@@ -1,6 +1,20 @@
 // BULLETPROOF ERROR ISOLATION UTILITIES
 // This file provides additional layers of protection against @context errors
 
+const CONTEXT_IDENTIFIER = '@context';
+
+type ContextError = { message: string };
+
+const hasContextMessage = (error: unknown): error is ContextError =>
+  typeof error === 'object' &&
+  error !== null &&
+  'message' in error &&
+  typeof (error as ContextError).message === 'string' &&
+  (error as ContextError).message.includes(CONTEXT_IDENTIFIER);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 export class ErrorIsolationManager {
   private static instance: ErrorIsolationManager;
   private errorCount = 0;
@@ -14,7 +28,7 @@ export class ErrorIsolationManager {
   }
 
   // Create isolated execution context
-  createIsolatedContext<T extends (...args: any[]) => any>(
+  createIsolatedContext<T extends (...args: unknown[]) => unknown>(
     fn: T,
     contextName: string = 'isolated'
   ): T {
@@ -30,12 +44,12 @@ export class ErrorIsolationManager {
   }
 
   // Handle errors in isolated context
-  private handleIsolatedError(error: any, contextName: string) {
+  private handleIsolatedError(error: unknown, contextName: string) {
     this.errorCount++;
-    
-    if (error.message && error.message.includes('@context')) {
+
+    if (hasContextMessage(error)) {
       console.log(`🚫 ${contextName.toUpperCase()} ERROR BLOCKED:`, error.message);
-      
+
       if (this.errorCount >= this.maxErrors) {
         console.log(`🚫 MAX ERRORS REACHED for ${contextName}, disabling further execution`);
         return;
@@ -47,7 +61,7 @@ export class ErrorIsolationManager {
   }
 
   // Wrap third-party functions with protection
-  wrapThirdPartyFunction<T extends (...args: any[]) => any>(
+  wrapThirdPartyFunction<T extends (...args: unknown[]) => unknown>(
     fn: T,
     functionName: string
   ): T {
@@ -55,7 +69,7 @@ export class ErrorIsolationManager {
       try {
         return fn.apply(this, args);
       } catch (error) {
-        if (error.message && error.message.includes('@context')) {
+        if (hasContextMessage(error)) {
           console.log(`🚫 THIRD-PARTY FUNCTION ERROR BLOCKED (${functionName}):`, error.message);
           return undefined;
         }
@@ -70,31 +84,34 @@ export class ErrorIsolationManager {
       parse: (text: string) => {
         try {
           const data = JSON.parse(text);
-          
+
           // Ensure all objects have @context
-          const ensureContext = (obj: any): any => {
+          const ensureContext = (obj: unknown): unknown => {
             if (Array.isArray(obj)) {
               return obj.map(ensureContext);
-            } else if (obj && typeof obj === 'object') {
-              if (!obj['@context']) {
+            }
+
+            if (isRecord(obj)) {
+              if (!('@context' in obj)) {
                 obj['@context'] = 'https://schema.org';
               }
               Object.keys(obj).forEach(key => {
-                if (obj[key] && typeof obj[key] === 'object') {
-                  obj[key] = ensureContext(obj[key]);
+                const value = obj[key];
+                if (typeof value === 'object' && value !== null) {
+                  obj[key] = ensureContext(value);
                 }
               });
             }
             return obj;
           };
-          
+
           return ensureContext(data);
         } catch (error) {
           console.log('🚫 JSON PARSING ERROR BLOCKED:', error);
           return {};
         }
       },
-      stringify: (obj: any) => {
+      stringify: (obj: unknown) => {
         try {
           return JSON.stringify(obj);
         } catch (error) {
@@ -109,13 +126,13 @@ export class ErrorIsolationManager {
   createSafeDOMManipulator() {
     const originalQuerySelector = document.querySelector;
     const originalQuerySelectorAll = document.querySelectorAll;
-    
+
     return {
       querySelector: (selector: string) => {
         try {
           return originalQuerySelector.call(document, selector);
         } catch (error) {
-          if (error.message && error.message.includes('@context')) {
+          if (hasContextMessage(error)) {
             console.log('🚫 QUERYSELECTOR ERROR BLOCKED:', error.message);
             return null;
           }
@@ -126,7 +143,7 @@ export class ErrorIsolationManager {
         try {
           return originalQuerySelectorAll.call(document, selector);
         } catch (error) {
-          if (error.message && error.message.includes('@context')) {
+          if (hasContextMessage(error)) {
             console.log('🚫 QUERYSELECTORALL ERROR BLOCKED:', error.message);
             return [];
           }
@@ -155,7 +172,7 @@ export class ErrorIsolationManager {
 export const errorIsolation = ErrorIsolationManager.getInstance();
 
 // Utility function to wrap any function with error protection
-export function withErrorProtection<T extends (...args: any[]) => any>(
+export function withErrorProtection<T extends (...args: unknown[]) => unknown>(
   fn: T,
   contextName?: string
 ): T {
@@ -171,7 +188,7 @@ export async function safeAsyncExecution<T>(
   try {
     return await operation();
   } catch (error) {
-    if (error.message && error.message.includes('@context')) {
+    if (hasContextMessage(error)) {
       console.log(`🚫 ASYNC ERROR BLOCKED (${contextName || 'unknown'}):`, error.message);
       return fallback;
     }

@@ -2,15 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import SmoothScroll from '@/components/SmoothScroll';
 import "../globals.css";
-import { Lato } from 'next/font/google';
-
-// Main font - Lato
-const lato = Lato({
-  subsets: ['latin'],
-  weight: ['100', '300', '400', '700', '900'],
-  variable: '--font-lato',
-  display: 'swap',
-});
+// `next/font` removed to keep builds resilient when Google Fonts are unreachable.
 
 export async function generateMetadata({
   params
@@ -86,8 +78,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={`${lato.variable}`}>
-      <body>
+    <html lang={locale}>
+      <body className="antialiased">
         <SmoothScroll />
         <NextIntlClientProvider messages={messages}>
           {children}
