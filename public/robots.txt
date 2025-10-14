@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://expandmatrix.cz/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /payload/
+
+# Allow specific API endpoints that should be indexed
+Allow: /api/site-settings
+Allow: /api/footer-links
+Allow: /api/references
+Allow: /api/newsletter

@@ -1,0 +1,144 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "hello": "Hello",
+    "error": {
+      "title": "Something went wrong",
+      "description": "Sorry, an unexpected error occurred. Please try refreshing the page.",
+      "tryAgain": "Try again",
+      "goHome": "Back to homepage"
+    }
+  },
+  "hero": {
+    "heading": {
+      "line1": "WE CREATE",
+      "line2a": "AI AGENTS",
+      "line2b": "THAT",
+      "line3": "GO BEYOND",
+      "line4": "LIMITS"
+    },
+    "slogan": "WE TRANSFORM businesses WITH artificial intelligence",
+    "subtitle": "It's time to effectively use artificial intelligence for the growth of your business and company development.",
+    "cta": "I want to start growing"
+  },
+  "sections": {
+    "accuracy": {
+      "title": {
+        "line1": "ACCURACY AND",
+        "line2": "TRANSPARENCY"
+      },
+      "description": "We only do what we're best at – AI agents, websites and AI implementation in business. We don't try to be an agency for everything. We build on clear strategy, strong ideas and execution that delivers results.",
+      "stats": {
+        "clients": "Satisfied clients",
+        "years": "Years of experience",
+        "team": "People in the team",
+        "projects": "Projects completed",
+        "adspend": "Client ad spend for advertising in CZK"
+      }
+    },
+    "clients": {
+      "title": "Our clients"
+    },
+    "services": {
+      "title": "Our services",
+      "learnMore": "Learn more",
+      "services": {
+        "ai-agents": {
+          "number": "001",
+          "title": "AI AGENTS",
+          "description": "We specialize in creating and managing advertising campaigns on platforms such as Google Ads, Meta Ads, TikTok Ads, Sklik, LinkedIn Ads.",
+          "details": "Our goal is always to achieve the best results for our clients with a clear focus on ROI and investment efficiency."
+        },
+        "web-development": {
+          "number": "002", 
+          "title": "WEBSITES AND E-SHOPS",
+          "description": "We create modern, fast, and functional websites and e-shops with emphasis on UX/UI design and SEO optimization.",
+          "details": "We use the latest technologies to create an excellent user experience and high conversion rates."
+        },
+        "ai-implementation": {
+          "number": "003",
+          "title": "AI BUSINESS IMPLEMENTATION",
+          "description": "We help companies implement artificial intelligence into their business processes to increase efficiency and competitiveness.",
+          "details": "From needs analysis to complex implementation of AI systems directly into your workflows."
+        }
+      }
+    },
+    "process": {
+      "title": "Cooperation process",
+      "description": "Our goal is to make the entire process as smooth and problem-free as possible, so you can focus on running your business while we take care of artificial intelligence.",
+      "cta": "Start cooperation",
+      "steps": {
+        "meeting": "Initial meeting",
+        "contract": "Payment & contract",
+        "access": "Sharing access",
+        "implementation": "First implementation",
+        "optimization": "Optimization"
+      },
+      "stepDescriptions": {
+        "meeting": "We conduct a thorough analysis of your needs and define specific goals for AI implementation. We identify which processes can be automated and which AI tools will be most effective for your business.",
+        "contract": "We prepare a detailed contract with clearly defined milestones, pricing, and timeline. We ensure transparent communication and set expectations for the entire project.",
+        "access": "We obtain necessary access to your systems and data. Everything is done securely with GDPR compliance and the highest security standards to protect your sensitive information.",
+        "implementation": "We begin implementing AI solutions according to the agreed plan. We create first functional prototypes and gradually integrate them into your existing workflows.",
+        "optimization": "We continuously monitor AI system performance and optimize them to achieve the best results. We perform regular updates and improve functionality according to your needs."
+      }
+    },
+    "references": {
+      "title": "References",
+      "overline": "REFERENCE",
+      "instagram": "Instagram",
+      "viewProfile": "View Profile"
+    },
+    "team": {
+      "title": "We're a young, driven team that isn't afraid of any challenge."
+    },
+    "faq": {
+      "title": {
+        "line1": "FREQUENTLY",
+        "line2": "ASKED QUESTIONS"
+      },
+      "cta": {
+        "overline": "Still have questions? Book a free meeting with us",
+        "button": "I WANT TO START GROWING"
+      }
+    }
+  },
+  "navigation": {
+    "about": "ABOUT",
+    "services": "SERVICES",
+    "references": "REFERENCES",
+    "faq": "FAQ",
+    "contact": "CONTACT"
+  },
+  "footer": {
+    "nav": "Footer primary navigation",
+    "brand": {
+      "tagline": "We build AI agents, websites and AI implementations.",
+      "socialAria": "Social links"
+    },
+    "newsletter": {
+      "title": "Subscribe to our newsletter",
+      "helper": "Get occasional updates. No spam.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "emailError": "Please enter a valid email.",
+      "cta": "Subscribe",
+      "loading": "Subscribing...",
+      "success": "Thanks! Please check your inbox.",
+      "error": "Something went wrong. Please try again.",
+      "consentText": {
+        "before": "I agree to receive emails and accept the",
+        "link": "Privacy Policy",
+        "after": "."
+      }
+    },
+    "links": {
+      "about": "About",
+      "services": "Services",
+      "references": "References",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  }
+}

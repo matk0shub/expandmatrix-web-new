@@ -1,0 +1,459 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Brand tokens */
+  --brand-primary: #00d76b; /* main green */
+  --brand-accent: #00b85c;  /* darker green */
+  --brand-glow: rgba(0, 215, 107, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-glow: var(--brand-glow);
+  --font-sans: var(--font-lato);
+  --font-heading: var(--font-lato);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Unified heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 6rem);
+  font-weight: 500;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+}
+
+h5 {
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+}
+
+h6 {
+  font-size: clamp(1rem, 1vw, 1.125rem);
+  font-weight: 600;
+}
+
+/* Main heading utility classes */
+.heading-main {
+  @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.1] uppercase font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 20px rgba(0, 215, 107, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heading-main:hover {
+  text-shadow: 0 0 30px rgba(0, 215, 107, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.heading-secondary {
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 15px rgba(0, 215, 107, 0.08);
+}
+
+.heading-tertiary {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-medium;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Hero specific heading styles - same size as other headings */
+.hero-heading {
+  @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.1] uppercase font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 20px rgba(0, 215, 107, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero heading layout - container width defined by line 2 */
+.hero-heading-grid {
+  display: inline-block;
+  width: max-content;
+  position: relative;
+}
+
+/* Line 1 - RESET all previous rules, right-aligned within container */
+.hero-heading-line-first {
+  text-align: right;
+  @apply block;
+  line-height: 0.9;
+  margin-bottom: 0.1em;
+  /* Ensure identical typography to line 2 for pixel-perfect alignment */
+  @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.1] uppercase font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 20px rgba(0, 215, 107, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Ensure identical letter-spacing and font features */
+  letter-spacing: -0.02em;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Line 2 - LEFT-ALIGNED, defines container width */
+.hero-heading-line-second {
+  text-align: left;
+  @apply block;
+  line-height: 0.9;
+  margin-bottom: 0.1em;
+  /* Ensure identical typography for consistency */
+  @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.1] uppercase font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 20px rgba(0, 215, 107, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Ensure identical letter-spacing and font features */
+  letter-spacing: -0.02em;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Lines 3 and 4 - left-aligned */
+.hero-heading-line-rest {
+  text-align: left;
+  @apply block;
+  line-height: 0.9;
+  margin-bottom: 0.1em;
+  /* Ensure identical typography for consistency */
+  @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.1] uppercase font-semibold tracking-tight;
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-shadow: 0 0 20px rgba(0, 215, 107, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Ensure identical letter-spacing and font features */
+  letter-spacing: -0.02em;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Responsive hero heading container */
+.hero-heading-container {
+  @apply max-w-5xl lg:max-w-6xl xl:max-w-7xl;
+}
+
+/* Font utility classes */
+.font-lato {
+  font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Text scrolling animation for partners section - removed CSS keyframes */
+
+/* Neon glow animations for accuracy section */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleX(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scaleX(1.2);
+  }
+}
+
+/* Traveling animations for neon spots */
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -15px) rotate(2deg);
+  }
+  50% {
+    transform: translate(-5px, -25px) rotate(-1deg);
+  }
+  75% {
+    transform: translate(-15px, -10px) rotate(1deg);
+  }
+}
+
+@keyframes drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-20px, 10px) rotate(-2deg);
+  }
+  66% {
+    transform: translate(15px, -20px) rotate(3deg);
+  }
+}
+
+@keyframes wander {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(25px, -10px) rotate(1deg);
+  }
+  40% {
+    transform: translate(-10px, 20px) rotate(-2deg);
+  }
+  60% {
+    transform: translate(-25px, -15px) rotate(2deg);
+  }
+  80% {
+    transform: translate(15px, 10px) rotate(-1deg);
+  }
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  30% {
+    transform: translate(-15px, -30px) rotate(-3deg);
+  }
+  60% {
+    transform: translate(20px, -10px) rotate(2deg);
+  }
+  90% {
+    transform: translate(-10px, 15px) rotate(-1deg);
+  }
+}
+
+@keyframes glide {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(30px, -20px) rotate(2deg);
+  }
+  50% {
+    transform: translate(-20px, -30px) rotate(-2deg);
+  }
+  75% {
+    transform: translate(-30px, 20px) rotate(1deg);
+  }
+}
+
+@keyframes flow {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-25px, 25px) rotate(-1deg);
+  }
+  40% {
+    transform: translate(30px, -15px) rotate(3deg);
+  }
+  60% {
+    transform: translate(-15px, -25px) rotate(-2deg);
+  }
+  80% {
+    transform: translate(20px, 15px) rotate(1deg);
+  }
+}
+
+@keyframes meander {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  16% {
+    transform: translate(35px, -25px) rotate(2deg);
+  }
+  33% {
+    transform: translate(-20px, 30px) rotate(-3deg);
+  }
+  50% {
+    transform: translate(-35px, -20px) rotate(1deg);
+  }
+  66% {
+    transform: translate(25px, 25px) rotate(-2deg);
+  }
+  83% {
+    transform: translate(-15px, -30px) rotate(3deg);
+  }
+}
+
+/* Breathing and traveling animations for single large blob */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1) rotate(1deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes travel {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: translate(30px, -20px) rotate(2deg);
+  }
+  20% {
+    transform: translate(-20px, 30px) rotate(-1deg);
+  }
+  30% {
+    transform: translate(-40px, -10px) rotate(3deg);
+  }
+  40% {
+    transform: translate(20px, 40px) rotate(-2deg);
+  }
+  50% {
+    transform: translate(-30px, -30px) rotate(1deg);
+  }
+  60% {
+    transform: translate(40px, 20px) rotate(-3deg);
+  }
+  70% {
+    transform: translate(-10px, -40px) rotate(2deg);
+  }
+  80% {
+    transform: translate(35px, 10px) rotate(-1deg);
+  }
+  90% {
+    transform: translate(-25px, 25px) rotate(3deg);
+  }
+}
+
+/* Advanced card animations for wow effects */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+@keyframes float-1 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-5px) translateX(-3px);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-15px) translateX(8px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-2 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-8px) translateX(-4px);
+    opacity: 0.6;
+  }
+  60% {
+    transform: translateY(-12px) translateX(6px);
+    opacity: 0.3;
+  }
+  90% {
+    transform: translateY(-6px) translateX(-2px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes float-3 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.5;
+  }
+  20% {
+    transform: translateY(-6px) translateX(3px);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateY(-14px) translateX(-5px);
+    opacity: 0.3;
+  }
+  70% {
+    transform: translateY(-8px) translateX(7px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float-4 {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+  35% {
+    transform: translateY(-9px) translateX(-6px);
+    opacity: 0.5;
+  }
+  65% {
+    transform: translateY(-11px) translateX(4px);
+    opacity: 0.2;
+  }
+  85% {
+    transform: translateY(-4px) translateX(-3px);
+    opacity: 0.4;
+  }
+}
