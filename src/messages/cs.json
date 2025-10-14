@@ -1,0 +1,144 @@
+{
+  "common": {
+    "welcome": "Vítejte",
+    "hello": "Ahoj",
+    "error": {
+      "title": "Něco se pokazilo",
+      "description": "Omlouváme se, došlo k neočekávané chybě. Zkuste prosím obnovit stránku.",
+      "tryAgain": "Zkusit znovu",
+      "goHome": "Zpět na hlavní stránku"
+    }
+  },
+  "hero": {
+    "heading": {
+      "line1": "VYVÍJÍME",
+      "line2a": "AI AGENTY",
+      "line2b": "KTEŘÍ",
+      "line3": "POSOUVAJÍ",
+      "line4": "MOŽNOSTI"
+    },
+    "slogan": "MĚNÍME businessy POMOCÍ umělé inteligence",
+    "subtitle": "Je čas efektivně využít umělou inteligenci k růstu Vašeho podnikání a rozvoji firmy.",
+    "cta": "Chci začít růst"
+  },
+  "sections": {
+    "accuracy": {
+      "title": {
+        "line1": "PŘESNOST A",
+        "line2": "TRANSPARENTNOST"
+      },
+      "description": "Děláme jen to, v čem jsme nejlepší – AI agenti, weby a implementace AI do businessu. Nesnažíme se být agenturou na všechno. Stavíme na jasné strategii, silných nápadech a exekuci, která přináší výsledky.",
+      "stats": {
+        "clients": "Spokojení klienti",
+        "years": "Roky zkušeností",
+        "team": "Lidé v týmu",
+        "projects": "Dokončené projekty",
+        "adspend": "Reklamní rozpočet klientů v CZK"
+      }
+    },
+    "services": {
+      "title": "Naše služby",
+      "learnMore": "Rozumím více",
+      "services": {
+        "ai-agents": {
+          "number": "001",
+          "title": "AI AGENTI",
+          "description": "Specializujeme se na vytváření a správu reklamních kampaní na platformách jako jsou Google Ads, Meta Ads, TikTok Ads, Sklik, LinkedIn Ads.",
+          "details": "Naším cílem je vždy dosáhnout nejlepších výsledků pro naše klienty s jasným zaměřením na ROI a efektivitu investic."
+        },
+        "web-development": {
+          "number": "002",
+          "title": "WEBOVÉ STRÁNKY A E-SHOPY",
+          "description": "Vytváříme moderní, rychlé a funkční webové stránky a e-shopy s důrazem na UX/UI design a SEO optimalizaci.",
+          "details": "Používáme nejnovější technologie pro vytvoření skvělého uživatelského zážitku a vysoké konverze."
+        },
+        "ai-implementation": {
+          "number": "003",
+          "title": "IMPLEMENTACE AI DO BUSINESSU",
+          "description": "Pomáháme firmám implementovat umělou inteligenci do jejich obchodních procesů pro zvýšení efektivity a konkurenceschopnosti.",
+          "details": "Od analýzy potřeb až po komplexní implementaci AI systémů přímo do vašich pracovních postupů."
+        }
+      }
+    },
+    "clients": {
+      "title": "Naši klienti"
+    },
+    "process": {
+      "title": "Proces spolupráce",
+      "description": "Naším cílem je, aby celý proces byl co nejhladší a bezproblémový, abyste se mohli soustředit na provoz svého podnikání, zatímco my se za Vás postaráme o umělou inteligenci.",
+      "cta": "Začít spolupráci",
+      "steps": {
+        "meeting": "Úvodní meeting",
+        "contract": "Platba & smlouva",
+        "access": "Sdílení přístupů",
+        "implementation": "První implementace",
+        "optimization": "Optimalizace"
+      },
+      "stepDescriptions": {
+        "meeting": "Provedeme analýzu vašich potřeb a definujeme konkrétní cíle pro implementaci AI řešení. Zjistíme, jaké procesy lze automatizovat a jaké AI nástroje budou nejefektivnější pro váš business.",
+        "contract": "Připravíme detailní smlouvu s jasně definovanými milníky, cenami a časovým harmonogramem. Zabezpečíme transparentní komunikaci a nastavíme očekávání pro celý projekt.",
+        "access": "Získáme potřebné přístupy k vašim systémům a datům. Vše probíhá bezpečně s dodržením GDPR a nejvyšších bezpečnostních standardů pro ochranu vašich citlivých informací.",
+        "implementation": "Začneme s implementací AI řešení podle dohodnutého plánu. Vytvoříme první funkční prototypy a postupně je integrujeme do vašich stávajících pracovních procesů.",
+        "optimization": "Nepřetržitě monitorujeme výkonnost AI systémů a optimalizujeme je pro dosažení nejlepších výsledků. Provádíme pravidelné aktualizace a vylepšujeme funkčnost podle vašich potřeb."
+      }
+    },
+    "references": {
+      "title": "Reference",
+      "overline": "REFERENCE",
+      "instagram": "Instagram",
+      "viewProfile": "Zobrazit profil"
+    },
+    "team": {
+      "title": "Jsme mladý, dravý tým, který se nebojí žádné výzvy."
+    },
+    "faq": {
+      "title": {
+        "line1": "ČASTÉ",
+        "line2": "OTÁZKY"
+      },
+      "cta": {
+        "overline": "Stále máte otázky? Zarezervujte si s námi meeting zdarma",
+        "button": "CHCI ZAČÍT RŮST"
+      }
+    }
+  },
+  "navigation": {
+    "about": "O NÁS",
+    "services": "SLUŽBY",
+    "references": "REFERENCE",
+    "faq": "FAQ",
+    "contact": "KONTAKT"
+  },
+  "footer": {
+    "nav": "Hlavní navigace v patičce",
+    "brand": {
+      "tagline": "Vytváříme AI agenty, weby a implementace AI.",
+      "socialAria": "Odkazy na sociální sítě"
+    },
+    "newsletter": {
+      "title": "Chceš být v obraze?",
+      "helper": "Občasné perly z našeho světa. Bez spamu, slibujeme!",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Tvůj e-mail",
+      "emailError": "Zadejte platný e-mail.",
+      "cta": "Chci být v obraze",
+      "loading": "Odesílám...",
+      "success": "Bingo! Zkontroluj si e-mail",
+      "error": "Hmm, něco se nepovedlo. Zkus to znovu!",
+      "consentText": {
+        "before": "Souhlasím se zasíláním e-mailů a přijímám",
+        "link": "Zásady ochrany osobních údajů",
+        "after": "."
+      }
+    },
+    "links": {
+      "about": "O nás",
+      "services": "Služby",
+      "references": "Reference",
+      "faq": "FAQ",
+      "contact": "Kontakt",
+      "privacy": "Zásady ochrany osobních údajů",
+      "terms": "Obchodní podmínky"
+    }
+  }
+}

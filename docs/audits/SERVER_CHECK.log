@@ -1,0 +1,10 @@
+Server check (Sprint #2 follow-up)
+Date: 2025-10-10T08:54:14Z
+Node: v24.4.1
+Build: npm run build (pass)
+Start: npm run start -p 3000 (pid 50475)
+HTTP / -> 200 (via curl -L)
+HTTP /cs -> 200
+HTTP /en -> 200
+Lint: npm run lint (pass)
+Typecheck: npx tsc --noEmit (pass)
