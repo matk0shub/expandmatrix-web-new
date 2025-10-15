@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 import type { TeamMember } from '@/hooks/useTeamMembers';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -82,6 +82,9 @@ export default function TeamSection() {
     locale,
     featuredOnly: true,
   });
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const pinWrapperRef = useRef<HTMLDivElement | null>(null);
+  const cardsRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const spotlightMembers = useMemo(() => {
     const ordered = SPOTLIGHT_ORDER.map((name) =>
@@ -99,6 +102,96 @@ export default function TeamSection() {
 
     return [...ordered, ...fallback].slice(0, SPOTLIGHT_ORDER.length);
   }, [teamMembers]);
+
+  const cardCount = spotlightMembers.length || 1;
+
+  useEffect(() => {
+    cardsRefs.current.length = cardCount;
+  }, [cardCount]);
+
+  useEffect(() => {
+    if (!spotlightMembers.length) {
+      return undefined;
+    }
+
+    let ctx: { revert: () => void } | undefined;
+    let canceled = false;
+
+    const init = async () => {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ]);
+
+      if (canceled) {
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        const cards = cardsRefs.current.filter(
+          (card): card is HTMLDivElement => Boolean(card),
+        );
+
+        if (!cards.length || !pinWrapperRef.current || !sectionRef.current) {
+          return;
+        }
+
+        gsap.set(cards, { opacity: 0, yPercent: 18 });
+        gsap.set(cards[0], { opacity: 1, yPercent: 0 });
+
+        const distance = Math.max(cards.length - 1, 1) * 100;
+
+        const timeline = gsap.timeline({
+          defaults: { ease: 'power2.inOut' },
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: `+=${distance}%`,
+            scrub: true,
+            pin: pinWrapperRef.current,
+            pinSpacing: false,
+            anticipatePin: 1,
+          },
+        });
+
+        cards.forEach((card, index) => {
+          const position = index === 0 ? 0 : index;
+
+          timeline.to(
+            card,
+            {
+              opacity: 1,
+              yPercent: 0,
+              duration: 0.6,
+              ease: 'power2.out',
+            },
+            position,
+          );
+
+          if (index > 0) {
+            timeline.to(
+              cards[index - 1],
+              {
+                opacity: 0,
+                yPercent: -18,
+                duration: 0.6,
+              },
+              position,
+            );
+          }
+        });
+      }, sectionRef);
+    };
+
+    void init();
+
+    return () => {
+      canceled = true;
+      ctx?.revert();
+    };
+  }, [spotlightMembers]);
 
   if (!hasMounted || loading) {
     return (
@@ -128,7 +221,11 @@ export default function TeamSection() {
   }
 
   return (
-    <section className="relative w-full bg-[#020b08] py-24 md:py-40 lg:py-48 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="team-section relative isolate w-full overflow-hidden bg-[#020b08]"
+      style={{ minHeight: `${Math.max(cardCount, 1) * 100}vh` }}
+    >
       {/* Background gradients */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,120,90,0.35),rgba(1,10,8,0.96))]" />
@@ -155,27 +252,40 @@ export default function TeamSection() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
-        <div className="relative flex flex-col items-center justify-center">
-          {/* Title */}
-          <h1 className="heading-main text-center text-white/85 mb-12 md:mb-16 lg:mb-20">
-            {t('title')}
-          </h1>
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1780px] items-center justify-center px-6 py-16 md:px-12">
+        <div
+          ref={pinWrapperRef}
+          className="team-pin relative flex h-[min(110vh,900px)] w-full items-center justify-center"
+        >
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="absolute left-1/2 top-1/2 z-20 w-full max-w-4xl -translate-x-1/2 -translate-y-1/2 px-4 text-center">
+              <h1 className="heading-main text-balance text-white/90">
+                {t('title')}
+              </h1>
+            </div>
+          </div>
 
-          {/* Team Cards */}
-          <div className="relative flex w-full max-w-5xl flex-col items-center gap-10 lg:flex-row lg:justify-center lg:gap-12">
+          <div className="relative flex h-full w-full items-center justify-center">
             {spotlightMembers.map((member, index) => {
               const theme = CARD_THEMES[index] ?? CARD_THEMES[CARD_THEMES.length - 1];
               const narrative = CARD_NARRATIVES[member.name as keyof typeof CARD_NARRATIVES];
 
               return (
-                <TeamSpotlightCard
+                <div
                   key={member.id}
-                  member={member}
-                  locale={locale}
-                  narrative={narrative}
-                  theme={theme}
-                />
+                  ref={(el) => {
+                    cardsRefs.current[index] = el;
+                  }}
+                  className="team-scroll-card absolute left-1/2 top-1/2 w-full max-w-[520px] -translate-x-1/2 -translate-y-1/2 will-change-transform sm:max-w-[560px] md:max-w-[600px] lg:max-w-[640px]"
+                  style={{ zIndex: 10 - index, opacity: index === 0 ? 1 : 0 }}
+                >
+                  <TeamSpotlightCard
+                    member={member}
+                    locale={locale}
+                    narrative={narrative}
+                    theme={theme}
+                  />
+                </div>
               );
             })}
           </div>
@@ -211,18 +321,23 @@ function TeamSpotlightCard({
 
   return (
     <article
-      className={`team-card relative w-full max-w-[440px] sm:max-w-[500px] md:max-w-[520px] lg:max-w-none lg:w-[300px] xl:w-[340px] 2xl:w-[360px] ${
+      className={`team-card relative mx-auto w-full max-w-[520px] sm:max-w-[560px] md:max-w-[600px] lg:max-w-[620px] xl:max-w-[640px] ${
         theme.wrapperClass ?? ''
       }`}
     >
-      <div className="relative z-10 overflow-hidden rounded-[30px] border border-white/10 bg-black/30 backdrop-blur-3xl p-[1px] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 blur-[120px] opacity-60"
+        style={{ background: theme.glowStyle }}
+      />
+      <div className="relative z-10 overflow-hidden rounded-[34px] border border-emerald-200/20 bg-[#03120f]/80 backdrop-blur-3xl p-[1.5px] shadow-[0_40px_140px_rgba(0,0,0,0.55)]">
         <div
-          className="relative rounded-[28px] pb-9"
+          className="relative rounded-[32px] pb-10"
           style={{
             background: theme.frameGradient,
           }}
         >
-          <div className="relative w-full overflow-hidden rounded-t-[28px] border-b border-white/10">
+          <div className="relative w-full overflow-hidden rounded-t-[32px] border-b border-white/10">
             <div className="relative aspect-[3/2] w-full overflow-hidden">
               {member.avatar?.url ? (
                 <Image
@@ -240,7 +355,7 @@ function TeamSpotlightCard({
               )}
             </div>
             <div
-              className="pointer-events-none absolute inset-0 rounded-t-[28px]"
+              className="pointer-events-none absolute inset-0 rounded-t-[32px]"
               style={{
                 background: theme.headerOverlay,
               }}
@@ -254,38 +369,38 @@ function TeamSpotlightCard({
             />
           </div>
 
-          <div className="px-8 pt-9 md:px-9 md:pt-10">
+          <div className="px-9 pt-10 md:px-10 md:pt-12">
             <div className="flex flex-col gap-4">
-              <div className={`inline-flex items-center gap-2 rounded-full border ${theme.accentBorder} bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.32em] text-emerald-100/80`}>
+              <div className={`inline-flex items-center gap-2 rounded-full border ${theme.accentBorder} bg-white/5 px-5 py-2 text-[11px] uppercase tracking-[0.32em] text-emerald-100/80`}>
                 {localizedRole}
               </div>
-              <h3 className="text-[28px] font-semibold text-white md:text-[32px]">{member.name}</h3>
+              <h3 className="text-[30px] font-semibold text-white md:text-[36px]">{member.name}</h3>
               {localizedNarrative && (
-                <p className="text-base leading-relaxed text-emerald-100/80 md:text-lg">
+                <p className="text-base leading-relaxed text-emerald-100/90 md:text-lg">
                   {localizedNarrative}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="px-8 md:px-9">
-            <div className="mt-9 flex items-center gap-3">
-              <div className="h-[2px] w-16 bg-gradient-to-r from-emerald-300 via-emerald-400/50 to-transparent" />
-              <span className="text-[11px] uppercase tracking-[0.28em] text-emerald-200/50">
+          <div className="px-9 md:px-10">
+            <div className="mt-10 flex items-center gap-3">
+              <div className="h-[2px] w-20 bg-gradient-to-r from-emerald-300 via-emerald-400/60 to-transparent" />
+              <span className="text-[11px] uppercase tracking-[0.28em] text-emerald-200/60">
                 Orbit stabilised
               </span>
             </div>
           </div>
 
           <div
-            className="absolute -bottom-8 left-1/2 h-20 w-20 -translate-x-1/2 rounded-full blur-[55px] opacity-70"
+            className="absolute -bottom-8 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full blur-[70px] opacity-70"
             style={{
               background: 'radial-gradient(circle, rgba(0, 214, 158, 0.35) 0%, transparent 70%)',
             }}
           />
 
           <div
-            className={`absolute -bottom-6 right-5 h-11 w-11 rounded-full border border-white/10 backdrop-blur-xl ${theme.accentGlow}`}
+            className={`absolute -bottom-7 right-7 h-12 w-12 rounded-full border border-white/10 backdrop-blur-xl ${theme.accentGlow}`}
           />
         </div>
       </div>
