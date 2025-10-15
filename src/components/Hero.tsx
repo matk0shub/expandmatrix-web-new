@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
 import Image from 'next/image';
@@ -10,6 +9,8 @@ import LocaleSwitcher from './LocaleSwitcher';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useClient } from '@/hooks/useClient';
+
+type GSAPTimeline = gsap.core.Timeline;
 
 export default function Hero() {
   const t = useTranslations('hero');
@@ -22,44 +23,57 @@ export default function Hero() {
 
 
   useEffect(() => {
-    if (!heroRef.current || !isClient) return;
-
-    const tl = gsap.timeline();
-    
-    // Initial animation
-    tl.fromTo(heroRef.current, 
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
-    );
-
-        // 3D Logo parallax effect on mouse move
-        const handleMouseMove = (e: MouseEvent) => {
-          if (!logoRef.current) return;
-
-          const { clientX, clientY } = e;
-          const { innerWidth, innerHeight } = window;
-
-          const xPos = (clientX / innerWidth - 0.5) * 10;
-          const yPos = (clientY / innerHeight - 0.5) * 10;
-
-          gsap.to(logoRef.current, {
-            rotateY: xPos,
-            rotateX: -yPos,
-            duration: 1,
-            ease: "power2.out"
-      });
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('mousemove', handleMouseMove);
+    if (!heroRef.current || !isClient || prefersReducedMotion) {
+      return;
     }
-    
+
+    let isMounted = true;
+    let handleMouseMove: ((event: MouseEvent) => void) | null = null;
+    let timeline: GSAPTimeline | null = null;
+
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (!isMounted || !heroRef.current) {
+        return;
+      }
+
+      timeline = gsap.timeline();
+      timeline.fromTo(
+        heroRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }
+      );
+
+      handleMouseMove = (event: MouseEvent) => {
+        if (!logoRef.current) {
+          return;
+        }
+
+        const { clientX, clientY } = event;
+        const { innerWidth, innerHeight } = window;
+
+        const xPos = (clientX / innerWidth - 0.5) * 10;
+        const yPos = (clientY / innerHeight - 0.5) * 10;
+
+        gsap.to(logoRef.current, {
+          rotateY: xPos,
+          rotateX: -yPos,
+          duration: 0.6,
+          ease: 'power2.out',
+        });
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+    })();
+
     return () => {
-      if (typeof window !== 'undefined') {
+      isMounted = false;
+      if (handleMouseMove) {
         window.removeEventListener('mousemove', handleMouseMove);
       }
+      timeline?.kill();
     };
-  }, [isClient]);
+  }, [isClient, prefersReducedMotion]);
 
   const scrollToSection = (sectionId: string) => {
     if (typeof document !== 'undefined') {

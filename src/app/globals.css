@@ -1,32 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url('/fonts/lato-v25-latin-300.woff2') format('woff2'),
-       url('/fonts/lato-v25-latin-300.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/lato-v25-latin-regular.woff2') format('woff2'),
-       url('/fonts/lato-v25-latin-regular.woff') format('woff');
-}
-
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/lato-v25-latin-700.woff2') format('woff2'),
-       url('/fonts/lato-v25-latin-700.woff') format('woff');
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -34,7 +7,7 @@
   --brand-primary: #00d76b; /* main green */
   --brand-accent: #00b85c;  /* darker green */
   --brand-glow: rgba(0, 215, 107, 0.2);
-  --font-lato: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color-scheme: light dark;
 }
 
 @theme inline {

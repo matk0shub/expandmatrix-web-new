@@ -38,6 +38,13 @@ export const References: CollectionConfig = {
       },
     },
     {
+      name: 'websiteUrl',
+      type: 'text',
+      admin: {
+        description: 'Official website URL (optional)',
+      },
+    },
+    {
       name: 'image',
       type: 'upload',
       relationTo: 'media',

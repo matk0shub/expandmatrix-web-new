@@ -43,8 +43,8 @@
         "ai-agents": {
           "number": "001",
           "title": "AI AGENTI",
-          "description": "Specializujeme se na vytváření a správu reklamních kampaní na platformách jako jsou Google Ads, Meta Ads, TikTok Ads, Sklik, LinkedIn Ads.",
-          "details": "Naším cílem je vždy dosáhnout nejlepších výsledků pro naše klienty s jasným zaměřením na ROI a efektivitu investic."
+          "description": "Navrhujeme autonomní AI agenty, kteří přirozeně komunikují, řeší úkoly a přesně se napojují na vaše systémy.",
+          "details": "Od analýzy po nasazení tvoříme doménově vytrénované agenty, integrujeme API a datové zdroje a průběžně je ladíme pro další učení."
         },
         "web-development": {
           "number": "002",

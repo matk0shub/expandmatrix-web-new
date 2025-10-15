@@ -1,12 +1,15 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { motion, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useSafeScroll } from '@/hooks/useSafeScroll';
 import { useRef, useEffect, useCallback } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Vector class for gravity points
 class Vector {
@@ -298,38 +301,13 @@ class Particle extends Vector {
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   // Canvas background refs
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bufferCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const mouseRef = useRef<Vector>(new Vector());
-  
-  // Use safe scroll hook that prevents hydration errors
-  const { scrollYProgress, isReady } = useSafeScroll({
-    target: cardsRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Transform scroll progress to card positions
-  const card1Y = useTransform(scrollYProgress, [0, 0.2, 0.4], [100, 20, -20]);
-  const card2Y = useTransform(scrollYProgress, [0, 0.2, 0.4], [80, 0, -40]);
-  const card3Y = useTransform(scrollYProgress, [0, 0.2, 0.4], [60, -20, -60]);
-  const card4Y = useTransform(scrollYProgress, [0, 0.2, 0.4], [40, -40, -80]);
-  const card5Y = useTransform(scrollYProgress, [0, 0.2, 0.4], [20, -60, -100]);
-
-  const card1Rotate = useTransform(scrollYProgress, [0, 0.5], [5, -3]);
-  const card2Rotate = useTransform(scrollYProgress, [0, 0.5], [-2, 4]);
-  const card3Rotate = useTransform(scrollYProgress, [0, 0.5], [3, -2]);
-  const card4Rotate = useTransform(scrollYProgress, [0, 0.5], [-4, 3]);
-  const card5Rotate = useTransform(scrollYProgress, [0, 0.5], [2, -5]);
-
-  const card1X = useTransform(scrollYProgress, [0, 0.5], [-10, 15]);
-  const card2X = useTransform(scrollYProgress, [0, 0.5], [8, -12]);
-  const card3X = useTransform(scrollYProgress, [0, 0.5], [-5, 8]);
-  const card4X = useTransform(scrollYProgress, [0, 0.5], [12, -8]);
-  const card5X = useTransform(scrollYProgress, [0, 0.5], [-8, 10]);
 
   const steps = [
     { key: 'meeting', number: '01' },
@@ -337,6 +315,15 @@ export default function ProcessSection() {
     { key: 'access', number: '03' },
     { key: 'implementation', number: '04' },
     { key: 'optimization', number: '05' }
+  ];
+
+  const cardBaseClass = 'process-card w-[768px] h-[640px] backdrop-blur-sm rounded-3xl border shadow-2xl';
+  const cardVariants = [
+    'bg-gradient-to-br from-green-500/90 to-green-600/90 border-green-400/30 shadow-green-500/20',
+    'bg-gradient-to-br from-green-400/90 to-green-500/90 border-green-300/30 shadow-green-400/20',
+    'bg-gradient-to-br from-green-300/90 to-green-400/90 border-green-200/30 shadow-green-300/20',
+    'bg-gradient-to-br from-green-200/90 to-green-300/90 border-green-100/30 shadow-green-200/20',
+    'bg-gradient-to-br from-green-100/90 to-green-200/90 border-green-50/30 shadow-green-100/20'
   ];
 
   // Gravity Points Canvas System
@@ -558,6 +545,85 @@ export default function ProcessSection() {
     return initGravityCanvas();
   }, [prefersReducedMotion, initGravityCanvas]);
 
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const container = cardsContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const cardWrappers = gsap.utils.toArray<HTMLElement>(
+        container.querySelectorAll('.process-card-wrapper')
+      );
+
+      if (cardWrappers.length === 0) {
+        return;
+      }
+
+      const cards = cardWrappers.map((wrapper) =>
+        wrapper.querySelector<HTMLElement>('.process-card')
+      );
+
+      const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
+
+      if (existingCards.length === 0) {
+        return;
+      }
+
+      gsap.set(existingCards, { opacity: 0, yPercent: 12 });
+      if (cards[0]) {
+        gsap.set(cards[0], { opacity: 1, yPercent: 0 });
+      }
+
+      // Distance (in px) that keeps a card pinned before the next one takes over
+      const stickDistance = 100;
+      const lastCardTrigger = ScrollTrigger.create({
+        trigger: cardWrappers[cardWrappers.length - 1],
+        start: 'bottom bottom',
+      });
+
+      cardWrappers.forEach((wrapper, index) => {
+        const card = cards[index];
+        if (!card) {
+          return;
+        }
+
+        ScrollTrigger.create({
+          trigger: wrapper,
+          start: 'center center',
+          end: () => (lastCardTrigger.start || 0) + stickDistance,
+          pin: true,
+          pinSpacing: false,
+          toggleActions: 'restart none none reverse',
+          onEnter: () => {
+            gsap.to(card, { opacity: 1, yPercent: 0, duration: 0.6, overwrite: 'auto' });
+          },
+          onEnterBack: () => {
+            gsap.to(card, { opacity: 1, yPercent: 0, duration: 0.6, overwrite: 'auto' });
+          },
+          onLeave: () => {
+            if (index !== cardWrappers.length - 1) {
+              gsap.to(card, { opacity: 0, yPercent: -12, duration: 0.6, overwrite: 'auto' });
+            }
+          },
+          onLeaveBack: () => {
+            if (index !== 0) {
+              gsap.to(card, { opacity: 0, yPercent: 12, duration: 0.6, overwrite: 'auto' });
+            }
+          },
+        });
+      });
+
+      ScrollTrigger.refresh();
+    }, container);
+
+    return () => ctx.revert();
+  }, [prefersReducedMotion]);
+
   return (
     <section
       ref={sectionRef}
@@ -649,124 +715,39 @@ export default function ProcessSection() {
           </div>
       </div>
 
-      {/* New Overlapping Cards Section */}
-      <section 
-        ref={cardsRef}
-        className="relative w-full overflow-hidden bg-transparent py-32 md:py-48 lg:py-64"
-      >
-        {/* Static Background Effects removed to unify with gravity canvas */}
-
-        {/* Cards Container */}
-        <div className="relative w-full h-[1200px] flex items-center justify-center">
-          {/* Card 1 - Intro Meeting */}
-          <motion.div
-            style={{
-              y: prefersReducedMotion ? 0 : (isReady ? card1Y : 0),
-              x: prefersReducedMotion ? 0 : (isReady ? card1X : 0),
-              rotate: prefersReducedMotion ? 0 : (isReady ? card1Rotate : 0),
-            }}
-            className="absolute z-50 w-[768px] h-[640px] bg-gradient-to-br from-green-500/90 to-green-600/90 backdrop-blur-sm rounded-3xl border border-green-400/30 shadow-2xl shadow-green-500/20"
-          >
-            <div className="p-12 h-full flex flex-col justify-between">
-              <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                {steps[0].number}
+      {/* Layered process steps */}
+      <section className="relative w-full overflow-hidden bg-transparent py-32 md:py-48 lg:py-64">
+        <div
+          ref={cardsContainerRef}
+          className={`relative w-full ${prefersReducedMotion ? 'space-y-16' : ''}`}
+        >
+          {steps.map((step, index) => (
+            <section
+              key={step.key}
+              className={`process-card-wrapper ${
+                prefersReducedMotion ? 'relative' : 'flex min-h-screen items-center justify-center'
+              }`}
+            >
+              <div
+                className={`${cardBaseClass} ${cardVariants[index]} ${
+                  prefersReducedMotion ? '' : 'opacity-0'
+                }`}
+                style={!prefersReducedMotion && index === 0 ? { opacity: 1 } : undefined}
+              >
+                <div className="p-12 h-full flex flex-col justify-between">
+                  <div className="text-green-100 text-lg font-mono font-medium mb-6">
+                    {step.number}
+                  </div>
+                  <div className="text-white text-5xl font-bold font-lato mb-8">
+                    <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
+                  </div>
+                  <div className="text-green-100 text-lg leading-relaxed font-lato">
+                    <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />
+                  </div>
+                </div>
               </div>
-              <div className="text-white text-5xl font-bold font-lato mb-8">
-                <ScrambleText text={t(`steps.${steps[0].key}`)} applyScramble={false} />
-              </div>
-              <div className="text-green-100 text-lg leading-relaxed font-lato">
-                <ScrambleText text={t(`stepDescriptions.${steps[0].key}`)} applyScramble={false} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 2 - Payment & Contract */}
-          <motion.div
-            style={{
-              y: prefersReducedMotion ? 0 : (isReady ? card2Y : 0),
-              x: prefersReducedMotion ? 0 : (isReady ? card2X : 0),
-              rotate: prefersReducedMotion ? 0 : (isReady ? card2Rotate : 0),
-            }}
-            className="absolute z-40 w-[768px] h-[640px] bg-gradient-to-br from-green-400/90 to-green-500/90 backdrop-blur-sm rounded-3xl border border-green-300/30 shadow-2xl shadow-green-400/20"
-          >
-            <div className="p-12 h-full flex flex-col justify-between">
-              <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                {steps[1].number}
-              </div>
-              <div className="text-white text-5xl font-bold font-lato mb-8">
-                <ScrambleText text={t(`steps.${steps[1].key}`)} applyScramble={false} />
-              </div>
-              <div className="text-green-100 text-lg leading-relaxed font-lato">
-                <ScrambleText text={t(`stepDescriptions.${steps[1].key}`)} applyScramble={false} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 3 - Access Sharing */}
-          <motion.div
-            style={{
-              y: prefersReducedMotion ? 0 : (isReady ? card3Y : 0),
-              x: prefersReducedMotion ? 0 : (isReady ? card3X : 0),
-              rotate: prefersReducedMotion ? 0 : (isReady ? card3Rotate : 0),
-            }}
-            className="absolute z-30 w-[768px] h-[640px] bg-gradient-to-br from-green-300/90 to-green-400/90 backdrop-blur-sm rounded-3xl border border-green-200/30 shadow-2xl shadow-green-300/20"
-          >
-            <div className="p-12 h-full flex flex-col justify-between">
-              <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                {steps[2].number}
-              </div>
-              <div className="text-white text-5xl font-bold font-lato mb-8">
-                <ScrambleText text={t(`steps.${steps[2].key}`)} applyScramble={false} />
-              </div>
-              <div className="text-green-100 text-lg leading-relaxed font-lato">
-                <ScrambleText text={t(`stepDescriptions.${steps[2].key}`)} applyScramble={false} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 4 - First Implementation */}
-          <motion.div
-            style={{
-              y: prefersReducedMotion ? 0 : (isReady ? card4Y : 0),
-              x: prefersReducedMotion ? 0 : (isReady ? card4X : 0),
-              rotate: prefersReducedMotion ? 0 : (isReady ? card4Rotate : 0),
-            }}
-            className="absolute z-20 w-[768px] h-[640px] bg-gradient-to-br from-green-200/90 to-green-300/90 backdrop-blur-sm rounded-3xl border border-green-100/30 shadow-2xl shadow-green-200/20"
-          >
-            <div className="p-12 h-full flex flex-col justify-between">
-              <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                {steps[3].number}
-              </div>
-              <div className="text-white text-5xl font-bold font-lato mb-8">
-                <ScrambleText text={t(`steps.${steps[3].key}`)} applyScramble={false} />
-              </div>
-              <div className="text-green-100 text-lg leading-relaxed font-lato">
-                <ScrambleText text={t(`stepDescriptions.${steps[3].key}`)} applyScramble={false} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 5 - Optimization */}
-          <motion.div
-            style={{
-              y: prefersReducedMotion ? 0 : (isReady ? card5Y : 0),
-              x: prefersReducedMotion ? 0 : (isReady ? card5X : 0),
-              rotate: prefersReducedMotion ? 0 : (isReady ? card5Rotate : 0),
-            }}
-            className="absolute z-10 w-[768px] h-[640px] bg-gradient-to-br from-green-100/90 to-green-200/90 backdrop-blur-sm rounded-3xl border border-green-50/30 shadow-2xl shadow-green-100/20"
-          >
-            <div className="p-12 h-full flex flex-col justify-between">
-              <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                {steps[4].number}
-              </div>
-              <div className="text-white text-5xl font-bold font-lato mb-8">
-                <ScrambleText text={t(`steps.${steps[4].key}`)} applyScramble={false} />
-              </div>
-              <div className="text-green-100 text-lg leading-relaxed font-lato">
-                <ScrambleText text={t(`stepDescriptions.${steps[4].key}`)} applyScramble={false} />
-              </div>
-            </div>
-          </motion.div>
+            </section>
+          ))}
         </div>
       </section>
     </section>
