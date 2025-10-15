@@ -1,387 +1,454 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import ScrambleText from './ScrambleText';
 
-interface Ball {
+interface BallConfig {
+  id: number;
+  icon: string;
+  size: number;
+}
+
+interface BallState {
   id: number;
   x: number;
   y: number;
   vx: number;
   vy: number;
-  size: number;
-  color: string;
-  isDragging?: boolean;
-  rotation?: number; // Add rotation for rolling effect
-  isOnSurface?: boolean; // Track if ball is touching ground
-  fallTime?: number; // Time spent falling for realistic acceleration
-  icon?: string; // Icon for the ball
-  onGround?: boolean; // contact flag for rotation calc
-  onGreen?: boolean; // contact flag for rotation calc
+  radius: number;
+  mass: number;
+  angle: number;
+  angularVelocity: number;
+  isDragging: boolean;
 }
+
+interface DragState {
+  id: number;
+  lastX: number;
+  lastY: number;
+  lastTime: number;
+}
+
+const FIXED_TIMESTEP = 1 / 120;
+const GRAVITY = 2200; // px / s^2
+const AIR_DRAG = 0.05;
+const RESTITUTION = 0.86;
+const FLOOR_RESTITUTION = 0.74;
+const WALL_RESTITUTION = 0.82;
+const GROUND_FRICTION = 0.84;
+const SURFACE_FRICTION = 0.18;
 
 export default function ClientsSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const animationRef = useRef<number | null>(null);
-  const textRef1 = useRef<HTMLHeadingElement>(null);
-  const textRef2 = useRef<HTMLHeadingElement>(null);
-  const greenBallRef = useRef<HTMLDivElement>(null);
-  const [balls, setBalls] = useState<Ball[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef1 = useRef<HTMLDivElement>(null);
+  const textRef2 = useRef<HTMLDivElement>(null);
+
+  const animationRef = useRef<number | undefined>(undefined);
+  const ballElementsRef = useRef(new Map<number, HTMLDivElement>());
+  const ballStateRef = useRef(new Map<number, BallState>());
+  const draggedBallRef = useRef<DragState | null>(null);
+  const dimensionsRef = useRef({ width: 0, height: 0 });
+  const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
+
   const [isInViewport, setIsInViewport] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [draggedBall, setDraggedBall] = useState<number | null>(null);
 
-  // Initialize 3D balls with icons and improved physics
-  const initializeBalls = useCallback(() => {
-    if (!sectionRef.current) {
-      return;
-    }
+  const ballConfigs = useMemo<BallConfig[]>(() => {
+    const icons = ['💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧', '📊', '🎪'];
 
-    // Random icons for balls
-    const ballIcons = [
-      '💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧',
-      '📊', '🎪', '🏆', '⚙️', '🎭', '🔮', '🎲', '🎪', '🎨', '🌟'
-    ];
-
-    const sectionRect = sectionRef.current.getBoundingClientRect();
-    
-    const newBalls: Ball[] = [];
-
-    const ballSize = 180; // Všechny koule stejně velké (3x větší)
-    
-    for (let i = 0; i < 15; i++) {
-      newBalls.push({
-        id: i,
-        x: Math.random() * (sectionRect.width - ballSize) + ballSize / 2,
-        y: Math.random() * sectionRect.height + ballSize / 2,
-        vx: (Math.random() - 0.5) * 0.2, // Reduced initial velocity for more control
-        vy: (Math.random() - 0.5) * 0.2,
-        size: ballSize,
-        color: '#ffffff', // Pure white
-        rotation: 0, // Initialize rotation
-        isOnSurface: false, // Start off surfaces
-        fallTime: 0, // Initialize fall time
-        icon: ballIcons[i % ballIcons.length] // Assign random icon
-      });
-    }
-
-    setBalls(newBalls);
+    return icons.map((icon, index) => {
+      const size = 160; // Všechny koule mají stejnou větší velikost
+      return {
+        id: index,
+        icon,
+        size
+      };
+    });
   }, []);
 
-  // Mouse event handlers
-  const handleMouseDown = (e: React.MouseEvent, ballId: number) => {
-    if (!sectionRef.current) return;
-    
-    e.preventDefault(); // Prevent text selection and other default behaviors
-    
-    setDraggedBall(ballId);
-    
-    // Stop the ball's velocity quando dragging starts
-    setBalls(prevBalls => 
-      prevBalls.map(ball => 
-        ball.id === ballId 
-          ? { ...ball, vx: 0, vy: 0, isDragging: true }
-          : ball
-      )
-    );
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggedBall === null || !sectionRef.current) return;
-    
-    e.preventDefault(); // Prevent text selection and other default behaviors
-    
-    const rect = sectionRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    setBalls(prevBalls => 
-      prevBalls.map(ball => 
-        ball.id === draggedBall 
-          ? { ...ball, x, y }
-          : ball
-      )
-    );
-  };
-
-  const handleMouseUp = () => {
-    if (draggedBall === null) return;
-    
-    setBalls(prevBalls => 
-      prevBalls.map(ball => 
-        ball.id === draggedBall 
-          ? { ...ball, isDragging: false }
-          : ball
-      )
-    );
-    
-    setDraggedBall(null);
-  };
-
-  // Simplified collision with green ball - no jittering
-  const checkTextCollision = (ball: Ball, sectionRect: DOMRect) => {
-    if (!greenBallRef.current) return ball;
-    
-    const greenBallRect = greenBallRef.current.getBoundingClientRect();
-    const greenBallRadius = 200;
-    const greenBallCenterX = greenBallRect.left - sectionRect.left + greenBallRadius;
-    const greenBallCenterY = greenBallRect.top - sectionRect.top + greenBallRadius;
-    
-    const dx = ball.x - greenBallCenterX;
-    const dy = ball.y - greenBallCenterY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const collisionThreshold = ball.size / 2 + greenBallRadius;
-    
-    if (distance < collisionThreshold) {
-      // Simple separation without complex physics
-      const angle = Math.atan2(dy, dx);
-      const overlap = collisionThreshold - distance;
-      const separationX = Math.cos(angle) * overlap;
-      const separationY = Math.sin(angle) * overlap;
-      
-      ball.x += separationX;
-      ball.y += separationY;
-      
-      // Simple velocity reduction
-      ball.vx *= 0.8;
-      ball.vy *= 0.8;
-    }
-    
-    return ball;
-  };
-
-  // Animation loop for 3D balls
-  const animateBalls = useCallback(() => {
-    if (!sectionRef.current) return;
-
-    // Skip ball animation if reduced motion is preferred
-    if (prefersReducedMotion) {
-      animationRef.current = requestAnimationFrame(animateBalls);
+  const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
+    if (!element) {
+      ballElementsRef.current.delete(id);
       return;
     }
 
-    setBalls(prevBalls => {
-      const sectionRect = sectionRef.current!.getBoundingClientRect();
-      
-      return prevBalls.map(ball => {
-        // Skip physics for dragged balls
-        if (ball.isDragging) return ball;
-        let newX = ball.x + ball.vx;
-        let newY = ball.y + ball.vy;
-        let newVx = ball.vx;
-        let newVy = ball.vy;
+    element.style.willChange = 'transform';
+    ballElementsRef.current.set(id, element);
+  }, []);
 
-        // Simplified wall collisions - realistic physics
-        if (newX <= ball.size / 2 || newX >= sectionRect.width - ball.size / 2) {
-          newVx = -newVx * 0.85; // Realistic bounce with energy loss
-          newX = Math.max(ball.size / 2, Math.min(sectionRect.width - ball.size / 2, newX));
-        }
-        
-        // Floor collision - realistic stopping
-        if (newY >= sectionRect.height - ball.size / 2) {
-          newVy = Math.max(0, newVy * 0.3); // Gradual stop, not instant
-          newY = sectionRect.height - ball.size / 2;
-          ball.isOnSurface = true;
-        }
+  const renderBalls = useCallback(() => {
+    const states = ballStateRef.current;
+    states.forEach((ball, id) => {
+      const element = ballElementsRef.current.get(id);
+      if (!element) {
+        return;
+      }
 
-        // Simplified physics implementation
-        
-        // Check if ball is on ground
-        const isTouchingGround = newY >= sectionRect.height - ball.size / 2 - 5;
-        
-        // Check contact with green ball
-        let isTouchingGreenBall = false;
-        if (greenBallRef.current) {
-          const greenBallRect = greenBallRef.current.getBoundingClientRect();
-          const greenBallRadius = 200;
-          const greenBallCenterX = greenBallRect.left - sectionRect.left + greenBallRadius;
-          const greenBallCenterY = greenBallRect.top - sectionRect.top + greenBallRadius;
-          const dx = ball.x - greenBallCenterX;
-          const dy = ball.y - greenBallCenterY;
-          const distanceToGreen = Math.sqrt(dx * dx + dy * dy);
-          const greenCollisionThreshold = ball.size / 2 + greenBallRadius;
-          
-          if (distanceToGreen < greenCollisionThreshold) {
-            isTouchingGreenBall = true;
-          }
-        }
-        
-        // Simplified physics states
-        if (isTouchingGround) {
-          // Snap to ground and roll without slipping
-          newY = sectionRect.height - ball.size / 2;
-          newVy = 0;
-          // Rolling friction
-          newVx *= 0.96;
-          ball.isOnSurface = true;
-          ball.onGround = true;
-          ball.onGreen = false;
-        } else if (isTouchingGreenBall) {
-          // Constrain to green ball surface and roll along tangent
-          const gRect = greenBallRef.current!.getBoundingClientRect();
-          const gR = 200;
-          const cx = gRect.left - sectionRect.left + gR;
-          const cy = gRect.top - sectionRect.top + gR;
-          const bx = newX;
-          const by = newY;
+      element.style.transform = `translate3d(${ball.x - ball.radius}px, ${ball.y - ball.radius}px, 0) rotate(${ball.angle}rad)`;
+    });
+  }, []);
 
-          const nx = bx - cx;
-          const ny = by - cy;
-          const dist = Math.max(1e-5, Math.hypot(nx, ny));
-          const desired = gR + ball.size / 2;
-          // Project position to exact surface radius
-          const nHatX = nx / dist;
-          const nHatY = ny / dist;
-          newX = cx + nHatX * desired;
-          newY = cy + nHatY * desired;
+  // Resolve circle-circle collisions with impulse response and tangential friction.
+  const resolveBallCollision = useCallback((a: BallState, b: BallState) => {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const distance = Math.hypot(dx, dy);
+    const minDistance = a.radius + b.radius;
 
-          // Decompose velocity into normal/tangent
-          const tHatX = -nHatY;
-          const tHatY = nHatX;
-          const v_n = newVx * nHatX + newVy * nHatY;
-          const v_t = newVx * tHatX + newVy * tHatY;
+    if (distance === 0 || distance >= minDistance) {
+      return;
+    }
 
-          // Kill inward normal, damp outward normal, keep tangential with slight friction
-          const v_n_out = Math.max(0, v_n) * 0.3;
-          const v_t_new = v_t * 0.985;
+    const nx = dx / distance;
+    const ny = dy / distance;
+    const penetration = minDistance - distance;
 
-          newVx = nHatX * v_n_out + tHatX * v_t_new;
-          newVy = nHatY * v_n_out + tHatY * v_t_new;
+    const inverseMassA = 1 / a.mass;
+    const inverseMassB = 1 / b.mass;
+    const totalInverseMass = inverseMassA + inverseMassB;
 
-          ball.fallTime = 0;
-          ball.onGround = false;
-          ball.onGreen = true;
+    const correctionFactor = (penetration / totalInverseMass) * 0.8;
+    const correctionX = correctionFactor * nx;
+    const correctionY = correctionFactor * ny;
+
+    a.x -= correctionX * inverseMassA;
+    a.y -= correctionY * inverseMassA;
+    b.x += correctionX * inverseMassB;
+    b.y += correctionY * inverseMassB;
+
+    const relativeVx = b.vx - a.vx;
+    const relativeVy = b.vy - a.vy;
+    const velocityAlongNormal = relativeVx * nx + relativeVy * ny;
+
+    if (velocityAlongNormal > 0) {
+      return;
+    }
+
+    const impulseMagnitude = (-(1 + RESTITUTION) * velocityAlongNormal) / totalInverseMass;
+    const impulseX = impulseMagnitude * nx;
+    const impulseY = impulseMagnitude * ny;
+
+    a.vx -= impulseX * inverseMassA;
+    a.vy -= impulseY * inverseMassA;
+    b.vx += impulseX * inverseMassB;
+    b.vy += impulseY * inverseMassB;
+
+    const tangentX = relativeVx - velocityAlongNormal * nx;
+    const tangentY = relativeVy - velocityAlongNormal * ny;
+    const tangentLength = Math.hypot(tangentX, tangentY);
+
+    if (tangentLength > 0.0001) {
+      const tx = tangentX / tangentLength;
+      const ty = tangentY / tangentLength;
+      const frictionImpulse = SURFACE_FRICTION * impulseMagnitude;
+      const fx = frictionImpulse * tx;
+      const fy = frictionImpulse * ty;
+
+      a.vx -= fx * inverseMassA;
+      a.vy -= fy * inverseMassA;
+      b.vx += fx * inverseMassB;
+      b.vy += fy * inverseMassB;
+    }
+
+    const tangentNormalX = -ny;
+    const tangentNormalY = nx;
+    const tangentialSpeedA = a.vx * tangentNormalX + a.vy * tangentNormalY;
+    const tangentialSpeedB = b.vx * tangentNormalX + b.vy * tangentNormalY;
+    a.angularVelocity = tangentialSpeedA / a.radius;
+    b.angularVelocity = tangentialSpeedB / b.radius;
+  }, []);
+
+  const resolveGreenCollision = useCallback((ball: BallState) => {
+    const { x, y, radius } = greenPhysicsRef.current;
+    const dx = ball.x - x;
+    const dy = ball.y - y;
+    const distance = Math.hypot(dx, dy);
+    const minDistance = radius + ball.radius;
+
+    if (distance === 0 || distance >= minDistance) {
+      return;
+    }
+
+    const nx = dx / distance;
+    const ny = dy / distance;
+    const penetration = minDistance - distance;
+
+    ball.x += nx * penetration;
+    ball.y += ny * penetration;
+
+    const velocityAlongNormal = ball.vx * nx + ball.vy * ny;
+
+    if (velocityAlongNormal < 0) {
+      ball.vx -= (1 + RESTITUTION) * velocityAlongNormal * nx;
+      ball.vy -= (1 + RESTITUTION) * velocityAlongNormal * ny;
+    }
+
+    const tangentX = -ny;
+    const tangentY = nx;
+    const tangentialSpeed = ball.vx * tangentX + ball.vy * tangentY;
+
+    ball.vx -= tangentialSpeed * tangentX * SURFACE_FRICTION;
+    ball.vy -= tangentialSpeed * tangentY * SURFACE_FRICTION;
+    ball.angularVelocity = tangentialSpeed / ball.radius;
+  }, []);
+
+  // Integrate motion, apply forces, and resolve all collisions for a single time step.
+  const updatePhysics = useCallback((dt: number) => {
+    const { width, height } = dimensionsRef.current;
+    if (!width || !height) {
+      return;
+    }
+
+    const balls = Array.from(ballStateRef.current.values());
+
+    balls.forEach((ball) => {
+      if (ball.isDragging) {
+        return;
+      }
+
+      ball.vy += GRAVITY * dt;
+      ball.vx *= 1 - AIR_DRAG * dt;
+      ball.vy *= 1 - AIR_DRAG * dt;
+
+      ball.vx = Math.max(Math.min(ball.vx, 900), -900);
+      ball.vy = Math.max(Math.min(ball.vy, 1200), -1200);
+
+      ball.x += ball.vx * dt;
+      ball.y += ball.vy * dt;
+
+      if (ball.x - ball.radius < 0) {
+        ball.x = ball.radius;
+        ball.vx = Math.abs(ball.vx) * WALL_RESTITUTION;
+      } else if (ball.x + ball.radius > width) {
+        ball.x = width - ball.radius;
+        ball.vx = -Math.abs(ball.vx) * WALL_RESTITUTION;
+      }
+
+      if (ball.y + ball.radius > height) {
+        ball.y = height - ball.radius;
+        if (Math.abs(ball.vy) < 20) {
+          ball.vy = 0;
         } else {
-          // Free fall
-          ball.fallTime = (ball.fallTime || 0) + (1/60);
-          ball.onGround = false;
-          ball.onGreen = false;
-
-          // Gravity
-          const gravity = 0.5;
-          newVy += gravity;
-
-          // Terminal velocity
-          const terminalVelocity = 8;
-          newVy = Math.min(newVy, terminalVelocity);
-
-          // Air drag
-          newVx *= 0.995;
-
-          // Rotation decay handled later
+          ball.vy = -Math.abs(ball.vy) * FLOOR_RESTITUTION;
         }
-
-        // Global clamps
-        const maxVelocity = 10;
-        newVx = Math.max(-maxVelocity, Math.min(maxVelocity, newVx));
-        newVy = Math.max(-maxVelocity, Math.min(maxVelocity, newVy));
-
-        // Apply physics
-        const updatedBall = {
-          ...ball,
-          x: newX,
-          y: newY,
-          vx: newVx,
-          vy: newVy,
-          rotation: ball.rotation || 0,
-          fallTime: ball.fallTime || 0
-        };
-        
-        // Check collision with text ball
-        return checkTextCollision(updatedBall, sectionRect);
-      }).map(ball => {
-        // Check collisions with other balls - improved to prevent jittering
-        let newVx = ball.vx;
-        let newVy = ball.vy;
-        let newX = ball.x;
-        let newY = ball.y;
-        
-        prevBalls.forEach(otherBall => {
-          if (ball.id !== otherBall.id) {
-            const dx = ball.x - otherBall.x;
-            const dy = ball.y - otherBall.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            const minDistance = ball.size / 2 + otherBall.size / 2;
-            
-            if (distance < minDistance && distance > 0) {
-              // Simple separation without jittering
-              const angle = Math.atan2(dy, dx);
-              const overlap = minDistance - distance;
-              
-              // Gentle separation - only move the current ball
-              const separationX = Math.cos(angle) * overlap * 0.5;
-              const separationY = Math.sin(angle) * overlap * 0.5;
-              
-              newX += separationX;
-              newY += separationY;
-              
-              // Simple velocity reduction to prevent bouncing
-              newVx *= 0.9;
-              newVy *= 0.9;
-            }
-          }
-        });
-        
-        // Calculate rotation from rolling kinematics
-        const circumference = Math.PI * ball.size;
-        let rotationDelta = 0;
-        if (ball.onGround) {
-          // No-slip: omega = v / R
-          rotationDelta = (newVx * 180) / circumference;
-        } else if (ball.onGreen && greenBallRef.current && sectionRef.current) {
-          const gRect = greenBallRef.current.getBoundingClientRect();
-          const sRect = sectionRef.current.getBoundingClientRect();
-          const gR = 200;
-          const cx = gRect.left - sRect.left + gR;
-          const cy = gRect.top - sRect.top + gR;
-          const nx = newX - cx;
-          const ny = newY - cy;
-          const nLen = Math.max(1e-5, Math.hypot(nx, ny));
-          const tHatX = -ny / nLen;
-          const tHatY = nx / nLen;
-          const v_t = newVx * tHatX + newVy * tHatY; // signed tangential speed
-          rotationDelta = (v_t * 180) / circumference;
-        } else {
-          rotationDelta = (ball.rotation || 0) * 0.0; // already decayed above
-        }
-        const newRotation = (ball.rotation || 0) + rotationDelta;
-
-        return {
-          ...ball,
-          x: newX,
-          y: newY,
-          vx: newVx,
-          vy: newVy,
-          rotation: newRotation
-        };
-      });
+        ball.vx *= GROUND_FRICTION;
+        ball.angularVelocity = ball.vx / ball.radius;
+      } else if (ball.y - ball.radius < 0) {
+        ball.y = ball.radius;
+        ball.vy = Math.abs(ball.vy) * RESTITUTION * 0.6;
+      }
     });
 
-    animationRef.current = requestAnimationFrame(animateBalls);
-  }, [prefersReducedMotion]);
-
-  // Start animation with useCallback for stable reference
-  const startAnimation = useCallback(() => {
-    if (isInViewport && !prefersReducedMotion && balls.length > 0) {
-      animationRef.current = requestAnimationFrame(animateBalls);
+    for (let i = 0; i < balls.length; i += 1) {
+      for (let j = i + 1; j < balls.length; j += 1) {
+        resolveBallCollision(balls[i], balls[j]);
+      }
     }
-  }, [isInViewport, prefersReducedMotion, balls.length, animateBalls]);
 
-  // Stop animation
+    balls.forEach(resolveGreenCollision);
+
+    balls.forEach((ball) => {
+      if (!ball.isDragging) {
+        ball.angle += ball.angularVelocity * dt;
+        ball.angularVelocity *= 0.985;
+      }
+    });
+  }, [resolveBallCollision, resolveGreenCollision]);
+
   const stopAnimation = useCallback(() => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
-      animationRef.current = null;
+      animationRef.current = undefined;
     }
   }, []);
 
-  // Viewport intersection observer
+  // Fixed-step integrator keeps the simulation stable regardless of frame rate.
+  const startAnimation = useCallback(() => {
+    if (prefersReducedMotion || !isInViewport || animationRef.current) {
+      return;
+    }
+
+    let lastTime = performance.now();
+    let accumulator = 0;
+
+    const loop = (time: number) => {
+      const delta = Math.min((time - lastTime) / 1000, 0.05);
+      lastTime = time;
+      accumulator += delta;
+
+      while (accumulator >= FIXED_TIMESTEP) {
+        updatePhysics(FIXED_TIMESTEP);
+        accumulator -= FIXED_TIMESTEP;
+      }
+
+      renderBalls();
+      animationRef.current = requestAnimationFrame(loop);
+    };
+
+    animationRef.current = requestAnimationFrame((time) => {
+      lastTime = time;
+      loop(time);
+    });
+  }, [isInViewport, prefersReducedMotion, renderBalls, updatePhysics]);
+
+  // Measure the container and seed every ball with deterministic yet varied initial state.
+  const initializeBalls = useCallback(() => {
+    if (!containerRef.current) {
+      return;
+    }
+
+    const rect = containerRef.current.getBoundingClientRect();
+    dimensionsRef.current = { width: rect.width, height: rect.height };
+
+    const green = {
+      width: 360,
+      height: 360,
+      topRatio: 0.45
+    } as const;
+
+    greenPhysicsRef.current = {
+      x: rect.width / 2,
+      y: rect.height * green.topRatio,
+      radius: green.width / 2
+    };
+
+    const newStates = new Map<number, BallState>();
+
+    ballConfigs.forEach((config) => {
+      const radius = config.size / 2;
+      const x = Math.min(
+        Math.max(radius, rect.width * 0.15 + Math.random() * rect.width * 0.7),
+        rect.width - radius
+      );
+      const y = Math.min(
+        Math.max(radius, rect.height * 0.1 + Math.random() * rect.height * 0.25),
+        rect.height - radius * 1.5
+      );
+      const vx = (Math.random() - 0.5) * 220;
+      const vy = Math.random() * -120;
+
+      newStates.set(config.id, {
+        id: config.id,
+        x,
+        y,
+        vx,
+        vy,
+        radius,
+        mass: radius * radius,
+        angle: 0,
+        angularVelocity: 0,
+        isDragging: false
+      });
+
+      const element = ballElementsRef.current.get(config.id);
+      if (element) {
+        element.style.width = `${config.size}px`;
+        element.style.height = `${config.size}px`;
+        element.style.opacity = '1';
+      }
+    });
+
+    ballStateRef.current = newStates;
+    renderBalls();
+  }, [ballConfigs, renderBalls]);
+
+  const handlePointerPosition = useCallback(
+    (event: PointerEvent | ReactPointerEvent<Element>) => {
+      if (!containerRef.current) {
+        return { x: 0, y: 0 };
+      }
+
+      const rect = containerRef.current.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      };
+    },
+    []
+  );
+
+  const handlePointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!isInViewport) {
+        return;
+      }
+
+      const { x, y } = handlePointerPosition(event);
+      const balls = Array.from(ballStateRef.current.values());
+
+      for (let i = balls.length - 1; i >= 0; i -= 1) {
+        const ball = balls[i];
+        const dx = x - ball.x;
+        const dy = y - ball.y;
+        if (Math.hypot(dx, dy) <= ball.radius) {
+          event.preventDefault();
+          ball.isDragging = true;
+          ball.vx = 0;
+          ball.vy = 0;
+          draggedBallRef.current = {
+            id: ball.id,
+            lastX: x,
+            lastY: y,
+            lastTime: event.timeStamp
+          };
+          break;
+        }
+      }
+    },
+    [handlePointerPosition, isInViewport]
+  );
+
+  const handlePointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const dragState = draggedBallRef.current;
+      if (!dragState) {
+        return;
+      }
+
+      const ball = ballStateRef.current.get(dragState.id);
+      if (!ball) {
+        return;
+      }
+
+      const { x, y } = handlePointerPosition(event);
+      const dt = Math.max((event.timeStamp - dragState.lastTime) / 1000, 0.001);
+
+      ball.x = x;
+      ball.y = y;
+      ball.vx = (x - dragState.lastX) / dt;
+      ball.vy = (y - dragState.lastY) / dt;
+
+      dragState.lastX = x;
+      dragState.lastY = y;
+      dragState.lastTime = event.timeStamp;
+
+      renderBalls();
+    },
+    [handlePointerPosition, renderBalls]
+  );
+
+  const handlePointerUp = useCallback(() => {
+    const dragState = draggedBallRef.current;
+    if (!dragState) {
+      return;
+    }
+
+    const ball = ballStateRef.current.get(dragState.id);
+    if (ball) {
+      ball.isDragging = false;
+    }
+
+    draggedBallRef.current = null;
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInViewport(entry.isIntersecting);
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
 
     if (sectionRef.current) {
@@ -391,250 +458,227 @@ export default function ClientsSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Prefers reduced motion
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
+    const handleChange = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches);
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Initialize balls when component mounts
   useEffect(() => {
-    // Delay initialization to ensure DOM is ready
+    // Wait for elements to be registered before initializing
     const timer = setTimeout(() => {
-      initializeBalls();
+      if (ballElementsRef.current.size > 0) {
+        initializeBalls();
+      }
     }, 100);
-    
+
     return () => clearTimeout(timer);
   }, [initializeBalls]);
 
-  // Start/stop animation based on viewport and motion preferences
   useEffect(() => {
-    if (isInViewport && !prefersReducedMotion && balls.length > 0) {
-      startAnimation();
-    } else {
+    if (prefersReducedMotion || !isInViewport) {
       stopAnimation();
+      return () => undefined;
     }
 
-    return () => {
-      stopAnimation();
-    };
-  }, [isInViewport, prefersReducedMotion, balls.length, startAnimation, stopAnimation]);
+    startAnimation();
+    return () => stopAnimation();
+  }, [isInViewport, prefersReducedMotion, startAnimation, stopAnimation]);
 
-  // Dual text animation with slower timing and immediate visibility (no fade effect)
   useEffect(() => {
-    if (prefersReducedMotion || !textRef1.current || !textRef2.current || !sectionRef.current) return;
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const handleResize = () => {
+      stopAnimation();
+      initializeBalls();
+      startAnimation();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation]);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !textRef1.current || !textRef2.current || !sectionRef.current) {
+      return;
+    }
 
     const textElement1 = textRef1.current;
     const textElement2 = textRef2.current;
     const sectionElement = sectionRef.current;
 
     const handleScroll = () => {
-      try {
-        const windowHeight = window.innerHeight;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Check if section is in viewport with much smaller delay for immediate visibility
-        const sectionTop = sectionElement.offsetTop;
-        
-        // Very small delay - animation starts almost immediately when section is visible
-        const delay = windowHeight * 0.1; // Start animation when section is only 10% visible
-        
-        // Additional offset calculation for green ball positioned at 40% of section
-        const sectionCenterOffset = sectionElement.offsetHeight * 0.1; // Adjust for 2/5 position
-        
-        if (sectionTop <= scrollTop + windowHeight - delay && sectionTop + sectionElement.offsetHeight >= scrollTop) {
-          // Calculate how far we've scrolled through this section (with adjustment for 2/5 position)
-          const sectionEntry = scrollTop + windowHeight - sectionTop - delay - sectionCenterOffset;
-          const sectionHeight = sectionElement.offsetHeight;
-          const sectionProgress = sectionEntry / sectionHeight; // Complete progress through section
-          
-          // Clamp progress to ensure full completion
-          const clampedProgress = Math.min(1, Math.max(0, sectionProgress));
-          
-          // Animation parameters with slower movement but complete travel
-          const textWidth = 500; // Increased for dual text
-          const ballRadius = 200; // Half of 400px ball diameter
-          const totalDistance = ballRadius + textWidth/2; // Complete distance from edge to center
-          
-          // Calculate positions for dual text animation - more offset final positions
-          // Text 1: moves from right edge to offset left position
-          const finalPosition1 = -80; // Much more to the left
-          const scrollOffset1 = ballRadius + textWidth/2 - (clampedProgress * (totalDistance + Math.abs(finalPosition1)));
-          
-          // Text 2: moves from left edge to offset right position
-          const finalPosition2 = 80; // Much more to the right
-          const scrollOffset2 = -ballRadius - textWidth/2 + (clampedProgress * (totalDistance + Math.abs(finalPosition2)));
-          
-          // Apply transformed positions with smooth easing
-          const easingProgress = 1 - Math.pow(1 - clampedProgress, 3); // Smooth cubic ease-out
-          const finalOffset1 = scrollOffset1 * easingProgress;
-          const finalOffset2 = scrollOffset2 * easingProgress;
-          
-          textElement1.style.transform = `translateX(${finalOffset1}px)`;
-          textElement2.style.transform = `translateX(${finalOffset2}px)`;
-          
-          // Always keep text fully visible - no fade effect
-          textElement1.style.opacity = '1';
-          textElement2.style.opacity = '1';
-        } else {
-          // Reset text positions when section is not in view - start from edges
-          const textWidth = 500;
-          const ballRadius = 200;
-          const initialPosition1 = ballRadius + textWidth/2; // Start from right edge
-          const initialPosition2 = -ballRadius - textWidth/2; // Start from left edge
-          
-          textElement1.style.transform = `translateX(${initialPosition1}px)`;
-          textElement2.style.transform = `translateX(${initialPosition2}px)`;
-          // Keep text fully visible at all times
-          textElement1.style.opacity = '1';
-          textElement2.style.opacity = '1';
-        }
-      } catch (error) {
-        console.warn('Letter carousel error:', error);
+      const windowHeight = window.innerHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const sectionTop = sectionElement.offsetTop;
+      const sectionHeight = sectionElement.offsetHeight;
+      const delay = windowHeight * 0.08;
+
+      if (sectionTop <= scrollTop + windowHeight - delay && sectionTop + sectionHeight >= scrollTop) {
+        const progress = Math.min(
+          1,
+          Math.max(
+            0,
+            (scrollTop + windowHeight - sectionTop - delay - sectionHeight * 0.08) /
+              sectionHeight
+          )
+        );
+
+        const easing = 1 - Math.pow(1 - progress, 3);
+        const textWidth = 460;
+        const ballRadius = greenPhysicsRef.current.radius;
+        const distance = ballRadius + textWidth / 2;
+
+        const offset1 = distance - easing * (distance + 90);
+        const offset2 = -distance + easing * (distance + 90);
+
+        textElement1.style.transform = `translateX(${offset1}px)`;
+        textElement2.style.transform = `translateX(${offset2}px)`;
+      } else {
+        const textWidth = 460;
+        const ballRadius = greenPhysicsRef.current.radius;
+        textElement1.style.transform = `translateX(${ballRadius + textWidth / 2}px)`;
+        textElement2.style.transform = `translateX(${-(ballRadius + textWidth / 2)}px)`;
       }
     };
 
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial calculation
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, [prefersReducedMotion]);
 
+  useEffect(() => {
+    const section = containerRef.current;
+    if (!section) {
+      return;
+    }
+
+    const handlePointerCancel = () => handlePointerUp();
+
+    section.addEventListener('pointerup', handlePointerCancel);
+    section.addEventListener('pointercancel', handlePointerCancel);
+
+    return () => {
+      section.removeEventListener('pointerup', handlePointerCancel);
+      section.removeEventListener('pointercancel', handlePointerCancel);
+    };
+  }, [handlePointerUp]);
+
   return (
-    <section 
+    <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black min-h-screen py-24 md:py-40 lg:py-48 -mt-20"
+      className="relative w-full overflow-hidden bg-black min-h-[90vh] py-24 md:py-32"
     >
-      {/* Background Elements - Green gradient */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large green gradient */}
-        <div 
-          className="absolute top-0 left-0 w-[500px] h-full blur-3xl opacity-30" 
-          style={{ background: 'linear-gradient(135deg, rgba(0, 215, 107, 0.2) 0%, rgba(0, 184, 92, 0.1) 50%, transparent 100%)' }} 
+        <div
+          className="absolute top-0 left-0 w-[480px] h-full blur-3xl opacity-30"
+          style={{ background: 'linear-gradient(135deg, rgba(0, 215, 107, 0.22) 0%, rgba(0, 184, 92, 0.12) 55%, transparent 100%)' }}
         />
-        
-        {/* Blurry green spots */}
-        <div 
-          className="absolute bottom-1/4 left-1/3 w-[400px] h-[300px] blur-3xl opacity-20" 
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.2) 0%, rgba(0, 184, 92, 0.1) 50%, transparent 70%)' }} 
+        <div
+          className="absolute bottom-[-25%] right-[-18%] w-[560px] h-[560px] rounded-full blur-3xl opacity-35"
+          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.22) 0%, rgba(0, 215, 107, 0.08) 45%, transparent 70%)' }}
         />
-        <div 
-          className="absolute bottom-1/4 right-1/3 w-[350px] h-[250px] blur-3xl opacity-15" 
-          style={{ background: 'radial-gradient(circle, rgba(0, 184, 92, 0.15) 0%, rgba(0, 215, 107, 0.05) 50%, transparent 70%)' }} 
+        <div
+          className="absolute top-[28%] right-[12%] w-[320px] h-[320px] rounded-full blur-3xl opacity-20"
+          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.18) 0%, transparent 65%)' }}
+        />
+        <div
+          className="absolute top-[-18%] left-[22%] w-[260px] h-[260px] rounded-full blur-3xl opacity-28"
+          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.14) 0%, transparent 60%)' }}
         />
       </div>
 
-      {/* 3D Balls Container */}
-      <div 
-        className="absolute inset-0 w-full h-full" 
-        style={{ zIndex: 1, userSelect: 'none', WebkitUserSelect: 'none' }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+      <div
+        ref={containerRef}
+        className="absolute inset-0"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        style={{ touchAction: 'none', userSelect: 'none' }}
       >
-        {balls.length > 0 && balls.map((ball) => (
+        {ballConfigs.map((ball) => (
           <div
             key={ball.id}
-            className="absolute rounded-full cursor-pointer select-none group"
+            ref={(element) => registerBall(ball.id, element)}
+            className="absolute rounded-full cursor-grab select-none group"
             style={{
-              left: ball.x - ball.size / 2,
-              top: ball.y - ball.size / 2,
               width: ball.size,
               height: ball.size,
-              background: `radial-gradient(40% 40% at 30% 25%, rgba(255,255,255,0.85) 0%, rgba(250,250,250,0.7) 40%, rgba(240,240,240,0.65) 70%, rgba(230,230,230,0.55) 100%),
-                           radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,0.25) 0%, rgba(245,245,245,0.15) 60%, rgba(235,235,235,0.08) 100%)`,
-              boxShadow: `0 16px 48px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.08)`,
-              transform: `perspective(1000px) rotateX(0deg) rotateY(0deg) rotateZ(${ball.rotation || 0}deg)`,
-              transition: prefersReducedMotion ? 'all 0.3s ease' : 'transform 0.1s ease, box-shadow 0.3s ease',
-              zIndex: ball.isDragging ? 10 : 1,
-              border: '1px solid rgba(255, 255, 255, 0.18)'
+              transform: 'translate3d(-9999px, -9999px, 0)',
+              opacity: 0,
+              transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              background:
+                'radial-gradient(40% 40% at 30% 25%, rgba(255,255,255,0.88) 0%, rgba(250,250,250,0.72) 45%, rgba(240,240,240,0.62) 70%, rgba(232,232,232,0.52) 100%),' +
+                'radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,0.25) 0%, rgba(245,245,245,0.16) 60%, rgba(235,235,235,0.08) 100%)',
+              boxShadow: '0 18px 44px rgba(0,0,0,0.18), 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.08)'
             }}
-            onMouseDown={(e) => handleMouseDown(e, ball.id)}
           >
-            {/* Inner rim light */}
-            <div className="absolute inset-0 rounded-full pointer-events-none" style={{ boxShadow: 'inset 0 0 32px rgba(255,255,255,0.25), inset 0 0 64px rgba(255,255,255,0.12)' }} />
-            {/* Icon in the center */}
-            <div 
-              className="absolute inset-0 flex items-center justify-center text-6xl select-none pointer-events-none"
-              style={{
-                textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-                filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))'
-              }}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ boxShadow: 'inset 0 0 32px rgba(255,255,255,0.24), inset 0 0 64px rgba(255,255,255,0.12)' }}
+            />
+            <div
+              className="absolute inset-0 flex items-center justify-center text-5xl md:text-6xl select-none pointer-events-none"
+              style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.25)', filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))' }}
             >
               {ball.icon}
             </div>
-            
-            {/* Hover glow effect */}
-            <div 
-              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              style={{
-                background: 'radial-gradient(circle, rgba(0, 215, 107, 0.1) 0%, transparent 70%)',
-                boxShadow: '0 0 40px rgba(0, 215, 107, 0.3)'
-              }}
+            <div
+              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.12) 0%, transparent 70%)', boxShadow: '0 0 36px rgba(0, 215, 107, 0.28)' }}
             />
           </div>
         ))}
       </div>
 
-      {/* Fixed Text Ball with dual animated content - positioned at 2/5 of section */}
-      <div className="absolute inset-0 flex items-center z-10" style={{ pointerEvents: 'none' }}>
-        <div 
-          ref={greenBallRef}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
           className="relative rounded-full overflow-hidden shadow-2xl flex items-center justify-center"
           style={{
-            width: '400px',
-            height: '400px',
-            background: `
-              linear-gradient(135deg, #00d76b, #00b85c)
-            `,
-            pointerEvents: 'none',
-            userSelect: 'none',
+            width: '360px',
+            height: '360px',
+            background: 'linear-gradient(135deg, #00d76b, #00b85c)',
             position: 'absolute',
             left: '50%',
-            transform: 'translateX(-50%)',
-            top: '40%' // Position at 2/5 of section height
+            top: '45%',
+            transform: 'translate(-50%, -50%)'
           }}
         >
-          {/* Mask gradients for smooth text fade at edges */}
-          <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#00d76b] to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#00d76b] to-transparent z-10 pointer-events-none"></div>
-          
-          {/* Dual text layers stacked vertically */}
+          <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#00d76b] to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#00d76b] to-transparent z-10" />
+
           <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
-            
-            {/* Text 1: moves from right to center */}
-            <div 
+            <div
               ref={textRef1}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap flex text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl" 
-              style={{ 
+              className="text-white font-medium uppercase font-lato whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+              style={{
                 letterSpacing: '0.1em',
-                transform: prefersReducedMotion ? 'translateX(0px)' : 'translateX(0px)',
-                opacity: '1', // Always fully visible
-                fontWeight: '600',
-                lineHeight: '1.1'
+                transform: 'translateX(0px)',
+                fontWeight: 600,
+                lineHeight: 1.1
               }}
             >
               <ScrambleText text="NAŠI PARTNEŘI" applyScramble={false} />
             </div>
-            
-            {/* Text 2: moves from left to center (opposite direction) */}
-            <div 
+            <div
               ref={textRef2}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap flex text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl" 
-              style={{ 
+              className="text-white font-medium uppercase font-lato whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+              style={{
                 letterSpacing: '0.1em',
-                transform: prefersReducedMotion ? 'translateX(0px)' : 'translateX(0px)',
-                opacity: '1', // Always fully visible
-                fontWeight: '400',
-                lineHeight: '1.1',
-                marginTop: '-0.1em' // Slight overlap for visual cohesion
+                transform: 'translateX(0px)',
+                fontWeight: 400,
+                lineHeight: 1.1,
+                marginTop: '-0.1em'
               }}
             >
               <ScrambleText text="NAŠI PARTNEŘI" applyScramble={false} />

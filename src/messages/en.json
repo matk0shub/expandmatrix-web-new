@@ -46,8 +46,8 @@
         "ai-agents": {
           "number": "001",
           "title": "AI AGENTS",
-          "description": "We specialize in creating and managing advertising campaigns on platforms such as Google Ads, Meta Ads, TikTok Ads, Sklik, LinkedIn Ads.",
-          "details": "Our goal is always to achieve the best results for our clients with a clear focus on ROI and investment efficiency."
+          "description": "We architect autonomous AI agents that converse naturally, solve tasks, and plug into your systems with razor precision.",
+          "details": "From discovery to deployment we craft domain-trained agents, integrate APIs and data sources, and monitor them for continuous learning."
         },
         "web-development": {
           "number": "002", 

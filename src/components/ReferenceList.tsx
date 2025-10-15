@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Instagram } from 'lucide-react';
+import { Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { Reference } from './ReferencesSection';
 
@@ -31,20 +31,24 @@ export default function ReferenceList({
 
     const containerRect = listRef.current.getBoundingClientRect();
     const elementRect = activeElement.getBoundingClientRect();
-    
+
     const isAbove = elementRect.top < containerRect.top;
     const isBelow = elementRect.bottom > containerRect.bottom;
 
     if (isAbove || isBelow) {
+      // Keep the interaction focused on the list by scrolling only the container
       activeElement.scrollIntoView({
         behavior: 'smooth',
-        block: 'center',
+        block: 'nearest',
       });
     }
   }, [activeIndex, prefersReducedMotion]);
 
   return (
-    <div ref={listRef} className="space-y-6">
+    <div
+      ref={listRef}
+      className="space-y-6 max-h-[70vh] overflow-y-auto pr-2"
+    >
       {references.map((reference, index) => {
         const isActive = index === activeIndex;
         const isHovered = hoveredIndex === index;
@@ -111,26 +115,51 @@ export default function ReferenceList({
                 )}
               </div>
 
-              {/* Instagram badge */}
-              {reference.instagramUrl && isActive && (
-                <motion.a
-                  href={reference.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-200"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ 
-                    duration: prefersReducedMotion ? 0 : 0.3,
-                    delay: prefersReducedMotion ? 0 : 0.2 
-                  }}
-                  whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                  whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                  aria-label="View Instagram profile"
-                >
-                  <Instagram size={16} />
-                  <span>Instagram</span>
-                </motion.a>
+              {/* External links */}
+              {isActive && (
+                <div className="flex flex-col gap-2">
+                  {reference.instagramUrl && (
+                    <motion.a
+                      href={reference.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-200"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        duration: prefersReducedMotion ? 0 : 0.3,
+                        delay: prefersReducedMotion ? 0 : 0.2
+                      }}
+                      whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+                      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+                      aria-label="View Instagram profile"
+                    >
+                      <Instagram size={16} />
+                      <span>Instagram</span>
+                    </motion.a>
+                  )}
+
+                  {reference.websiteUrl && (
+                    <motion.a
+                      href={reference.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-200 backdrop-blur-sm"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        duration: prefersReducedMotion ? 0 : 0.3,
+                        delay: prefersReducedMotion ? 0 : 0.25
+                      }}
+                      whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
+                      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+                      aria-label="Visit website"
+                    >
+                      <Globe size={16} />
+                      <span>Web</span>
+                    </motion.a>
+                  )}
+                </div>
               )}
             </div>
           </motion.div>

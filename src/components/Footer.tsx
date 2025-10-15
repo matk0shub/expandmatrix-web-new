@@ -3,13 +3,14 @@
 import { useEffect, useState, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
 import FooterBrand from './FooterBrand';
 import FooterLinks, { type FooterLinkGroup } from './FooterLinks';
 import FooterNewsletter from './FooterNewsletter';
 import FooterBottomBar from './FooterBottomBar';
+
+type GSAPTimeline = gsap.core.Timeline;
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -91,25 +92,38 @@ export default function Footer() {
   useEffect(() => {
     if (prefersReducedMotion) return;
 
-    const tl = gsap.timeline({ delay: 0.5 });
-    
-    // Animate separator lines
-    tl.fromTo('.footer-separator', 
-      { scaleX: 0, opacity: 0 },
-      { scaleX: 1, opacity: 1, duration: 1.2, ease: 'power3.out' }
-    );
+    let timeline: GSAPTimeline | null = null;
+    let isCancelled = false;
 
-    // Pulse glow effect for brand elements
-    tl.to('.footer-glow-pulse', {
-      opacity: 0.8,
-      duration: 2,
-      ease: 'power2.inOut',
-      yoyo: true,
-      repeat: -1
-    }, '-=0.5');
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (isCancelled) {
+        return;
+      }
+
+      timeline = gsap.timeline({ delay: 0.5 });
+      timeline.fromTo(
+        '.footer-separator',
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 1.2, ease: 'power3.out' }
+      );
+
+      timeline.to(
+        '.footer-glow-pulse',
+        {
+          opacity: 0.8,
+          duration: 2,
+          ease: 'power2.inOut',
+          yoyo: true,
+          repeat: -1,
+        },
+        '-=0.5'
+      );
+    })();
 
     return () => {
-      tl.kill();
+      isCancelled = true;
+      timeline?.kill();
     };
   }, [prefersReducedMotion]);
 
@@ -178,5 +192,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-

@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
-import { gsap } from 'gsap';
 import { useReducedMotion } from './useReducedMotion';
 import { useIntersectionObserver } from './useIntersectionObserver';
 
+type TweenVars = gsap.TweenVars;
+
 interface GSAPAnimationOptions {
   selector?: string;
-  from?: gsap.TweenVars;
-  to?: gsap.TweenVars;
+  from?: TweenVars;
+  to?: TweenVars;
   stagger?: number;
   delay?: number;
   duration?: number;
@@ -40,31 +41,43 @@ export function useGSAPAnimation(options: GSAPAnimationOptions = {}) {
 
   useEffect(() => {
     if (!isIntersecting || (triggerOnce && hasTriggered)) return;
-    
+
     const element = ref.current;
     if (!element) return;
 
     const targets = element.querySelectorAll(selector);
     if (targets.length === 0) return;
 
-    if (prefersReducedMotion) {
-      // Apply final state immediately for reduced motion
-      gsap.set(targets, to);
-      return;
-    }
+    let isCancelled = false;
 
-    // Animate with GSAP
-    gsap.fromTo(
-      targets,
-      from,
-      {
-        ...to,
-        duration,
-        stagger,
-        delay,
-        ease,
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (isCancelled) {
+        return;
       }
-    );
+
+      if (prefersReducedMotion) {
+        // Apply final state immediately for reduced motion
+        gsap.set(targets, to);
+        return;
+      }
+
+      gsap.fromTo(
+        targets,
+        from,
+        {
+          ...to,
+          duration,
+          stagger,
+          delay,
+          ease,
+        }
+      );
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isIntersecting, hasTriggered, prefersReducedMotion, selector, from, to, stagger, delay, duration, ease, triggerOnce, ref]);
 
   return { ref };

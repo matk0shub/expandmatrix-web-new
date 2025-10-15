@@ -15,6 +15,7 @@ export interface Reference {
   slug: string;
   subtitle?: string;
   instagramUrl?: string;
+  websiteUrl?: string;
   image: {
     id: string;
     url: string;

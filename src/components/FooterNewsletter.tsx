@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocale, useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
-import { gsap } from 'gsap';
 import { Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import ScrambleText from './ScrambleText';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 type FormValues = { email: string; consent: boolean };
 
@@ -17,6 +17,7 @@ export default function FooterNewsletter() {
   const [message, setMessage] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setError, clearErrors } = useForm<FormValues>({
     defaultValues: { email: '', consent: false },
@@ -25,64 +26,94 @@ export default function FooterNewsletter() {
 
   // Animated input underline effect
   useEffect(() => {
-    if (!inputRef.current) return;
-
     const input = inputRef.current;
-    const underline = input.parentElement?.querySelector('.input-underline') as HTMLElement;
-    
+    if (!input || prefersReducedMotion) return;
+
+    const underline = input.parentElement?.querySelector('.input-underline') as HTMLElement | null;
     if (!underline) return;
 
-    const updateUnderline = () => {
-      if (input.value.length > 0) {
-        gsap.to(underline, { scaleX: 1, duration: 0.3, ease: 'power2.out' });
-      } else {
-        gsap.to(underline, { scaleX: 0, duration: 0.3, ease: 'power2.out' });
-      }
-    };
+    let teardown: (() => void) | undefined;
+    let isCancelled = false;
 
-    input.addEventListener('input', updateUnderline);
-    input.addEventListener('focus', () => {
-      gsap.to(underline, { scaleX: 1, duration: 0.3, ease: 'power2.out' });
-    });
-    input.addEventListener('blur', updateUnderline);
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (isCancelled) {
+        return;
+      }
+
+      const updateUnderline = () => {
+        const scaleX = input.value.length > 0 ? 1 : 0;
+        gsap.to(underline, { scaleX, duration: 0.3, ease: 'power2.out' });
+      };
+
+      const handleFocus = () => {
+        gsap.to(underline, { scaleX: 1, duration: 0.3, ease: 'power2.out' });
+      };
+
+      input.addEventListener('input', updateUnderline);
+      input.addEventListener('focus', handleFocus);
+      input.addEventListener('blur', updateUnderline);
+
+      // Run once to reflect initial value
+      updateUnderline();
+
+      teardown = () => {
+        input.removeEventListener('input', updateUnderline);
+        input.removeEventListener('focus', handleFocus);
+        input.removeEventListener('blur', updateUnderline);
+      };
+    })();
 
     return () => {
-      input.removeEventListener('input', updateUnderline);
-      input.removeEventListener('focus', updateUnderline);
-      input.removeEventListener('blur', updateUnderline);
+      isCancelled = true;
+      teardown?.();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   // Button glow effect
   useEffect(() => {
-    if (!buttonRef.current) return;
-
     const button = buttonRef.current;
-    
-    const handleMouseEnter = () => {
-      gsap.to(button, {
-        boxShadow: '0 0 20px rgba(0, 215, 107, 0.4)',
-        duration: 0.3,
-        ease: 'power2.out'
-      });
-    };
+    if (!button || prefersReducedMotion) return;
 
-    const handleMouseLeave = () => {
-      gsap.to(button, {
-        boxShadow: '0 0 0px rgba(0, 215, 107, 0)',
-        duration: 0.3,
-        ease: 'power2.out'
-      });
-    };
+    let teardown: (() => void) | undefined;
+    let isCancelled = false;
 
-    button.addEventListener('mouseenter', handleMouseEnter);
-    button.addEventListener('mouseleave', handleMouseLeave);
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (isCancelled) {
+        return;
+      }
+
+      const handleMouseEnter = () => {
+        gsap.to(button, {
+          boxShadow: '0 0 20px rgba(0, 215, 107, 0.4)',
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(button, {
+          boxShadow: '0 0 0px rgba(0, 215, 107, 0)',
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      };
+
+      button.addEventListener('mouseenter', handleMouseEnter);
+      button.addEventListener('mouseleave', handleMouseLeave);
+
+      teardown = () => {
+        button.removeEventListener('mouseenter', handleMouseEnter);
+        button.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    })();
 
     return () => {
-      button.removeEventListener('mouseenter', handleMouseEnter);
-      button.removeEventListener('mouseleave', handleMouseLeave);
+      isCancelled = true;
+      teardown?.();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   const onSubmit = async (data: FormValues) => {
     try {
