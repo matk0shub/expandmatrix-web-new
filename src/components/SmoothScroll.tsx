@@ -3,68 +3,157 @@
 import { useEffect } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
+const DESKTOP_QUERY = '(min-width: 1024px)';
+const IS_IOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+
+type LenisLike = {
+  raf: (time: number) => void;
+  destroy: () => void;
+  on?: (event: string, cb: (...args: unknown[]) => unknown) => unknown;
+  off?: (event: string, cb: (...args: unknown[]) => unknown) => unknown;
+};
+
 export default function SmoothScroll() {
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (prefersReducedMotion) {
-      return;
+      return undefined;
     }
 
-    let animationFrameId: number | undefined;
-    let lenisInstance: { raf: (time: number) => void; destroy: () => void } | undefined;
-    let isMounted = true;
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
 
-    (async () => {
-      const { default: Lenis } = await import('lenis');
-      if (!isMounted) {
+    const desktopMedia = window.matchMedia(DESKTOP_QUERY);
+    if (!desktopMedia.matches || IS_IOS) {
+      return undefined;
+    }
+
+    let disposed = false;
+    let lenisInstance: LenisLike | undefined;
+    let rafId: number | undefined;
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let loadHandler: (() => void) | undefined;
+    let scrollCleanup: (() => void) | undefined;
+
+    const dispose = () => {
+      if (disposed) {
         return;
       }
 
-      lenisInstance = new Lenis({
-        duration: 1.1,
-        // Slightly softer easing curve to keep scrolling responsive while smooth
-        easing: (t: number) => Math.min(1, 1 - Math.pow(2, -10 * t)),
-      });
+      disposed = true;
 
-      // Integrate GSAP ScrollTrigger with Lenis so markers and triggers are correct
+      if (loadHandler) {
+        window.removeEventListener('load', loadHandler);
+      }
+
+      if (typeof window.cancelIdleCallback === 'function' && idleId) {
+        window.cancelIdleCallback(idleId);
+      }
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+
+      if (scrollCleanup) {
+        scrollCleanup();
+      }
+
+      lenisInstance?.destroy();
+      desktopMedia.removeEventListener('change', handleDesktopChange);
+    };
+
+    const handleDesktopChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) {
+        dispose();
+      }
+    };
+
+    desktopMedia.addEventListener('change', handleDesktopChange);
+
+    const startLoop = () => {
+      const raf = (time: number) => {
+        if (disposed) {
+          return;
+        }
+        lenisInstance?.raf(time);
+        rafId = window.requestAnimationFrame(raf);
+      };
+
+      rafId = window.requestAnimationFrame(raf);
+    };
+
+    const initializeSmoothScroll = async () => {
+      const { default: Lenis } = await import('lenis');
+      if (disposed) {
+        return;
+      }
+
+      lenisInstance = (new Lenis({
+        duration: 1.05,
+        easing: (t: number) => Math.min(1, 1 - Math.pow(2, -10 * t)),
+      })) as unknown as LenisLike;
+
       try {
         const { gsap } = await import('gsap');
         const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        if (disposed) {
+          return;
+        }
+
         gsap.registerPlugin(ScrollTrigger);
 
-        // Update ScrollTrigger on every Lenis scroll
-        // @ts-expect-error Lenis has runtime 'on' API
-        lenisInstance.on?.('scroll', () => {
-          ScrollTrigger.update();
-        });
+        const onLenisScroll = () => ScrollTrigger.update();
+        lenisInstance.on?.('scroll', onLenisScroll);
 
-        // Ensure ScrollTrigger refresh accounts for smooth scrolling
-        ScrollTrigger.addEventListener('refresh', () => {
-          // Kick lenis once after layout changes so positions are up-to-date
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-          lenisInstance && (document.documentElement.style.scrollBehavior = 'auto');
-        });
-
-        // Initial refresh after everything is set up
+        const onRefresh = () => {
+          document.documentElement.style.scrollBehavior = 'auto';
+        };
+        ScrollTrigger.addEventListener('refresh', onRefresh);
         ScrollTrigger.refresh();
-      } catch {}
 
-      const raf = (time: number) => {
-        lenisInstance?.raf(time);
-        animationFrameId = window.requestAnimationFrame(raf);
+        scrollCleanup = () => {
+          lenisInstance?.off?.('scroll', onLenisScroll);
+          ScrollTrigger.removeEventListener('refresh', onRefresh);
+        };
+      } catch {
+        scrollCleanup = () => undefined;
+      }
+
+      startLoop();
+    };
+
+    const queueInitialization = () => {
+      const schedule = () => {
+        if (typeof window.requestIdleCallback === 'function') {
+          idleId = window.requestIdleCallback(() => {
+            initializeSmoothScroll().catch(() => dispose());
+          });
+        } else {
+          timeoutId = setTimeout(() => {
+            initializeSmoothScroll().catch(() => dispose());
+          }, 0);
+        }
       };
 
-      animationFrameId = window.requestAnimationFrame(raf);
-    })();
-
-    return () => {
-      isMounted = false;
-      if (animationFrameId) {
-        window.cancelAnimationFrame(animationFrameId);
+      if (document.readyState === 'complete') {
+        schedule();
+      } else {
+        loadHandler = () => schedule();
+        window.addEventListener('load', loadHandler, { once: true });
       }
-      lenisInstance?.destroy();
     };
+
+    queueInitialization();
+
+    return dispose;
   }, [prefersReducedMotion]);
 
   return null;

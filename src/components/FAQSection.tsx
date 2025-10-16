@@ -100,43 +100,45 @@ export default function FAQSection() {
       <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left Column - Headline and CTA */}
-          <div className="flex flex-col justify-between min-h-[600px]">
+          <div className="flex flex-col space-y-8">
             {/* Headline */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <h1 className="heading-main">
+              <h2 className="heading-main">
                 <div>{t('title.line1')}</div>
                 <div>{t('title.line2')}</div>
-              </h1>
+              </h2>
             </motion.div>
 
-            {/* CTA Block - positioned at bottom */}
-            <motion.div
+            <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="space-y-6 mt-auto"
+              className="text-white/80 text-lg md:text-xl leading-relaxed max-w-xl"
             >
-              <p className="text-white/80 text-lg md:text-xl leading-relaxed max-w-md">
-                {t('cta.overline')}
-              </p>
-              <button
-                data-cal-namespace="strategy"
-                data-cal-link="team/em-core/strategy"
-                data-cal-origin="https://meet.expandmatrix.com"
-                data-cal-config='{"layout":"month_view"}'
-                className="group relative inline-flex items-center gap-3 px-7 md:px-9 py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-base md:text-lg cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50"
-              >
-                <span className="uppercase tracking-wide">
-                  {t('cta.button')}
-                </span>
-                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-              </button>
-            </motion.div>
+              {t('cta.overline')}
+            </motion.p>
+
+            <motion.button
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              data-cal-namespace="strategy"
+              data-cal-link="team/em-core/strategy"
+              data-cal-origin="https://meet.expandmatrix.com"
+              data-cal-config='{"layout":"month_view"}'
+              className="group relative inline-flex items-center gap-3 px-7 md:px-9 py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-base md:text-lg cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50"
+            >
+              <span className="uppercase tracking-wide">
+                {t('cta.button')}
+              </span>
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
+            </motion.button>
+
           </div>
 
           {/* Right Column - FAQ Accordion */}

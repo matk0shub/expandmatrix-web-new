@@ -145,24 +145,17 @@ export default function TeamSection() {
 
   // Main content
   return (
-    <section 
+    <section
       id="our-team-section"
       data-section="our-team"
-      className="relative w-full min-h-screen bg-black"
+      className="relative w-full bg-black py-24 md:py-40 lg:py-48"
     >
-      {/* Background - sticky layer 1, stays in place */}
       <TeamSectionBackground />
 
-      {/* Header - sticky layer 2, centered and fixed in viewport */}
-      <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center z-10 pointer-events-none">
-        <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
-          <TeamSectionHeader />
-        </div>
-      </div>
+      <div className="relative z-20 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex flex-col items-center gap-16 lg:gap-24">
+        <TeamSectionHeader />
 
-      {/* Cards container - layer 3, centered on same position as header */}
-      <div className="relative z-20 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex items-center justify-center min-h-screen">
-        <div 
+        <div
           ref={cardsRef}
           className="relative flex w-full items-center justify-center overflow-visible"
         >

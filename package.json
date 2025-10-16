@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "clean": "rm -rf .next",
-    "dev:clean": "npm run clean && npm run dev"
+    "dev:clean": "npm run clean && npm run dev",
+    "audit:mobile": "node scripts/run-lighthouse.js mobile",
+    "audit:tablet": "node scripts/run-lighthouse.js tablet",
+    "audit:desktop": "node scripts/run-lighthouse.js desktop",
+    "audit:all": "npm run audit:mobile && npm run audit:tablet && npm run audit:desktop"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",

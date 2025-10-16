@@ -104,16 +104,16 @@ export default function ServicesSection() {
         <div className="mb-20 lg:mb-32">
           {/* Main Title - single line */}
           <div className="relative inline-block mb-8">
-            <h1 
+            <h2 
               className="heading-main" 
             >
               <ScrambleText text={t('title')} applyScramble={false} />
-            </h1>
+            </h2>
           </div>
         </div>
 
-        {/* Bottom Section - 3 Service Cards breaking layout more to the left */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 lg:justify-start -ml-12 md:-ml-16 lg:-ml-24 xl:-ml-32">
+        {/* Bottom Section - Responsive service cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10 items-stretch">
           {services.map((service, index) => (
             <motion.div
               key={service.key}
@@ -134,13 +134,13 @@ export default function ServicesSection() {
               {/* Use a button for a11y focus; hover/focus reveal content */}
               <button
                 type="button"
-                className="group relative w-full max-w-[650px] min-w-[520px] h-[320px] md:h-[340px] lg:h-[360px] rounded-3xl focus:outline-none"
+                className="group relative w-full h-[320px] md:h-[340px] lg:h-[360px] rounded-3xl focus:outline-none"
                 aria-label={service.title}
               >
                 {/* Frame with gradient border */}
                 <div className="relative bg-transparent transition-all duration-700 group-hover:scale-[1.02] group-focus-visible:scale-[1.02]">
                   <div className="absolute inset-0 rounded-3xl p-[3px] bg-gradient-to-r from-green-500/40 via-green-400/30 to-green-500/40 transition-all duration-500 group-hover:from-green-400/60 group-hover:via-green-300/40 group-hover:to-green-400/60 group-focus-visible:from-green-400/60 group-focus-visible:via-green-300/40 group-focus-visible:to-green-400/60" />
-                  <div className="relative w-full h-[320px] md:h-[340px] lg:h-[360px] rounded-3xl bg-black overflow-hidden">
+                  <div className="relative w-full h-full rounded-3xl bg-black overflow-hidden">
                     {/* Subtle background gloss */}
                     <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-700" aria-hidden="true">
                       <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.15),transparent_70%)] rotate-12" />
