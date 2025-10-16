@@ -64,19 +64,39 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  experimental: {
-    optimizePackageImports: ['framer-motion', 'lucide-react', 'gsap'],
-  },
-  webpack: (config, { dev, isServer }) => {
-    // Fix for webpack module resolution issues
-    if (dev && !isServer) {
+  webpack: (config, { dev, isServer, webpack }) => {
+    // Fix for Next.js 15.5.4 vendor-chunks bug
+    if (dev) {
+      // Disable problematic optimizations in development
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: false,
+        minimize: false,
+      };
+      
+      // Fix module resolution
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         net: false,
         tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
       };
+      
+      // Fix for vendor-chunks issue
+      config.plugins = config.plugins.filter((plugin: any) => {
+        return !(plugin.constructor.name === 'ChunkNamesPlugin');
+      });
     }
+    
     return config;
   },
 };
