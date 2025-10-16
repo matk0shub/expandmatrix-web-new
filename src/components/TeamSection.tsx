@@ -516,7 +516,7 @@ function TeamSpotlightCard({
 
   return (
     <article
-      className={`team-card relative z-10 w-full max-w-[440px] sm:max-w-[500px] md:max-w-[520px] lg:max-w-none lg:w-[300px] xl:w-[340px] 2xl:w-[360px] ${
+      className={`team-card relative z-40 w-full max-w-[440px] sm:max-w-[500px] md:max-w-[520px] lg:max-w-none lg:w-[300px] xl:w-[340px] 2xl:w-[360px] ${
         theme.wrapperClass ?? ''
       }`}
       style={{ willChange: 'transform, opacity' }}
@@ -614,7 +614,7 @@ type TeamCardsGridProps = {
 
 function TeamCardsGrid({ members, locale }: TeamCardsGridProps) {
   return (
-    <div className="relative z-20 mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-10 md:flex-row md:flex-nowrap md:gap-12">
+    <div className="relative z-40 mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-10 md:flex-row md:flex-nowrap md:gap-12">
       {members.map((member, index) => {
         const theme = CARD_THEMES[index] ?? CARD_THEMES[CARD_THEMES.length - 1];
         const narrative = CARD_NARRATIVES[member.name as keyof typeof CARD_NARRATIVES];
@@ -723,6 +723,19 @@ export default function TeamSection() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            // Keep header pinned to center of viewport during scroll
+            const header = section.querySelector('.heading-wrapper');
+            if (header && self.progress > 0 && self.progress < 1) {
+              gsap.set(header, {
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 30
+              });
+            }
+          },
         },
       });
 
@@ -783,11 +796,13 @@ export default function TeamSection() {
           ref={sectionRef}
           className="relative flex min-h-screen w-full flex-col items-center justify-center gap-10 overflow-visible pb-24"
         >
-          <TeamSectionHeader isPinned={!prefersReducedMotion} />
-
-          <div className={`relative w-full ${prefersReducedMotion ? 'pt-4' : ''}`}>
+          {/* Cards first - they will animate over the header */}
+          <div className={`relative w-full z-20 ${prefersReducedMotion ? 'pt-4' : ''}`}>
             <TeamCardsGrid members={spotlightMembers} locale={locale} />
           </div>
+
+          {/* Header second - will be pinned behind cards */}
+          <TeamSectionHeader isPinned={!prefersReducedMotion} />
         </div>
       </div>
     </section>
