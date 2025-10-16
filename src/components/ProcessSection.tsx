@@ -668,6 +668,44 @@ export default function ProcessSection() {
         </>
       )}
 
+      {/* Green blob background effects - top section */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large vibrant blob - top left */}
+        <div className="absolute top-[2%] left-[5%] w-[480px] h-[380px] blur-3xl opacity-50" 
+          style={{ 
+            background: 'radial-gradient(ellipse 55% 45%, rgba(0, 255, 120, 0.7) 0%, rgba(0, 215, 107, 0.5) 40%, rgba(0, 184, 92, 0.25) 70%, transparent 85%)' 
+          }} 
+        />
+
+        {/* Large vibrant blob - top right */}
+        <div className="absolute top-[8%] right-[8%] w-[520px] h-[400px] blur-3xl opacity-55" 
+          style={{ 
+            background: 'radial-gradient(ellipse 50% 50%, rgba(0, 215, 107, 0.75) 0%, rgba(0, 255, 120, 0.55) 35%, rgba(0, 184, 92, 0.35) 65%, transparent 80%)' 
+          }} 
+        />
+
+        {/* Medium blob - center top */}
+        <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[400px] h-[320px] blur-3xl opacity-40" 
+          style={{ 
+            background: 'radial-gradient(ellipse 45% 55%, rgba(0, 184, 92, 0.5) 0%, rgba(0, 215, 107, 0.3) 50%, transparent 75%)' 
+          }} 
+        />
+
+        {/* Accent blob - left side middle */}
+        <div className="absolute top-[20%] left-[2%] w-[350px] h-[300px] blur-3xl opacity-35" 
+          style={{ 
+            background: 'radial-gradient(circle, rgba(0, 215, 107, 0.4) 0%, rgba(0, 255, 120, 0.25) 50%, transparent 75%)' 
+          }} 
+        />
+
+        {/* Accent blob - right side middle */}
+        <div className="absolute top-[25%] right-[3%] w-[320px] h-[280px] blur-3xl opacity-32" 
+          style={{ 
+            background: 'radial-gradient(circle, rgba(0, 255, 120, 0.35) 0%, rgba(0, 215, 107, 0.2) 55%, transparent 75%)' 
+          }} 
+        />
+      </div>
+
       {/* Foreground content */}
       <div className="relative z-10">
 
@@ -681,10 +719,7 @@ export default function ProcessSection() {
                   className="heading-main" 
                 >
                   <div className="leading-tight">
-                    <ScrambleText text="PROCES" applyScramble={false} />
-                  </div>
-                  <div className="leading-tight">
-                    <ScrambleText text="SPOLUPRÁCE" applyScramble={false} />
+                    <ScrambleText text={t('title')} applyScramble={false} />
                   </div>
                 </h1>
               </div>

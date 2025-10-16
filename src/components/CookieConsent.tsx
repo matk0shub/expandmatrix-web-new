@@ -1,13 +1,15 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import CookieConsent from 'react-cookie-consent';
 
 export default function CookieConsentBanner() {
+  const t = useTranslations('cookie');
 
   return (
     <CookieConsent
       location="bottom"
-      buttonText="Přijmout"
+      buttonText={t('buttonText')}
       cookieName="expandmatrix-cookie-consent"
       style={{
         background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
@@ -38,10 +40,9 @@ export default function CookieConsentBanner() {
     >
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4">
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 mb-2">Používáme cookies</h4>
+          <h4 className="font-semibold text-gray-900 mb-2">{t('title')}</h4>
           <p className="text-sm text-gray-600">
-            Tento web používá cookies k zajištění nejlepšího uživatelského zážitku a analýze návštěvnosti. 
-            Pokračováním v prohlížení souhlasíte s jejich používáním.
+            {t('message')}
           </p>
         </div>
       </div>

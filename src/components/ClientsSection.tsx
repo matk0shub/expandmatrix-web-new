@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
 
 interface BallConfig {
@@ -40,6 +41,7 @@ const GROUND_FRICTION = 0.84;
 const SURFACE_FRICTION = 0.18;
 
 export default function ClientsSection() {
+  const t = useTranslations('sections.clients');
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef1 = useRef<HTMLDivElement>(null);
@@ -668,7 +670,7 @@ export default function ClientsSection() {
                 lineHeight: 1.1
               }}
             >
-              <ScrambleText text="NAŠI PARTNEŘI" applyScramble={false} />
+              <ScrambleText text={t('title')} applyScramble={false} />
             </div>
             <div
               ref={textRef2}
@@ -681,7 +683,7 @@ export default function ClientsSection() {
                 marginTop: '-0.1em'
               }}
             >
-              <ScrambleText text="NAŠI PARTNEŘI" applyScramble={false} />
+              <ScrambleText text={t('title')} applyScramble={false} />
             </div>
           </div>
         </div>
