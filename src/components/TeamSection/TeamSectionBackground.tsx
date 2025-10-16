@@ -124,7 +124,7 @@ export default function TeamSectionBackground() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative lg:sticky lg:top-0 lg:h-screen w-full overflow-hidden pointer-events-none z-[1]">
+    <div ref={containerRef} className="sticky top-0 h-screen w-full overflow-hidden pointer-events-none z-[1]">
       {/* Base matte black background */}
       <div className="absolute inset-0 bg-black" />
       
