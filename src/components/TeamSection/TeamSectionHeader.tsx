@@ -7,16 +7,15 @@ export default function TeamSectionHeader() {
   const t = useTranslations('sections.team');
 
   return (
-    <div className="heading-wrapper flex w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
-      <h2 className="team-heading whitespace-normal text-balance">
+    <div className="heading-wrapper mx-auto flex w-full max-w-4xl items-center justify-center px-6 text-center">
+      <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
         <div className="block">
           <ScrambleText text={t('title.line1')} applyScramble={false} />
         </div>
         <div className="block">
           <ScrambleText text={t('title.line2')} applyScramble={false} />
         </div>
-      </h2>
+      </h1>
     </div>
   );
 }
-

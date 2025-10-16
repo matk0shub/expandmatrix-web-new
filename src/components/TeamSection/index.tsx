@@ -148,13 +148,15 @@ export default function TeamSection() {
     <section
       id="our-team-section"
       data-section="our-team"
-      className="relative w-full bg-black py-24 md:py-40 lg:py-48"
+      className="relative w-full min-h-screen bg-black py-24 md:py-40 lg:py-48"
     >
       <TeamSectionBackground />
 
-      <div className="relative z-20 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex flex-col items-center gap-16 lg:gap-24">
+      <div className="relative z-20 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex items-center justify-center min-h-[40vh]">
         <TeamSectionHeader />
+      </div>
 
+      <div className="relative z-20 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex items-center justify-center min-h-screen">
         <div
           ref={cardsRef}
           className="relative flex w-full items-center justify-center overflow-visible"
@@ -167,4 +169,3 @@ export default function TeamSection() {
     </section>
   );
 }
-
