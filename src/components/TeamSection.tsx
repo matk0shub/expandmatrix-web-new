@@ -465,21 +465,11 @@ function TeamSectionBackground() {
 // ============================================================================
 // HEADER COMPONENT - Title section (centered)
 // ============================================================================
-type TeamSectionHeaderProps = {
-  isPinned: boolean;
-};
-
-function TeamSectionHeader({ isPinned }: TeamSectionHeaderProps) {
+function TeamSectionHeader() {
   const t = useTranslations('sections.team');
 
   return (
-    <div
-      className={`heading-wrapper flex w-full items-center justify-center ${
-        isPinned
-          ? 'pointer-events-none absolute left-1/2 top-1/2 z-30 max-w-4xl -translate-x-1/2 -translate-y-1/2 px-6'
-          : 'relative z-30 pb-14'
-      }`}
-    >
+    <div className="heading-wrapper relative z-30 pb-14 flex w-full items-center justify-center">
       <h1 className="heading-main text-balance text-center">
         <ScrambleText text={t('title')} applyScramble={false} />
       </h1>
@@ -696,8 +686,9 @@ export default function TeamSection() {
     if (!section) return;
 
     const cards = section.querySelectorAll<HTMLElement>('.team-card');
+    const header = section.querySelector<HTMLElement>('.heading-wrapper');
 
-    if (!cards.length) return;
+    if (!cards.length || !header) return;
 
     if (prefersReducedMotion) {
       gsap.set(cards, { clearProps: 'transform,opacity' });
@@ -711,7 +702,18 @@ export default function TeamSection() {
       const cardCount = cardElements.length;
       const scrollDistance = cardCount > 1 ? (cardCount - 1) * 100 : 100;
 
+      // Set initial states
       gsap.set(cardElements, { yPercent: 160, opacity: 0 });
+      
+      // Pin header to center of viewport immediately
+      gsap.set(header, {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 30,
+        pointerEvents: 'none'
+      });
 
       const timeline = gsap.timeline({
         defaults: { ease: 'power1.out' },
@@ -723,19 +725,6 @@ export default function TeamSection() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            // Keep header pinned to center of viewport during scroll
-            const header = section.querySelector('.heading-wrapper');
-            if (header && self.progress > 0 && self.progress < 1) {
-              gsap.set(header, {
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 30
-              });
-            }
-          },
         },
       });
 
@@ -802,7 +791,7 @@ export default function TeamSection() {
           </div>
 
           {/* Header second - will be pinned behind cards */}
-          <TeamSectionHeader isPinned={!prefersReducedMotion} />
+          <TeamSectionHeader />
         </div>
       </div>
     </section>
