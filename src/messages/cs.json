@@ -61,7 +61,7 @@
       }
     },
     "clients": {
-      "title": "Naši klienti"
+      "title": "Naši partneři"
     },
     "process": {
       "title": "Proces spolupráce",
@@ -89,7 +89,12 @@
       "viewProfile": "Zobrazit profil"
     },
     "team": {
-      "title": "Jsme mladý, dravý tým, který se nebojí žádné výzvy"
+      "title": {
+        "line1": "Jsme mladý, dravý tým,",
+        "line2": "který se nebojí žádné výzvy"
+      },
+      "loading": "Načítání týmu...",
+      "error": "Chyba při načítání týmu"
     },
     "faq": {
       "title": {
@@ -99,7 +104,9 @@
       "cta": {
         "overline": "Stále máte otázky? Zarezervujte si s námi meeting zdarma",
         "button": "CHCI ZAČÍT RŮST"
-      }
+      },
+      "loading": "Načítání FAQ...",
+      "error": "Chyba při načítání FAQ"
     }
   },
   "navigation": {
@@ -140,5 +147,10 @@
       "privacy": "Zásady ochrany osobních údajů",
       "terms": "Obchodní podmínky"
     }
+  },
+  "cookie": {
+    "title": "Používáme cookies",
+    "message": "Tento web používá cookies k zajištění nejlepšího uživatelského zážitku a analýze návštěvnosti. Pokračováním v prohlížení souhlasíte s jejich používáním.",
+    "buttonText": "Přijmout"
   }
 }

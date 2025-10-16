@@ -37,7 +37,7 @@
       }
     },
     "clients": {
-      "title": "Our clients"
+      "title": "Our Partners"
     },
     "services": {
       "title": "Our services",
@@ -89,7 +89,12 @@
       "viewProfile": "View Profile"
     },
     "team": {
-      "title": "We're a young, driven team that isn't afraid of any challenge"
+      "title": {
+        "line1": "We're a young, driven team",
+        "line2": "that isn't afraid of any challenge"
+      },
+      "loading": "Loading team...",
+      "error": "Error loading team"
     },
     "faq": {
       "title": {
@@ -99,7 +104,9 @@
       "cta": {
         "overline": "Still have questions? Book a free meeting with us",
         "button": "I WANT TO START GROWING"
-      }
+      },
+      "loading": "Loading FAQ...",
+      "error": "Error loading FAQ"
     }
   },
   "navigation": {
@@ -140,5 +147,10 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
     }
+  },
+  "cookie": {
+    "title": "We Use Cookies",
+    "message": "This website uses cookies to ensure the best user experience and analyze traffic. By continuing to browse, you agree to their use.",
+    "buttonText": "Accept"
   }
 }

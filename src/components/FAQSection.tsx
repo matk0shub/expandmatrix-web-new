@@ -66,7 +66,7 @@ export default function FAQSection() {
       <section className="relative w-full bg-black py-24 md:py-40 lg:py-48">
         <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
           <div className="text-center">
-            <div className="text-white text-2xl">Loading FAQ...</div>
+            <div className="text-white text-2xl">{t('loading')}</div>
           </div>
         </div>
       </section>
@@ -78,7 +78,7 @@ export default function FAQSection() {
       <section className="relative w-full bg-black py-24 md:py-40 lg:py-48">
         <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
           <div className="text-center">
-            <div className="text-red-400 text-2xl">Error loading FAQ</div>
+            <div className="text-red-400 text-2xl">{t('error')}</div>
           </div>
         </div>
       </section>

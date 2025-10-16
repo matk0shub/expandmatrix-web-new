@@ -43,78 +43,59 @@ export default function ServicesSection() {
     >
       {/* Modern Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Modern animated gradient blob */}
-        <div className="absolute top-0 left-0 w-[600px] h-full blur-3xl opacity-30 animate-pulse">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.4) 0%, rgba(21, 128, 61, 0.3) 30%, rgba(0, 215, 107, 0.2) 70%, transparent 100%)' 
-            }} 
-          />
-        </div>
+        {/* Large vibrant blob - top left */}
+        <div className="absolute top-[5%] left-[8%] w-[550px] h-[420px] blur-3xl opacity-60" 
+          style={{ 
+            background: 'radial-gradient(ellipse 55% 45%, rgba(0, 255, 120, 0.8) 0%, rgba(0, 215, 107, 0.6) 40%, rgba(0, 184, 92, 0.3) 70%, transparent 85%)' 
+          }} 
+        />
 
-        {/* Floating geometric shapes */}
-        <div className="absolute top-1/4 right-1/4 w-[200px] h-[200px] opacity-20 animate-spin">
-          <div 
-            className="w-full h-full rotate-45 blur-2xl"
-            style={{ 
-              background: 'conic-gradient(from 0deg, rgba(34, 197, 94, 0.3) 0%, rgba(21, 128, 61, 0.2) 50%, rgba(34, 197, 94, 0.3) 100%)' 
-            }} 
-          />
-        </div>
+        {/* Large vibrant blob - top right */}
+        <div className="absolute top-[10%] right-[5%] w-[600px] h-[450px] blur-3xl opacity-65" 
+          style={{ 
+            background: 'radial-gradient(ellipse 50% 50%, rgba(0, 255, 120, 0.85) 0%, rgba(0, 215, 107, 0.65) 35%, rgba(0, 184, 92, 0.4) 65%, transparent 80%)' 
+          }} 
+        />
 
-        {/* Dynamic moving spots */}
-        <div className="absolute bottom-1/3 left-1/4 w-[300px] h-[300px] blur-3xl opacity-25 animate-bounce">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(34, 197, 94, 0.4) 0%, rgba(21, 128, 61, 0.2) 40%, transparent 70%)' 
-            }} 
-          />
-        </div>
+        {/* Medium blob - center left */}
+        <div className="absolute top-1/2 left-[2%] w-[420px] h-[360px] blur-3xl opacity-50" 
+          style={{ 
+            background: 'radial-gradient(ellipse 60% 40%, rgba(0, 184, 92, 0.7) 0%, rgba(0, 215, 107, 0.5) 50%, transparent 75%)' 
+          }} 
+        />
 
-        {/* Multiple layered blur effects */}
-        <div className="absolute top-1/2 left-0 w-[400px] h-[200px] blur-3xl opacity-20 animate-pulse">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'radial-gradient(ellipse, rgba(34, 197, 94, 0.5) 0%, rgba(21, 128, 61, 0.3) 50%, transparent 80%)' 
-            }} 
-          />
-        </div>
+        {/* Medium blob - center right */}
+        <div className="absolute bottom-[15%] right-[8%] w-[480px] h-[380px] blur-3xl opacity-55" 
+          style={{ 
+            background: 'radial-gradient(circle, rgba(0, 215, 107, 0.7) 0%, rgba(0, 255, 120, 0.5) 45%, rgba(0, 184, 92, 0.3) 70%, transparent 85%)' 
+          }} 
+        />
 
-        <div className="absolute top-3/4 right-0 w-[350px] h-[250px] blur-3xl opacity-15 animate-bounce">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'radial-gradient(ellipse, rgba(21, 128, 61, 0.4) 0%, rgba(34, 197, 94, 0.2) 60%, transparent 85%)' 
-            }} 
-          />
-        </div>
+        {/* Small blob - bottom left */}
+        <div className="absolute bottom-[8%] left-[15%] w-[350px] h-[300px] blur-3xl opacity-45" 
+          style={{ 
+            background: 'radial-gradient(circle, rgba(0, 255, 120, 0.6) 0%, rgba(0, 215, 107, 0.4) 55%, transparent 75%)' 
+          }} 
+        />
 
-        {/* Glowing particles */}
+        {/* Extra small accent blob - center */}
+        <div className="absolute top-[45%] left-[45%] w-[280px] h-[240px] blur-3xl opacity-40" 
+          style={{ 
+            background: 'radial-gradient(circle, rgba(0, 184, 92, 0.5) 0%, rgba(0, 215, 107, 0.3) 60%, transparent 80%)' 
+          }} 
+        />
+
+        {/* Additional accent - top center */}
+        <div className="absolute top-[8%] left-1/2 -translate-x-1/2 w-[400px] h-[320px] blur-3xl opacity-45" 
+          style={{ 
+            background: 'radial-gradient(ellipse 45% 55%, rgba(0, 215, 107, 0.6) 0%, rgba(0, 184, 92, 0.4) 50%, transparent 75%)' 
+          }} 
+        />
+
+        {/* Glowing particles - kept for sparkle */}
         <div className="absolute top-1/5 left-3/4 w-1 h-1 bg-green-400 rounded-full opacity-60 animate-ping shadow-lg shadow-green-400" />
         <div className="absolute top-2/3 left-1/5 w-2 h-2 bg-green-500 rounded-full opacity-40 animate-ping shadow-lg shadow-green-500" />
         <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-green-400 rounded-full opacity-50 animate-ping shadow-lg shadow-green-400" />
-
-        {/* Additional corner effects */}
-        <div className="absolute top-0 right-0 w-[300px] h-[150px] blur-2xl opacity-25">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, rgba(21, 128, 61, 0.15) 50%, transparent 70%)' 
-            }} 
-          />
-        </div>
-
-        <div className="absolute bottom-0 left-0 w-[250px] h-[200px] blur-2xl opacity-20">
-          <div 
-            className="w-full h-full rounded-full"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(21, 128, 61, 0.3) 0%, rgba(34, 197, 94, 0.1) 60%, transparent 80%)' 
-            }} 
-          />
-        </div>
       </div>
 
       {/* Container with same max-width as Hero */}
