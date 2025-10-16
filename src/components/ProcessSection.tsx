@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -317,14 +317,34 @@ export default function ProcessSection() {
     { key: 'optimization', number: '05' }
   ];
 
-  const cardBaseClass = 'process-card w-[768px] h-[640px] backdrop-blur-sm rounded-3xl border shadow-2xl';
+  const cardBaseClass = 'process-card w-[720px] h-[580px] backdrop-blur-xl rounded-[3rem] shadow-2xl border border-white/10';
+  
+  // Modern card variants with glassmorphism effect
   const cardVariants = [
-    'bg-gradient-to-br from-green-500/90 to-green-600/90 border-green-400/30 shadow-green-500/20',
-    'bg-gradient-to-br from-green-400/90 to-green-500/90 border-green-300/30 shadow-green-400/20',
-    'bg-gradient-to-br from-green-300/90 to-green-400/90 border-green-200/30 shadow-green-300/20',
-    'bg-gradient-to-br from-green-200/90 to-green-300/90 border-green-100/30 shadow-green-200/20',
-    'bg-gradient-to-br from-green-100/90 to-green-200/90 border-green-50/30 shadow-green-100/20'
+    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-500/20',
+    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-400/20',
+    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-300/20',
+    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-200/20',
+    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-100/20'
   ];
+
+  // Random rotations and positions for scattered look
+  const cardRotations = useMemo(() => [
+    'rotate-[-3deg]',
+    'rotate-[2deg]',
+    'rotate-[-1.5deg]',
+    'rotate-[2.5deg]',
+    'rotate-[-2deg]'
+  ], []);
+
+  // Random X offsets for scattered positioning
+  const cardOffsets = useMemo(() => [
+    'translate-x-[-20px]',
+    'translate-x-[30px]',
+    'translate-x-[-15px]',
+    'translate-x-[25px]',
+    'translate-x-[-10px]'
+  ], []);
 
   // Gravity Points Canvas System
   const initGravityCanvas = useCallback(() => {
@@ -574,10 +594,7 @@ export default function ProcessSection() {
         return;
       }
 
-      gsap.set(existingCards, { opacity: 0, yPercent: 12 });
-      if (cards[0]) {
-        gsap.set(cards[0], { opacity: 1, yPercent: 0 });
-      }
+      gsap.set(existingCards, { opacity: 1, yPercent: 0 });
 
       // Distance (in px) that keeps a card pinned before the next one takes over
       const stickDistance = 100;
@@ -600,20 +617,24 @@ export default function ProcessSection() {
           pinSpacing: false,
           toggleActions: 'restart none none reverse',
           onEnter: () => {
-            gsap.to(card, { opacity: 1, yPercent: 0, duration: 0.6, overwrite: 'auto' });
+            gsap.to(card, { 
+              yPercent: 0, 
+              rotation: cardRotations[index].replace('rotate-[', '').replace(']', '').replace('deg', ''),
+              x: cardOffsets[index].replace('translate-x-[', '').replace(']', '').replace('px', ''),
+              duration: 0.8, 
+              ease: "power2.out",
+              overwrite: 'auto' 
+            });
           },
           onEnterBack: () => {
-            gsap.to(card, { opacity: 1, yPercent: 0, duration: 0.6, overwrite: 'auto' });
-          },
-          onLeave: () => {
-            if (index !== cardWrappers.length - 1) {
-              gsap.to(card, { opacity: 0, yPercent: -12, duration: 0.6, overwrite: 'auto' });
-            }
-          },
-          onLeaveBack: () => {
-            if (index !== 0) {
-              gsap.to(card, { opacity: 0, yPercent: 12, duration: 0.6, overwrite: 'auto' });
-            }
+            gsap.to(card, { 
+              yPercent: 0, 
+              rotation: cardRotations[index].replace('rotate-[', '').replace(']', '').replace('deg', ''),
+              x: cardOffsets[index].replace('translate-x-[', '').replace(']', '').replace('px', ''),
+              duration: 0.8, 
+              ease: "power2.out",
+              overwrite: 'auto' 
+            });
           },
         });
       });
@@ -622,7 +643,7 @@ export default function ProcessSection() {
     }, container);
 
     return () => ctx.revert();
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, cardRotations, cardOffsets]);
 
   return (
     <section
@@ -729,20 +750,35 @@ export default function ProcessSection() {
               }`}
             >
               <div
-                className={`${cardBaseClass} ${cardVariants[index]} ${
-                  prefersReducedMotion ? '' : 'opacity-0'
-                }`}
-                style={!prefersReducedMotion && index === 0 ? { opacity: 1 } : undefined}
+                className={`${cardBaseClass} ${cardVariants[index]} ${cardRotations[index]} ${cardOffsets[index]} transform-gpu transition-all duration-500 hover:scale-105 hover:rotate-0`}
               >
-                <div className="p-12 h-full flex flex-col justify-between">
-                  <div className="text-green-100 text-lg font-mono font-medium mb-6">
-                    {step.number}
+                <div className="p-16 h-full flex flex-col justify-between relative">
+                  {/* Subtle inner glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-[3rem] pointer-events-none" />
+                  
+                  <div className="relative z-10">
+                    {/* Step number with modern styling */}
+                    <div className="inline-flex items-center gap-4 mb-8">
+                      <div className="text-white/60 text-sm font-mono font-bold tracking-[0.2em] uppercase">
+                        {step.number}
+                      </div>
+                      <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent max-w-[120px]" />
+                    </div>
+                    
+                    {/* Title with better spacing */}
+                    <div className="text-white text-6xl font-bold font-lato mb-12 leading-[0.9] tracking-tight">
+                      <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
+                    </div>
+                    
+                    {/* Description with improved typography */}
+                    <div className="text-white/80 text-xl leading-relaxed font-lato max-w-[500px]">
+                      <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />
+                    </div>
                   </div>
-                  <div className="text-white text-5xl font-bold font-lato mb-8">
-                    <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
-                  </div>
-                  <div className="text-green-100 text-lg leading-relaxed font-lato">
-                    <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />
+
+                  {/* Modern corner accent */}
+                  <div className="absolute bottom-8 right-8 w-24 h-24 pointer-events-none">
+                    <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-white/10 to-transparent rounded-full blur-xl" />
                   </div>
                 </div>
               </div>

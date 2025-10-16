@@ -469,7 +469,7 @@ function TeamSectionHeader() {
   const t = useTranslations('sections.team');
 
   return (
-    <div className="heading-wrapper relative z-30 pb-14 flex w-full items-center justify-center">
+    <div className="heading-wrapper absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none flex w-full max-w-4xl items-center justify-center px-6">
       <h1 className="heading-main text-balance text-center">
         <ScrambleText text={t('title')} applyScramble={false} />
       </h1>
@@ -686,9 +686,8 @@ export default function TeamSection() {
     if (!section) return;
 
     const cards = section.querySelectorAll<HTMLElement>('.team-card');
-    const header = section.querySelector<HTMLElement>('.heading-wrapper');
 
-    if (!cards.length || !header) return;
+    if (!cards.length) return;
 
     if (prefersReducedMotion) {
       gsap.set(cards, { clearProps: 'transform,opacity' });
@@ -702,18 +701,8 @@ export default function TeamSection() {
       const cardCount = cardElements.length;
       const scrollDistance = cardCount > 1 ? (cardCount - 1) * 100 : 100;
 
-      // Set initial states
-      gsap.set(cardElements, { yPercent: 160, opacity: 0 });
-      
-      // Pin header to center of viewport immediately
-      gsap.set(header, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 30,
-        pointerEvents: 'none'
-      });
+      // Set initial states - cards start from bottom
+      gsap.set(cardElements, { yPercent: 150, opacity: 0 });
 
       const timeline = gsap.timeline({
         defaults: { ease: 'power1.out' },
@@ -728,10 +717,11 @@ export default function TeamSection() {
         },
       });
 
+      // Animate cards to center (over the header)
       timeline.to(cardElements, {
-        yPercent: -140,
+        yPercent: 0,
         opacity: 1,
-        stagger: 0.35,
+        stagger: 0.4,
       });
 
       ScrollTrigger.refresh();
@@ -783,15 +773,15 @@ export default function TeamSection() {
           id="our-team-section"
           data-section="our-team"
           ref={sectionRef}
-          className="relative flex min-h-screen w-full flex-col items-center justify-center gap-10 overflow-visible pb-24"
+          className="relative flex min-h-screen w-full items-center justify-center overflow-visible"
         >
-          {/* Cards first - they will animate over the header */}
-          <div className={`relative w-full z-20 ${prefersReducedMotion ? 'pt-4' : ''}`}>
+          {/* Header - pinned to center of section */}
+          <TeamSectionHeader />
+
+          {/* Cards - will animate over the header */}
+          <div className="relative w-full z-50">
             <TeamCardsGrid members={spotlightMembers} locale={locale} />
           </div>
-
-          {/* Header second - will be pinned behind cards */}
-          <TeamSectionHeader />
         </div>
       </div>
     </section>
