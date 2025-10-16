@@ -4,55 +4,63 @@ import SmoothScroll from '@/components/SmoothScroll';
 import { lato } from '../fonts';
 import "../globals.css";
 
+const BASE_URL = 'https://expandmatrix.com';
+const LOGO_URL = `${BASE_URL}/logo.png`;
+
 export async function generateMetadata({
-  params
+  params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  
   const isCzech = locale === 'cs';
-  
+  const localePath = isCzech ? '/cs' : '/en';
+  const pageUrl = `${BASE_URL}${localePath}`;
+
+  const title = isCzech
+    ? 'ExpandMatrix - AI agenti, weby a implementace AI do businessu'
+    : 'ExpandMatrix - AI agents, websites and AI business implementation';
+  const description = isCzech
+    ? 'Implementujeme chytrou inteligenci, která nezná hranice. AI agenti, moderní weby a implementace AI do businessu. Přesnost, transparentnost a výsledky.'
+    : 'We implement smart intelligence that knows no boundaries. AI agents, modern websites and AI business implementation. Accuracy, transparency and results.';
+
   return {
-    title: isCzech 
-      ? "ExpandMatrix - AI agenti, weby a implementace AI do businessu"
-      : "ExpandMatrix - AI agents, websites and AI business implementation",
-    description: isCzech
-      ? "Implementujeme chytrou inteligenci, která nezná hranice. AI agenti, moderní weby a implementace AI do businessu. Přesnost, transparentnost a výsledky."
-      : "We implement smart intelligence that knows no boundaries. AI agents, modern websites and AI business implementation. Accuracy, transparency and results.",
+    title,
+    description,
     keywords: isCzech
-      ? "AI agenti, weby, implementace AI, chatbot, automatizace, business, technologie"
-      : "AI agents, websites, AI implementation, chatbot, automation, business, technology",
-    authors: [{ name: "ExpandMatrix" }],
-    creator: "ExpandMatrix",
-    publisher: "ExpandMatrix",
-    robots: "index, follow",
+      ? 'AI agenti, weby, implementace AI, chatbot, automatizace, business, technologie'
+      : 'AI agents, websites, AI implementation, chatbot, automation, business, technology',
+    authors: [{ name: 'ExpandMatrix' }],
+    creator: 'ExpandMatrix',
+    publisher: 'ExpandMatrix',
+    robots: 'index, follow',
     openGraph: {
-      type: "website",
-      locale: isCzech ? "cs_CZ" : "en_US",
-      url: "https://expandmatrix.cz",
-      title: isCzech 
-        ? "ExpandMatrix - AI agenti, weby a implementace AI do businessu"
-        : "ExpandMatrix - AI agents, websites and AI business implementation",
-      description: isCzech
-        ? "Implementujeme chytrou inteligenci, která nezná hranice. AI agenti, moderní weby a implementace AI do businessu."
-        : "We implement smart intelligence that knows no boundaries. AI agents, modern websites and AI business implementation.",
-      siteName: "ExpandMatrix",
+      type: 'website',
+      locale: isCzech ? 'cs_CZ' : 'en_US',
+      url: pageUrl,
+      title,
+      description,
+      siteName: 'ExpandMatrix',
+      images: [
+        {
+          url: LOGO_URL,
+          width: 1200,
+          height: 630,
+          alt: 'Expand Matrix brand mark',
+        },
+      ],
     },
     twitter: {
-      card: "summary_large_image",
-      title: isCzech 
-        ? "ExpandMatrix - AI agenti, weby a implementace AI do businessu"
-        : "ExpandMatrix - AI agents, websites and AI business implementation",
-      description: isCzech
-        ? "Implementujeme chytrou inteligenci, která nezná hranice. AI agenti, moderní weby a implementace AI do businessu."
-        : "We implement smart intelligence that knows no boundaries. AI agents, modern websites and AI business implementation.",
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [LOGO_URL],
     },
     alternates: {
-      canonical: "https://expandmatrix.cz",
+      canonical: pageUrl,
       languages: {
-        'cs': 'https://expandmatrix.cz/cs',
-        'en': 'https://expandmatrix.cz/en',
+        cs: `${BASE_URL}/cs`,
+        en: `${BASE_URL}/en`,
       },
     },
   };
@@ -60,13 +68,13 @@ export async function generateMetadata({
 
 export default async function LocaleLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  
+
   // Import messages dynamically with error handling
   let messages;
   try {
@@ -77,9 +85,25 @@ export default async function LocaleLayout({
     messages = (await import(`@/messages/en.json`)).default;
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Expand Matrix",
+    url: BASE_URL,
+    logo: LOGO_URL,
+    sameAs: [
+      "https://www.linkedin.com/company/expandmatrix",
+      "https://x.com/expandmatrix",
+    ],
+  };
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${lato.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <SmoothScroll />
         <NextIntlClientProvider messages={messages}>
           {children}

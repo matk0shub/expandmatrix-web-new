@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expand Matrix Marketing Site
 
-## Getting Started
+This repository contains the Expand Matrix marketing site built with Next.js 15, Tailwind CSS, and next-intl. The project ships with smooth scrolling, interactive physics, and localized content.
 
-First, run the development server:
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The development server runs at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tailwind CSS's WASM build is disabled to avoid CI timeouts. Use the following commands for reproducible builds:
 
-## Learn More
+```bash
+TAILWIND_DISABLE_OXIDE=1 npm ci --omit=optional
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Lighthouse Audits
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Build and start the production server:
+   ```bash
+   npm run build
+   npm run start
+   ```
+2. In a separate terminal run the audits and summary generator:
+   ```bash
+   npm run audit:all
+   node scripts/generate-lighthouse-summary.js
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Audit reports are written to `docs/lighthouse/reports/` and the consolidated summary to `docs/lighthouse/summary.json`.
 
-## Deploy on Vercel
+## Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` – start the development server.
+- `npm run build` – build the production bundle.
+- `npm run start` – run the production server.
+- `npm run audit:mobile|tablet|desktop` – run Lighthouse for a single device profile.
+- `npm run audit:all` – run all Lighthouse audits sequentially.

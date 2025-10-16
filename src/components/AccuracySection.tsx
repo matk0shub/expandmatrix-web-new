@@ -58,7 +58,7 @@ export default function AccuracySection() {
         <div className="mb-20 lg:mb-32">
           {/* Main Title - aligned left, stacked vertically */}
           <div className="relative inline-block mb-8">
-            <h1 
+            <h2 
               className="heading-main block" 
             >
               <div>
@@ -67,7 +67,7 @@ export default function AccuracySection() {
               <div>
                 <ScrambleText text={t('title.line2')} applyScramble={false} />
               </div>
-            </h1>
+            </h2>
             
             {/* One large traveling neon blob with multiple gradient areas */}
             <div className="absolute -bottom-48 left-0 right-0 h-64 pointer-events-none">

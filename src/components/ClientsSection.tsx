@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import ScrambleText from './ScrambleText';
 
 interface BallConfig {
@@ -31,7 +32,7 @@ interface DragState {
   lastTime: number;
 }
 
-const FIXED_TIMESTEP = 1 / 120;
+const FIXED_TIMESTEP = 1 / 90;
 const GRAVITY = 2200; // px / s^2
 const AIR_DRAG = 0.05;
 const RESTITUTION = 0.86;
@@ -55,7 +56,8 @@ export default function ClientsSection() {
   const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
 
   const [isInViewport, setIsInViewport] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const [isMobileDisabled, setIsMobileDisabled] = useState(false);
 
   const ballConfigs = useMemo<BallConfig[]>(() => {
     const icons = ['💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧', '📊', '🎪'];
@@ -68,6 +70,23 @@ export default function ClientsSection() {
         size
       };
     });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const update = (event: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobileDisabled(event.matches);
+    };
+
+    update(mediaQuery);
+
+    const handleChange = (event: MediaQueryListEvent) => update(event);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
@@ -268,7 +287,7 @@ export default function ClientsSection() {
 
   // Fixed-step integrator keeps the simulation stable regardless of frame rate.
   const startAnimation = useCallback(() => {
-    if (prefersReducedMotion || !isInViewport || animationRef.current) {
+    if (prefersReducedMotion || isMobileDisabled || !isInViewport || animationRef.current) {
       return;
     }
 
@@ -293,7 +312,7 @@ export default function ClientsSection() {
       lastTime = time;
       loop(time);
     });
-  }, [isInViewport, prefersReducedMotion, renderBalls, updatePhysics]);
+  }, [isInViewport, isMobileDisabled, prefersReducedMotion, renderBalls, updatePhysics]);
 
   // Measure the container and seed every ball with deterministic yet varied initial state.
   const initializeBalls = useCallback(() => {
@@ -358,7 +377,7 @@ export default function ClientsSection() {
 
   const handlePointerPosition = useCallback(
     (event: PointerEvent | ReactPointerEvent<Element>) => {
-      if (!containerRef.current) {
+      if (isMobileDisabled || !containerRef.current) {
         return { x: 0, y: 0 };
       }
 
@@ -368,12 +387,12 @@ export default function ClientsSection() {
         y: event.clientY - rect.top
       };
     },
-    []
+    [isMobileDisabled]
   );
 
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!isInViewport) {
+      if (isMobileDisabled || !isInViewport) {
         return;
       }
 
@@ -399,11 +418,15 @@ export default function ClientsSection() {
         }
       }
     },
-    [handlePointerPosition, isInViewport]
+    [handlePointerPosition, isInViewport, isMobileDisabled]
   );
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (isMobileDisabled) {
+        return;
+      }
+
       const dragState = draggedBallRef.current;
       if (!dragState) {
         return;
@@ -428,10 +451,15 @@ export default function ClientsSection() {
 
       renderBalls();
     },
-    [handlePointerPosition, renderBalls]
+    [handlePointerPosition, isMobileDisabled, renderBalls]
   );
 
   const handlePointerUp = useCallback(() => {
+    if (isMobileDisabled) {
+      draggedBallRef.current = null;
+      return;
+    }
+
     const dragState = draggedBallRef.current;
     if (!dragState) {
       return;
@@ -443,9 +471,14 @@ export default function ClientsSection() {
     }
 
     draggedBallRef.current = null;
-  }, []);
+  }, [isMobileDisabled]);
 
   useEffect(() => {
+    if (isMobileDisabled) {
+      setIsInViewport(false);
+      return () => undefined;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInViewport(entry.isIntersecting);
@@ -458,21 +491,13 @@ export default function ClientsSection() {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [isMobileDisabled]);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
+    if (prefersReducedMotion || isMobileDisabled) {
+      return () => undefined;
+    }
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  useEffect(() => {
     // Wait for elements to be registered before initializing
     const timer = setTimeout(() => {
       if (ballElementsRef.current.size > 0) {
@@ -481,20 +506,20 @@ export default function ClientsSection() {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [initializeBalls]);
+  }, [initializeBalls, isMobileDisabled, prefersReducedMotion]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !isInViewport) {
+    if (prefersReducedMotion || isMobileDisabled || !isInViewport) {
       stopAnimation();
       return () => undefined;
     }
 
     startAnimation();
     return () => stopAnimation();
-  }, [isInViewport, prefersReducedMotion, startAnimation, stopAnimation]);
+  }, [isInViewport, isMobileDisabled, prefersReducedMotion, startAnimation, stopAnimation]);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || isMobileDisabled) {
       return;
     }
 
@@ -506,10 +531,10 @@ export default function ClientsSection() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation]);
+  }, [initializeBalls, isMobileDisabled, prefersReducedMotion, startAnimation, stopAnimation]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !textRef1.current || !textRef2.current || !sectionRef.current) {
+    if (prefersReducedMotion || isMobileDisabled || !textRef1.current || !textRef2.current || !sectionRef.current) {
       return;
     }
 
@@ -555,9 +580,13 @@ export default function ClientsSection() {
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [prefersReducedMotion]);
+  }, [isMobileDisabled, prefersReducedMotion]);
 
   useEffect(() => {
+    if (isMobileDisabled) {
+      return;
+    }
+
     const section = containerRef.current;
     if (!section) {
       return;
@@ -572,7 +601,42 @@ export default function ClientsSection() {
       section.removeEventListener('pointerup', handlePointerCancel);
       section.removeEventListener('pointercancel', handlePointerCancel);
     };
-  }, [handlePointerUp]);
+  }, [handlePointerUp, isMobileDisabled]);
+
+  if (isMobileDisabled) {
+    return (
+      <section className="relative w-full bg-black py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute -top-24 right-[-15%] w-[360px] h-[360px] rounded-full blur-3xl opacity-30"
+            style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.25) 0%, transparent 70%)' }}
+          />
+          <div
+            className="absolute bottom-[-10%] left-[-20%] w-[320px] h-[320px] rounded-full blur-3xl opacity-25"
+            style={{ background: 'radial-gradient(circle, rgba(0, 184, 92, 0.22) 0%, transparent 70%)' }}
+          />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-10">
+          <div className="text-center space-y-3">
+            <h2 className="heading-main text-balance text-white">{t('title')}</h2>
+            <p className="text-white/70 text-sm leading-relaxed">{t('title')}</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 sm:gap-6">
+            {ballConfigs.map((ball) => (
+              <div
+                key={ball.id}
+                className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+              >
+                <span className="text-3xl">{ball.icon}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

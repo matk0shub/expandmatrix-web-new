@@ -715,13 +715,13 @@ export default function ProcessSection() {
             <div className="mb-20 lg:mb-32">
               {/* Main Title */}
               <div className="relative inline-block mb-8">
-                <h1 
+                <h2 
                   className="heading-main" 
                 >
                   <div className="leading-tight">
                     <ScrambleText text={t('title')} applyScramble={false} />
                   </div>
-                </h1>
+                </h2>
               </div>
             </div>
 
