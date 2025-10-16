@@ -2,15 +2,10 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
-import { useMemo, useRef, useEffect } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useMemo } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 import type { TeamMember } from '@/hooks/useTeamMembers';
 import { useHasMounted } from '@/hooks/useHasMounted';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const SPOTLIGHT_ORDER = ['Matěj Štipčák', 'Matěj Venclík', 'Jakub Hrůza'];
 const FALLBACK_LOCALE = 'cs';
@@ -33,6 +28,7 @@ const CARD_NARRATIVES: Record<string, Narrative> = {
 };
 
 type TeamCardTheme = {
+  wrapperClass?: string;
   glowStyle: string;
   frameGradient: string;
   headerOverlay: string;
@@ -42,28 +38,31 @@ type TeamCardTheme = {
 
 const CARD_THEMES: TeamCardTheme[] = [
   {
-    glowStyle: 'radial-gradient(circle at 32% 22%, rgba(0, 166, 124, 0.6), transparent 72%)',
+    wrapperClass: '',
+    glowStyle: 'radial-gradient(circle at 32% 22%, rgba(0, 166, 124, 0.55), transparent 72%)',
     frameGradient:
-      'linear-gradient(145deg, rgba(11, 47, 38, 0.98), rgba(5, 25, 20, 0.99) 60%, rgba(2, 12, 10, 1))',
-    headerOverlay: 'linear-gradient(180deg, rgba(0, 166, 124, 0.4), rgba(0, 54, 44, 0.1))',
-    accentBorder: 'border-emerald-400/50',
-    accentGlow: 'bg-[radial-gradient(circle,rgba(0,166,124,0.4),transparent_70%)]',
-  },
-  {
-    glowStyle: 'radial-gradient(circle at 55% 28%, rgba(0, 208, 150, 0.65), transparent 70%)',
-    frameGradient:
-      'linear-gradient(150deg, rgba(11, 45, 37, 0.98), rgba(5, 23, 19, 0.99) 55%, rgba(2, 12, 10, 1))',
-    headerOverlay: 'linear-gradient(180deg, rgba(0, 195, 142, 0.38), rgba(0, 46, 37, 0.12))',
-    accentBorder: 'border-emerald-300/50',
-    accentGlow: 'bg-[radial-gradient(circle,rgba(0,195,142,0.38),transparent_70%)]',
-  },
-  {
-    glowStyle: 'radial-gradient(circle at 72% 80%, rgba(0, 180, 135, 0.55), transparent 70%)',
-    frameGradient:
-      'linear-gradient(150deg, rgba(11, 43, 38, 0.98), rgba(5, 22, 19, 0.99) 55%, rgba(2, 12, 10, 1))',
-    headerOverlay: 'linear-gradient(180deg, rgba(0, 180, 135, 0.35), rgba(0, 40, 32, 0.12))',
+      'linear-gradient(145deg, rgba(4, 26, 22, 0.95), rgba(2, 14, 12, 0.97) 60%, rgba(1, 8, 7, 0.98))',
+    headerOverlay: 'linear-gradient(180deg, rgba(0, 166, 124, 0.35), rgba(0, 54, 44, 0.05))',
     accentBorder: 'border-emerald-300/45',
-    accentGlow: 'bg-[radial-gradient(circle,rgba(0,180,135,0.38),transparent_70%)]',
+    accentGlow: 'bg-[radial-gradient(circle,rgba(0,166,124,0.35),transparent_65%)]',
+  },
+  {
+    wrapperClass: '',
+    glowStyle: 'radial-gradient(circle at 55% 28%, rgba(0, 208, 150, 0.58), transparent 70%)',
+    frameGradient:
+      'linear-gradient(150deg, rgba(3, 24, 21, 0.95), rgba(1, 13, 11, 0.97) 55%, rgba(1, 8, 7, 0.98))',
+    headerOverlay: 'linear-gradient(180deg, rgba(0, 195, 142, 0.32), rgba(0, 46, 37, 0.08))',
+    accentBorder: 'border-emerald-200/45',
+    accentGlow: 'bg-[radial-gradient(circle,rgba(0,195,142,0.32),transparent_65%)]',
+  },
+  {
+    wrapperClass: '',
+    glowStyle: 'radial-gradient(circle at 72% 80%, rgba(0, 180, 135, 0.5), transparent 70%)',
+    frameGradient:
+      'linear-gradient(150deg, rgba(4, 25, 22, 0.95), rgba(2, 14, 12, 0.97) 55%, rgba(1, 8, 7, 0.98))',
+    headerOverlay: 'linear-gradient(180deg, rgba(0, 180, 135, 0.3), rgba(0, 40, 32, 0.08))',
+    accentBorder: 'border-emerald-300/40',
+    accentGlow: 'bg-[radial-gradient(circle,rgba(0,180,135,0.32),transparent_65%)]',
   },
 ];
 
@@ -79,16 +78,10 @@ export default function TeamSection() {
   const t = useTranslations('sections.team');
   const locale = useLocale();
   const hasMounted = useHasMounted();
-  const prefersReducedMotion = useReducedMotion();
   const { teamMembers, loading, error } = useTeamMembers({
     locale,
     featuredOnly: true,
   });
-
-  const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const cardsRowRef = useRef<HTMLDivElement>(null);
 
   const spotlightMembers = useMemo(() => {
     const ordered = SPOTLIGHT_ORDER.map((name) =>
@@ -106,74 +99,6 @@ export default function TeamSection() {
 
     return [...ordered, ...fallback].slice(0, SPOTLIGHT_ORDER.length);
   }, [teamMembers]);
-
-  // GSAP Scroll Animation
-  useEffect(() => {
-    if (prefersReducedMotion || !spotlightMembers.length || !hasMounted) return;
-
-    const section = sectionRef.current;
-    const container = containerRef.current;
-    const heading = headingRef.current;
-    const cardsRow = cardsRowRef.current;
-
-    if (!section || !container || !heading || !cardsRow) return;
-
-    const cards = gsap.utils.toArray<HTMLElement>(cardsRow.children);
-    if (cards.length === 0) return;
-
-    const ctx = gsap.context(() => {
-      // Initial state: cards below viewport
-      gsap.set(cards, {
-        y: '30vh',
-        opacity: 0,
-      });
-
-      // Create timeline with ScrollTrigger
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: 'top top',
-          end: `+=${(cards.length - 1) * 100}%`,
-          scrub: true,
-          pin: true,
-          pinSpacing: false,
-          anticipatePin: 1,
-        },
-      });
-
-      // Animate each card moving up and through the heading
-      cards.forEach((card, index) => {
-        const startProgress = index / cards.length;
-        const endProgress = (index + 1) / cards.length;
-
-        tl.to(
-          card,
-          {
-            y: '-100vh',
-            opacity: 1,
-            ease: 'none',
-          },
-          startProgress
-        );
-
-        // Fade out as it goes past
-        tl.to(
-          card,
-          {
-            opacity: 0,
-            ease: 'power1.in',
-          },
-          endProgress - 0.1
-        );
-      });
-
-      ScrollTrigger.refresh();
-    }, section);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [spotlightMembers, hasMounted, prefersReducedMotion]);
 
   if (!hasMounted || loading) {
     return (
@@ -203,71 +128,57 @@ export default function TeamSection() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full bg-[#020b08] overflow-hidden"
-    >
+    <section className="relative w-full bg-[#020b08] py-24 md:py-40 lg:py-48 overflow-hidden">
       {/* Background gradients */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,120,90,0.4),rgba(1,10,8,0.98))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,120,90,0.35),rgba(1,10,8,0.96))]" />
         <div
-          className="absolute left-1/2 top-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[180px] opacity-40"
+          className="absolute left-1/2 top-[46%] h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[160px] opacity-40"
           style={{
             background:
-              'radial-gradient(circle, rgba(0, 166, 124, 0.5) 0%, rgba(0, 50, 39, 0) 70%)',
+              'radial-gradient(circle, rgba(0, 166, 124, 0.45) 0%, rgba(0, 50, 39, 0) 70%)',
           }}
         />
         <div
-          className="absolute right-[10%] top-[20%] h-[400px] w-[400px] rounded-full blur-[140px] opacity-30"
+          className="absolute right-[12%] top-[18%] h-[320px] w-[320px] rounded-full blur-[120px] opacity-30"
           style={{
             background:
-              'radial-gradient(circle, rgba(72, 255, 199, 0.4) 0%, rgba(12, 36, 29, 0) 70%)',
+              'radial-gradient(circle, rgba(72, 255, 199, 0.38) 0%, rgba(12, 36, 29, 0) 70%)',
           }}
         />
         <div
-          className="absolute left-[10%] bottom-[20%] h-[450px] w-[450px] rounded-full blur-[160px] opacity-25"
+          className="absolute left-[14%] bottom-[14%] h-[380px] w-[380px] rounded-full blur-[140px] opacity-25"
           style={{
             background:
-              'radial-gradient(circle, rgba(0, 214, 158, 0.3) 0%, rgba(10, 35, 28, 0) 70%)',
+              'radial-gradient(circle, rgba(0, 214, 158, 0.28) 0%, rgba(10, 35, 28, 0) 70%)',
           }}
         />
       </div>
 
-      {/* Main container - will be pinned */}
-      <div
-        ref={containerRef}
-        className="relative min-h-screen w-full flex items-center justify-center"
-      >
-        {/* Fixed heading in center */}
-        <h1
-          ref={headingRef}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 heading-main text-center text-white/90 px-6 pointer-events-none"
-          style={{
-            textShadow: '0 4px 20px rgba(0, 166, 124, 0.3)',
-          }}
-        >
-          {t('title')}
-        </h1>
+      <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
+        <div className="relative flex flex-col items-center justify-center">
+          {/* Title */}
+          <h1 className="heading-main text-center text-white/85 mb-12 md:mb-16 lg:mb-20">
+            {t('title')}
+          </h1>
 
-        {/* Cards row - will scroll through */}
-        <div
-          ref={cardsRowRef}
-          className="relative z-10 flex gap-8 lg:gap-12 items-center justify-center px-6 md:px-12"
-        >
-          {spotlightMembers.map((member, index) => {
-            const theme = CARD_THEMES[index] ?? CARD_THEMES[CARD_THEMES.length - 1];
-            const narrative = CARD_NARRATIVES[member.name as keyof typeof CARD_NARRATIVES];
+          {/* Team Cards */}
+          <div className="relative flex w-full max-w-5xl flex-col items-center gap-10 lg:flex-row lg:justify-center lg:gap-12">
+            {spotlightMembers.map((member, index) => {
+              const theme = CARD_THEMES[index] ?? CARD_THEMES[CARD_THEMES.length - 1];
+              const narrative = CARD_NARRATIVES[member.name as keyof typeof CARD_NARRATIVES];
 
-            return (
-              <TeamSpotlightCard
-                key={member.id}
-                member={member}
-                locale={locale}
-                narrative={narrative}
-                theme={theme}
-              />
-            );
-          })}
+              return (
+                <TeamSpotlightCard
+                  key={member.id}
+                  member={member}
+                  locale={locale}
+                  narrative={narrative}
+                  theme={theme}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -299,94 +210,82 @@ function TeamSpotlightCard({
   }, [member.name]);
 
   return (
-    <article className="team-card relative w-full max-w-[380px] lg:w-[360px] xl:w-[400px] 2xl:w-[420px] flex-shrink-0">
-      {/* Glow effect */}
-      <div className="pointer-events-none absolute -inset-24 rounded-[48px] opacity-60 blur-[100px]">
+    <article
+      className={`team-card relative w-full max-w-[440px] sm:max-w-[500px] md:max-w-[520px] lg:max-w-none lg:w-[300px] xl:w-[340px] 2xl:w-[360px] ${
+        theme.wrapperClass ?? ''
+      }`}
+    >
+      <div className="relative z-10 overflow-hidden rounded-[30px] border border-white/10 bg-black/30 backdrop-blur-3xl p-[1px] shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
         <div
-          className="h-full w-full rounded-[48px]"
-          style={{
-            background: theme.glowStyle,
-          }}
-        />
-      </div>
-
-      {/* Card content */}
-      <div className="relative z-10 overflow-hidden rounded-[32px] border border-white/15 bg-black/40 backdrop-blur-3xl p-[1.5px] shadow-[0_40px_140px_rgba(0,0,0,0.5)]">
-        <div
-          className="relative rounded-[30px] pb-10"
+          className="relative rounded-[28px] pb-9"
           style={{
             background: theme.frameGradient,
           }}
         >
-          {/* Image header */}
-          <div className="relative w-full overflow-hidden rounded-t-[30px] border-b border-white/15">
-            <div className="relative aspect-[4/3] w-full overflow-hidden">
+          <div className="relative w-full overflow-hidden rounded-t-[28px] border-b border-white/10">
+            <div className="relative aspect-[3/2] w-full overflow-hidden">
               {member.avatar?.url ? (
                 <Image
                   src={member.avatar.url}
                   alt={member.avatar.alt || member.name}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 420px, 480px"
+                  sizes="(max-width: 768px) 480px, (max-width: 1280px) 540px, 600px"
                   priority={false}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500/50 via-emerald-400/35 to-transparent text-5xl font-semibold text-white/90">
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500/40 via-emerald-400/30 to-transparent text-4xl font-semibold text-white/85">
                   {initials}
                 </div>
               )}
             </div>
             <div
-              className="pointer-events-none absolute inset-0 rounded-t-[30px]"
+              className="pointer-events-none absolute inset-0 rounded-t-[28px]"
               style={{
                 background: theme.headerOverlay,
               }}
             />
             <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-20"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-16"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%)',
+                  'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.32) 100%)',
               }}
             />
           </div>
 
-          {/* Card body */}
-          <div className="px-9 pt-10 md:px-10 md:pt-11">
-            <div className="flex flex-col gap-5">
-              <div className={`inline-flex items-center gap-2 rounded-full border ${theme.accentBorder} bg-white/8 px-5 py-2.5 text-[11px] uppercase tracking-[0.35em] text-emerald-100/85`}>
+          <div className="px-8 pt-9 md:px-9 md:pt-10">
+            <div className="flex flex-col gap-4">
+              <div className={`inline-flex items-center gap-2 rounded-full border ${theme.accentBorder} bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.32em] text-emerald-100/80`}>
                 {localizedRole}
               </div>
-              <h3 className="text-[32px] font-semibold text-white md:text-[36px]">{member.name}</h3>
+              <h3 className="text-[28px] font-semibold text-white md:text-[32px]">{member.name}</h3>
               {localizedNarrative && (
-                <p className="text-lg leading-relaxed text-emerald-100/85 md:text-xl">
+                <p className="text-base leading-relaxed text-emerald-100/80 md:text-lg">
                   {localizedNarrative}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Footer accent */}
-          <div className="px-9 md:px-10">
-            <div className="mt-10 flex items-center gap-3">
-              <div className="h-[2px] w-20 bg-gradient-to-r from-emerald-300 via-emerald-400/60 to-transparent" />
-              <span className="text-[11px] uppercase tracking-[0.3em] text-emerald-200/60">
+          <div className="px-8 md:px-9">
+            <div className="mt-9 flex items-center gap-3">
+              <div className="h-[2px] w-16 bg-gradient-to-r from-emerald-300 via-emerald-400/50 to-transparent" />
+              <span className="text-[11px] uppercase tracking-[0.28em] text-emerald-200/50">
                 Orbit stabilised
               </span>
             </div>
           </div>
 
-          {/* Bottom glow */}
           <div
-            className="absolute -bottom-10 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full blur-[60px] opacity-75"
+            className="absolute -bottom-8 left-1/2 h-20 w-20 -translate-x-1/2 rounded-full blur-[55px] opacity-70"
             style={{
-              background: 'radial-gradient(circle, rgba(0, 214, 158, 0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(0, 214, 158, 0.35) 0%, transparent 70%)',
             }}
           />
 
-          {/* Accent orb */}
           <div
-            className={`absolute -bottom-7 right-6 h-12 w-12 rounded-full border border-white/15 backdrop-blur-xl ${theme.accentGlow}`}
+            className={`absolute -bottom-6 right-5 h-11 w-11 rounded-full border border-white/10 backdrop-blur-xl ${theme.accentGlow}`}
           />
         </div>
       </div>
