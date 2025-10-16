@@ -93,6 +93,7 @@
         "line1": "We're a young, driven team",
         "line2": "that isn't afraid of any challenge"
       },
+      "description": "We combine strategic thinking, AI agent engineering, and digital products that move brands and teams forward.",
       "loading": "Loading team...",
       "error": "Error loading team"
     },
