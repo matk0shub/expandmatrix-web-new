@@ -469,7 +469,10 @@ function TeamSectionHeader() {
   const t = useTranslations('sections.team');
 
   return (
-    <div className="heading-wrapper absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none flex w-full max-w-4xl items-center justify-center px-6">
+    <div 
+      className="heading-wrapper absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none flex w-full max-w-4xl items-center justify-center px-6"
+      style={{ willChange: 'auto' }}
+    >
       <h1 className="heading-main text-balance text-center">
         <ScrambleText text={t('title')} applyScramble={false} />
       </h1>
@@ -686,6 +689,7 @@ export default function TeamSection() {
     if (!section) return;
 
     const cards = section.querySelectorAll<HTMLElement>('.team-card');
+    const header = document.querySelector<HTMLElement>('.heading-wrapper');
 
     if (!cards.length) return;
 
@@ -703,6 +707,19 @@ export default function TeamSection() {
 
       // Set initial states - cards start from bottom
       gsap.set(cardElements, { yPercent: 150, opacity: 0 });
+      
+      // Ensure header stays fixed in place - prevent any transform
+      if (header) {
+        gsap.set(header, {
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          xPercent: -50,
+          yPercent: -50,
+          zIndex: 20,
+          pointerEvents: 'none'
+        });
+      }
 
       const timeline = gsap.timeline({
         defaults: { ease: 'power1.out' },
@@ -714,6 +731,19 @@ export default function TeamSection() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: () => {
+            // Force header to stay in place during scroll
+            if (header) {
+              gsap.set(header, {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                xPercent: -50,
+                yPercent: -50,
+                clearProps: 'transform'
+              });
+            }
+          },
         },
       });
 
@@ -772,15 +802,19 @@ export default function TeamSection() {
         <div
           id="our-team-section"
           data-section="our-team"
-          ref={sectionRef}
-          className="relative flex min-h-screen w-full items-center justify-center overflow-visible"
+          className="relative min-h-screen w-full"
         >
-          {/* Header - pinned to center of section */}
+          {/* Header - absolutely positioned, not affected by ScrollTrigger */}
           <TeamSectionHeader />
 
-          {/* Cards - will animate over the header */}
-          <div className="relative w-full z-50">
-            <TeamCardsGrid members={spotlightMembers} locale={locale} />
+          {/* Cards container - this will be pinned by ScrollTrigger */}
+          <div 
+            ref={sectionRef}
+            className="relative flex min-h-screen w-full items-center justify-center overflow-visible"
+          >
+            <div className="relative w-full z-50">
+              <TeamCardsGrid members={spotlightMembers} locale={locale} />
+            </div>
           </div>
         </div>
       </div>
