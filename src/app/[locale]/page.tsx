@@ -6,7 +6,6 @@ import ClientsSection from '@/components/ClientsSection';
 import ServicesSection from '@/components/ServicesSection';
 import ProcessSection from '@/components/ProcessSection';
 import ReferencesSection from '@/components/ReferencesSection';
-import TeamSection from '@/components/TeamSection';
 import FAQSection from '@/components/FAQSection';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
@@ -39,7 +38,6 @@ export default function Home() {
       <div id="references">
         <ReferencesSection references={references} />
       </div>
-      <TeamSection />
       <div id="faq">
         <FAQSection />
       </div>
