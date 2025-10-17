@@ -89,12 +89,52 @@
       "viewProfile": "Zobrazit profil"
     },
     "team": {
-      "title": {
-        "line1": "Jsme mladý, dravý tým,",
-        "line2": "který se nebojí žádné výzvy"
-      },
-      "loading": "Načítání týmu...",
-      "error": "Chyba při načítání týmu"
+      "eyebrow": "poznejte náš",
+      "title": "Tým",
+      "description": "Jsme multidisciplinární parta, která kombinuje AI strategii, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
+      "availability": "Připravení na nové výzvy",
+      "members": {
+        "strategist": {
+          "name": "Tomáš Valenta",
+          "role": "Lead strategie AI",
+          "bio": "Proměňuje ambiciózní vize v realizovatelné AI roadmapy postavené na datech, ověřování a reálných výsledcích.",
+          "focus": [
+            "AI audity & roadmapy",
+            "Růstové experimenty",
+            "Leadership enablement"
+          ]
+        },
+        "technologist": {
+          "name": "Dominika Králová",
+          "role": "Lead AI inženýrka",
+          "bio": "Navrhuje škálovatelné AI stacky, řídí integrace a zajišťuje, že naše automatizace drží krok s produkcí.",
+          "focus": [
+            "Autonomní agenti",
+            "Systémová architektura",
+            "Datové pipeline"
+          ]
+        },
+        "designer": {
+          "name": "Filip Marek",
+          "role": "Produktový & brand designer",
+          "bio": "Tvoří prémiové digitální zážitky, které působí přirozeně, lépe konvertují a drží se identity značky.",
+          "focus": [
+            "AI-first UX",
+            "Design systémy",
+            "Interaktivní storytelling"
+          ]
+        },
+        "operator": {
+          "name": "Veronika Dostálová",
+          "role": "Delivery & success lead",
+          "bio": "Hlídá ostrou exekuci, sladění stakeholderů a každý milník oslaví s precizností jí vlastní.",
+          "focus": [
+            "Klientské operace",
+            "Výkonová analytika",
+            "Partnerský ekosystém"
+          ]
+        }
+      }
     },
     "faq": {
       "title": {

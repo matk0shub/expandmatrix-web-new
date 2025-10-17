@@ -1,4 +1,5 @@
 import localFont from 'next/font/local';
+import { Poppins } from 'next/font/google';
 
 // Centralized font configuration ensures consistent fallbacks and font-display
 // settings across both server and client components while letting Next.js
@@ -24,4 +25,11 @@ export const lato = localFont({
   display: 'swap',
   variable: '--font-lato',
   preload: true,
+});
+
+export const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '800'],
+  display: 'swap',
+  variable: '--font-poppins',
 });
