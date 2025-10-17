@@ -17,6 +17,7 @@ export default function TeamSection() {
   const locale = useLocale();
   const t = useTranslations('sections.team');
   const hasMounted = useHasMounted();
+  const sectionRef = useRef<HTMLElement | null>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const { teamMembers, loading, error } = useTeamMembers({
@@ -71,10 +72,21 @@ export default function TeamSection() {
     if (!hasMounted) return;
 
     const cardsContainer = cardsRef.current;
+    const sectionElement = sectionRef.current;
+    const headerElement = document.querySelector('.team-heading');
+    
     if (!cardsContainer) return;
 
     const cards = cardsContainer.querySelectorAll<HTMLElement>('.team-card');
     if (!cards.length) return;
+
+    // EXPLICITNĚ zakázat animace na headeru
+    if (headerElement) {
+      gsap.set(headerElement, { 
+        clearProps: 'all',
+        transform: 'none'
+      });
+    }
 
     if (prefersReducedMotion) {
       gsap.set(cards, { clearProps: 'transform,opacity' });
@@ -86,9 +98,9 @@ export default function TeamSection() {
 
       const cardElements = Array.from(cards);
 
-      // Simple fade in from bottom as cards enter viewport
+      // Animovat POUZE karty, NE celý container
       gsap.fromTo(
-        cardElements,
+        cardElements, // pouze karty!
         { y: 50, opacity: 0 },
         {
           y: 0,
@@ -97,17 +109,22 @@ export default function TeamSection() {
           stagger: 0.1,
           ease: 'power2.out',
           scrollTrigger: {
-            trigger: cardsContainer,
-            start: 'top 80%',
-            end: 'top 50%',
-            scrub: 1,
+            trigger: cardsContainer, // trigger na kontejneru karet
+            start: 'top 75%', // začít když karty jsou 75% od horního okraje viewportu
+            end: () => {
+              if (!sectionElement) return 'center center';
+              // Skončit ve středu sekce
+              const sectionCenter = sectionElement.offsetTop + sectionElement.offsetHeight / 2;
+              return `${sectionCenter}px center`;
+            },
+            scrub: 1.2,
             invalidateOnRefresh: true,
           },
         }
       );
 
       ScrollTrigger.refresh();
-    });
+    }, cardsContainer); // context scope POUZE na cardsContainer
 
     return () => ctx.revert();
   }, [hasMounted, prefersReducedMotion, spotlightMembers.length]);
@@ -149,6 +166,7 @@ export default function TeamSection() {
       id="our-team-section"
       data-section="our-team"
       className="relative w-full bg-black py-24 md:py-40 lg:py-48"
+      ref={sectionRef}
     >
       <TeamSectionBackground />
 

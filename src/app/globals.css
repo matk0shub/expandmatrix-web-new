@@ -111,6 +111,11 @@ h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* EXPLICITNĚ zakázat jakékoliv animace */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
 }
 
 .heading-secondary {
