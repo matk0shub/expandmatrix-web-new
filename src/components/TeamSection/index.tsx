@@ -73,19 +73,20 @@ export default function TeamSection() {
 
     const cardsContainer = cardsRef.current;
     const sectionElement = sectionRef.current;
-    const headerElement = document.querySelector('.team-heading');
-    
     if (!cardsContainer) return;
 
     const cards = cardsContainer.querySelectorAll<HTMLElement>('.team-card');
     if (!cards.length) return;
 
-    // EXPLICITNĚ zakázat animace na headeru
-    if (headerElement) {
-      gsap.set(headerElement, { 
-        clearProps: 'all',
-        transform: 'none'
-      });
+    // EXPLICITNĚ zakázat jakékoliv animace na nadpisu - je mimo GSAP context
+    if (sectionElement) {
+      const headerElement = sectionElement.querySelector('.team-heading');
+      if (headerElement) {
+        gsap.set(headerElement, { 
+          clearProps: 'all',
+          transform: 'none'
+        });
+      }
     }
 
     if (prefersReducedMotion) {
@@ -98,9 +99,9 @@ export default function TeamSection() {
 
       const cardElements = Array.from(cards);
 
-      // Animovat POUZE karty, NE celý container
+      // Simple fade in from bottom as cards enter viewport
       gsap.fromTo(
-        cardElements, // pouze karty!
+        cardElements,
         { y: 50, opacity: 0 },
         {
           y: 0,
@@ -109,12 +110,14 @@ export default function TeamSection() {
           stagger: 0.1,
           ease: 'power2.out',
           scrollTrigger: {
-            trigger: cardsContainer, // trigger na kontejneru karet
-            start: 'top 75%', // začít když karty jsou 75% od horního okraje viewportu
+            trigger: cardsContainer,
+            start: 'top 75%',
             end: () => {
               if (!sectionElement) return 'center center';
-              // Skončit ve středu sekce
-              const sectionCenter = sectionElement.offsetTop + sectionElement.offsetHeight / 2;
+              // Skončit ve středu sekce - počítáno od horního okraje dokumentu
+              const sectionTop = sectionElement.offsetTop;
+              const sectionHeight = sectionElement.offsetHeight;
+              const sectionCenter = sectionTop + sectionHeight / 2;
               return `${sectionCenter}px center`;
             },
             scrub: 1.2,
@@ -124,7 +127,7 @@ export default function TeamSection() {
       );
 
       ScrollTrigger.refresh();
-    }, cardsContainer); // context scope POUZE na cardsContainer
+    }, cardsContainer);
 
     return () => ctx.revert();
   }, [hasMounted, prefersReducedMotion, spotlightMembers.length]);
