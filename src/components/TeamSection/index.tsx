@@ -6,11 +6,9 @@ import { useMemo, useRef, useEffect, useState } from 'react';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 import type { TeamMember } from '@/hooks/useTeamMembers';
 import { useHasMounted } from '@/hooks/useHasMounted';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TeamSectionBackground from './TeamSectionBackground';
 import TeamSectionHeader from './TeamSectionHeader';
-import TeamCardsGrid from './TeamCardsGrid';
+import AnimatedTeamCards from './AnimatedTeamCards';
 import { SPOTLIGHT_ORDER } from './constants';
 
 export default function TeamSection() {
@@ -18,7 +16,6 @@ export default function TeamSection() {
   const t = useTranslations('sections.team');
   const hasMounted = useHasMounted();
   const sectionRef = useRef<HTMLElement | null>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const { teamMembers, loading, error } = useTeamMembers({
     locale,
@@ -42,7 +39,7 @@ export default function TeamSection() {
     return [...ordered, ...fallback].slice(0, SPOTLIGHT_ORDER.length);
   }, [teamMembers]);
 
-  // Respect reduced motion preference before wiring scroll effects.
+  // Respect reduced motion preference
   useEffect(() => {
     if (!hasMounted) return;
 
@@ -66,83 +63,6 @@ export default function TeamSection() {
       }
     };
   }, [hasMounted]);
-
-  // EFFECT 1: Zastavit animaci nadpisu - ŽÁDNÁ GSAP ANIMACE NA HEADERU!
-  useEffect(() => {
-    if (!hasMounted) return;
-
-    const sectionElement = sectionRef.current;
-    if (!sectionElement) return;
-
-    const headerElement = sectionElement.querySelector('.team-heading') as HTMLElement;
-    if (!headerElement) return;
-
-    // Nastavit transform: none a zakázat všechny transformace
-    gsap.set(headerElement, {
-      clearProps: 'all',
-      transform: 'none',
-      x: 0,
-      y: 0,
-      scale: 1,
-      opacity: 1,
-      rotation: 0,
-      skewX: 0,
-      skewY: 0,
-    });
-
-    // Zabránit jakýmkoliv budoucím GSAP animacím na headeru
-    gsap.to(headerElement, {
-      x: 0,
-      y: 0,
-      overwrite: 'auto', // Přepsat všechny existující animace
-    });
-  }, [hasMounted]);
-
-  // EFFECT 2: Animace POUZE karet - zcela izolované od headeru
-  useEffect(() => {
-    if (!hasMounted || prefersReducedMotion) return;
-
-    const cardsContainer = cardsRef.current;
-    if (!cardsContainer) return;
-
-    const cards = Array.from(cardsContainer.querySelectorAll<HTMLElement>('.team-card'));
-    if (!cards.length) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Vytvorit nový GSAP context POUZE pro karty
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        cards,
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: cardsContainer,
-            start: 'top 75%',
-            end: () => {
-              const sectionElement = sectionRef.current;
-              if (!sectionElement) return 'center center';
-              const sectionTop = sectionElement.offsetTop;
-              const sectionHeight = sectionElement.offsetHeight;
-              const sectionCenter = sectionTop + sectionHeight / 2;
-              return `${sectionCenter}px center`;
-            },
-            scrub: 1.2,
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-    }, cardsContainer);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [hasMounted, prefersReducedMotion]);
 
   // Loading state
   if (!hasMounted || loading) {
@@ -186,13 +106,16 @@ export default function TeamSection() {
       <TeamSectionBackground />
 
       <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 flex flex-col items-center gap-16 lg:gap-24">
+        {/* Static heading - NO animation */}
         <TeamSectionHeader />
 
-        <div ref={cardsRef} className="relative w-full flex justify-center">
-          <div className="w-full">
-            <TeamCardsGrid members={spotlightMembers} locale={locale} />
-          </div>
-        </div>
+        {/* Animated cards - isolated in separate component */}
+        <AnimatedTeamCards
+          members={spotlightMembers}
+          locale={locale}
+          sectionRef={sectionRef}
+          prefersReducedMotion={prefersReducedMotion}
+        />
       </div>
     </section>
   );
