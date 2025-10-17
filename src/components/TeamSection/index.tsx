@@ -67,41 +67,53 @@ export default function TeamSection() {
     };
   }, [hasMounted]);
 
-  // Simple fade-in animation for cards (no pinning)
+  // EFFECT 1: Zastavit animaci nadpisu - ŽÁDNÁ GSAP ANIMACE NA HEADERU!
   useEffect(() => {
     if (!hasMounted) return;
 
-    const cardsContainer = cardsRef.current;
     const sectionElement = sectionRef.current;
+    if (!sectionElement) return;
+
+    const headerElement = sectionElement.querySelector('.team-heading') as HTMLElement;
+    if (!headerElement) return;
+
+    // Nastavit transform: none a zakázat všechny transformace
+    gsap.set(headerElement, {
+      clearProps: 'all',
+      transform: 'none',
+      x: 0,
+      y: 0,
+      scale: 1,
+      opacity: 1,
+      rotation: 0,
+      skewX: 0,
+      skewY: 0,
+    });
+
+    // Zabránit jakýmkoliv budoucím GSAP animacím na headeru
+    gsap.to(headerElement, {
+      x: 0,
+      y: 0,
+      overwrite: 'auto', // Přepsat všechny existující animace
+    });
+  }, [hasMounted]);
+
+  // EFFECT 2: Animace POUZE karet - zcela izolované od headeru
+  useEffect(() => {
+    if (!hasMounted || prefersReducedMotion) return;
+
+    const cardsContainer = cardsRef.current;
     if (!cardsContainer) return;
 
-    const cards = cardsContainer.querySelectorAll<HTMLElement>('.team-card');
+    const cards = Array.from(cardsContainer.querySelectorAll<HTMLElement>('.team-card'));
     if (!cards.length) return;
 
-    // EXPLICITNĚ zakázat jakékoliv animace na nadpisu - je mimo GSAP context
-    if (sectionElement) {
-      const headerElement = sectionElement.querySelector('.team-heading');
-      if (headerElement) {
-        gsap.set(headerElement, { 
-          clearProps: 'all',
-          transform: 'none'
-        });
-      }
-    }
+    gsap.registerPlugin(ScrollTrigger);
 
-    if (prefersReducedMotion) {
-      gsap.set(cards, { clearProps: 'transform,opacity' });
-      return;
-    }
-
+    // Vytvorit nový GSAP context POUZE pro karty
     const ctx = gsap.context(() => {
-      gsap.registerPlugin(ScrollTrigger);
-
-      const cardElements = Array.from(cards);
-
-      // Simple fade in from bottom as cards enter viewport
       gsap.fromTo(
-        cardElements,
+        cards,
         { y: 50, opacity: 0 },
         {
           y: 0,
@@ -113,8 +125,8 @@ export default function TeamSection() {
             trigger: cardsContainer,
             start: 'top 75%',
             end: () => {
+              const sectionElement = sectionRef.current;
               if (!sectionElement) return 'center center';
-              // Skončit ve středu sekce - počítáno od horního okraje dokumentu
               const sectionTop = sectionElement.offsetTop;
               const sectionHeight = sectionElement.offsetHeight;
               const sectionCenter = sectionTop + sectionHeight / 2;
@@ -125,12 +137,12 @@ export default function TeamSection() {
           },
         }
       );
-
-      ScrollTrigger.refresh();
     }, cardsContainer);
 
-    return () => ctx.revert();
-  }, [hasMounted, prefersReducedMotion, spotlightMembers.length]);
+    return () => {
+      ctx.revert();
+    };
+  }, [hasMounted, prefersReducedMotion]);
 
   // Loading state
   if (!hasMounted || loading) {
