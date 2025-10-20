@@ -85,8 +85,8 @@ export default function ReferenceList({
                   text={reference.name}
                   className={`font-bold transition-all duration-300 ${
                     isActive 
-                      ? 'text-4xl lg:text-5xl text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)]' 
-                      : 'text-2xl lg:text-3xl text-gray-200 drop-shadow-[0_0_15px_rgba(0,0,0,0.6)]'
+                      ? 'text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)]' 
+                      : 'text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-200 drop-shadow-[0_0_15px_rgba(0,0,0,0.6)]'
                   }`}
                   applyScramble={shouldAnimate && !prefersReducedMotion}
                   trigger="manual"

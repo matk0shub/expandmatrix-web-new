@@ -139,7 +139,11 @@ export default function ReferencesSection({ references }: ReferencesSectionProps
       }}
       className="relative min-h-screen bg-black text-white rounded-3xl overflow-hidden mx-4 my-8"
       id="references"
+      itemScope
+      itemType="https://schema.org/ItemList"
     >
+      <meta itemProp="name" content="Client References" />
+      <meta itemProp="description" content="Featured client success stories and AI implementation results" />
       {/* Full-width background images */}
       <div className={`${isPinned ? 'fixed inset-0 z-10' : 'relative'} h-screen`}>
         <AnimatePresence mode="wait">
@@ -153,9 +157,9 @@ export default function ReferencesSection({ references }: ReferencesSectionProps
         </AnimatePresence>
 
         {/* Content overlay with max-width constraint */}
-        <div className="absolute inset-0 flex max-w-[1780px] mx-auto">
+        <div className="absolute inset-0 flex flex-col lg:flex-row max-w-[1780px] mx-auto">
           {/* Left side - Reference list */}
-          <div className="w-1/2 flex flex-col justify-center px-8 lg:px-16 relative z-10">
+          <div className="w-full lg:w-1/2 flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-8 lg:py-0 relative z-10">
             <div className="max-w-md">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -176,7 +180,7 @@ export default function ReferencesSection({ references }: ReferencesSectionProps
           </div>
 
           {/* Right side - Stats card */}
-          <div className="w-1/2 relative">
+          <div className="w-full lg:w-1/2 relative">
             <AnimatePresence>
               {activeReference && (
                 <ReferenceStatsCard
