@@ -154,7 +154,7 @@ export default function TeamSection() {
                       {member.focus.map((item, focusIndex) => (
                         <li
                           key={`${member.key}-focus-${focusIndex}`}
-                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs sm:text-[0.65rem] uppercase tracking-[0.26em] text-white/70 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/80"
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/70 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/80"
                         >
                           {item}
                         </li>
