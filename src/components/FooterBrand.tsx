@@ -30,12 +30,12 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
           
           {/* Logo with pulse effect */}
           <div className="relative">
-            <Image 
-              src="/logo.svg" 
-              alt="ExpandMatrix" 
-              width={48} 
-              height={48} 
-              priority 
+            <Image
+              src="/logo.svg"
+              alt="Expand Matrix logo"
+              width={48}
+              height={48}
+              priority
               className="relative z-10 transition-transform duration-300 group-hover:scale-110"
             />
             {/* Pulsing glow ring */}

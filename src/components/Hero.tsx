@@ -348,9 +348,9 @@ export default function Hero() {
                     opacity: Math.max(0, 1 - (i * 0.02)),
                   }}
                 >
-                  <Image 
-                    src="/logo.svg" 
-                    alt="Expand Matrix" 
+                  <Image
+                    src="/logo.svg"
+                    alt="Expand Matrix logo"
                     width={200}
                     height={200}
                     className="w-full h-full object-contain"
@@ -374,9 +374,9 @@ export default function Hero() {
               >
                 <div className="relative w-full h-full">
                   {/* Base Logo with Consistent Lighting */}
-                  <Image 
-                    src="/logo.svg" 
-                    alt="Expand Matrix" 
+                  <Image
+                    src="/logo.svg"
+                    alt="Expand Matrix logo"
                     width={200}
                     height={200}
                     className="w-full h-full object-contain relative z-10"
