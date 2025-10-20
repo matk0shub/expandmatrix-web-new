@@ -310,8 +310,9 @@ export default function ClientsSection() {
   const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 200, 420));
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
-  const primaryTextSize = clampValue(layout.greenRadius * 0.32, 28, 44);
-  const secondaryTextSize = clampValue(layout.greenRadius * 0.28, 22, 36);
+  const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 30, 60);
+  const primaryTextSize = unifiedHeadingSize;
+  const secondaryTextSize = unifiedHeadingSize;
   const iconFontSize = clampValue(layout.ballSize * 0.38, 22, 52);
 
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
@@ -847,12 +848,14 @@ export default function ClientsSection() {
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
     return () => {
       if (scrollAnimationFrame.current) {
         cancelAnimationFrame(scrollAnimationFrame.current);
         scrollAnimationFrame.current = null;
       }
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
     };
   }, [clampValue, circleDiameter, prefersReducedMotion]);
 
@@ -962,12 +965,11 @@ export default function ClientsSection() {
           <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
             <div
               ref={textRef1}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap"
+              className="text-white font-semibold uppercase font-lato whitespace-nowrap"
               style={{
                 letterSpacing: '0.12em',
                 transform: 'translateX(0px)',
-                fontWeight: 600,
-                lineHeight: 1.08,
+                lineHeight: 1.04,
                 fontSize: `${primaryTextSize}px`
               }}
             >
@@ -975,12 +977,11 @@ export default function ClientsSection() {
             </div>
             <div
               ref={textRef2}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap"
+              className="text-white font-semibold uppercase font-lato whitespace-nowrap"
               style={{
                 letterSpacing: '0.12em',
                 transform: 'translateX(0px)',
-                fontWeight: 400,
-                lineHeight: 1.08,
+                lineHeight: 1.04,
                 marginTop: '-0.08em',
                 fontSize: `${secondaryTextSize}px`
               }}
