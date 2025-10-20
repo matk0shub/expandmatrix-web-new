@@ -86,7 +86,11 @@ export default function FAQSection() {
   }
 
   return (
-    <section className="relative w-full bg-black py-24 md:py-40 lg:py-48 overflow-hidden">
+    <section 
+      className="relative w-full bg-black py-24 md:py-40 lg:py-48 overflow-hidden"
+      itemScope
+      itemType="https://schema.org/FAQPage"
+    >
       {/* Background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
@@ -173,8 +177,12 @@ export default function FAQSection() {
                       ease: "easeOut" 
                     }}
                     className="relative"
+                    itemScope
+                    itemProp="mainEntity"
+                    itemType="https://schema.org/Question"
                   >
                     <div className="relative bg-[#0B0B0B] rounded-2xl border border-white/10 overflow-hidden shadow-lg">
+                      <meta itemProp="name" content={question} />
                       {/* Left edge accent */}
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00d76b] to-[#00b85c] opacity-60" />
                       
@@ -233,10 +241,13 @@ export default function FAQSection() {
                               ease: "easeInOut" 
                             }}
                             className="overflow-hidden"
+                            itemScope
+                            itemProp="acceptedAnswer"
+                            itemType="https://schema.org/Answer"
                           >
                             <div className="px-6 pb-6">
                               <div className="pt-2 border-t border-white/10">
-                                <p className="text-white/80 text-base md:text-lg leading-relaxed pt-4">
+                                <p className="text-white/80 text-base md:text-lg leading-relaxed pt-4" itemProp="text">
                                   {answer}
                                 </p>
                               </div>

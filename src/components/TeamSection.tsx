@@ -117,7 +117,12 @@ export default function TeamSection() {
               transition={{ duration: 0.8, delay: index * 0.1, ease: 'easeOut' }}
               viewport={{ once: true }}
               className="group relative"
+              itemScope
+              itemType="https://schema.org/Person"
             >
+              <meta itemProp="name" content={member.name} />
+              <meta itemProp="jobTitle" content={member.role} />
+              <meta itemProp="description" content={member.bio} />
               <div
                 className="absolute -top-8 -left-8 h-28 w-24 rounded-[36px] opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
                 style={{ background: member.accent }}
@@ -126,11 +131,12 @@ export default function TeamSection() {
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <Image
                     src={member.image}
-                    alt={member.name}
+                    alt={`${member.name} - ${member.role} at Expand Matrix`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                     className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105"
                     priority={index < 2}
+                    itemProp="image"
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80 opacity-100 transition-opacity duration-700 group-hover:via-black/35 group-hover:to-black/70" />
                 </div>
@@ -148,7 +154,7 @@ export default function TeamSection() {
                       {member.focus.map((item, focusIndex) => (
                         <li
                           key={`${member.key}-focus-${focusIndex}`}
-                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[0.65rem] uppercase tracking-[0.26em] text-white/70 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/80"
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs sm:text-[0.65rem] uppercase tracking-[0.26em] text-white/70 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/80"
                         >
                           {item}
                         </li>
@@ -159,9 +165,10 @@ export default function TeamSection() {
                         <a
                           href={member.linkedin}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="me noopener noreferrer"
                           aria-label={`${member.name} LinkedIn`}
                           className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                          itemProp="sameAs"
                         >
                           <Linkedin className="h-5 w-5" />
                           <span className="absolute inset-0 rounded-full bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -171,9 +178,10 @@ export default function TeamSection() {
                         <a
                           href={member.twitter}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="me noopener noreferrer"
                           aria-label={`${member.name} X profile`}
                           className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                          itemProp="sameAs"
                         >
                           <Twitter className="h-5 w-5" />
                           <span className="absolute inset-0 rounded-full bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

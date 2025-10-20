@@ -18,7 +18,7 @@ export default function ReferenceStatsCard({
 
   return (
     <motion.div
-      className="absolute top-1/2 right-8 transform -translate-y-1/2 z-20"
+      className="absolute bottom-8 left-4 right-4 lg:top-1/2 lg:right-8 lg:left-auto lg:bottom-auto lg:transform lg:-translate-y-1/2 z-20"
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
@@ -27,7 +27,7 @@ export default function ReferenceStatsCard({
         ease: 'easeOut'
       }}
     >
-      <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl p-8 min-w-[320px] max-w-[420px] shadow-2xl">
+      <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[320px] lg:max-w-[420px] shadow-2xl">
         <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
           AI Impact Overview
         </div>
