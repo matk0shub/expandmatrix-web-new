@@ -281,24 +281,8 @@ export default function Hero() {
                      className="block"
                    />
                  </span>
-               </h1>
-               
-               {/* Subtitle with better spacing */}
-               <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ duration: 0.8, delay: 1.2 }}
-                 className="mt-6 md:mt-8 lg:mt-10"
-               >
-                 <p className="text-lg md:text-xl lg:text-2xl text-white/80 font-lato font-medium tracking-wide">
-                   <ScrambleText 
-                     text={t('slogan')}
-                     applyScramble={false}
-                     className="block"
-                   />
-                 </p>
-               </motion.div>
-             </div>
+              </h1>
+            </div>
            </motion.div>
 
           {/* Bottom Section - CTA with better positioning */}

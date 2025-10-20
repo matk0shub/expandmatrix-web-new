@@ -5,309 +5,89 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useRef, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Vector class for gravity points
-class Vector {
-  x: number;
-  y: number;
+// ============================================================================
+// CONFIGURATION - FUTURISTIC DESIGN
+// ============================================================================
 
-  constructor(x: number = 0, y: number = 0) {
-    this.x = x;
-    this.y = y;
-  }
-
-  static add(a: Vector, b: Vector): Vector {
-    return new Vector(a.x + b.x, a.y + b.y);
-  }
-
-  static sub(a: Vector, b: Vector): Vector {
-    return new Vector(a.x - b.x, a.y - b.y);
-  }
-
-  static scale(v: Vector, s: number): Vector {
-    return v.clone().scale(s);
-  }
-
-  static random(): Vector {
-    return new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
-  }
-
-  set(x: number | Vector, y?: number): Vector {
-    if (typeof x === "object") {
-      y = x.y;
-      x = x.x;
+const CARD_CONFIG = {
+  width: {
+    base: 'w-full',
+    sm: 'sm:w-[95%]',
+    md: 'md:w-[85%]',
+    lg: 'lg:w-[720px]',
+    xl: 'xl:w-[800px]'
+  },
+  height: {
+    base: 'min-h-[580px]',
+    sm: 'sm:min-h-[600px]',
+    md: 'md:min-h-[620px]',
+    lg: 'lg:min-h-[640px]'
+  },
+  padding: {
+    base: 'p-10',
+    sm: 'sm:p-12',
+    md: 'md:p-14',
+    lg: 'lg:p-16',
+    xl: 'xl:p-20'
+  },
+  borderRadius: 'rounded-[4rem]', // Ultra zakulacené
+  maxWidth: 'max-w-[92vw] lg:max-w-none',
+  typography: {
+    number: {
+      size: 'text-base sm:text-lg md:text-xl lg:text-2xl',
+      weight: 'font-extrabold'
+    },
+    heading: {
+      size: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
+      weight: 'font-extrabold'
+    },
+    description: {
+      size: 'text-base sm:text-lg md:text-xl lg:text-2xl',
+      weight: 'font-semibold'
     }
-    this.x = x || 0;
-    this.y = y || 0;
-    return this;
+  },
+  effects: {
+    // Multi-layer shadows pro 3D depth
+    shadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,215,107,0.25)]',
+    hoverShadow: 'hover:shadow-[0_24px_64px_rgba(0,0,0,0.7),0_8px_32px_rgba(0,215,107,0.4)]',
+    // Transform pro levitaci
+    defaultTransform: '-translate-y-2',
+    hoverTransform: 'hover:-translate-y-6'
+  },
+  animation: {
+    stickDistance: 100,
+    duration: 0.8,
+    ease: 'power2.out'
   }
+} as const;
 
-  add(v: Vector): Vector {
-    this.x += v.x;
-    this.y += v.y;
-    return this;
-  }
+// Futuristic glassmorphism card style - bez borderů
+const cardBaseStyle = `
+  bg-gradient-to-br from-black/90 via-black/95 to-black/98
+  backdrop-blur-2xl
+  transition-all duration-700
+  hover:scale-[1.03]
+`;
 
-  sub(v: Vector): Vector {
-    this.x -= v.x;
-    this.y -= v.y;
-    return this;
-  }
+// Subtle rotations for scattered look
+const cardRotations = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg'];
+const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 
-  scale(s: number): Vector {
-    this.x *= s;
-    this.y *= s;
-    return this;
-  }
-
-  length(): number {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  }
-
-  lengthSq(): number {
-    return this.x * this.x + this.y * this.y;
-  }
-
-  normalize(): Vector {
-    const m = Math.sqrt(this.x * this.x + this.y * this.y);
-    if (m) {
-      this.x /= m;
-      this.y /= m;
-    }
-    return this;
-  }
-
-  angle(): number {
-    return Math.atan2(this.y, this.x);
-  }
-
-  angleTo(v: Vector): number {
-    const dx = v.x - this.x;
-    const dy = v.y - this.y;
-    return Math.atan2(dy, dx);
-  }
-
-  distanceTo(v: Vector): number {
-    const dx = v.x - this.x;
-    const dy = v.y - this.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  distanceToSq(v: Vector): number {
-    const dx = v.x - this.x;
-    const dy = v.y - this.y;
-    return dx * dx + dy * dy;
-  }
-
-  lerp(v: Vector, t: number): Vector {
-    this.x += (v.x - this.x) * t;
-    this.y += (v.y - this.y) * t;
-    return this;
-  }
-
-  clone(): Vector {
-    return new Vector(this.x, this.y);
-  }
-
-  toString(): string {
-    return `(x:${this.x}, y:${this.y})`;
-  }
-}
-
-// Gravity Point class
-class GravityPoint extends Vector {
-  radius: number;
-  currentRadius: number;
-  gravity: number = 0.05;
-  isMouseOver: boolean = false;
-  dragging: boolean = false;
-  destroyed: boolean = false;
-  _easeRadius: number = 0;
-  _dragDistance: Vector | null = null;
-  _collapsing: boolean = false;
-  _speed: Vector = new Vector();
-  _targets: {
-    particles: Particle[];
-    gravities: GravityPoint[];
-  };
-
-  static RADIUS_LIMIT = 65;
-  static interferenceToPoint = true;
-
-  constructor(x: number, y: number, radius: number, targets: { particles: Particle[]; gravities: GravityPoint[] }) {
-    super(x, y);
-    this.radius = radius;
-    this.currentRadius = radius * 0.5;
-    this._targets = targets;
-  }
-
-  hitTest(p: Vector): boolean {
-    return this.distanceTo(p) < this.radius;
-  }
-
-  startDrag(dragStartPoint: Vector): void {
-    this._dragDistance = Vector.sub(dragStartPoint, this);
-    this.dragging = true;
-  }
-
-  drag(dragToPoint: Vector): void {
-    if (this._dragDistance) {
-      this.x = dragToPoint.x - this._dragDistance.x;
-      this.y = dragToPoint.y - this._dragDistance.y;
-    }
-  }
-
-  endDrag(): void {
-    this._dragDistance = null;
-    this.dragging = false;
-  }
-
-  addSpeed(d: Vector): void {
-    this._speed = this._speed.add(d);
-  }
-
-  collapse(): void {
-    this.currentRadius *= 1.75;
-    this._collapsing = true;
-  }
-
-  render(ctx: CanvasRenderingContext2D): void {
-    if (this.destroyed) return;
-
-    const particles = this._targets.particles;
-    const gravities = this._targets.gravities;
-
-    // Apply gravity to particles
-    for (let i = 0; i < particles.length; i++) {
-      particles[i].addSpeed(
-        Vector.sub(this, particles[i]).normalize().scale(this.gravity)
-      );
-    }
-
-    // Update radius
-    this._easeRadius = (this._easeRadius + (this.radius - this.currentRadius) * 0.07) * 0.95;
-    this.currentRadius += this._easeRadius;
-    if (this.currentRadius < 0) this.currentRadius = 0;
-
-    if (this._collapsing) {
-      this.radius *= 0.75;
-      if (this.currentRadius < 1) this.destroyed = true;
-      this._draw(ctx);
-      return;
-    }
-
-    // Handle gravity point interactions
-    const area = this.radius * this.radius * Math.PI;
-    for (let i = 0; i < gravities.length; i++) {
-      const g = gravities[i];
-      if (g === this || g.destroyed) continue;
-
-      if (
-        (this.currentRadius >= g.radius || this.dragging) &&
-        this.distanceTo(g) < (this.currentRadius + g.radius) * 0.85
-      ) {
-        g.destroyed = true;
-        this.gravity += g.gravity;
-
-        const absorp = Vector.sub(g, this).scale((g.radius / this.radius) * 0.5);
-        this.addSpeed(absorp);
-
-        const garea = g.radius * g.radius * Math.PI;
-        this.currentRadius = Math.sqrt((area + garea * 3) / Math.PI);
-        this.radius = Math.sqrt((area + garea) / Math.PI);
-      }
-
-      g.addSpeed(Vector.sub(this, g).normalize().scale(this.gravity));
-    }
-
-    if (GravityPoint.interferenceToPoint && !this.dragging) {
-      this.add(this._speed);
-    }
-
-    this._speed = new Vector();
-
-    if (this.currentRadius > GravityPoint.RADIUS_LIMIT) {
-      this.collapse();
-    }
-
-    this._draw(ctx);
-  }
-
-  _draw(ctx: CanvasRenderingContext2D): void {
-    ctx.save();
-
-    // Outer glow
-    const grd = ctx.createRadialGradient(
-      this.x, this.y, this.radius,
-      this.x, this.y, this.radius * 5
-    );
-    grd.addColorStop(0, "rgba(0, 0, 0, 0.1)");
-    grd.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius * 5, 0, Math.PI * 2, false);
-    ctx.fillStyle = grd;
-    ctx.fill();
-
-    // Inner core
-    const r = Math.random() * this.currentRadius * 0.7 + this.currentRadius * 0.3;
-    const grd2 = ctx.createRadialGradient(
-      this.x, this.y, r,
-      this.x, this.y, this.currentRadius
-    );
-    grd2.addColorStop(0, "rgba(0, 0, 0, 1)");
-    grd2.addColorStop(1, Math.random() < 0.2 
-      ? "rgba(0, 215, 107, 0.15)" 
-      : "rgba(0, 215, 107, 0.75)");
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.currentRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = grd2;
-    ctx.fill();
-
-    ctx.restore();
-  }
-}
-
-// Particle class
-class Particle extends Vector {
-  radius: number;
-  _latest: Vector;
-  _speed: Vector;
-
-  constructor(x: number, y: number, radius: number) {
-    super(x, y);
-    this.radius = radius;
-    this._latest = new Vector();
-    this._speed = new Vector();
-  }
-
-  addSpeed(d: Vector): void {
-    this._speed.add(d);
-  }
-
-  update(): void {
-    if (this._speed.length() > 12) {
-      this._speed.normalize().scale(12);
-    }
-    this._latest.set(this);
-    this.add(this._speed);
-  }
-}
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
   const cardsContainerRef = useRef<HTMLDivElement>(null);
-  // Canvas background refs
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const bufferCanvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | null>(null);
-  const mouseRef = useRef<Vector>(new Vector());
 
   const steps = [
     { key: 'meeting', number: '01' },
@@ -317,322 +97,68 @@ export default function ProcessSection() {
     { key: 'optimization', number: '05' }
   ];
 
-  const cardBaseClass = 'process-card w-[720px] h-[580px] backdrop-blur-xl rounded-[3rem] shadow-2xl border border-white/10';
-  
-  // Modern card variants with glassmorphism effect
-  const cardVariants = [
-    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-500/20',
-    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-400/20',
-    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-300/20',
-    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-200/20',
-    'bg-gradient-to-br from-slate-800/80 to-slate-700/80 shadow-blue-100/20'
-  ];
-
-  // Random rotations and positions for scattered look
-  const cardRotations = useMemo(() => [
-    'rotate-[-3deg]',
-    'rotate-[2deg]',
-    'rotate-[-1.5deg]',
-    'rotate-[2.5deg]',
-    'rotate-[-2deg]'
-  ], []);
-
-  // Random X offsets for scattered positioning
-  const cardOffsets = useMemo(() => [
-    'translate-x-[-20px]',
-    'translate-x-[30px]',
-    'translate-x-[-15px]',
-    'translate-x-[25px]',
-    'translate-x-[-10px]'
-  ], []);
-
-  // Gravity Points Canvas System
-  const initGravityCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    const bufferCanvas = bufferCanvasRef.current;
-    const container = sectionRef.current;
-    if (!canvas || !bufferCanvas || !container) return;
-
-    const ctx = canvas.getContext('2d');
-    const bufferCtx = bufferCanvas.getContext('2d');
-    if (!ctx || !bufferCtx) return;
-
-    let screenWidth = 0;
-    let screenHeight = 0;
-    let grad: CanvasGradient;
-
-    // Configuration
-    const BACKGROUND_COLOR = "rgba(0, 0, 0, 0.8)";
-    const PARTICLE_RADIUS = 1;
-    const G_POINT_RADIUS = 10;
-    const PARTICLE_NUM = 160; // slightly increased density
-
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      screenWidth = canvas.width = bufferCanvas.width = rect.width;
-      screenHeight = canvas.height = bufferCanvas.height = rect.height;
-      
-      const cx = canvas.width * 0.5;
-      const cy = canvas.height * 0.5;
-      grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.sqrt(cx * cx + cy * cy));
-      grad.addColorStop(0, "rgba(0, 0, 0, 0)");
-      grad.addColorStop(1, "rgba(0, 0, 0, 0.35)");
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Initialize particles
-    const particles: Particle[] = [];
-    const addParticle = (num: number) => {
-      for (let i = 0; i < num; i++) {
-        const p = new Particle(
-          Math.floor(Math.random() * (screenWidth - PARTICLE_RADIUS * 2)) + 1 + PARTICLE_RADIUS,
-          Math.floor(Math.random() * (screenHeight - PARTICLE_RADIUS * 2)) + 1 + PARTICLE_RADIUS,
-          PARTICLE_RADIUS
-        );
-        p.addSpeed(Vector.random());
-        particles.push(p);
-      }
-    };
-
-    // Initialize gravity points
-    const gravities: GravityPoint[] = [];
-    const addGravityPoint = (x: number, y: number) => {
-      const newGravity = new GravityPoint(x, y, G_POINT_RADIUS, {
-        particles: particles,
-        gravities: gravities
-      });
-      gravities.push(newGravity);
-      console.log('Added gravity point at:', x, y, 'Total gravities:', gravities.length);
-    };
-
-    // Add initial particles
-    addParticle(PARTICLE_NUM);
-
-    // Helper to add some gravity points near edges + a couple random
-    const seedInitialGravityPoints = () => {
-      const margin = 40; // px from the edges
-      // Edge seeds
-      addGravityPoint(margin, screenHeight * 0.25);
-      addGravityPoint(screenWidth - margin, screenHeight * 0.35);
-      addGravityPoint(screenWidth * 0.5, margin);
-      addGravityPoint(screenWidth * 0.5, screenHeight - margin);
-      // A couple random seeds
-      for (let i = 0; i < 2; i++) {
-        addGravityPoint(
-          Math.random() * (screenWidth - margin * 2) + margin,
-          Math.random() * (screenHeight - margin * 2) + margin
-        );
-      }
-    };
-
-    // Seed gravity points after a short delay to ensure canvas sizes are ready
-    setTimeout(seedInitialGravityPoints, 100);
-
-    // Mouse event handlers
-    const mouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      mouseRef.current.set(e.clientX - rect.left, e.clientY - rect.top);
-
-      let hit = false;
-      for (let i = gravities.length - 1; i >= 0; i--) {
-        const g = gravities[i];
-        if ((!hit && g.hitTest(mouseRef.current)) || g.dragging) {
-          g.isMouseOver = hit = true;
-        } else {
-          g.isMouseOver = false;
-        }
-      }
-
-      container.style.cursor = hit ? "pointer" : "default";
-    };
-
-    const mouseDown = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const mousePos = new Vector(e.clientX - rect.left, e.clientY - rect.top);
-      console.log('Mouse down at:', mousePos.x, mousePos.y);
-
-      for (let i = gravities.length - 1; i >= 0; i--) {
-        if (gravities[i].isMouseOver) {
-          console.log('Starting drag on gravity point');
-          gravities[i].startDrag(mousePos);
-          return;
-        }
-      }
-      console.log('Creating new gravity point');
-      addGravityPoint(mousePos.x, mousePos.y);
-    };
-
-    const mouseUp = () => {
-      for (let i = 0; i < gravities.length; i++) {
-        if (gravities[i].dragging) {
-          gravities[i].endDrag();
-          break;
-        }
-      }
-    };
-
-    const doubleClick = () => {
-      for (let i = gravities.length - 1; i >= 0; i--) {
-        if (gravities[i].isMouseOver) {
-          gravities[i].collapse();
-          break;
-        }
-      }
-    };
-
-    // Add event listeners on the whole section container
-    container.addEventListener('mousemove', mouseMove);
-    container.addEventListener('mousedown', mouseDown);
-    container.addEventListener('mouseup', mouseUp);
-    container.addEventListener('dblclick', doubleClick);
-
-    // Animation loop
-    const loop = () => {
-      // Clear main canvas
-      ctx.save();
-      ctx.fillStyle = BACKGROUND_COLOR;
-      ctx.fillRect(0, 0, screenWidth, screenHeight);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, screenWidth, screenHeight);
-      ctx.restore();
-
-      // Update and render gravity points
-      for (let i = 0; i < gravities.length; i++) {
-        const g = gravities[i];
-        if (g.dragging) g.drag(mouseRef.current);
-        g.render(ctx);
-        if (g.destroyed) {
-          gravities.splice(i, 1);
-          i--;
-        }
-      }
-
-      // Clear buffer with fade effect
-      bufferCtx.save();
-      bufferCtx.globalCompositeOperation = "destination-out";
-      bufferCtx.globalAlpha = 0.35;
-      bufferCtx.fillRect(0, 0, screenWidth, screenHeight);
-      bufferCtx.restore();
-
-      // Draw particles to buffer
-      bufferCtx.save();
-      bufferCtx.fillStyle = bufferCtx.strokeStyle = "#fff";
-      bufferCtx.lineCap = bufferCtx.lineJoin = "round";
-      bufferCtx.lineWidth = PARTICLE_RADIUS * 2;
-      
-      // Draw particle trails
-      bufferCtx.beginPath();
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.update();
-        bufferCtx.moveTo(p.x, p.y);
-        bufferCtx.lineTo(p._latest.x, p._latest.y);
-      }
-      bufferCtx.stroke();
-
-      // Draw particle dots
-      bufferCtx.beginPath();
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        bufferCtx.moveTo(p.x, p.y);
-        bufferCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
-      }
-      bufferCtx.fill();
-      bufferCtx.restore();
-
-      // Draw buffer to main canvas
-      ctx.drawImage(bufferCanvas, 0, 0);
-
-      animationRef.current = requestAnimationFrame(loop);
-    };
-
-    animationRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      window.removeEventListener('resize', resize);
-      container.removeEventListener('mousemove', mouseMove);
-      container.removeEventListener('mousedown', mouseDown);
-      container.removeEventListener('mouseup', mouseUp);
-      container.removeEventListener('dblclick', doubleClick);
-    };
-  }, []);
+  // ============================================================================
+  // GSAP SCROLL TRIGGER - STACKING CARDS EFFECT
+  // ============================================================================
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-    return initGravityCanvas();
-  }, [prefersReducedMotion, initGravityCanvas]);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
 
     const container = cardsContainerRef.current;
-    if (!container) {
-      return;
-    }
+    if (!container) return;
 
     const ctx = gsap.context(() => {
       const cardWrappers = gsap.utils.toArray<HTMLElement>(
         container.querySelectorAll('.process-card-wrapper')
       );
 
-      if (cardWrappers.length === 0) {
-        return;
-      }
+      if (cardWrappers.length === 0) return;
 
       const cards = cardWrappers.map((wrapper) =>
         wrapper.querySelector<HTMLElement>('.process-card')
       );
 
       const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
+      if (existingCards.length === 0) return;
 
-      if (existingCards.length === 0) {
-        return;
-      }
-
+      // Set initial state
       gsap.set(existingCards, { opacity: 1, yPercent: 0 });
 
-      // Distance (in px) that keeps a card pinned before the next one takes over
-      const stickDistance = 100;
+      // Create last card trigger for pin end calculation
       const lastCardTrigger = ScrollTrigger.create({
         trigger: cardWrappers[cardWrappers.length - 1],
         start: 'bottom bottom',
       });
 
+      // Create scroll trigger for each card
       cardWrappers.forEach((wrapper, index) => {
         const card = cards[index];
-        if (!card) {
-          return;
-        }
+        if (!card) return;
 
         ScrollTrigger.create({
           trigger: wrapper,
           start: 'center center',
-          end: () => (lastCardTrigger.start || 0) + stickDistance,
+          end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
           pin: true,
           pinSpacing: false,
           toggleActions: 'restart none none reverse',
           onEnter: () => {
             gsap.to(card, { 
               yPercent: 0, 
-              rotation: cardRotations[index].replace('rotate-[', '').replace(']', '').replace('deg', ''),
-              x: cardOffsets[index].replace('translate-x-[', '').replace(']', '').replace('px', ''),
-              duration: 0.8, 
-              ease: "power2.out",
+              rotation: cardRotations[index],
+              x: cardOffsets[index],
+              duration: CARD_CONFIG.animation.duration,
+              ease: CARD_CONFIG.animation.ease,
               overwrite: 'auto' 
             });
           },
           onEnterBack: () => {
             gsap.to(card, { 
               yPercent: 0, 
-              rotation: cardRotations[index].replace('rotate-[', '').replace(']', '').replace('deg', ''),
-              x: cardOffsets[index].replace('translate-x-[', '').replace(']', '').replace('px', ''),
-              duration: 0.8, 
-              ease: "power2.out",
+              rotation: cardRotations[index],
+              x: cardOffsets[index],
+              duration: CARD_CONFIG.animation.duration,
+              ease: CARD_CONFIG.animation.ease,
               overwrite: 'auto' 
             });
           },
@@ -643,7 +169,11 @@ export default function ProcessSection() {
     }, container);
 
     return () => ctx.revert();
-  }, [prefersReducedMotion, cardRotations, cardOffsets]);
+  }, [prefersReducedMotion]);
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <section
@@ -651,131 +181,123 @@ export default function ProcessSection() {
       className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
       id="process"
     >
-      {/* Canvas background - behind content; events are attached to the section */}
-      {!prefersReducedMotion && (
-        <>
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-            aria-hidden="true"
-          />
-          <canvas
-            ref={bufferCanvasRef}
-            className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-            aria-hidden="true"
-            style={{ display: 'none' }}
-          />
-        </>
-      )}
-
-      {/* Green blob background effects - top section */}
+      {/* Modern Background Effects - Green Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large vibrant blob - top left */}
-        <div className="absolute top-[2%] left-[5%] w-[480px] h-[380px] blur-3xl opacity-50" 
+        {/* Animated blob - top left */}
+        <div 
+          className="absolute top-[5%] left-[8%] w-[480px] h-[380px] blur-3xl opacity-40 animate-pulse" 
           style={{ 
-            background: 'radial-gradient(ellipse 55% 45%, rgba(0, 255, 120, 0.7) 0%, rgba(0, 215, 107, 0.5) 40%, rgba(0, 184, 92, 0.25) 70%, transparent 85%)' 
+            background: 'radial-gradient(ellipse 55% 45%, rgba(0, 255, 120, 0.6) 0%, rgba(0, 215, 107, 0.4) 40%, rgba(0, 184, 92, 0.2) 70%, transparent 85%)',
+            animationDuration: '8s'
           }} 
         />
 
-        {/* Large vibrant blob - top right */}
-        <div className="absolute top-[8%] right-[8%] w-[520px] h-[400px] blur-3xl opacity-55" 
+        {/* Animated blob - top right */}
+        <div 
+          className="absolute top-[10%] right-[5%] w-[520px] h-[400px] blur-3xl opacity-45 animate-pulse" 
           style={{ 
-            background: 'radial-gradient(ellipse 50% 50%, rgba(0, 215, 107, 0.75) 0%, rgba(0, 255, 120, 0.55) 35%, rgba(0, 184, 92, 0.35) 65%, transparent 80%)' 
+            background: 'radial-gradient(ellipse 50% 50%, rgba(0, 215, 107, 0.65) 0%, rgba(0, 255, 120, 0.45) 35%, rgba(0, 184, 92, 0.25) 65%, transparent 80%)',
+            animationDuration: '10s',
+            animationDelay: '1s'
           }} 
         />
 
-        {/* Medium blob - center top */}
-        <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[400px] h-[320px] blur-3xl opacity-40" 
+        {/* Animated blob - center */}
+        <div 
+          className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[400px] h-[320px] blur-3xl opacity-35 animate-pulse" 
           style={{ 
-            background: 'radial-gradient(ellipse 45% 55%, rgba(0, 184, 92, 0.5) 0%, rgba(0, 215, 107, 0.3) 50%, transparent 75%)' 
+            background: 'radial-gradient(circle, rgba(0, 184, 92, 0.4) 0%, rgba(0, 215, 107, 0.25) 50%, transparent 75%)',
+            animationDuration: '12s',
+            animationDelay: '2s'
           }} 
         />
 
-        {/* Accent blob - left side middle */}
-        <div className="absolute top-[20%] left-[2%] w-[350px] h-[300px] blur-3xl opacity-35" 
+        {/* Animated blob - bottom left */}
+        <div 
+          className="absolute bottom-[10%] left-[10%] w-[380px] h-[320px] blur-3xl opacity-30 animate-pulse" 
           style={{ 
-            background: 'radial-gradient(circle, rgba(0, 215, 107, 0.4) 0%, rgba(0, 255, 120, 0.25) 50%, transparent 75%)' 
+            background: 'radial-gradient(circle, rgba(0, 255, 120, 0.5) 0%, rgba(0, 215, 107, 0.3) 50%, transparent 75%)',
+            animationDuration: '9s',
+            animationDelay: '3s'
           }} 
         />
 
-        {/* Accent blob - right side middle */}
-        <div className="absolute top-[25%] right-[3%] w-[320px] h-[280px] blur-3xl opacity-32" 
+        {/* Animated blob - bottom right */}
+        <div 
+          className="absolute bottom-[15%] right-[8%] w-[420px] h-[340px] blur-3xl opacity-35 animate-pulse" 
           style={{ 
-            background: 'radial-gradient(circle, rgba(0, 255, 120, 0.35) 0%, rgba(0, 215, 107, 0.2) 55%, transparent 75%)' 
+            background: 'radial-gradient(circle, rgba(0, 215, 107, 0.55) 0%, rgba(0, 184, 92, 0.35) 50%, transparent 75%)',
+            animationDuration: '11s',
+            animationDelay: '1.5s'
           }} 
         />
+
+        {/* Small glowing particles */}
+        <div className="absolute top-[20%] left-[15%] w-2 h-2 bg-green-400 rounded-full opacity-60 animate-ping" style={{ animationDuration: '3s' }} />
+        <div className="absolute top-[60%] right-[20%] w-1 h-1 bg-green-500 rounded-full opacity-40 animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+        <div className="absolute bottom-[30%] left-[25%] w-1.5 h-1.5 bg-green-400 rounded-full opacity-50 animate-ping" style={{ animationDuration: '5s', animationDelay: '2s' }} />
       </div>
 
-      {/* Foreground content */}
+      {/* Content Container */}
       <div className="relative z-10">
-
-        {/* Container with same max-width as Hero */}
+        {/* Header Section */}
         <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
-            {/* Top Section - Title and Description */}
-            <div className="mb-20 lg:mb-32">
-              {/* Main Title */}
-              <div className="relative inline-block mb-8">
-                <h2 
-                  className="heading-main" 
+          {/* Title */}
+          <div className="mb-16 lg:mb-24">
+            <div className="relative inline-block mb-8">
+              <h2 className="heading-main">
+                <ScrambleText text={t('title')} applyScramble={false} />
+              </h2>
+            </div>
+          </div>
+
+          {/* Description and CTA */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ 
+              opacity: 1, 
+              x: 0,
+              transition: { duration: prefersReducedMotion ? 0 : 1, ease: "easeOut" }
+            }}
+            viewport={{ once: true }}
+            className="flex justify-start md:justify-end mb-16"
+          >
+            <div className="max-w-2xl text-left">
+              {/* Description */}
+              <p className="text-white/90 text-lg sm:text-xl md:text-2xl lg:text-3xl leading-relaxed font-lato mb-8">
+                <ScrambleText text={t('description')} applyScramble={false} />
+              </p>
+              
+              {/* CTA Button */}
+              <div className="flex justify-start">
+                <motion.button
+                  data-cal-namespace="strategy"
+                  data-cal-link="team/em-core/strategy"
+                  data-cal-origin="https://meet.expandmatrix.com"
+                  data-cal-config='{"layout":"month_view"}'
+                  whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
+                  whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
+                  className="group relative inline-flex items-center gap-3 px-6 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 text-sm sm:text-base md:text-lg cursor-pointer font-lato" 
                 >
-                  <div className="leading-tight">
-                    <ScrambleText text={t('title')} applyScramble={false} />
-                  </div>
-                </h2>
+                  <span className="uppercase tracking-wide">
+                    <ScrambleText text={t('cta')} applyScramble={false} />
+                  </span>
+                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+                  
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
+                </motion.button>
               </div>
             </div>
-
-            {/* Content Section - Description and CTA */}
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ 
-                opacity: 1, 
-                x: 0,
-                transition: { duration: prefersReducedMotion ? 0 : 1, ease: "easeOut" }
-              }}
-              viewport={{ once: true }}
-              className="flex justify-end mr-8 md:mr-16 lg:mr-24"
-            >
-              <div className="max-w-2xl text-left">
-                {/* Description text */}
-                <p className="text-white/90 text-xl md:text-2xl lg:text-3xl leading-relaxed font-lato text-left mb-8">
-                  <ScrambleText text={t('description')} applyScramble={false} />
-                </p>
-                
-                {/* CTA Button - Similar to Hero */}
-                <div className="flex justify-start pointer-events-auto">
-                  <motion.button
-                    data-cal-namespace="strategy"
-                    data-cal-link="team/em-core/strategy"
-                    data-cal-origin="https://meet.expandmatrix.com"
-                    data-cal-config='{"layout":"month_view"}'
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
-                    whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
-                    className="group relative inline-flex items-center gap-3 px-7 md:px-9 py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-base md:text-lg cursor-pointer font-lato" 
-                  >
-                    <span className="uppercase tracking-wide">
-                      <ScrambleText text={t('cta')} applyScramble={false} />
-                    </span>
-                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                    
-                    {/* Glow effect */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Layered process steps */}
-      <section className="relative w-full overflow-hidden bg-transparent py-32 md:py-48 lg:py-64">
+      {/* Process Cards - Futuristic Stacking Effect */}
+      <section className="relative w-full overflow-hidden bg-transparent py-20 sm:py-32 md:py-48 lg:py-64">
         <div
           ref={cardsContainerRef}
-          className={`relative w-full ${prefersReducedMotion ? 'space-y-16' : ''}`}
+          className={`relative w-full ${prefersReducedMotion ? 'space-y-12 sm:space-y-16' : ''}`}
         >
           {steps.map((step, index) => (
             <section
@@ -784,36 +306,139 @@ export default function ProcessSection() {
                 prefersReducedMotion ? 'relative' : 'flex min-h-screen items-center justify-center'
               }`}
             >
+              {/* Futuristic Card Container */}
               <div
-                className={`${cardBaseClass} ${cardVariants[index]} ${cardRotations[index]} ${cardOffsets[index]} transform-gpu transition-all duration-500 hover:scale-105 hover:rotate-0`}
+                className={`
+                  process-card
+                  group
+                  ${CARD_CONFIG.width.base}
+                  ${CARD_CONFIG.width.sm}
+                  ${CARD_CONFIG.width.md}
+                  ${CARD_CONFIG.width.lg}
+                  ${CARD_CONFIG.width.xl}
+                  ${CARD_CONFIG.height.base}
+                  ${CARD_CONFIG.height.sm}
+                  ${CARD_CONFIG.height.md}
+                  ${CARD_CONFIG.height.lg}
+                  ${CARD_CONFIG.maxWidth}
+                  ${CARD_CONFIG.borderRadius}
+                  ${cardBaseStyle}
+                  ${CARD_CONFIG.effects.shadow}
+                  ${CARD_CONFIG.effects.hoverShadow}
+                  ${CARD_CONFIG.effects.defaultTransform}
+                  ${CARD_CONFIG.effects.hoverTransform}
+                  mx-auto
+                  transform-gpu
+                  ${prefersReducedMotion ? '' : 'hover:rotate-0'}
+                  relative
+                  overflow-hidden
+                `}
               >
-                <div className="p-16 h-full flex flex-col justify-between relative">
-                  {/* Subtle inner glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-[3rem] pointer-events-none" />
-                  
-                  <div className="relative z-10">
-                    {/* Step number with modern styling */}
-                    <div className="inline-flex items-center gap-4 mb-8">
-                      <div className="text-white/60 text-sm font-mono font-bold tracking-[0.2em] uppercase">
+                {/* Holographic Gradient Overlay */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-[4rem] pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
+                />
+
+                {/* Scan Line Effect */}
+                <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-30">
+                  <div 
+                    className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-green-400/80 to-transparent"
+                    style={{
+                      animation: 'scanLine 8s linear infinite',
+                    }}
+                  />
+                </div>
+
+                {/* Corner Accents - Glowing Dots */}
+                <div className="absolute top-8 left-8 w-2.5 h-2.5 bg-green-400 rounded-full opacity-80 animate-pulse" 
+                  style={{ 
+                    boxShadow: '0 0 16px rgba(0, 215, 107, 0.9)',
+                    animationDuration: '3s' 
+                  }} 
+                />
+                <div className="absolute top-8 right-8 w-2.5 h-2.5 bg-green-400 rounded-full opacity-80 animate-pulse" 
+                  style={{ 
+                    boxShadow: '0 0 16px rgba(0, 215, 107, 0.9)',
+                    animationDuration: '3.5s',
+                    animationDelay: '0.5s'
+                  }} 
+                />
+
+                {/* Corner Accents - Lines */}
+                <div className="absolute bottom-8 left-8 w-16 h-0.5 bg-gradient-to-r from-green-400 to-transparent opacity-70" />
+                <div className="absolute bottom-8 right-8 w-16 h-0.5 bg-gradient-to-l from-green-400 to-transparent opacity-70" />
+
+                {/* Card Content */}
+                <div 
+                  className={`
+                    ${CARD_CONFIG.padding.base}
+                    ${CARD_CONFIG.padding.sm}
+                    ${CARD_CONFIG.padding.md}
+                    ${CARD_CONFIG.padding.lg}
+                    ${CARD_CONFIG.padding.xl}
+                    h-full
+                    flex flex-col
+                    justify-between
+                    relative
+                    z-10
+                  `}
+                >
+                  {/* Content */}
+                  <div>
+                    {/* Step number with line */}
+                    <div className="flex items-center gap-4 sm:gap-5 mb-8 sm:mb-10">
+                      <div 
+                        className={`
+                          text-green-400 
+                          ${CARD_CONFIG.typography.number.size}
+                          ${CARD_CONFIG.typography.number.weight}
+                          font-mono
+                          tracking-[0.2em]
+                          uppercase
+                        `}
+                        style={{
+                          textShadow: '0 0 24px rgba(0, 215, 107, 0.8), 0 0 12px rgba(0, 215, 107, 0.6)'
+                        }}
+                      >
                         {step.number}
                       </div>
-                      <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent max-w-[120px]" />
+                      <div className="h-[2px] w-20 sm:w-28 md:w-36 bg-gradient-to-r from-green-500/50 to-transparent" />
                     </div>
                     
-                    {/* Title with better spacing */}
-                    <div className="text-white text-6xl font-bold font-lato mb-12 leading-[0.9] tracking-tight">
+                    {/* Title */}
+                    <h3 
+                      className={`
+                        text-white
+                        ${CARD_CONFIG.typography.heading.size}
+                        ${CARD_CONFIG.typography.heading.weight}
+                        font-lato
+                        mb-10 sm:mb-12 md:mb-16
+                        leading-[0.9]
+                        tracking-tight
+                      `}
+                    >
                       <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
-                    </div>
+                    </h3>
                     
-                    {/* Description with improved typography */}
-                    <div className="text-white/80 text-xl leading-relaxed font-lato max-w-[500px]">
+                    {/* Description */}
+                    <p 
+                      className={`
+                        text-white/85
+                        ${CARD_CONFIG.typography.description.size}
+                        ${CARD_CONFIG.typography.description.weight}
+                        font-lato
+                        leading-relaxed
+                        max-w-full
+                        lg:max-w-[90%]
+                      `}
+                    >
                       <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />
-                    </div>
+                    </p>
                   </div>
 
-                  {/* Modern corner accent */}
-                  <div className="absolute bottom-8 right-8 w-24 h-24 pointer-events-none">
-                    <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-white/10 to-transparent rounded-full blur-xl" />
+                  {/* Bottom glow accent */}
+                  <div className="absolute bottom-10 right-10 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-green-400/30 to-transparent rounded-full blur-3xl" />
                   </div>
                 </div>
               </div>
@@ -821,6 +446,26 @@ export default function ProcessSection() {
           ))}
         </div>
       </section>
+
+      {/* Scan Line Animation Keyframes */}
+      <style jsx>{`
+        @keyframes scanLine {
+          0% {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(200vh);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </section>
   );
 }
