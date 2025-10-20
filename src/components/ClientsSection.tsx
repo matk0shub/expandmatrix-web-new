@@ -605,7 +605,7 @@ export default function ClientsSection() {
 
   if (isMobileDisabled) {
     return (
-      <section className="relative w-full bg-black py-20 overflow-hidden">
+      <section className="relative w-full bg-black py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div
             className="absolute -top-24 right-[-15%] w-[360px] h-[360px] rounded-full blur-3xl opacity-30"
@@ -617,19 +617,23 @@ export default function ClientsSection() {
           />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-10">
-          <div className="text-center space-y-3">
-            <h2 className="heading-main text-balance text-white">{t('title')}</h2>
-            <p className="text-white/70 text-sm leading-relaxed">{t('title')}</p>
+        <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
+          <div className="text-center space-y-6 mb-12">
+            <h2 className="heading-main text-balance text-white">
+              <ScrambleText text={t('title')} applyScramble={false} />
+            </h2>
+            <p className="text-white/80 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+              <ScrambleText text={t('title')} applyScramble={false} />
+            </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
             {ballConfigs.map((ball) => (
               <div
                 key={ball.id}
-                className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+                className="flex items-center justify-center rounded-3xl border border-white/10 bg-white/5 py-8 sm:py-10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:bg-white/10 hover:border-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
               >
-                <span className="text-3xl">{ball.icon}</span>
+                <span className="text-4xl sm:text-5xl">{ball.icon}</span>
               </div>
             ))}
           </div>
