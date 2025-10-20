@@ -304,7 +304,7 @@ export default function Hero() {
                  data-cal-link="team/em-core/strategy"
                  data-cal-origin="https://meet.expandmatrix.com"
                  data-cal-config='{"layout":"month_view"}'
-                 className="group relative inline-flex items-center gap-3 px-7 md:px-9 py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-base md:text-lg cursor-pointer font-lato" 
+                 className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-sm md:text-base cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50" 
                >
                  <span className="uppercase tracking-wide">
                    <ScrambleText text={t('cta')} applyScramble={false} />

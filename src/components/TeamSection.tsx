@@ -124,10 +124,10 @@ export default function TeamSection() {
               <meta itemProp="jobTitle" content={member.role} />
               <meta itemProp="description" content={member.bio} />
               <div
-                className="absolute -top-8 -left-8 h-28 w-24 rounded-[36px] opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
+                className="absolute -top-8 -left-8 h-28 w-24 rounded-3xl opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
                 style={{ background: member.accent }}
               />
-              <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.03] via-[#0d0d0d] to-[#050505] shadow-[0_35px_120px_-40px_rgba(0,0,0,0.8)]">
+              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.03] via-[#0d0d0d] to-[#050505] shadow-[0_35px_120px_-40px_rgba(0,0,0,0.8)]">
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <Image
                     src={member.image}

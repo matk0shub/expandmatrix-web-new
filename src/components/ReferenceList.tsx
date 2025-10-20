@@ -45,10 +45,14 @@ export default function ReferenceList({
   }, [activeIndex, prefersReducedMotion]);
 
   return (
-    <div className="relative">
+    <div className="relative h-full flex flex-col">
       <div
         ref={listRef}
-        className="space-y-6 max-h-[50vh] lg:max-h-[70vh] overflow-y-auto pr-2"
+        className="space-y-4 lg:space-y-6 flex-1 overflow-y-auto overflow-x-hidden pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+        style={{ 
+          maxHeight: 'calc(100vh - 200px)',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
       {references.map((reference, index) => {
         const isActive = index === activeIndex;
@@ -61,7 +65,7 @@ export default function ReferenceList({
             className={`cursor-pointer transition-all duration-300 ${
               isActive 
                 ? 'opacity-100' 
-                : 'opacity-40 hover:opacity-70'
+                : 'opacity-50 sm:opacity-40 hover:opacity-80 sm:hover:opacity-70'
             }`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
@@ -76,55 +80,59 @@ export default function ReferenceList({
             role="button"
             aria-label={`Select ${reference.name}`}
             aria-pressed={isActive}
-            whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
-            whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
+            whileHover={{}}
+            whileTap={{}}
           >
             <div className="flex items-center gap-4">
               {/* Company name */}
               <div className="flex-1">
-                <ScrambleText
-                  text={reference.name}
-                  className={`font-bold transition-all duration-300 ${
-                    isActive 
-                      ? 'text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)]' 
-                      : 'text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-200 drop-shadow-[0_0_15px_rgba(0,0,0,0.6)]'
-                  }`}
-                  applyScramble={shouldAnimate && !prefersReducedMotion}
-                  trigger="manual"
-                />
-                
-                {/* Subtitle */}
-                {reference.subtitle && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ 
-                      opacity: isActive ? 1 : 0.6,
-                      y: 0 
-                    }}
-                    transition={{ 
-                      duration: prefersReducedMotion ? 0 : 0.3,
-                      delay: prefersReducedMotion ? 0 : 0.1 
-                    }}
-                    className={`mt-2 text-sm lg:text-base transition-colors duration-300 ${
-                      isActive 
-                        ? 'text-gray-200 drop-shadow-[0_0_12px_rgba(0,0,0,0.7)]' 
-                        : 'text-gray-400 drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]'
-                    }`}
-                  >
-                    {reference.subtitle}
-                  </motion.div>
-                )}
+                <div className="relative">
+                  <div className="relative z-10">
+                    <ScrambleText
+                      text={reference.name}
+                      className={`font-bold transition-all duration-300 ${
+                        isActive 
+                          ? 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-white sm:drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] lg:drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]' 
+                          : 'text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 sm:drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_3px_8px_rgba(0,0,0,0.6)]'
+                      }`}
+                      applyScramble={shouldAnimate && !prefersReducedMotion}
+                      trigger="manual"
+                    />
+                    
+                    {/* Subtitle */}
+                    {reference.subtitle && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ 
+                          opacity: isActive ? 1 : 0.6,
+                          y: 0 
+                        }}
+                        transition={{ 
+                          duration: prefersReducedMotion ? 0 : 0.3,
+                          delay: prefersReducedMotion ? 0 : 0.1 
+                        }}
+                        className={`mt-1 lg:mt-2 text-xs sm:text-sm lg:text-base transition-colors duration-300 ${
+                          isActive 
+                            ? 'text-gray-200 sm:drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]' 
+                            : 'text-gray-400 sm:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
+                        }`}
+                      >
+                        {reference.subtitle}
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* External links */}
               {isActive && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
                   {reference.instagramUrl && (
                     <motion.a
                       href={reference.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-200"
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{
@@ -135,8 +143,8 @@ export default function ReferenceList({
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
                       aria-label="View Instagram profile"
                     >
-                      <Instagram size={16} />
-                      <span>Instagram</span>
+                      <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="whitespace-nowrap">Instagram</span>
                     </motion.a>
                   )}
 
@@ -145,7 +153,7 @@ export default function ReferenceList({
                       href={reference.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-200 backdrop-blur-sm"
+                      className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{
@@ -156,8 +164,8 @@ export default function ReferenceList({
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
                       aria-label="Visit website"
                     >
-                      <Globe size={16} />
-                      <span>Web</span>
+                      <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="whitespace-nowrap">Web</span>
                     </motion.a>
                   )}
                 </div>
@@ -167,11 +175,6 @@ export default function ReferenceList({
         );
       })}
       </div>
-      
-      {/* Scroll indicator - visible on mobile when more content available */}
-      {references.length > 3 && (
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none lg:hidden" />
-      )}
     </div>
   );
 }

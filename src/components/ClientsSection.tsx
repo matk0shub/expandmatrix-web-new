@@ -631,9 +631,34 @@ export default function ClientsSection() {
             {ballConfigs.map((ball) => (
               <div
                 key={ball.id}
-                className="flex items-center justify-center rounded-3xl border border-white/10 bg-white/5 py-8 sm:py-10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:bg-white/10 hover:border-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="group relative flex items-center justify-center rounded-3xl py-8 sm:py-10 cursor-pointer transition-all duration-300 hover:scale-105"
+                style={{
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  background:
+                    'radial-gradient(40% 40% at 30% 25%, rgba(255,255,255,0.88) 0%, rgba(250,250,250,0.72) 45%, rgba(240,240,240,0.62) 70%, rgba(232,232,232,0.52) 100%),' +
+                    'radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,0.25) 0%, rgba(245,245,245,0.16) 60%, rgba(235,235,235,0.08) 100%)',
+                  boxShadow: '0 18px 44px rgba(0,0,0,0.18), 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.08)'
+                }}
               >
-                <span className="text-4xl sm:text-5xl">{ball.icon}</span>
+                {/* Inner glow effect */}
+                <div
+                  className="absolute inset-0 rounded-3xl pointer-events-none"
+                  style={{ boxShadow: 'inset 0 0 32px rgba(255,255,255,0.24), inset 0 0 64px rgba(255,255,255,0.12)' }}
+                />
+                
+                {/* Icon */}
+                <span 
+                  className="text-4xl sm:text-5xl relative z-10"
+                  style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.25)', filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))' }}
+                >
+                  {ball.icon}
+                </span>
+                
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.12) 0%, transparent 70%)', boxShadow: '0 0 36px rgba(0, 215, 107, 0.28)' }}
+                />
               </div>
             ))}
           </div>
