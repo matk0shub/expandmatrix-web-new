@@ -8,12 +8,18 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const lighthouse = require('lighthouse');
+const lighthouseModule = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 const { resolveChromePath } = require('./resolve-chrome-path');
 const { resolveAuditUrl } = require('./resolve-audit-url');
 
 const VARIANTS = new Set(['mobile', 'tablet', 'desktop']);
+const runLighthouse =
+  typeof lighthouseModule === 'function'
+    ? lighthouseModule
+    : typeof lighthouseModule?.default === 'function'
+      ? lighthouseModule.default
+      : lighthouseModule?.lighthouse;
 
 function writeJson(filePath, payload) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -53,6 +59,13 @@ async function run(variant) {
     return false;
   }
 
+  if (typeof runLighthouse !== 'function') {
+    const reason = 'Installed lighthouse package does not expose a runnable entry point.';
+    writeJson(outputPath, createErrorReport(variant, reason));
+    console.error(`[lighthouse:${variant}] ${reason}`);
+    return false;
+  }
+
   let chrome;
   try {
     chrome = await chromeLauncher.launch({
@@ -72,7 +85,7 @@ async function run(variant) {
       port: chrome.port,
     };
 
-    const result = await lighthouse(url, options, config);
+    const result = await runLighthouse(url, options, config);
     const report = Array.isArray(result.report) ? result.report[0] : result.report;
     const parsed = typeof report === 'string' ? JSON.parse(report) : report;
     const payload = {

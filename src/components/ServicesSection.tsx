@@ -218,7 +218,7 @@ export default function ServicesSection() {
                         }
                       `}
                     >
-                      <p className="text-white text-sm sm:text-base md:text-lg leading-relaxed font-lato text-center px-4">
+                      <p className="text-white/90 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-lato font-medium text-center px-4 sm:px-6">
                         <ScrambleText text={service.description} applyScramble={false} />
                       </p>
                     </div>

@@ -93,48 +93,38 @@
       "title": "Team",
       "description": "We are a multidisciplinary crew blending AI strategy, product design and flawless delivery. Every project gets an accountable lead, transparent communication and measurable impact.",
       "availability": "Ready for new missions",
-      "members": {
-        "strategist": {
-          "name": "Tomas Valenta",
-          "role": "AI Strategy Lead",
-          "bio": "Transforms ambitious visions into executable AI roadmaps grounded in data, validation and measurable value.",
-          "focus": [
-            "AI audits & roadmaps",
-            "Growth experimentation",
-            "Executive enablement"
-          ]
-        },
-        "technologist": {
-          "name": "Dominika Kralova",
-          "role": "Lead AI Engineer",
-          "bio": "Designs scalable AI stacks, orchestrates integrations and keeps our automations bulletproof in production.",
-          "focus": [
-            "Autonomous agents",
-            "Systems architecture",
-            "Data pipelines"
-          ]
-        },
-        "designer": {
-          "name": "Filip Marek",
-          "role": "Product & Brand Designer",
-          "bio": "Shapes premium digital experiences that feel effortless, convert better and stay faithful to the brand.",
-          "focus": [
-            "AI-first UX",
-            "Design systems",
-            "Interactive storytelling"
-          ]
-        },
-        "operator": {
-          "name": "Veronika Dostalova",
-          "role": "Delivery & Success Lead",
-          "bio": "Keeps execution sharp, stakeholders aligned and every milestone celebrated with obsessive attention to detail.",
-          "focus": [
-            "Client operations",
-            "Performance analytics",
-            "Partner ecosystem"
-          ]
-        }
+    "members": {
+      "matejStipcak": {
+        "name": "Matěj Štipčák",
+        "role": "Founder & CEO",
+        "bio": "Leads vision, partnerships and the category narrative so every AI initiative lands with tangible business momentum.",
+        "focus": [
+          "Founder strategy",
+          "Enterprise alliances",
+          "Category design"
+        ]
+      },
+      "matejVenclik": {
+        "name": "Matěj Venclík",
+        "role": "Co-founder & AI Architect",
+        "bio": "Builds production-ready automations and content ecosystems that compound reach and revenue for our clients.",
+        "focus": [
+          "AI automation systems",
+          "Content growth loops",
+          "Applied experimentation"
+        ]
+      },
+      "jakubHruza": {
+        "name": "Jakub Hrůza",
+        "role": "Delivery & Operations Lead",
+        "bio": "Keeps delivery on schedule, orchestrates cross-team collaboration and turns strategy into measurable outcomes.",
+        "focus": [
+          "Program operations",
+          "Client success rituals",
+          "Performance intelligence"
+        ]
       }
+    }
     },
     "faq": {
       "title": {
