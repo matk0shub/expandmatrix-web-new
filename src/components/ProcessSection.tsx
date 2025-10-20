@@ -36,7 +36,7 @@ const CARD_CONFIG = {
     lg: 'lg:p-16',
     xl: 'xl:p-20'
   },
-  borderRadius: 'rounded-[4rem]', // Ultra zakulacené
+  borderRadius: 'rounded-[2.5rem]', // Standardní zakulacení
   maxWidth: 'max-w-[92vw] lg:max-w-none',
   typography: {
     number: {
@@ -335,12 +335,12 @@ export default function ProcessSection() {
                 `}
               >
                 {/* Holographic Gradient Overlay */}
-                <div 
-                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-[4rem] pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-[2.5rem] pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
                 />
 
                 {/* Scan Line Effect */}
-                <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-30">
+                <div className="absolute inset-0 overflow-hidden rounded-[2.5rem] pointer-events-none opacity-30">
                   <div 
                     className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-green-400/80 to-transparent"
                     style={{
@@ -365,7 +365,7 @@ export default function ProcessSection() {
                 />
 
                 {/* Bottom edge accent - stejně jako FAQ má z levé strany */}
-                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[4rem]" />
+                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[2.5rem]" />
 
                 {/* Card Content */}
                 <div 
