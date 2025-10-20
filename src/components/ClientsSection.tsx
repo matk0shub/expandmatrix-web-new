@@ -9,7 +9,6 @@ import ScrambleText from './ScrambleText';
 interface BallConfig {
   id: number;
   icon: string;
-  size: number;
 }
 
 interface BallState {
@@ -54,40 +53,36 @@ export default function ClientsSection() {
   const draggedBallRef = useRef<DragState | null>(null);
   const dimensionsRef = useRef({ width: 0, height: 0 });
   const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
+  const ballSizeRef = useRef(160);
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const [isMobileDisabled, setIsMobileDisabled] = useState(false);
+  const [layout, setLayout] = useState({
+    ballSize: 160,
+    greenRadius: 180,
+    topRatio: 0.45,
+    sectionMinHeight: 720,
+  });
+  const clampValue = useCallback(
+    (value: number, min: number, max: number) => Math.min(Math.max(value, min), max),
+    []
+  );
 
   const ballConfigs = useMemo<BallConfig[]>(() => {
     const icons = ['💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧', '📊', '🎪'];
 
-    return icons.map((icon, index) => {
-      const size = 160; // Všechny koule mají stejnou větší velikost
-      return {
-        id: index,
-        icon,
-        size
-      };
-    });
+    return icons.map((icon, index) => ({
+      id: index,
+      icon
+    }));
   }, []);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    const update = (event: MediaQueryListEvent | MediaQueryList) => {
-      setIsMobileDisabled(event.matches);
-    };
-
-    update(mediaQuery);
-
-    const handleChange = (event: MediaQueryListEvent) => update(event);
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 260, 520));
+  const circleTopPercent = clampValue(layout.topRatio * 100, 38, 52);
+  const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
+  const primaryTextSize = clampValue(layout.greenRadius * 0.42, 24, 56);
+  const secondaryTextSize = clampValue(layout.greenRadius * 0.34, 20, 46);
+  const iconFontSize = clampValue(layout.ballSize * 0.38, 28, 60);
 
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
     if (!element) {
@@ -287,7 +282,7 @@ export default function ClientsSection() {
 
   // Fixed-step integrator keeps the simulation stable regardless of frame rate.
   const startAnimation = useCallback(() => {
-    if (prefersReducedMotion || isMobileDisabled || !isInViewport || animationRef.current) {
+    if (prefersReducedMotion || !isInViewport || animationRef.current) {
       return;
     }
 
@@ -312,7 +307,7 @@ export default function ClientsSection() {
       lastTime = time;
       loop(time);
     });
-  }, [isInViewport, isMobileDisabled, prefersReducedMotion, renderBalls, updatePhysics]);
+  }, [isInViewport, prefersReducedMotion, renderBalls, updatePhysics]);
 
   // Measure the container and seed every ball with deterministic yet varied initial state.
   const initializeBalls = useCallback(() => {
@@ -321,34 +316,49 @@ export default function ClientsSection() {
     }
 
     const rect = containerRef.current.getBoundingClientRect();
-    dimensionsRef.current = { width: rect.width, height: rect.height };
+    const width = rect.width;
+    const height = rect.height;
 
-    const green = {
-      width: 360,
-      height: 360,
-      topRatio: 0.45
-    } as const;
+    const ballSize = Math.round(clampValue(width * 0.22, 84, 168));
+    const greenRadius = clampValue(width * 0.33, 140, 220);
+    const topRatio = clampValue(0.42 + width * 0.00006, 0.4, 0.48);
+    const sectionMinHeight = Math.round(clampValue(Math.max(height, width * 1.08), 540, 880));
+
+    ballSizeRef.current = ballSize;
+    dimensionsRef.current = { width, height };
 
     greenPhysicsRef.current = {
-      x: rect.width / 2,
-      y: rect.height * green.topRatio,
-      radius: green.width / 2
+      x: width / 2,
+      y: height * topRatio,
+      radius: greenRadius
     };
 
+    setLayout({
+      ballSize,
+      greenRadius,
+      topRatio,
+      sectionMinHeight,
+    });
+
     const newStates = new Map<number, BallState>();
+    const horizontalPadding = clampValue(width * 0.14, 40, 140);
+    const verticalPaddingTop = clampValue(height * 0.12, 36, 120);
+    const verticalPaddingBottom = clampValue(height * 0.24, 110, 220);
 
     ballConfigs.forEach((config) => {
-      const radius = config.size / 2;
-      const x = Math.min(
-        Math.max(radius, rect.width * 0.15 + Math.random() * rect.width * 0.7),
-        rect.width - radius
+      const radius = ballSize / 2;
+      const x = clampValue(
+        horizontalPadding + Math.random() * (width - horizontalPadding * 2),
+        radius,
+        width - radius
       );
-      const y = Math.min(
-        Math.max(radius, rect.height * 0.1 + Math.random() * rect.height * 0.25),
-        rect.height - radius * 1.5
+      const y = clampValue(
+        verticalPaddingTop + Math.random() * (height - verticalPaddingTop - verticalPaddingBottom),
+        radius,
+        height - radius
       );
-      const vx = (Math.random() - 0.5) * 220;
-      const vy = Math.random() * -120;
+      const vx = (Math.random() - 0.5) * clampValue(width * 0.24, 110, 220);
+      const vy = Math.random() * -clampValue(height * 0.2, 70, 150);
 
       newStates.set(config.id, {
         id: config.id,
@@ -365,34 +375,31 @@ export default function ClientsSection() {
 
       const element = ballElementsRef.current.get(config.id);
       if (element) {
-        element.style.width = `${config.size}px`;
-        element.style.height = `${config.size}px`;
+        element.style.width = `${ballSize}px`;
+        element.style.height = `${ballSize}px`;
         element.style.opacity = '1';
       }
     });
 
     ballStateRef.current = newStates;
     renderBalls();
-  }, [ballConfigs, renderBalls]);
+  }, [ballConfigs, clampValue, renderBalls]);
 
-  const handlePointerPosition = useCallback(
-    (event: PointerEvent | ReactPointerEvent<Element>) => {
-      if (isMobileDisabled || !containerRef.current) {
-        return { x: 0, y: 0 };
-      }
+  const handlePointerPosition = useCallback((event: PointerEvent | ReactPointerEvent<Element>) => {
+    if (!containerRef.current) {
+      return { x: 0, y: 0 };
+    }
 
-      const rect = containerRef.current.getBoundingClientRect();
-      return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
-      };
-    },
-    [isMobileDisabled]
-  );
+    const rect = containerRef.current.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    };
+  }, []);
 
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (isMobileDisabled || !isInViewport) {
+      if (!isInViewport) {
         return;
       }
 
@@ -418,15 +425,11 @@ export default function ClientsSection() {
         }
       }
     },
-    [handlePointerPosition, isInViewport, isMobileDisabled]
+    [handlePointerPosition, isInViewport]
   );
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (isMobileDisabled) {
-        return;
-      }
-
       const dragState = draggedBallRef.current;
       if (!dragState) {
         return;
@@ -451,15 +454,10 @@ export default function ClientsSection() {
 
       renderBalls();
     },
-    [handlePointerPosition, isMobileDisabled, renderBalls]
+    [handlePointerPosition, renderBalls]
   );
 
   const handlePointerUp = useCallback(() => {
-    if (isMobileDisabled) {
-      draggedBallRef.current = null;
-      return;
-    }
-
     const dragState = draggedBallRef.current;
     if (!dragState) {
       return;
@@ -471,14 +469,9 @@ export default function ClientsSection() {
     }
 
     draggedBallRef.current = null;
-  }, [isMobileDisabled]);
+  }, []);
 
   useEffect(() => {
-    if (isMobileDisabled) {
-      setIsInViewport(false);
-      return () => undefined;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInViewport(entry.isIntersecting);
@@ -491,14 +484,13 @@ export default function ClientsSection() {
     }
 
     return () => observer.disconnect();
-  }, [isMobileDisabled]);
+  }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion || isMobileDisabled) {
+    if (prefersReducedMotion) {
       return () => undefined;
     }
 
-    // Wait for elements to be registered before initializing
     const timer = setTimeout(() => {
       if (ballElementsRef.current.size > 0) {
         initializeBalls();
@@ -506,20 +498,20 @@ export default function ClientsSection() {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [initializeBalls, isMobileDisabled, prefersReducedMotion]);
+  }, [initializeBalls, prefersReducedMotion]);
 
   useEffect(() => {
-    if (prefersReducedMotion || isMobileDisabled || !isInViewport) {
+    if (prefersReducedMotion || !isInViewport) {
       stopAnimation();
       return () => undefined;
     }
 
     startAnimation();
     return () => stopAnimation();
-  }, [isInViewport, isMobileDisabled, prefersReducedMotion, startAnimation, stopAnimation]);
+  }, [isInViewport, prefersReducedMotion, startAnimation, stopAnimation]);
 
   useEffect(() => {
-    if (prefersReducedMotion || isMobileDisabled) {
+    if (prefersReducedMotion) {
       return;
     }
 
@@ -531,10 +523,10 @@ export default function ClientsSection() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [initializeBalls, isMobileDisabled, prefersReducedMotion, startAnimation, stopAnimation]);
+  }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation]);
 
   useEffect(() => {
-    if (prefersReducedMotion || isMobileDisabled || !textRef1.current || !textRef2.current || !sectionRef.current) {
+    if (prefersReducedMotion || !textRef1.current || !textRef2.current || !sectionRef.current) {
       return;
     }
 
@@ -560,17 +552,17 @@ export default function ClientsSection() {
         );
 
         const easing = 1 - Math.pow(1 - progress, 3);
-        const textWidth = 460;
+        const textWidth = clampValue(circleDiameter * 0.78, circleDiameter * 0.52, circleDiameter);
         const ballRadius = greenPhysicsRef.current.radius;
         const distance = ballRadius + textWidth / 2;
 
-        const offset1 = distance - easing * (distance + 90);
-        const offset2 = -distance + easing * (distance + 90);
+        const offset1 = distance - easing * (distance + textWidth * 0.2);
+        const offset2 = -distance + easing * (distance + textWidth * 0.2);
 
         textElement1.style.transform = `translateX(${offset1}px)`;
         textElement2.style.transform = `translateX(${offset2}px)`;
       } else {
-        const textWidth = 460;
+        const textWidth = clampValue(circleDiameter * 0.78, circleDiameter * 0.52, circleDiameter);
         const ballRadius = greenPhysicsRef.current.radius;
         textElement1.style.transform = `translateX(${ballRadius + textWidth / 2}px)`;
         textElement2.style.transform = `translateX(${-(ballRadius + textWidth / 2)}px)`;
@@ -580,18 +572,14 @@ export default function ClientsSection() {
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobileDisabled, prefersReducedMotion]);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
-    if (isMobileDisabled) {
+    if (!containerRef.current) {
       return;
     }
 
     const section = containerRef.current;
-    if (!section) {
-      return;
-    }
-
     const handlePointerCancel = () => handlePointerUp();
 
     section.addEventListener('pointerup', handlePointerCancel);
@@ -601,76 +589,13 @@ export default function ClientsSection() {
       section.removeEventListener('pointerup', handlePointerCancel);
       section.removeEventListener('pointercancel', handlePointerCancel);
     };
-  }, [handlePointerUp, isMobileDisabled]);
-
-  if (isMobileDisabled) {
-    return (
-      <section className="relative w-full bg-black py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute -top-24 right-[-15%] w-[360px] h-[360px] rounded-full blur-3xl opacity-30"
-            style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.25) 0%, transparent 70%)' }}
-          />
-          <div
-            className="absolute bottom-[-10%] left-[-20%] w-[320px] h-[320px] rounded-full blur-3xl opacity-25"
-            style={{ background: 'radial-gradient(circle, rgba(0, 184, 92, 0.22) 0%, transparent 70%)' }}
-          />
-        </div>
-
-        <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
-          <div className="text-center space-y-6 mb-12">
-            <h2 className="heading-main text-balance text-white">
-              <ScrambleText text={t('title')} applyScramble={false} />
-            </h2>
-            <p className="text-white/80 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-              <ScrambleText text={t('title')} applyScramble={false} />
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-            {ballConfigs.map((ball) => (
-              <div
-                key={ball.id}
-                className="group relative flex items-center justify-center rounded-3xl py-8 sm:py-10 cursor-pointer transition-all duration-300 hover:scale-105"
-                style={{
-                  border: '1px solid rgba(255, 255, 255, 0.18)',
-                  background:
-                    'radial-gradient(40% 40% at 30% 25%, rgba(255,255,255,0.88) 0%, rgba(250,250,250,0.72) 45%, rgba(240,240,240,0.62) 70%, rgba(232,232,232,0.52) 100%),' +
-                    'radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,0.25) 0%, rgba(245,245,245,0.16) 60%, rgba(235,235,235,0.08) 100%)',
-                  boxShadow: '0 18px 44px rgba(0,0,0,0.18), 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.08)'
-                }}
-              >
-                {/* Inner glow effect */}
-                <div
-                  className="absolute inset-0 rounded-3xl pointer-events-none"
-                  style={{ boxShadow: 'inset 0 0 32px rgba(255,255,255,0.24), inset 0 0 64px rgba(255,255,255,0.12)' }}
-                />
-                
-                {/* Icon */}
-                <span 
-                  className="text-4xl sm:text-5xl relative z-10"
-                  style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.25)', filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))' }}
-                >
-                  {ball.icon}
-                </span>
-                
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.12) 0%, transparent 70%)', boxShadow: '0 0 36px rgba(0, 215, 107, 0.28)' }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  }, [handlePointerUp]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black min-h-[90vh] py-24 md:py-32"
+      className="relative w-full overflow-hidden bg-black py-24 md:py-32"
+      style={{ minHeight: sectionMinHeightStyle }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
@@ -704,10 +629,10 @@ export default function ClientsSection() {
           <div
             key={ball.id}
             ref={(element) => registerBall(ball.id, element)}
-            className="absolute rounded-full cursor-grab select-none group"
+            className="absolute rounded-full cursor-grab active:cursor-grabbing select-none group"
             style={{
-              width: ball.size,
-              height: ball.size,
+              width: `${layout.ballSize}px`,
+              height: `${layout.ballSize}px`,
               transform: 'translate3d(-9999px, -9999px, 0)',
               opacity: 0,
               transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
@@ -726,7 +651,7 @@ export default function ClientsSection() {
               className="absolute inset-0 flex items-center justify-center text-5xl md:text-6xl select-none pointer-events-none"
               style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.25)', filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))' }}
             >
-              {ball.icon}
+              <span style={{ fontSize: `${iconFontSize}px`, lineHeight: 1 }}>{ball.icon}</span>
             </div>
             <div
               className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
@@ -740,12 +665,12 @@ export default function ClientsSection() {
         <div
           className="relative rounded-full overflow-hidden shadow-2xl flex items-center justify-center"
           style={{
-            width: '360px',
-            height: '360px',
+            width: `${circleDiameter}px`,
+            height: `${circleDiameter}px`,
             background: 'linear-gradient(135deg, #00d76b, #00b85c)',
             position: 'absolute',
             left: '50%',
-            top: '45%',
+            top: `${circleTopPercent}%`,
             transform: 'translate(-50%, -50%)'
           }}
         >
@@ -755,25 +680,27 @@ export default function ClientsSection() {
           <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
             <div
               ref={textRef1}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+              className="text-white font-medium uppercase font-lato whitespace-nowrap"
               style={{
-                letterSpacing: '0.1em',
+                letterSpacing: '0.12em',
                 transform: 'translateX(0px)',
                 fontWeight: 600,
-                lineHeight: 1.1
+                lineHeight: 1.08,
+                fontSize: `${primaryTextSize}px`
               }}
             >
               <ScrambleText text={t('title')} applyScramble={false} />
             </div>
             <div
               ref={textRef2}
-              className="text-white font-medium uppercase font-lato whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
+              className="text-white font-medium uppercase font-lato whitespace-nowrap"
               style={{
-                letterSpacing: '0.1em',
+                letterSpacing: '0.12em',
                 transform: 'translateX(0px)',
                 fontWeight: 400,
-                lineHeight: 1.1,
-                marginTop: '-0.1em'
+                lineHeight: 1.08,
+                marginTop: '-0.08em',
+                fontSize: `${secondaryTextSize}px`
               }}
             >
               <ScrambleText text={t('title')} applyScramble={false} />
