@@ -181,7 +181,7 @@ export default function FAQSection() {
                     itemProp="mainEntity"
                     itemType="https://schema.org/Question"
                   >
-                    <div className="relative bg-[#0B0B0B] rounded-2xl border border-white/10 overflow-hidden shadow-lg">
+                    <div className="relative bg-[#0B0B0B] rounded-3xl border border-white/10 overflow-hidden shadow-lg">
                       <meta itemProp="name" content={question} />
                       {/* Left edge accent */}
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00d76b] to-[#00b85c] opacity-60" />

@@ -17,6 +17,25 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
     formats: ['image/avif', 'image/webp'],
   },
+  webpack: (config, { dev, isServer }) => {
+    // Optimize cache for development to prevent corruption
+    if (dev) {
+      config.cache = {
+        type: 'filesystem',
+        // Remove buildDependencies to avoid next.config.compiled.js issue
+        compression: 'gzip',
+        hashAlgorithm: 'sha256',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        store: 'pack',
+        version: '0.1.0',
+      };
+      
+      // Prevent parallel builds from corrupting cache
+      config.parallelism = 1;
+    }
+    
+    return config;
+  },
   async headers() {
     return [
       {

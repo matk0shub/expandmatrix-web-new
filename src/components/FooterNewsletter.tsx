@@ -221,7 +221,7 @@ export default function FooterNewsletter() {
             ref={buttonRef}
             type="submit"
             disabled={isSubmitting}
-            className="group relative w-full h-12 px-6 rounded-xl bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-[#00d76b]/40 transition-all duration-300 overflow-hidden"
+            className="group relative w-full px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white text-sm md:text-base font-semibold disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-[#00d76b]/40 transition-all duration-300 overflow-hidden hover:from-[#00e673] hover:to-[#00d76b]"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

@@ -42,6 +42,7 @@ export default function ReferenceBackground({
           delay: prefersReducedMotion ? 0 : 0.2 
         }}
       />
+      {/* Remove heavy mobile-only darkening */}
       
       {/* Additional subtle overlay for extra contrast */}
       <motion.div
