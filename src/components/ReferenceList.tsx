@@ -45,10 +45,11 @@ export default function ReferenceList({
   }, [activeIndex, prefersReducedMotion]);
 
   return (
-    <div
-      ref={listRef}
-      className="space-y-6 max-h-[70vh] overflow-y-auto pr-2"
-    >
+    <div className="relative">
+      <div
+        ref={listRef}
+        className="space-y-6 max-h-[50vh] lg:max-h-[70vh] overflow-y-auto pr-2"
+      >
       {references.map((reference, index) => {
         const isActive = index === activeIndex;
         const isHovered = hoveredIndex === index;
@@ -165,6 +166,12 @@ export default function ReferenceList({
           </motion.div>
         );
       })}
+      </div>
+      
+      {/* Scroll indicator - visible on mobile when more content available */}
+      {references.length > 3 && (
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none lg:hidden" />
+      )}
     </div>
   );
 }
