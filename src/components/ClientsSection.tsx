@@ -54,6 +54,8 @@ export default function ClientsSection() {
   const dimensionsRef = useRef({ width: 0, height: 0 });
   const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
   const ballSizeRef = useRef(160);
+  const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
+  const scrollAnimationFrame = useRef<number | null>(null);
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -62,6 +64,7 @@ export default function ClientsSection() {
     greenRadius: 180,
     topRatio: 0.45,
     sectionMinHeight: 720,
+    ballCount: 11,
   });
   const clampValue = useCallback(
     (value: number, min: number, max: number) => Math.min(Math.max(value, min), max),
@@ -77,12 +80,239 @@ export default function ClientsSection() {
     }));
   }, []);
 
-  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 260, 520));
-  const circleTopPercent = clampValue(layout.topRatio * 100, 38, 52);
+  const computeResponsiveValues = useCallback(
+    (width: number, height: number) => {
+      const baseConfig = {
+        ballScale: 0.2,
+        ballMin: 80,
+        ballMax: 150,
+        greenScale: 0.28,
+        greenMin: 120,
+        greenMax: 200,
+        topBase: 0.4,
+        topSlope: 0.00005,
+        topMin: 0.38,
+        topMax: 0.48,
+        sectionMultiplier: 1.02,
+        viewportMultiplier: 0.68,
+        sectionMin: 520,
+        sectionMax: 820,
+        horizontalPaddingScale: 0.12,
+        horizontalPaddingMin: 36,
+        horizontalPaddingMax: 132,
+        verticalPaddingTopScale: 0.11,
+        verticalPaddingTopMin: 34,
+        verticalPaddingTopMax: 114,
+        verticalPaddingBottomScale: 0.22,
+        verticalPaddingBottomMin: 102,
+        verticalPaddingBottomMax: 210,
+        ballCount: 11,
+        velocityHorizontalScale: 0.22,
+        velocityHorizontalMin: 100,
+        velocityHorizontalMax: 210,
+        velocityVerticalScale: 0.19,
+        velocityVerticalMin: 68,
+        velocityVerticalMax: 140,
+        maxVelocity: { x: 860, y: 1120 }
+      };
+
+      const largeConfig = {
+        ballScale: 0.19,
+        ballMin: 74,
+        ballMax: 140,
+        greenScale: 0.3,
+        greenMin: 130,
+        greenMax: 205,
+        topBase: 0.41,
+        topSlope: 0.00005,
+        topMin: 0.39,
+        topMax: 0.49,
+        sectionMultiplier: 1.08,
+        viewportMultiplier: 0.7,
+        sectionMin: 540,
+        sectionMax: 840,
+        horizontalPaddingScale: 0.11,
+        horizontalPaddingMin: 34,
+        horizontalPaddingMax: 124,
+        verticalPaddingTopScale: 0.1,
+        verticalPaddingTopMin: 32,
+        verticalPaddingTopMax: 110,
+        verticalPaddingBottomScale: 0.2,
+        verticalPaddingBottomMin: 100,
+        verticalPaddingBottomMax: 200,
+        ballCount: 10,
+        velocityHorizontalScale: 0.2,
+        velocityHorizontalMin: 92,
+        velocityHorizontalMax: 190,
+        velocityVerticalScale: 0.18,
+        velocityVerticalMin: 62,
+        velocityVerticalMax: 128,
+        maxVelocity: { x: 780, y: 1040 }
+      };
+
+      const tabletConfig = {
+        ballScale: 0.22,
+        ballMin: 68,
+        ballMax: 120,
+        greenScale: 0.32,
+        greenMin: 120,
+        greenMax: 190,
+        topBase: 0.43,
+        topSlope: 0.00008,
+        topMin: 0.4,
+        topMax: 0.5,
+        sectionMultiplier: 1.14,
+        viewportMultiplier: 0.74,
+        sectionMin: 520,
+        sectionMax: 820,
+        horizontalPaddingScale: 0.1,
+        horizontalPaddingMin: 30,
+        horizontalPaddingMax: 106,
+        verticalPaddingTopScale: 0.095,
+        verticalPaddingTopMin: 28,
+        verticalPaddingTopMax: 104,
+        verticalPaddingBottomScale: 0.19,
+        verticalPaddingBottomMin: 92,
+        verticalPaddingBottomMax: 190,
+        ballCount: 8,
+        velocityHorizontalScale: 0.18,
+        velocityHorizontalMin: 86,
+        velocityHorizontalMax: 164,
+        velocityVerticalScale: 0.17,
+        velocityVerticalMin: 56,
+        velocityVerticalMax: 120,
+        maxVelocity: { x: 700, y: 960 }
+      };
+
+      const mobileConfig = {
+        ballScale: 0.24,
+        ballMin: 54,
+        ballMax: 92,
+        greenScale: 0.43,
+        greenMin: 108,
+        greenMax: 168,
+        topBase: 0.46,
+        topSlope: 0.0001,
+        topMin: 0.44,
+        topMax: 0.54,
+        sectionMultiplier: 1.26,
+        viewportMultiplier: 0.78,
+        sectionMin: 500,
+        sectionMax: 720,
+        horizontalPaddingScale: 0.08,
+        horizontalPaddingMin: 20,
+        horizontalPaddingMax: 70,
+        verticalPaddingTopScale: 0.09,
+        verticalPaddingTopMin: 24,
+        verticalPaddingTopMax: 74,
+        verticalPaddingBottomScale: 0.2,
+        verticalPaddingBottomMin: 86,
+        verticalPaddingBottomMax: 170,
+        ballCount: 6,
+        velocityHorizontalScale: 0.16,
+        velocityHorizontalMin: 66,
+        velocityHorizontalMax: 134,
+        velocityVerticalScale: 0.16,
+        velocityVerticalMin: 48,
+        velocityVerticalMax: 106,
+        maxVelocity: { x: 600, y: 820 }
+      };
+
+      let config = baseConfig;
+
+      if (width <= 480) {
+        config = mobileConfig;
+      } else if (width <= 834) {
+        config = tabletConfig;
+      } else if (width <= 1180) {
+        config = largeConfig;
+      }
+
+      const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : height;
+      const sectionTargetHeight = Math.max(
+        height,
+        width * config.sectionMultiplier,
+        viewportHeight * config.viewportMultiplier
+      );
+      const sectionMinHeight = Math.round(
+        clampValue(sectionTargetHeight, config.sectionMin, config.sectionMax)
+      );
+      const effectiveHeight = Math.max(height, sectionMinHeight);
+
+      const ballSize = Math.round(
+        clampValue(width * config.ballScale, config.ballMin, config.ballMax)
+      );
+      const greenRadius = clampValue(
+        width * config.greenScale,
+        config.greenMin,
+        config.greenMax
+      );
+      const topRatio = clampValue(
+        config.topBase + width * config.topSlope,
+        config.topMin,
+        config.topMax
+      );
+
+      const horizontalPadding = clampValue(
+        width * config.horizontalPaddingScale,
+        config.horizontalPaddingMin,
+        config.horizontalPaddingMax
+      );
+      const verticalPaddingTop = clampValue(
+        effectiveHeight * config.verticalPaddingTopScale,
+        config.verticalPaddingTopMin,
+        config.verticalPaddingTopMax
+      );
+      const verticalPaddingBottom = clampValue(
+        effectiveHeight * config.verticalPaddingBottomScale,
+        config.verticalPaddingBottomMin,
+        config.verticalPaddingBottomMax
+      );
+
+      const horizontalVelocityRange = clampValue(
+        width * config.velocityHorizontalScale,
+        config.velocityHorizontalMin,
+        config.velocityHorizontalMax
+      );
+      const verticalVelocityRange = clampValue(
+        effectiveHeight * config.velocityVerticalScale,
+        config.velocityVerticalMin,
+        config.velocityVerticalMax
+      );
+
+      return {
+        layout: {
+          ballSize,
+          greenRadius,
+          topRatio,
+          sectionMinHeight,
+          ballCount: config.ballCount
+        },
+        padding: {
+          horizontal: horizontalPadding,
+          top: verticalPaddingTop,
+          bottom: verticalPaddingBottom,
+          height: effectiveHeight
+        },
+        velocity: {
+          horizontal: horizontalVelocityRange,
+          vertical: verticalVelocityRange
+        },
+        maxVelocity: {
+          x: config.maxVelocity.x,
+          y: config.maxVelocity.y
+        }
+      };
+    },
+    [clampValue]
+  );
+
+  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 200, 420));
+  const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
-  const primaryTextSize = clampValue(layout.greenRadius * 0.42, 24, 56);
-  const secondaryTextSize = clampValue(layout.greenRadius * 0.34, 20, 46);
-  const iconFontSize = clampValue(layout.ballSize * 0.38, 28, 60);
+  const primaryTextSize = clampValue(layout.greenRadius * 0.32, 28, 44);
+  const secondaryTextSize = clampValue(layout.greenRadius * 0.28, 22, 36);
+  const iconFontSize = clampValue(layout.ballSize * 0.38, 22, 52);
 
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
     if (!element) {
@@ -217,6 +447,7 @@ export default function ClientsSection() {
       return;
     }
 
+    const { maxVx, maxVy } = physicsConfigRef.current;
     const balls = Array.from(ballStateRef.current.values());
 
     balls.forEach((ball) => {
@@ -228,8 +459,8 @@ export default function ClientsSection() {
       ball.vx *= 1 - AIR_DRAG * dt;
       ball.vy *= 1 - AIR_DRAG * dt;
 
-      ball.vx = Math.max(Math.min(ball.vx, 900), -900);
-      ball.vy = Math.max(Math.min(ball.vy, 1200), -1200);
+      ball.vx = Math.max(Math.min(ball.vx, maxVx), -maxVx);
+      ball.vy = Math.max(Math.min(ball.vy, maxVy), -maxVy);
 
       ball.x += ball.vx * dt;
       ball.y += ball.vy * dt;
@@ -319,46 +550,74 @@ export default function ClientsSection() {
     const width = rect.width;
     const height = rect.height;
 
-    const ballSize = Math.round(clampValue(width * 0.22, 84, 168));
-    const greenRadius = clampValue(width * 0.33, 140, 220);
-    const topRatio = clampValue(0.42 + width * 0.00006, 0.4, 0.48);
-    const sectionMinHeight = Math.round(clampValue(Math.max(height, width * 1.08), 540, 880));
+    if (!width) {
+      return;
+    }
 
-    ballSizeRef.current = ballSize;
-    dimensionsRef.current = { width, height };
+    const responsive = computeResponsiveValues(width, height);
+    const { layout: layoutValues, padding, velocity, maxVelocity } = responsive;
+    const effectiveHeight = padding.height;
+
+    ballSizeRef.current = layoutValues.ballSize;
+    dimensionsRef.current = { width, height: effectiveHeight };
 
     greenPhysicsRef.current = {
       x: width / 2,
-      y: height * topRatio,
-      radius: greenRadius
+      y: effectiveHeight * layoutValues.topRatio,
+      radius: layoutValues.greenRadius
     };
 
-    setLayout({
-      ballSize,
-      greenRadius,
-      topRatio,
-      sectionMinHeight,
+    physicsConfigRef.current = {
+      maxVx: maxVelocity.x,
+      maxVy: maxVelocity.y
+    };
+
+    setLayout((previous) => {
+      if (
+        previous.ballSize === layoutValues.ballSize &&
+        previous.greenRadius === layoutValues.greenRadius &&
+        previous.topRatio === layoutValues.topRatio &&
+        previous.sectionMinHeight === layoutValues.sectionMinHeight &&
+        previous.ballCount === layoutValues.ballCount
+      ) {
+        return previous;
+      }
+      return {
+        ballSize: layoutValues.ballSize,
+        greenRadius: layoutValues.greenRadius,
+        topRatio: layoutValues.topRatio,
+        sectionMinHeight: layoutValues.sectionMinHeight,
+        ballCount: layoutValues.ballCount
+      };
     });
 
     const newStates = new Map<number, BallState>();
-    const horizontalPadding = clampValue(width * 0.14, 40, 140);
-    const verticalPaddingTop = clampValue(height * 0.12, 36, 120);
-    const verticalPaddingBottom = clampValue(height * 0.24, 110, 220);
+    const activeBallConfigs = ballConfigs.slice(0, layoutValues.ballCount);
 
-    ballConfigs.forEach((config) => {
-      const radius = ballSize / 2;
+    const radius = layoutValues.ballSize / 2;
+    const usableWidth = Math.max(width - padding.horizontal * 2, radius * 2);
+    const usableHeight = Math.max(
+      effectiveHeight - padding.top - padding.bottom,
+      radius * 2
+    );
+    const horizontalOrigin = padding.horizontal;
+    const verticalOrigin = padding.top;
+    const vxRange = velocity.horizontal;
+    const vyRange = velocity.vertical;
+
+    activeBallConfigs.forEach((config) => {
       const x = clampValue(
-        horizontalPadding + Math.random() * (width - horizontalPadding * 2),
+        horizontalOrigin + Math.random() * usableWidth,
         radius,
-        width - radius
+        Math.max(width - radius, radius)
       );
       const y = clampValue(
-        verticalPaddingTop + Math.random() * (height - verticalPaddingTop - verticalPaddingBottom),
+        verticalOrigin + Math.random() * usableHeight,
         radius,
-        height - radius
+        Math.max(effectiveHeight - radius, radius)
       );
-      const vx = (Math.random() - 0.5) * clampValue(width * 0.24, 110, 220);
-      const vy = Math.random() * -clampValue(height * 0.2, 70, 150);
+      const vx = (Math.random() - 0.5) * vxRange;
+      const vy = Math.random() * -vyRange;
 
       newStates.set(config.id, {
         id: config.id,
@@ -375,15 +634,23 @@ export default function ClientsSection() {
 
       const element = ballElementsRef.current.get(config.id);
       if (element) {
-        element.style.width = `${ballSize}px`;
-        element.style.height = `${ballSize}px`;
+        element.style.width = `${layoutValues.ballSize}px`;
+        element.style.height = `${layoutValues.ballSize}px`;
         element.style.opacity = '1';
+      }
+    });
+
+    ballConfigs.slice(layoutValues.ballCount).forEach((config) => {
+      const element = ballElementsRef.current.get(config.id);
+      if (element) {
+        element.style.opacity = '0';
+        element.style.transform = 'translate3d(-9999px, -9999px, 0)';
       }
     });
 
     ballStateRef.current = newStates;
     renderBalls();
-  }, [ballConfigs, clampValue, renderBalls]);
+  }, [ballConfigs, clampValue, computeResponsiveValues, renderBalls]);
 
   const handlePointerPosition = useCallback((event: PointerEvent | ReactPointerEvent<Element>) => {
     if (!containerRef.current) {
@@ -534,45 +801,60 @@ export default function ClientsSection() {
     const textElement2 = textRef2.current;
     const sectionElement = sectionRef.current;
 
-    const handleScroll = () => {
+    const animateScroll = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const sectionTop = sectionElement.offsetTop;
       const sectionHeight = sectionElement.offsetHeight;
       const delay = windowHeight * 0.08;
 
-      if (sectionTop <= scrollTop + windowHeight - delay && sectionTop + sectionHeight >= scrollTop) {
+      if (
+        sectionTop <= scrollTop + windowHeight - delay &&
+        sectionTop + sectionHeight >= scrollTop
+      ) {
         const progress = Math.min(
           1,
           Math.max(
             0,
-            (scrollTop + windowHeight - sectionTop - delay - sectionHeight * 0.08) /
-              sectionHeight
+            (scrollTop + windowHeight - sectionTop - delay - sectionHeight * 0.08) / sectionHeight
           )
         );
 
         const easing = 1 - Math.pow(1 - progress, 3);
-        const textWidth = clampValue(circleDiameter * 0.78, circleDiameter * 0.52, circleDiameter);
+        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
         const ballRadius = greenPhysicsRef.current.radius;
         const distance = ballRadius + textWidth / 2;
 
-        const offset1 = distance - easing * (distance + textWidth * 0.2);
-        const offset2 = -distance + easing * (distance + textWidth * 0.2);
+        const offset1 = distance - easing * (distance + textWidth * 0.24);
+        const offset2 = -distance + easing * (distance + textWidth * 0.24);
 
         textElement1.style.transform = `translateX(${offset1}px)`;
         textElement2.style.transform = `translateX(${offset2}px)`;
       } else {
-        const textWidth = clampValue(circleDiameter * 0.78, circleDiameter * 0.52, circleDiameter);
+        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
         const ballRadius = greenPhysicsRef.current.radius;
         textElement1.style.transform = `translateX(${ballRadius + textWidth / 2}px)`;
         textElement2.style.transform = `translateX(${-(ballRadius + textWidth / 2)}px)`;
       }
     };
 
+    const handleScroll = () => {
+      if (scrollAnimationFrame.current) {
+        cancelAnimationFrame(scrollAnimationFrame.current);
+      }
+      scrollAnimationFrame.current = requestAnimationFrame(animateScroll);
+    };
+
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [prefersReducedMotion]);
+    return () => {
+      if (scrollAnimationFrame.current) {
+        cancelAnimationFrame(scrollAnimationFrame.current);
+        scrollAnimationFrame.current = null;
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [clampValue, circleDiameter, prefersReducedMotion]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -625,7 +907,7 @@ export default function ClientsSection() {
         onPointerLeave={handlePointerUp}
         style={{ touchAction: 'none', userSelect: 'none' }}
       >
-        {ballConfigs.map((ball) => (
+        {ballConfigs.slice(0, layout.ballCount).map((ball) => (
           <div
             key={ball.id}
             ref={(element) => registerBall(ball.id, element)}
