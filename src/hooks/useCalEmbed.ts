@@ -8,7 +8,7 @@ export const useCalEmbed = () => {
         try {
           const cal = await getCalApi({
             namespace: "strategy",
-            embedLibUrl: "https://meet.expandmatrix.com/embed/embed.js"
+            embedJsUrl: "https://meet.expandmatrix.com/embed/embed.js"
           });
           cal("ui", {
             hideEventTypeDetails: false,
@@ -54,6 +54,22 @@ export const useCalEmbed = () => {
                 "--cal-background": "#050505",
                 "--cal-modal-box-shadow": "0 40px 120px rgba(0, 0, 0, 0.65)",
                 "--cal-shadow": "0 40px 120px rgba(0, 0, 0, 0.65)",
+                "--cal-font-family": "var(--font-lato, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)"
+              },
+              light: {
+                "--cal-border-radius": "22px",
+                "--cal-border-color": "rgba(0, 0, 0, 0)",
+                "--cal-border": "rgba(0, 0, 0, 0)",
+                "--cal-border-muted": "rgba(0, 0, 0, 0)",
+                "--cal-border-subtle": "rgba(0, 0, 0, 0)",
+                "--cal-border-emphasis": "rgba(0, 0, 0, 0)",
+                "--cal-border-booker": "rgba(0, 0, 0, 0)",
+                "--cal-border-width": "0px",
+                "--cal-text-color": "#051b12",
+                "--cal-brand": "#00d76b",
+                "--cal-background": "#ffffff",
+                "--cal-modal-box-shadow": "0 40px 120px rgba(0, 0, 0, 0.15)",
+                "--cal-shadow": "0 40px 120px rgba(0, 0, 0, 0.15)",
                 "--cal-font-family": "var(--font-lato, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)"
               }
             }
