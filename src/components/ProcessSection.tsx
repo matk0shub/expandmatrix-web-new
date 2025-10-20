@@ -2,12 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CalCTAButton } from './CalCTAButton';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -270,23 +270,15 @@ export default function ProcessSection() {
               
               {/* CTA Button */}
               <div className="flex justify-start">
-                <motion.button
-                  data-cal-namespace="strategy"
-                  data-cal-link="team/em-core/strategy"
-                  data-cal-origin="https://meet.expandmatrix.com"
-                  data-cal-config='{"layout":"month_view"}'
+                <motion.div
                   whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
                   whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
-                  className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-sm md:text-base cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50" 
+                  className="inline-flex"
                 >
-                  <span className="uppercase tracking-wide">
+                  <CalCTAButton>
                     <ScrambleText text={t('cta')} applyScramble={false} />
-                  </span>
-                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                  
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                </motion.button>
+                  </CalCTAButton>
+                </motion.div>
               </div>
             </div>
           </motion.div>
@@ -299,7 +291,7 @@ export default function ProcessSection() {
           ref={cardsContainerRef}
           className={`relative w-full ${prefersReducedMotion ? 'space-y-12 sm:space-y-16' : ''}`}
         >
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <section
               key={step.key}
               className={`process-card-wrapper ${

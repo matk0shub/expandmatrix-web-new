@@ -42,11 +42,18 @@ export const useCalEmbed = () => {
             cssVarsPerTheme: {
               dark: {
                 "--cal-border-radius": "22px",
-                "--cal-border-color": "rgba(255, 255, 255, 0.08)",
+                "--cal-border-color": "rgba(0, 0, 0, 0)",
+                "--cal-border": "rgba(0, 0, 0, 0)",
+                "--cal-border-muted": "rgba(0, 0, 0, 0)",
+                "--cal-border-subtle": "rgba(0, 0, 0, 0)",
+                "--cal-border-emphasis": "rgba(0, 0, 0, 0)",
+                "--cal-border-booker": "rgba(0, 0, 0, 0)",
+                "--cal-border-width": "0px",
                 "--cal-text-color": "#f1f6f3",
                 "--cal-brand": "#00d76b",
                 "--cal-background": "#050505",
-                "--cal-modal-box-shadow": "0 30px 90px rgba(0, 0, 0, 0.65)",
+                "--cal-modal-box-shadow": "0 40px 120px rgba(0, 0, 0, 0.65)",
+                "--cal-shadow": "0 40px 120px rgba(0, 0, 0, 0.65)",
                 "--cal-font-family": "var(--font-lato, 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif)"
               }
             }
