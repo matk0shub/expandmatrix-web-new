@@ -150,13 +150,14 @@ export default function ServicesSection() {
                   ${CARD_CONFIG.height.lg}
                   ${CARD_CONFIG.borderRadius}
                   bg-black
-                  border-2 border-green-500/40
                   transition-all duration-500
-                  group-hover:border-green-400/60
                   group-hover:scale-[1.02]
                   overflow-hidden
                 `}
               >
+                {/* Left edge accent - stejně jako FAQ */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00d76b] to-[#00b85c] opacity-60 rounded-l-3xl" />
+
                 {/* Background glow effect on hover */}
                 <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.15),transparent_70%)] rotate-12" />
