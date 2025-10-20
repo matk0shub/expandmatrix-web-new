@@ -3,12 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import LocaleSwitcher from './LocaleSwitcher';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useClient } from '@/hooks/useClient';
+import { CalCTAButton } from './CalCTAButton';
 
 type GSAPTimeline = gsap.core.Timeline;
 
@@ -294,26 +295,11 @@ export default function Hero() {
            >
             <div className="text-left md:text-right max-w-md md:max-w-lg">
               <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-outfit">
-                <ScrambleText 
-                  text={t('subtitle')}
-                  applyScramble={false}
-                />
+                <ScrambleText text={t('subtitle')} applyScramble={false} />
               </p>
-               <button 
-                 data-cal-namespace="strategy"
-                 data-cal-link="team/em-core/strategy"
-                 data-cal-origin="https://meet.expandmatrix.com"
-                 data-cal-config='{"layout":"month_view"}'
-                 className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-sm md:text-base cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50" 
-               >
-                 <span className="uppercase tracking-wide">
-                   <ScrambleText text={t('cta')} applyScramble={false} />
-                 </span>
-                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                 
-                 {/* Glow effect */}
-                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-               </button>
+              <CalCTAButton>
+                <ScrambleText text={t('cta')} applyScramble={false} />
+              </CalCTAButton>
             </div>
           </motion.div>
         </div>
@@ -362,9 +348,9 @@ export default function Hero() {
                     opacity: Math.max(0, 1 - (i * 0.02)),
                   }}
                 >
-                  <Image 
-                    src="/logo.svg" 
-                    alt="Expand Matrix" 
+                  <Image
+                    src="/logo.svg"
+                    alt="Expand Matrix logo"
                     width={200}
                     height={200}
                     className="w-full h-full object-contain"
@@ -388,9 +374,9 @@ export default function Hero() {
               >
                 <div className="relative w-full h-full">
                   {/* Base Logo with Consistent Lighting */}
-                  <Image 
-                    src="/logo.svg" 
-                    alt="Expand Matrix" 
+                  <Image
+                    src="/logo.svg"
+                    alt="Expand Matrix logo"
                     width={200}
                     height={200}
                     className="w-full h-full object-contain relative z-10"
