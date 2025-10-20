@@ -93,48 +93,38 @@
       "title": "Tým",
       "description": "Jsme multidisciplinární parta, která kombinuje AI strategii, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
       "availability": "Připravení na nové výzvy",
-      "members": {
-        "strategist": {
-          "name": "Tomáš Valenta",
-          "role": "Lead strategie AI",
-          "bio": "Proměňuje ambiciózní vize v realizovatelné AI roadmapy postavené na datech, ověřování a reálných výsledcích.",
-          "focus": [
-            "AI audity & roadmapy",
-            "Růstové experimenty",
-            "Leadership enablement"
-          ]
-        },
-        "technologist": {
-          "name": "Dominika Králová",
-          "role": "Lead AI inženýrka",
-          "bio": "Navrhuje škálovatelné AI stacky, řídí integrace a zajišťuje, že naše automatizace drží krok s produkcí.",
-          "focus": [
-            "Autonomní agenti",
-            "Systémová architektura",
-            "Datové pipeline"
-          ]
-        },
-        "designer": {
-          "name": "Filip Marek",
-          "role": "Produktový & brand designer",
-          "bio": "Tvoří prémiové digitální zážitky, které působí přirozeně, lépe konvertují a drží se identity značky.",
-          "focus": [
-            "AI-first UX",
-            "Design systémy",
-            "Interaktivní storytelling"
-          ]
-        },
-        "operator": {
-          "name": "Veronika Dostálová",
-          "role": "Delivery & success lead",
-          "bio": "Hlídá ostrou exekuci, sladění stakeholderů a každý milník oslaví s precizností jí vlastní.",
-          "focus": [
-            "Klientské operace",
-            "Výkonová analytika",
-            "Partnerský ekosystém"
-          ]
-        }
+    "members": {
+      "matejStipcak": {
+        "name": "Matěj Štipčák",
+        "role": "Founder & CEO",
+        "bio": "Řídí vizi, partnerství a positioning značky, aby každá AI iniciativa přinesla konkrétní byznysový dopad.",
+        "focus": [
+          "Zakladatelská strategie",
+          "Enterprise partnerství",
+          "Kategorie & brand"
+        ]
+      },
+      "matejVenclik": {
+        "name": "Matěj Venclík",
+        "role": "Spoluzakladatel & AI architekt",
+        "bio": "Staví produkčně připravené automatizace a obsahové ekosystémy, které násobí dosah i revenue klientů.",
+        "focus": [
+          "AI automatizační systémy",
+          "Obsahové growth smyčky",
+          "Experimentální frameworky"
+        ]
+      },
+      "jakubHruza": {
+        "name": "Jakub Hrůza",
+        "role": "Delivery & operations lead",
+        "bio": "Hlídá delivery harmonogram, koordinuje týmy a překládá strategii do měřitelných výsledků.",
+        "focus": [
+          "Programové operace",
+          "Klientské rituály úspěchu",
+          "Výkonová inteligence"
+        ]
       }
+    }
     },
     "faq": {
       "title": {
