@@ -2,12 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CalCTAButton } from './CalCTAButton';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,7 +36,7 @@ const CARD_CONFIG = {
     lg: 'lg:p-16',
     xl: 'xl:p-20'
   },
-  borderRadius: 'rounded-[4rem]', // Ultra zakulacené
+  borderRadius: 'rounded-3xl', // Standard border-radius
   maxWidth: 'max-w-[92vw] lg:max-w-none',
   typography: {
     number: {
@@ -270,23 +270,15 @@ export default function ProcessSection() {
               
               {/* CTA Button */}
               <div className="flex justify-start">
-                <motion.button
-                  data-cal-namespace="strategy"
-                  data-cal-link="team/em-core/strategy"
-                  data-cal-origin="https://meet.expandmatrix.com"
-                  data-cal-config='{"layout":"month_view"}'
+                <motion.div
                   whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
                   whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
-                  className="group relative inline-flex items-center gap-3 px-6 sm:px-7 md:px-9 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 text-sm sm:text-base md:text-lg cursor-pointer font-lato" 
+                  className="inline-flex"
                 >
-                  <span className="uppercase tracking-wide">
+                  <CalCTAButton>
                     <ScrambleText text={t('cta')} applyScramble={false} />
-                  </span>
-                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                  
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                </motion.button>
+                  </CalCTAButton>
+                </motion.div>
               </div>
             </div>
           </motion.div>
@@ -299,7 +291,7 @@ export default function ProcessSection() {
           ref={cardsContainerRef}
           className={`relative w-full ${prefersReducedMotion ? 'space-y-12 sm:space-y-16' : ''}`}
         >
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <section
               key={step.key}
               className={`process-card-wrapper ${
@@ -335,12 +327,12 @@ export default function ProcessSection() {
                 `}
               >
                 {/* Holographic Gradient Overlay */}
-                <div 
-                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-[4rem] pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
                 />
 
                 {/* Scan Line Effect */}
-                <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-30">
+                <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none opacity-30">
                   <div 
                     className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-green-400/80 to-transparent"
                     style={{
@@ -365,7 +357,7 @@ export default function ProcessSection() {
                 />
 
                 {/* Bottom edge accent - stejně jako FAQ má z levé strany */}
-                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[4rem]" />
+                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Card Content */}
                 <div 

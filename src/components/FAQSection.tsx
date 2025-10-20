@@ -4,10 +4,11 @@ import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { useFAQs } from '@/hooks/useFAQs';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useHasMounted } from '@/hooks/useHasMounted';
+import { CalCTAButton } from './CalCTAButton';
 
 export default function FAQSection() {
   const t = useTranslations('sections.faq');
@@ -135,19 +136,7 @@ export default function FAQSection() {
                 transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                 className="pt-2"
               >
-                <button
-                  data-cal-namespace="strategy"
-                  data-cal-link="team/em-core/strategy"
-                  data-cal-origin="https://meet.expandmatrix.com"
-                  data-cal-config='{"layout":"month_view"}'
-                  className="group relative inline-flex items-center gap-3 px-6 md:px-8 py-3.5 md:py-4 bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white font-semibold rounded-full hover:from-[#00e673] hover:to-[#00d76b] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-sm md:text-base cursor-pointer font-lato focus:outline-none focus:ring-4 focus:ring-[#00d76b]/50"
-                >
-                  <span className="uppercase tracking-wide">
-                    {t('cta.button')}
-                  </span>
-                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00d76b]/20 to-[#00b85c]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                </button>
+                <CalCTAButton>{t('cta.button')}</CalCTAButton>
               </motion.div>
             </div>
           </div>
@@ -181,7 +170,7 @@ export default function FAQSection() {
                     itemProp="mainEntity"
                     itemType="https://schema.org/Question"
                   >
-                    <div className="relative bg-[#0B0B0B] rounded-2xl border border-white/10 overflow-hidden shadow-lg">
+                    <div className="relative bg-[#0B0B0B] rounded-3xl border border-white/10 overflow-hidden shadow-lg">
                       <meta itemProp="name" content={question} />
                       {/* Left edge accent */}
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00d76b] to-[#00b85c] opacity-60" />
