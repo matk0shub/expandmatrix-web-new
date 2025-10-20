@@ -364,9 +364,8 @@ export default function ProcessSection() {
                   }} 
                 />
 
-                {/* Corner Accents - Lines */}
-                <div className="absolute bottom-8 left-8 w-16 h-0.5 bg-gradient-to-r from-green-400 to-transparent opacity-70" />
-                <div className="absolute bottom-8 right-8 w-16 h-0.5 bg-gradient-to-l from-green-400 to-transparent opacity-70" />
+                {/* Bottom edge accent - stejně jako FAQ má z levé strany */}
+                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[4rem]" />
 
                 {/* Card Content */}
                 <div 
