@@ -40,6 +40,24 @@ export const partnerItems: PartnerContent[] = [
     labelLines: ['Klimatizace', 'Tomeš']
   },
   {
+    kind: 'logo',
+    src: '/images/partners/openai_logo.svg',
+    alt: 'OpenAI',
+    scale: 0.64
+  },
+  {
+    kind: 'logo',
+    src: '/images/partners/cursor_logo.svg',
+    alt: 'Cursor',
+    scale: 0.6
+  },
+  {
+    kind: 'logo',
+    src: '/images/partners/n8n_logo.svg',
+    alt: 'n8n',
+    scale: 0.68
+  },
+  {
     kind: 'label',
     text: 'COMING'
   },
