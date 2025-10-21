@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
-import { Reference } from './ReferencesSection';
+import type { Reference } from '@/types/references';
 
 interface ReferenceListProps {
   references: Reference[];
