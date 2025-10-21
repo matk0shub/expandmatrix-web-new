@@ -96,36 +96,36 @@
     "members": {
       "matejStipcak": {
         "name": "Matěj Štipčák",
-        "role": "Founder & CEO",
-        "bio": "Řídí vizi, partnerství a positioning značky, aby každá AI iniciativa přinesla konkrétní byznysový dopad.",
+        "role": "Jednatel & Systémový inženýr",
+        "bio": "Odpovídám za návrh systémových řešení a technickou implementaci našich AI produktů. Zaměřuji se na vývoj, integrace a optimalizaci kódu.",
         "focus": [
-          "Zakladatelská strategie",
-          "Enterprise partnerství",
-          "Kategorie & brand"
+          "Systémová integrace",
+          "Custom vývoj",
+          "Optimalizace procesů"
         ]
       },
       "matejVenclik": {
         "name": "Matěj Venclík",
-        "role": "Spoluzakladatel & AI architekt",
-        "bio": "Staví produkčně připravené automatizace a obsahové ekosystémy, které násobí dosah i revenue klientů.",
+        "role": "Jednatel & AI Architekt",
+        "bio": "Specializuju se na návrh a implementaci AI systémů, automatizací a inteligentních agentů. Zajímám se o nejmodernější technologie a budování AI ekosystémů.",
         "focus": [
-          "AI automatizační systémy",
-          "Obsahové growth smyčky",
-          "Experimentální frameworky"
+          "AI agenti",
+          "Strategie automatizace",
+          "Architektura systémů"
         ]
       },
-      "jakubHruza": {
-        "name": "Jakub Hrůza",
-        "role": "Delivery & operations lead",
-        "bio": "Hlídá delivery harmonogram, koordinuje týmy a překládá strategii do měřitelných výsledků.",
+      "expandee": {
+        "name": "Expandee",
+        "role": "AI Jádrový Architekt",
+        "bio": "Nikdy nespí, nikdy neodpočívá a nikdy se neunaví. Zpracovává gigantické objemy dat, navrhuje dokonalé workflow a dělá rozhodnutí rychleji než mrknutí oka.",
         "focus": [
-          "Programové operace",
-          "Klientské rituály úspěchu",
-          "Výkonová inteligence"
+          "Reálné zpracování dat",
+          "Prediktivní inteligence",
+          "Nekonečné možnosti růstu"
         ]
       }
     }
-    },
+  },
     "faq": {
       "title": {
         "line1": "ČASTÉ",

@@ -269,6 +269,323 @@ h6 {
   }
 }
 
+/* Enhanced shimmer effects with smooth gradients and soft edges */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-reverse {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-diagonal-tl {
+  0% {
+    transform: translate(-100%, -100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(100%, 100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-diagonal-tr {
+  0% {
+    transform: translate(100%, -100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-100%, 100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-diagonal-bl {
+  0% {
+    transform: translate(-100%, 100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(100%, -100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-diagonal-br {
+  0% {
+    transform: translate(100%, 100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-100%, -100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-vertical-up {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-vertical-down {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-radial {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-spiral {
+  0% {
+    transform: translateX(-100%) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%) scaleY(0.3);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateX(0%) scaleY(1);
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) scaleY(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-zigzag {
+  0% {
+    transform: translateX(-100%) translateY(0%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  25% {
+    transform: translateX(-50%) translateY(-10%);
+  }
+  50% {
+    transform: translateX(0%) translateY(0%);
+  }
+  75% {
+    transform: translateX(50%) translateY(10%);
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) translateY(0%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-bounce {
+  0% {
+    transform: translateX(-100%) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  25% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  50% {
+    transform: translateX(0%) scale(1);
+  }
+  75% {
+    transform: translateX(50%) scale(1.05);
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-sine {
+  0% {
+    transform: translateX(-100%) translateY(0%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) translateY(0%);
+    opacity: 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+  animation-delay: calc(var(--shimmer-delay, 0) * 0.3s);
+}
+
+.animate-shimmer-random {
+  animation: var(--shimmer-animation, shimmer) var(--shimmer-duration, 1.2s) var(--shimmer-easing, ease-in-out) infinite;
+  animation-delay: var(--shimmer-delay, 0s);
+}
+
+/* Border glow effect that travels around the card perimeter */
+@keyframes border-glow {
+  0% {
+    border-color: transparent;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  25% {
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px 3px rgba(255, 255, 255, 0.4);
+  }
+  75% {
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    border-color: transparent;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.animate-border-glow {
+  animation: border-glow var(--glow-duration, 3s) ease-in-out infinite;
+  animation-delay: var(--glow-delay, 0s);
+}
+
+/* Scan line animation */
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
 @keyframes sway {
   0%, 100% {
     transform: translate(0, 0) rotate(0deg);
