@@ -9,6 +9,17 @@ export type PartnerContent =
       scale?: number;
     }
   | {
+      kind: 'logoStacked';
+      /** Top logo asset, ideally an icon-only SVG */
+      src: string;
+      /** Accessible name for screen readers */
+      alt: string;
+      /** Optional scale multiplier applied to the icon */
+      scale?: number;
+      /** One or two lines rendered below the logo */
+      labelLines: [string, string?];
+    }
+  | {
       kind: 'label';
       /** Short placeholder label shown until the slot is filled with a logo */
       text: string;
@@ -19,13 +30,14 @@ export const partnerItems: PartnerContent[] = [
     kind: 'logo',
     src: '/images/partners/bodybody_logo.svg',
     alt: 'BodyBody',
-    scale: 0.68
+    scale: 0.7
   },
   {
-    kind: 'logo',
+    kind: 'logoStacked',
     src: '/images/partners/klimatizace_tomes.svg',
     alt: 'Klimatizace Tomeš',
-    scale: 0.72
+    scale: 0.7,
+    labelLines: ['Klimatizace', 'Tomeš']
   },
   {
     kind: 'label',

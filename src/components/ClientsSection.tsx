@@ -325,17 +325,14 @@ export default function ClientsSection() {
       opacity: 0,
       borderRadius: '9999px',
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-      border: '1px solid rgba(255, 255, 255, 0.42)',
+      border: '1px solid rgba(220, 230, 240, 0.52)',
       background:
-        'linear-gradient(180deg, rgba(255, 255, 255, 0.34) 6%, rgba(226, 234, 244, 0.24) 42%, rgba(204, 214, 226, 0.16) 68%, rgba(182, 194, 210, 0.1) 86%, rgba(158, 170, 190, 0.08) 100%),' +
-        'radial-gradient(145% 160% at 50% 118%, rgba(246, 249, 255, 0.92) 0%, rgba(220, 232, 244, 0.42) 42%, rgba(190, 204, 222, 0.16) 68%, rgba(162, 174, 196, 0.12) 82%, rgba(128, 140, 162, 0.08) 100%),' +
-        'radial-gradient(122% 118% at 18% 16%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.38) 52%, rgba(255, 255, 255, 0.12) 82%, rgba(255, 255, 255, 0.02) 100%)',
-      boxShadow:
-        '0 36px 82px rgba(6, 10, 18, 0.55), 0 18px 34px rgba(6, 10, 18, 0.36), inset 0 4px 14px rgba(255, 255, 255, 0.48), inset 0 -6px 22px rgba(66, 78, 102, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.25)',
-      backgroundBlendMode: 'screen, normal, normal',
-      backdropFilter: 'blur(30px) saturate(170%)',
-      WebkitBackdropFilter: 'blur(30px) saturate(170%)',
-      backgroundColor: 'rgba(226, 234, 244, 0.26)',
+        'radial-gradient(140% 120% at 50% 100%, rgba(218, 228, 240, 0.48) 0%, rgba(196, 204, 216, 0.28) 52%, rgba(174, 186, 200, 0.18) 78%, rgba(156, 166, 182, 0.12) 100%),' +
+        'linear-gradient(180deg, rgba(244, 248, 254, 0.45) 0%, rgba(210, 220, 234, 0.22) 58%, rgba(188, 198, 212, 0.18) 100%)',
+      boxShadow: '0 28px 52px rgba(12, 18, 26, 0.32), 0 12px 22px rgba(12, 18, 26, 0.22)',
+      backdropFilter: 'blur(22px) saturate(140%)',
+      WebkitBackdropFilter: 'blur(22px) saturate(140%)',
+      backgroundColor: 'rgba(210, 220, 232, 0.24)',
       overflow: 'hidden'
     }),
     [layout.ballSize, prefersReducedMotion]
@@ -384,11 +381,58 @@ export default function ClientsSection() {
               sizes={`${Math.round(side)}px`}
               className="object-contain"
               style={{
-                filter: 'saturate(0) brightness(1.12) contrast(1.08)',
-                mixBlendMode: 'luminosity'
+                filter: 'saturate(0) brightness(1.02) contrast(1.04)',
+                mixBlendMode: 'multiply'
               }}
               draggable={false}
             />
+          </div>
+        );
+      }
+
+      if (ball.content.kind === 'logoStacked') {
+        const scale = ball.content.scale ?? 0.6;
+        const side = Math.max(layout.ballSize * scale, 32);
+        const [primaryLine, secondaryLine] = ball.content.labelLines;
+
+        return (
+          <div className="flex flex-col items-center justify-center gap-2 text-center">
+            <div
+              className="relative flex items-center justify-center"
+              style={{
+                width: `${side}px`,
+                height: `${side}px`
+              }}
+            >
+              <Image
+                src={ball.content.src}
+                alt={ball.content.alt}
+                fill
+                sizes={`${Math.round(side)}px`}
+                className="object-contain"
+                style={{
+                  filter: 'saturate(0) brightness(1.04) contrast(1.06)',
+                  mixBlendMode: 'multiply'
+                }}
+                draggable={false}
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center leading-none text-[#e6ecf5]">
+              <span
+                className="text-sm font-semibold uppercase tracking-[0.24em]"
+                style={{ fontSize: `${Math.max(layout.ballSize * 0.18, 12)}px` }}
+              >
+                {primaryLine}
+              </span>
+              {secondaryLine ? (
+                <span
+                  className="text-sm font-semibold uppercase tracking-[0.24em]"
+                  style={{ fontSize: `${Math.max(layout.ballSize * 0.2, 13)}px` }}
+                >
+                  {secondaryLine}
+                </span>
+              ) : null}
+            </div>
           </div>
         );
       }
@@ -1006,86 +1050,18 @@ export default function ClientsSection() {
             style={baseBallStyle}
           >
             <div
-              className="absolute inset-0 pointer-events-none overflow-hidden"
-            >
-              <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    'radial-gradient(140% 160% at 50% 116%, rgba(236, 244, 255, 0.68) 0%, rgba(216, 226, 240, 0.36) 44%, rgba(190, 202, 218, 0.18) 70%, rgba(156, 168, 188, 0.08) 92%, rgba(130, 142, 164, 0.05) 100%)'
-                }}
-              />
-              <div
-                className="absolute inset-x-[14%] bottom-[6%] h-[42%] -translate-x-[0%] rounded-full opacity-75 blur-[24px]"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(210, 222, 236, 0.46) 0%, rgba(190, 204, 220, 0.24) 68%, rgba(158, 172, 192, 0.12) 100%)'
-                }}
-              />
-              <div
-                className="absolute inset-[12%] rounded-full opacity-70"
-                style={{
-                  background:
-                    'radial-gradient(120% 110% at 52% 82%, rgba(230, 236, 246, 0.72) 0%, rgba(204, 214, 230, 0.36) 58%, rgba(174, 186, 204, 0.16) 84%, rgba(150, 162, 184, 0.08) 100%)'
-                }}
-              />
-              <div
-                className="absolute inset-[18%] rounded-[55%] opacity-45 blur-[22px]"
-                style={{
-                  background:
-                    'conic-gradient(from 130deg at 70% 48%, rgba(255, 255, 255, 0.24) 0deg, rgba(255, 255, 255, 0.04) 150deg, rgba(255, 255, 255, 0.24) 320deg, rgba(255, 255, 255, 0.34) 360deg)'
-                }}
-              />
-              <div
-                className="absolute inset-[3%] rounded-full border border-white/40 opacity-70 mix-blend-screen"
-                style={{ boxShadow: 'inset 0 0 36px rgba(255,255,255,0.28), inset 0 1px 4px rgba(255,255,255,0.48)' }}
-              />
-              <div
-                className="absolute top-[12%] left-[18%] w-[58%] h-[58%] rounded-full opacity-80 blur-[6px]"
-                style={{
-                  background:
-                    'radial-gradient(64% 74% at 18% 20%, rgba(255,255,255,0.88) 0%, rgba(246,250,255,0.32) 54%, rgba(226,236,250,0.12) 100%)',
-                  transform: 'rotate(-16deg)'
-                }}
-              />
-              <div
-                className="absolute top-[24%] right-[16%] w-[22%] h-[22%] rounded-full opacity-80 blur-[12px]"
-                style={{
-                  background:
-                    'radial-gradient(circle, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.42) 52%, rgba(255,255,255,0) 100%)'
-                }}
-              />
-              <div
-                className="absolute inset-0 rounded-full opacity-70"
-                style={{
-                  background:
-                    'linear-gradient(132deg, rgba(255,255,255,0.4) 12%, rgba(232,240,252,0.18) 46%, rgba(204,214,228,0.1) 72%, rgba(176,188,204,0.05) 100%)',
-                  mixBlendMode: 'screen'
-                }}
-              />
-            </div>
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(120% 130% at 50% 110%, rgba(206, 216, 228, 0.55) 0%, rgba(188, 198, 210, 0.26) 60%, rgba(170, 180, 194, 0.18) 100%)'
+              }}
+            />
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{ filter: 'drop-shadow(0 12px 32px rgba(16,22,32,0.28))' }}
+              style={{ filter: 'drop-shadow(0 10px 24px rgba(16,22,32,0.24))' }}
             >
               {renderBallContent(ball)}
             </div>
-            <div
-              className="absolute inset-0 rounded-full pointer-events-none mix-blend-screen"
-              style={{
-                background:
-                  'radial-gradient(92% 92% at 48% 12%, rgba(255,255,255,0.48) 0%, rgba(255,255,255,0.14) 62%, rgba(255,255,255,0) 100%)',
-                opacity: 0.85
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-600 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.12) 48%, transparent 78%)',
-                boxShadow: '0 0 56px rgba(226, 236, 248, 0.32)'
-              }}
-            />
           </div>
         ))}
       </div>
