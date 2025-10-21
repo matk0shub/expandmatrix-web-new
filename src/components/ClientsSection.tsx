@@ -1,27 +1,16 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import ScrambleText from './ScrambleText';
-
-type BallContent =
-  | {
-      kind: 'logo';
-      src: string;
-      alt?: string;
-      scale?: number;
-    }
-  | {
-      kind: 'label';
-      text: string;
-    };
+import { partnerItems, type PartnerContent } from '@/constants/partners';
 
 interface BallConfig {
   id: number;
-  content: BallContent;
+  content: PartnerContent;
 }
 
 interface BallState {
@@ -84,30 +73,14 @@ export default function ClientsSection() {
     []
   );
 
-  const ballConfigs = useMemo<BallConfig[]>(() => {
-    const logoConfigs: BallConfig[] = [
-      {
-        id: 0,
-        content: {
-          kind: 'logo',
-          src: '/images/partners/bodybody_logo.svg',
-          alt: 'BodyBody'
-        }
-      }
-    ];
-
-    const placeholders = ['💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧', '📊', '🎪'];
-
-    const placeholderConfigs = placeholders.map((placeholder, index) => ({
-      id: logoConfigs.length + index,
-      content: {
-        kind: 'label' as const,
-        text: placeholder
-      }
-    }));
-
-    return [...logoConfigs, ...placeholderConfigs];
-  }, []);
+  const ballConfigs = useMemo<BallConfig[]>(
+    () =>
+      partnerItems.map((content, index) => ({
+        id: index,
+        content
+      })),
+    []
+  );
 
   const computeResponsiveValues = useCallback(
     (width: number, height: number) => {
@@ -344,6 +317,30 @@ export default function ClientsSection() {
   const secondaryTextSize = unifiedHeadingSize;
   const contentFontSize = clampValue(layout.ballSize * 0.38, 20, 52);
 
+  const baseBallStyle = useMemo<CSSProperties>(
+    () => ({
+      width: `${layout.ballSize}px`,
+      height: `${layout.ballSize}px`,
+      transform: 'translate3d(-9999px, -9999px, 0)',
+      opacity: 0,
+      borderRadius: '9999px',
+      transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
+      border: '1px solid rgba(255, 255, 255, 0.42)',
+      background:
+        'linear-gradient(180deg, rgba(255, 255, 255, 0.34) 6%, rgba(226, 234, 244, 0.24) 42%, rgba(204, 214, 226, 0.16) 68%, rgba(182, 194, 210, 0.1) 86%, rgba(158, 170, 190, 0.08) 100%),' +
+        'radial-gradient(145% 160% at 50% 118%, rgba(246, 249, 255, 0.92) 0%, rgba(220, 232, 244, 0.42) 42%, rgba(190, 204, 222, 0.16) 68%, rgba(162, 174, 196, 0.12) 82%, rgba(128, 140, 162, 0.08) 100%),' +
+        'radial-gradient(122% 118% at 18% 16%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.38) 52%, rgba(255, 255, 255, 0.12) 82%, rgba(255, 255, 255, 0.02) 100%)',
+      boxShadow:
+        '0 36px 82px rgba(6, 10, 18, 0.55), 0 18px 34px rgba(6, 10, 18, 0.36), inset 0 4px 14px rgba(255, 255, 255, 0.48), inset 0 -6px 22px rgba(66, 78, 102, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.25)',
+      backgroundBlendMode: 'screen, normal, normal',
+      backdropFilter: 'blur(30px) saturate(170%)',
+      WebkitBackdropFilter: 'blur(30px) saturate(170%)',
+      backgroundColor: 'rgba(226, 234, 244, 0.26)',
+      overflow: 'hidden'
+    }),
+    [layout.ballSize, prefersReducedMotion]
+  );
+
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
     if (!element) {
       ballElementsRef.current.delete(id);
@@ -369,8 +366,8 @@ export default function ClientsSection() {
   const renderBallContent = useCallback(
     (ball: BallConfig) => {
       if (ball.content.kind === 'logo') {
-        const scale = ball.content.scale ?? 0.6;
-        const side = Math.max(layout.ballSize * scale, 24);
+        const scale = ball.content.scale ?? 0.62;
+        const side = Math.max(layout.ballSize * scale, 28);
 
         return (
           <div
@@ -382,20 +379,32 @@ export default function ClientsSection() {
           >
             <Image
               src={ball.content.src}
-              alt={ball.content.alt ?? 'Partner logo'}
+              alt={ball.content.alt}
               fill
               sizes={`${Math.round(side)}px`}
-              className="object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]"
+              className="object-contain"
+              style={{
+                filter: 'saturate(0) brightness(1.12) contrast(1.08)',
+                mixBlendMode: 'luminosity'
+              }}
               draggable={false}
             />
           </div>
         );
       }
 
+      const placeholderFontSize = Math.max(contentFontSize * 0.7, 16);
+
       return (
         <span
-          className="select-none font-semibold text-white/90 drop-shadow-[0_4px_14px_rgba(0,0,0,0.45)]"
-          style={{ fontSize: `${contentFontSize}px`, lineHeight: 1 }}
+          className="select-none font-semibold uppercase text-[#e6ecf5]"
+          style={{
+            fontSize: `${placeholderFontSize}px`,
+            lineHeight: 1.08,
+            letterSpacing: '0.18em',
+            textShadow:
+              '0 12px 26px rgba(16, 22, 32, 0.55), 0 0 18px rgba(255, 255, 255, 0.22)'
+          }}
         >
           {ball.content.text}
         </span>
@@ -952,19 +961,31 @@ export default function ClientsSection() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute top-0 left-0 w-[480px] h-full blur-3xl opacity-30"
-          style={{ background: 'linear-gradient(135deg, rgba(0, 215, 107, 0.22) 0%, rgba(0, 184, 92, 0.12) 55%, transparent 100%)' }}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(173, 216, 230, 0.12) 45%, transparent 100%)'
+          }}
         />
         <div
-          className="absolute bottom-[-25%] right-[-18%] w-[560px] h-[560px] rounded-full blur-3xl opacity-35"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.22) 0%, rgba(0, 215, 107, 0.08) 45%, transparent 70%)' }}
+          className="absolute bottom-[-25%] right-[-18%] w-[560px] h-[560px] rounded-full blur-3xl opacity-30"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(176, 196, 222, 0.28) 0%, rgba(176, 196, 222, 0.1) 48%, transparent 75%)'
+          }}
         />
         <div
           className="absolute top-[28%] right-[12%] w-[320px] h-[320px] rounded-full blur-3xl opacity-20"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.18) 0%, transparent 65%)' }}
+          style={{
+            background:
+              'radial-gradient(circle, rgba(224, 255, 255, 0.25) 0%, rgba(240, 248, 255, 0.05) 68%, transparent 100%)'
+          }}
         />
         <div
-          className="absolute top-[-18%] left-[22%] w-[260px] h-[260px] rounded-full blur-3xl opacity-28"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.14) 0%, transparent 60%)' }}
+          className="absolute top-[-18%] left-[22%] w-[260px] h-[260px] rounded-full blur-3xl opacity-24"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(245, 245, 245, 0.04) 62%, transparent 100%)'
+          }}
         />
       </div>
 
@@ -982,81 +1003,87 @@ export default function ClientsSection() {
             key={ball.id}
             ref={(element) => registerBall(ball.id, element)}
             className="absolute rounded-full cursor-grab active:cursor-grabbing select-none group"
-            style={{
-              width: `${layout.ballSize}px`,
-              height: `${layout.ballSize}px`,
-              transform: 'translate3d(-9999px, -9999px, 0)',
-              opacity: 0,
-              transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-              border: '1px solid rgba(255, 255, 255, 0.26)',
-              background:
-                'radial-gradient(130% 150% at 50% 120%, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.12) 48%, rgba(255, 255, 255, 0.04) 72%, transparent 100%),' +
-                'radial-gradient(110% 120% at 26% 18%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.34) 42%, rgba(255, 255, 255, 0.08) 68%, rgba(255, 255, 255, 0.02) 100%),' +
-                'linear-gradient(152deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.06))',
-              boxShadow:
-                '0 30px 60px rgba(8,9,12,0.4), 0 16px 32px rgba(8,9,12,0.24), inset 0 1px 0 rgba(255,255,255,0.52), inset 0 -1px 0 rgba(12,13,16,0.28)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              overflow: 'hidden'
-            }}
+            style={baseBallStyle}
           >
             <div
-              className="absolute inset-0 pointer-events-none"
+              className="absolute inset-0 pointer-events-none overflow-hidden"
             >
-              <div
-                className="absolute inset-[10%] rounded-full opacity-45"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.18) 58%, rgba(255,255,255,0.1) 100%)',
-                  filter: 'blur(0.5px)'
-                }}
-              />
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
                   background:
-                    'radial-gradient(82% 92% at 24% 22%, rgba(255,255,255,0.58) 0%, rgba(255,255,255,0.18) 58%, rgba(255,255,255,0) 100%)'
+                    'radial-gradient(140% 160% at 50% 116%, rgba(236, 244, 255, 0.68) 0%, rgba(216, 226, 240, 0.36) 44%, rgba(190, 202, 218, 0.18) 70%, rgba(156, 168, 188, 0.08) 92%, rgba(130, 142, 164, 0.05) 100%)'
                 }}
               />
               <div
-                className="absolute top-[14%] left-[16%] w-[62%] h-[62%] rounded-full opacity-75 blur-[2px]"
+                className="absolute inset-x-[14%] bottom-[6%] h-[42%] -translate-x-[0%] rounded-full opacity-75 blur-[24px]"
                 style={{
                   background:
-                    'radial-gradient(70% 80% at 18% 20%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.22) 60%, rgba(255,255,255,0.04) 100%)',
-                  transform: 'rotate(-12deg)'
+                    'linear-gradient(180deg, rgba(210, 222, 236, 0.46) 0%, rgba(190, 204, 220, 0.24) 68%, rgba(158, 172, 192, 0.12) 100%)'
                 }}
               />
               <div
-                className="absolute bottom-[-28%] left-1/2 w-[88%] h-[70%] rounded-full opacity-35 blur-[28px]"
+                className="absolute inset-[12%] rounded-full opacity-70"
                 style={{
                   background:
-                    'radial-gradient(90% 80% at 50% 18%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 70%, transparent 100%)',
-                  transform: 'translateX(-50%)'
+                    'radial-gradient(120% 110% at 52% 82%, rgba(230, 236, 246, 0.72) 0%, rgba(204, 214, 230, 0.36) 58%, rgba(174, 186, 204, 0.16) 84%, rgba(150, 162, 184, 0.08) 100%)'
                 }}
               />
               <div
-                className="absolute inset-[2%] rounded-full border border-white/35 opacity-75 mix-blend-screen"
-                style={{ boxShadow: 'inset 0 0 26px rgba(255,255,255,0.2)' }}
-              />
-              <div
-                className="absolute inset-[6%] rounded-full opacity-25 blur-[24px]"
+                className="absolute inset-[18%] rounded-[55%] opacity-45 blur-[22px]"
                 style={{
                   background:
-                    'radial-gradient(70% 90% at 50% 75%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.15) 65%, transparent 100%)'
+                    'conic-gradient(from 130deg at 70% 48%, rgba(255, 255, 255, 0.24) 0deg, rgba(255, 255, 255, 0.04) 150deg, rgba(255, 255, 255, 0.24) 320deg, rgba(255, 255, 255, 0.34) 360deg)'
+                }}
+              />
+              <div
+                className="absolute inset-[3%] rounded-full border border-white/40 opacity-70 mix-blend-screen"
+                style={{ boxShadow: 'inset 0 0 36px rgba(255,255,255,0.28), inset 0 1px 4px rgba(255,255,255,0.48)' }}
+              />
+              <div
+                className="absolute top-[12%] left-[18%] w-[58%] h-[58%] rounded-full opacity-80 blur-[6px]"
+                style={{
+                  background:
+                    'radial-gradient(64% 74% at 18% 20%, rgba(255,255,255,0.88) 0%, rgba(246,250,255,0.32) 54%, rgba(226,236,250,0.12) 100%)',
+                  transform: 'rotate(-16deg)'
+                }}
+              />
+              <div
+                className="absolute top-[24%] right-[16%] w-[22%] h-[22%] rounded-full opacity-80 blur-[12px]"
+                style={{
+                  background:
+                    'radial-gradient(circle, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.42) 52%, rgba(255,255,255,0) 100%)'
+                }}
+              />
+              <div
+                className="absolute inset-0 rounded-full opacity-70"
+                style={{
+                  background:
+                    'linear-gradient(132deg, rgba(255,255,255,0.4) 12%, rgba(232,240,252,0.18) 46%, rgba(204,214,228,0.1) 72%, rgba(176,188,204,0.05) 100%)',
+                  mixBlendMode: 'screen'
                 }}
               />
             </div>
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{ filter: 'drop-shadow(0 10px 28px rgba(10,12,16,0.28))' }}
+              style={{ filter: 'drop-shadow(0 12px 32px rgba(16,22,32,0.28))' }}
             >
               {renderBallContent(ball)}
             </div>
             <div
-              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+              className="absolute inset-0 rounded-full pointer-events-none mix-blend-screen"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.28) 0%, transparent 72%)',
-                boxShadow: '0 0 48px rgba(255, 255, 255, 0.18)'
+                background:
+                  'radial-gradient(92% 92% at 48% 12%, rgba(255,255,255,0.48) 0%, rgba(255,255,255,0.14) 62%, rgba(255,255,255,0) 100%)',
+                opacity: 0.85
+              }}
+            />
+            <div
+              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-600 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.12) 48%, transparent 78%)',
+                boxShadow: '0 0 56px rgba(226, 236, 248, 0.32)'
               }}
             />
           </div>
