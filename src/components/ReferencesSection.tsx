@@ -8,26 +8,7 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import ReferenceList from './ReferenceList';
 import ReferenceBackground from './ReferenceBackground';
 import ReferenceStatsCard from './ReferenceStatsCard';
-
-export interface Reference {
-  id: string;
-  name: string;
-  slug: string;
-  subtitle?: string;
-  instagramUrl?: string;
-  websiteUrl?: string;
-  image: {
-    id: string;
-    url: string;
-    alt?: string;
-  };
-  metrics: Array<{
-    label: string;
-    value: string;
-  }>;
-  order: number;
-  isFeatured: boolean;
-}
+import type { Reference } from '@/types/references';
 
 interface ReferencesSectionProps {
   references: Reference[];
