@@ -381,8 +381,7 @@ export default function ClientsSection() {
               sizes={`${Math.round(side)}px`}
               className="object-contain"
               style={{
-                filter: 'saturate(0) brightness(1.02) contrast(1.04)',
-                mixBlendMode: 'multiply'
+                filter: 'grayscale(1) brightness(1.08) contrast(1.04)'
               }}
               draggable={false}
             />
@@ -411,8 +410,7 @@ export default function ClientsSection() {
                 sizes={`${Math.round(side)}px`}
                 className="object-contain"
                 style={{
-                  filter: 'saturate(0) brightness(1.04) contrast(1.06)',
-                  mixBlendMode: 'multiply'
+                  filter: 'grayscale(1) brightness(1.08) contrast(1.06)'
                 }}
                 draggable={false}
               />
