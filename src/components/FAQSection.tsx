@@ -107,36 +107,31 @@ export default function FAQSection() {
           {/* Left Column - Headline and CTA */}
           <div className="flex flex-col min-h-[420px] py-4">
             <div className="flex flex-1 flex-col justify-between gap-10">
-              <div className="space-y-6">
-            {/* Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <h2 className="heading-main">
-                <div>{t('title.line1')}</div>
-                <div>{t('title.line2')}</div>
-              </h2>
-            </motion.div>
+              {/* Headline */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <h2 className="heading-main">
+                  <div>{t('title.line1')}</div>
+                  <div>{t('title.line2')}</div>
+                </h2>
+              </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-white/80 text-lg md:text-xl leading-relaxed max-w-xl"
-            >
-              {t('cta.overline')}
-            </motion.p>
-              </div>
-
+              {/* Bottom Section - CTA with text above button */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                className="pt-2"
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                className="flex justify-start items-end"
               >
-                <CalCTAButton>{t('cta.button')}</CalCTAButton>
+                <div className="text-left max-w-md">
+                  <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-lato">
+                    {t('cta.overline')}
+                  </p>
+                  <CalCTAButton>{t('cta.button')}</CalCTAButton>
+                </div>
               </motion.div>
             </div>
           </div>

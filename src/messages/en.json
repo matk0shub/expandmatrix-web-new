@@ -96,36 +96,36 @@
     "members": {
       "matejStipcak": {
         "name": "Matěj Štipčák",
-        "role": "Founder & CEO",
-        "bio": "Leads vision, partnerships and the category narrative so every AI initiative lands with tangible business momentum.",
+        "role": "Founder & System Engineer",
+        "bio": "I am responsible for designing system solutions and handling the technical implementation of our AI products. I focus on custom development, integrations, and optimization.",
         "focus": [
-          "Founder strategy",
-          "Enterprise alliances",
-          "Category design"
+          "System integration",
+          "Custom development",
+          "Process optimization"
         ]
       },
       "matejVenclik": {
         "name": "Matěj Venclík",
-        "role": "Co-founder & AI Architect",
-        "bio": "Builds production-ready automations and content ecosystems that compound reach and revenue for our clients.",
+        "role": "Founder & AI Architect",
+        "bio": "Specialist in designing and implementing advanced AI systems, automations and intelligent agents. I focus on cutting-edge technologies and building efficient AI ecosystems.",
         "focus": [
-          "AI automation systems",
-          "Content growth loops",
-          "Applied experimentation"
+          "AI agents",
+          "Automation strategy",
+          "System architecture"
         ]
       },
-      "jakubHruza": {
-        "name": "Jakub Hrůza",
-        "role": "Delivery & Operations Lead",
-        "bio": "Keeps delivery on schedule, orchestrates cross-team collaboration and turns strategy into measurable outcomes.",
+      "expandee": {
+        "name": "Expandee",
+        "role": "AI Core Architect",
+        "bio": "Never sleeps, never rests, never tires. Processes massive data volumes, designs perfect workflows and makes decisions faster than the blink of an eye.",
         "focus": [
-          "Program operations",
-          "Client success rituals",
-          "Performance intelligence"
+          "Real-time data processing",
+          "Predictive intelligence",
+          "Infinite growth possibilities"
         ]
       }
     }
-    },
+  },
     "faq": {
       "title": {
         "line1": "FREQUENTLY",
