@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/check-cache.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -18,11 +17,14 @@
     "audit:mobile": "node scripts/run-lighthouse.js mobile",
     "audit:tablet": "node scripts/run-lighthouse.js tablet",
     "audit:desktop": "node scripts/run-lighthouse.js desktop",
-    "audit:all": "npm run audit:mobile && npm run audit:tablet && npm run audit:desktop"
+    "audit:all": "npm run audit:mobile && npm run audit:tablet && npm run audit:desktop",
+    "seed:faqs": "node scripts/seed-faqs.mjs",
+    "seed:team": "node scripts/seed-team.mjs"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
     "@payloadcms/db-mongodb": "^3.57.0",
+    "@payloadcms/next": "^3.57.0",
     "@payloadcms/richtext-lexical": "^3.57.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -30,6 +32,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.15",
     "@tailwindcss/node": "^4.1.14",
+    "dotenv": "^17.2.3",
     "framer-motion": "^12.23.22",
     "gsap": "^3.13.0",
     "jiti": "^2.6.1",
@@ -37,12 +40,14 @@
     "lucide-react": "^0.544.0",
     "next": "15.5.4",
     "next-intl": "^4.3.9",
+    "nodemailer": "^7.0.10",
     "path-exists": "^5.0.0",
     "payload": "^3.57.0",
     "react": "19.1.0",
     "react-cookie-consent": "^9.0.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.63.0",
+    "sharp": "^0.33.5",
     "use-intl": "^4.3.12",
     "use-scramble": "^2.2.15"
   },

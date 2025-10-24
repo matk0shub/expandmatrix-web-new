@@ -269,13 +269,15 @@ export default function FooterNewsletter() {
               )}
             </div>
             <label htmlFor="newsletter-consent" className="text-white/70 text-xs leading-5 font-lato">
-              {t('consentText.before')} 
+              {t('consentText.before')}
+              {' '}
               <a 
                 href={`/${locale}/privacy`} 
                 className="underline decoration-[#00d76b] underline-offset-2 hover:text-white transition-colors duration-300"
               >
                 {t('consentText.link')}
-              </a> 
+              </a>
+              {' '}
               {t('consentText.after')}
             </label>
           </motion.div>
@@ -320,5 +322,4 @@ export default function FooterNewsletter() {
     </section>
   );
 }
-
 

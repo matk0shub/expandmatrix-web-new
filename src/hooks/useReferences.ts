@@ -48,7 +48,7 @@ export function useReferences(options: UseReferencesOptions = {}) {
         setError(err instanceof Error ? err.message : 'Failed to fetch references');
         // Fallback to sample data for development
         if (!initialReferences.length) {
-          setReferences(getSampleReferences());
+          setReferences(getSampleReferences(locale));
         }
       } finally {
         setLoading(false);

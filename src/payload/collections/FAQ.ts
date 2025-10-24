@@ -3,10 +3,51 @@ import type { CollectionConfig } from 'payload'
 export const FAQ: CollectionConfig = {
   slug: 'faqs',
   admin: {
-    useAsTitle: 'question.cs',
-    defaultColumns: ['question.cs', 'order', 'isFeatured'],
+    useAsTitle: 'questionTitle',
+    defaultColumns: ['question.cs', 'order', 'showOnSite', 'isFeatured'],
+  },
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (!data) {
+          return data
+        }
+
+        const czech = data.question?.cs
+        const english = data.question?.en
+
+        if (czech) {
+          data.questionTitle = czech
+        } else if (english) {
+          data.questionTitle = english
+        }
+
+        return data
+      },
+    ],
+    afterRead: [
+      ({ doc }) => {
+        if (!doc) {
+          return doc
+        }
+
+        if (!doc.questionTitle) {
+          doc.questionTitle = doc.question?.cs ?? doc.question?.en ?? doc.questionTitle
+        }
+
+        return doc
+      },
+    ],
   },
   fields: [
+    {
+      name: 'questionTitle',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
     {
       name: 'question',
       type: 'group',
@@ -44,6 +85,12 @@ export const FAQ: CollectionConfig = {
       type: 'number',
       required: true,
       defaultValue: 0,
+    },
+    {
+      name: 'showOnSite',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Show on website',
     },
     {
       name: 'isFeatured',

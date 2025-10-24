@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const jiti = require('jiti')(__filename);
+const path = require('path');
+const jiti = require('jiti')(process.cwd());
 
-module.exports = jiti('./payload.config.ts').default;
+module.exports = jiti(path.resolve(process.cwd(), 'payload.config.ts')).default;

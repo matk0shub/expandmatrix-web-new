@@ -1,4 +1,6 @@
 import payload from 'payload'
+import path from 'path'
+import { pathToFileURL } from 'url'
 
 type PayloadConfigShape = Record<string, unknown>
 
@@ -6,8 +8,9 @@ let cachedConfig: PayloadConfigShape | null = null
 
 const loadConfig = async (): Promise<PayloadConfigShape> => {
   if (!cachedConfig) {
-    const mod = await import('../../payload.config.js')
-    const resolvedConfig = await Promise.resolve(mod.default)
+    const configPath = path.resolve(process.cwd(), 'payload.config.js')
+    const mod = await import(/* webpackIgnore: true */ pathToFileURL(configPath).href)
+    const resolvedConfig = await Promise.resolve(mod.default ?? mod)
     cachedConfig = resolvedConfig as PayloadConfigShape
   }
 

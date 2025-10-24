@@ -9,6 +9,7 @@ export interface FAQ {
     en: string;
   };
   order: number;
+  showOnSite: boolean;
   isFeatured: boolean;
   questionTitle?: string;
   createdAt?: string;

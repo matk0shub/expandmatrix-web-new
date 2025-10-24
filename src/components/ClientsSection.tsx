@@ -57,7 +57,6 @@ export default function ClientsSection() {
   const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
   const ballSizeRef = useRef(160);
   const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
-  const scrollAnimationFrame = useRef<number | null>(null);
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -210,7 +209,7 @@ export default function ClientsSection() {
         verticalPaddingBottomScale: 0.2,
         verticalPaddingBottomMin: 86,
         verticalPaddingBottomMax: 170,
-        ballCount: 6,
+        ballCount: 8,
         velocityHorizontalScale: 0.16,
         velocityHorizontalMin: 66,
         velocityHorizontalMax: 134,
@@ -316,6 +315,8 @@ export default function ClientsSection() {
   const primaryTextSize = unifiedHeadingSize;
   const secondaryTextSize = unifiedHeadingSize;
   const contentFontSize = clampValue(layout.ballSize * 0.38, 20, 52);
+  const ballForegroundColor = '#e6ecf5';
+  const monochromeFilter = 'none';
 
   const baseBallStyle = useMemo<CSSProperties>(
     () => ({
@@ -381,7 +382,7 @@ export default function ClientsSection() {
               sizes={`${Math.round(side)}px`}
               className="object-contain"
               style={{
-                filter: 'grayscale(1) brightness(1.08) contrast(1.04)'
+                filter: monochromeFilter
               }}
               draggable={false}
             />
@@ -390,42 +391,70 @@ export default function ClientsSection() {
       }
 
       if (ball.content.kind === 'logoStacked') {
-        const scale = ball.content.scale ?? 0.6;
-        const side = Math.max(layout.ballSize * scale, 32);
+        const baseIconScale = ball.content.scale ?? 0.6;
+        const maxIconRatio = 0.62;
+        const minIconPixels = 28;
+        const baseIconSide = Math.max(layout.ballSize * baseIconScale, minIconPixels);
+        const iconMax = layout.ballSize * maxIconRatio;
         const [primaryLine, secondaryLine] = ball.content.labelLines;
 
+        const baseGap = Math.max(layout.ballSize * 0.06, 6);
+        const basePrimaryFont = Math.max(layout.ballSize * 0.18, 12);
+        const baseSecondaryFont = Math.max(layout.ballSize * 0.16, 11);
+        const estimatedHeight =
+          baseIconSide +
+          baseGap +
+          basePrimaryFont +
+          (secondaryLine ? baseSecondaryFont + baseGap * 0.6 : 0);
+        const availableHeight = layout.ballSize * 0.88;
+        const scaleFactor = Math.min(1, availableHeight / estimatedHeight);
+
+        const iconSide = Math.max(
+          Math.min(baseIconSide * scaleFactor, iconMax),
+          22
+        );
+        const gap = baseGap * scaleFactor;
+        const primaryFont = Math.max(basePrimaryFont * scaleFactor, 10);
+        const secondaryFont = Math.max(baseSecondaryFont * scaleFactor, 10);
+
         return (
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
+          <div
+            className="flex h-full w-full flex-col items-center justify-center text-center"
+            style={{ gap: `${gap}px`, padding: `${layout.ballSize * 0.08}px` }}
+          >
             <div
               className="relative flex items-center justify-center"
               style={{
-                width: `${side}px`,
-                height: `${side}px`
+                width: `${iconSide}px`,
+                height: `${iconSide}px`
               }}
             >
               <Image
                 src={ball.content.src}
                 alt={ball.content.alt}
                 fill
-                sizes={`${Math.round(side)}px`}
+                sizes={`${Math.round(iconSide)}px`}
                 className="object-contain"
                 style={{
-                  filter: 'grayscale(1) brightness(1.08) contrast(1.06)'
+                  filter: monochromeFilter
                 }}
                 draggable={false}
               />
             </div>
-            <div className="flex flex-col items-center justify-center leading-none text-[#e6ecf5]">
+            <div
+              className="flex flex-col items-center justify-center leading-none"
+              style={{ color: ballForegroundColor }}
+            >
               <span
                 className="text-sm font-semibold uppercase tracking-[0.24em]"
-                style={{ fontSize: `${Math.max(layout.ballSize * 0.18, 12)}px` }}
+                style={{ fontSize: `${primaryFont}px` }}
               >
                 {primaryLine}
               </span>
               {secondaryLine ? (
                 <span
                   className="text-sm font-semibold uppercase tracking-[0.24em]"
-                  style={{ fontSize: `${Math.max(layout.ballSize * 0.2, 13)}px` }}
+                  style={{ fontSize: `${secondaryFont}px` }}
                 >
                   {secondaryLine}
                 </span>
@@ -439,11 +468,12 @@ export default function ClientsSection() {
 
       return (
         <span
-          className="select-none font-semibold uppercase text-[#e6ecf5]"
+          className="select-none font-semibold uppercase"
           style={{
             fontSize: `${placeholderFontSize}px`,
             lineHeight: 1.08,
             letterSpacing: '0.18em',
+            color: ballForegroundColor,
             textShadow:
               '0 12px 26px rgba(16, 22, 32, 0.55), 0 0 18px rgba(255, 255, 255, 0.22)'
           }}
@@ -452,7 +482,7 @@ export default function ClientsSection() {
         </span>
       );
     },
-    [contentFontSize, layout.ballSize]
+    [ballForegroundColor, contentFontSize, layout.ballSize, monochromeFilter]
   );
 
   // Resolve circle-circle collisions with impulse response and tangential friction.
@@ -920,60 +950,58 @@ export default function ClientsSection() {
     const textElement2 = textRef2.current;
     const sectionElement = sectionRef.current;
 
-    const animateScroll = () => {
+    const updateTransforms = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const sectionTop = sectionElement.offsetTop;
-      const sectionHeight = sectionElement.offsetHeight;
+      const viewportBottom = scrollTop + windowHeight;
       const delay = windowHeight * 0.08;
 
-      if (
-        sectionTop <= scrollTop + windowHeight - delay &&
-        sectionTop + sectionHeight >= scrollTop
-      ) {
-        const progress = Math.min(
-          1,
-          Math.max(
-            0,
-            (scrollTop + windowHeight - sectionTop - delay - sectionHeight * 0.08) / sectionHeight
-          )
-        );
+      const sectionTop = sectionElement.offsetTop;
+      const nextSection = document.querySelector<HTMLElement>('#services');
+      const sectionEnd = nextSection ? nextSection.offsetTop : sectionTop + sectionElement.offsetHeight;
 
-        const easing = 1 - Math.pow(1 - progress, 3);
-        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
-        const ballRadius = greenPhysicsRef.current.radius;
-        const distance = ballRadius + textWidth / 2;
+      const effectiveBottom = viewportBottom - delay;
+      const span = Math.max(sectionEnd - sectionTop, 1);
 
-        const offset1 = distance - easing * (distance + textWidth * 0.24);
-        const offset2 = -distance + easing * (distance + textWidth * 0.24);
+      const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
+      const radius = greenPhysicsRef.current.radius;
+      const baseOffset = radius + textWidth / 2;
+      const travel = baseOffset + textWidth * 0.24;
 
-        textElement1.style.transform = `translateX(${offset1}px)`;
-        textElement2.style.transform = `translateX(${offset2}px)`;
-      } else {
-        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
-        const ballRadius = greenPhysicsRef.current.radius;
-        textElement1.style.transform = `translateX(${ballRadius + textWidth / 2}px)`;
-        textElement2.style.transform = `translateX(${-(ballRadius + textWidth / 2)}px)`;
+      if (effectiveBottom <= sectionTop) {
+        textElement1.style.transform = `translateX(${baseOffset}px)`;
+        textElement2.style.transform = `translateX(${-baseOffset}px)`;
+        return;
       }
+
+      if (effectiveBottom >= sectionEnd) {
+        const finalOffset = baseOffset - travel;
+        textElement1.style.transform = `translateX(${finalOffset}px)`;
+        textElement2.style.transform = `translateX(${-finalOffset}px)`;
+        return;
+      }
+
+      const rawProgress = (effectiveBottom - sectionTop) / span;
+      const eased = 1 - Math.pow(1 - clampValue(rawProgress, 0, 1), 3);
+
+      const offset1 = baseOffset - eased * travel;
+      const offset2 = -baseOffset + eased * travel;
+
+      textElement1.style.transform = `translateX(${offset1}px)`;
+      textElement2.style.transform = `translateX(${offset2}px)`;
     };
 
-    const handleScroll = () => {
-      if (scrollAnimationFrame.current) {
-        cancelAnimationFrame(scrollAnimationFrame.current);
-      }
-      scrollAnimationFrame.current = requestAnimationFrame(animateScroll);
-    };
+    updateTransforms();
 
-    handleScroll();
+    const handleScroll = () => updateTransforms();
+    const handleResize = () => updateTransforms();
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+
     return () => {
-      if (scrollAnimationFrame.current) {
-        cancelAnimationFrame(scrollAnimationFrame.current);
-        scrollAnimationFrame.current = null;
-      }
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, [clampValue, circleDiameter, prefersReducedMotion]);
 
@@ -1054,10 +1082,7 @@ export default function ClientsSection() {
                   'radial-gradient(120% 130% at 50% 110%, rgba(206, 216, 228, 0.55) 0%, rgba(188, 198, 210, 0.26) 60%, rgba(170, 180, 194, 0.18) 100%)'
               }}
             />
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{ filter: 'drop-shadow(0 10px 24px rgba(16,22,32,0.24))' }}
-            >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               {renderBallContent(ball)}
             </div>
           </div>

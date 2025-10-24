@@ -346,24 +346,24 @@ export default function ProcessSection() {
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Card Content */}
-                <div 
+                <div
                   className={`
                     ${CARD_CONFIG.padding.base}
                     ${CARD_CONFIG.padding.sm}
                     ${CARD_CONFIG.padding.md}
                     ${CARD_CONFIG.padding.lg}
                     ${CARD_CONFIG.padding.xl}
-                    h-full
-                    flex flex-col
-                    justify-between
                     relative
                     z-10
+                    flex
+                    h-full
+                    flex-col
                   `}
                 >
                   {/* Content */}
-                  <div>
+                  <div className="flex flex-1 flex-col items-start justify-center gap-6 sm:gap-8 md:gap-10">
                     {/* Step number with line */}
-                    <div className="flex items-center gap-4 sm:gap-5 mb-8 sm:mb-10">
+                    <div className="flex w-full items-center gap-4 sm:gap-5">
                       <div 
                         className={`
                           text-green-400 
@@ -385,13 +385,13 @@ export default function ProcessSection() {
                     {/* Title */}
                     <h3 
                       className={`
-                        text-white
-                        ${CARD_CONFIG.typography.heading.size}
-                        ${CARD_CONFIG.typography.heading.weight}
-                        font-lato
-                        mb-10 sm:mb-12 md:mb-16
-                        leading-[0.9]
-                        tracking-tight
+                        heading-secondary
+                        text-left
+                        uppercase
+                        tracking-[0.18em]
+                        sm:tracking-[0.22em]
+                        md:tracking-[0.24em]
+                        leading-tight
                       `}
                     >
                       <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
@@ -401,12 +401,16 @@ export default function ProcessSection() {
                     <p 
                       className={`
                         text-white/85
-                        ${CARD_CONFIG.typography.description.size}
-                        ${CARD_CONFIG.typography.description.weight}
+                        text-base
+                        sm:text-lg
+                        md:text-xl
+                        lg:text-2xl
                         font-lato
+                        font-medium
                         leading-relaxed
-                        max-w-full
-                        lg:max-w-[90%]
+                        text-left
+                        max-w-[680px]
+                        lg:max-w-[75%]
                       `}
                     >
                       <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />

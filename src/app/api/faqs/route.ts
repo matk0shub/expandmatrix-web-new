@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import type { Where } from 'payload';
+
 import { getPayloadClient } from '@/payload/getPayloadClient';
 import { getSampleFAQsResponse } from '@/data/faqs';
 
@@ -9,18 +11,33 @@ export async function GET(request: Request) {
   try {
     const payload = await getPayloadClient();
 
+    const where: Where = featuredOnly
+      ? {
+          and: [
+            {
+              showOnSite: {
+                equals: true,
+              },
+            },
+            {
+              isFeatured: {
+                equals: true,
+              },
+            },
+          ],
+        }
+      : {
+          showOnSite: {
+            equals: true,
+          },
+        };
+
     const result = await payload.find({
       collection: 'faqs',
       depth: 0,
       sort: 'order',
       limit: 100,
-      ...(featuredOnly && {
-        where: {
-          isFeatured: {
-            equals: true,
-          },
-        },
-      }),
+      where,
     });
 
     return NextResponse.json(result);
