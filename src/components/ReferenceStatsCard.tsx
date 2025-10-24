@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 interface ReferenceStatsCardProps {
   metrics: Array<{
@@ -14,6 +15,8 @@ export default function ReferenceStatsCard({
   metrics,
   prefersReducedMotion,
 }: ReferenceStatsCardProps) {
+  const t = useTranslations('sections.references');
+
   if (!metrics.length) return null;
 
   return (
@@ -27,9 +30,9 @@ export default function ReferenceStatsCard({
         ease: 'easeOut'
       }}
     >
-      <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[320px] lg:max-w-[420px] shadow-2xl">
+      <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[400px] lg:max-w-[600px] shadow-2xl">
         <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
-          AI Impact Overview
+          {t('impactHeading')}
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           <table className="w-full">
@@ -45,13 +48,13 @@ export default function ReferenceStatsCard({
                   }}
                   className="border-b border-white/5 last:border-b-0"
                 >
-                  <td className="px-5 py-4 align-top">
+                  <td className="px-6 py-5 align-top">
                     <span className="text-sm font-medium text-white/80 drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]">
                       {metric.label}
                     </span>
                   </td>
                   <motion.td
-                    className="px-5 py-4 text-right text-lg font-semibold text-white drop-shadow-[0_0_12px_rgba(0,0,0,0.6)]"
+                    className="px-6 py-5 text-right text-lg font-semibold text-white drop-shadow-[0_0_12px_rgba(0,0,0,0.6)]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{

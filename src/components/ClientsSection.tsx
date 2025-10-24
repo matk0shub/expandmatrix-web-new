@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import ScrambleText from './ScrambleText';
+import { partnerItems, type PartnerContent } from '@/constants/partners';
 
 interface BallConfig {
   id: number;
-  icon: string;
+  content: PartnerContent;
 }
 
 interface BallState {
@@ -55,7 +57,6 @@ export default function ClientsSection() {
   const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
   const ballSizeRef = useRef(160);
   const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
-  const scrollAnimationFrame = useRef<number | null>(null);
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -71,14 +72,14 @@ export default function ClientsSection() {
     []
   );
 
-  const ballConfigs = useMemo<BallConfig[]>(() => {
-    const icons = ['💼', '🚀', '💡', '⚡', '🎯', '🌟', '🔥', '💎', '🎨', '🔧', '📊', '🎪'];
-
-    return icons.map((icon, index) => ({
-      id: index,
-      icon
-    }));
-  }, []);
+  const ballConfigs = useMemo<BallConfig[]>(
+    () =>
+      partnerItems.map((content, index) => ({
+        id: index,
+        content
+      })),
+    []
+  );
 
   const computeResponsiveValues = useCallback(
     (width: number, height: number) => {
@@ -208,7 +209,7 @@ export default function ClientsSection() {
         verticalPaddingBottomScale: 0.2,
         verticalPaddingBottomMin: 86,
         verticalPaddingBottomMax: 170,
-        ballCount: 6,
+        ballCount: 8,
         velocityHorizontalScale: 0.16,
         velocityHorizontalMin: 66,
         velocityHorizontalMax: 134,
@@ -313,7 +314,30 @@ export default function ClientsSection() {
   const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 30, 60);
   const primaryTextSize = unifiedHeadingSize;
   const secondaryTextSize = unifiedHeadingSize;
-  const iconFontSize = clampValue(layout.ballSize * 0.38, 22, 52);
+  const contentFontSize = clampValue(layout.ballSize * 0.38, 20, 52);
+  const ballForegroundColor = '#e6ecf5';
+  const monochromeFilter = 'none';
+
+  const baseBallStyle = useMemo<CSSProperties>(
+    () => ({
+      width: `${layout.ballSize}px`,
+      height: `${layout.ballSize}px`,
+      transform: 'translate3d(-9999px, -9999px, 0)',
+      opacity: 0,
+      borderRadius: '9999px',
+      transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
+      border: '1px solid rgba(220, 230, 240, 0.52)',
+      background:
+        'radial-gradient(140% 120% at 50% 100%, rgba(218, 228, 240, 0.48) 0%, rgba(196, 204, 216, 0.28) 52%, rgba(174, 186, 200, 0.18) 78%, rgba(156, 166, 182, 0.12) 100%),' +
+        'linear-gradient(180deg, rgba(244, 248, 254, 0.45) 0%, rgba(210, 220, 234, 0.22) 58%, rgba(188, 198, 212, 0.18) 100%)',
+      boxShadow: '0 28px 52px rgba(12, 18, 26, 0.32), 0 12px 22px rgba(12, 18, 26, 0.22)',
+      backdropFilter: 'blur(22px) saturate(140%)',
+      WebkitBackdropFilter: 'blur(22px) saturate(140%)',
+      backgroundColor: 'rgba(210, 220, 232, 0.24)',
+      overflow: 'hidden'
+    }),
+    [layout.ballSize, prefersReducedMotion]
+  );
 
   const registerBall = useCallback((id: number, element: HTMLDivElement | null) => {
     if (!element) {
@@ -336,6 +360,130 @@ export default function ClientsSection() {
       element.style.transform = `translate3d(${ball.x - ball.radius}px, ${ball.y - ball.radius}px, 0) rotate(${ball.angle}rad)`;
     });
   }, []);
+
+  const renderBallContent = useCallback(
+    (ball: BallConfig) => {
+      if (ball.content.kind === 'logo') {
+        const scale = ball.content.scale ?? 0.62;
+        const side = Math.max(layout.ballSize * scale, 28);
+
+        return (
+          <div
+            className="relative flex items-center justify-center"
+            style={{
+              width: `${side}px`,
+              height: `${side}px`
+            }}
+          >
+            <Image
+              src={ball.content.src}
+              alt={ball.content.alt}
+              fill
+              sizes={`${Math.round(side)}px`}
+              className="object-contain"
+              style={{
+                filter: monochromeFilter
+              }}
+              draggable={false}
+            />
+          </div>
+        );
+      }
+
+      if (ball.content.kind === 'logoStacked') {
+        const baseIconScale = ball.content.scale ?? 0.6;
+        const maxIconRatio = 0.62;
+        const minIconPixels = 28;
+        const baseIconSide = Math.max(layout.ballSize * baseIconScale, minIconPixels);
+        const iconMax = layout.ballSize * maxIconRatio;
+        const [primaryLine, secondaryLine] = ball.content.labelLines;
+
+        const baseGap = Math.max(layout.ballSize * 0.06, 6);
+        const basePrimaryFont = Math.max(layout.ballSize * 0.18, 12);
+        const baseSecondaryFont = Math.max(layout.ballSize * 0.16, 11);
+        const estimatedHeight =
+          baseIconSide +
+          baseGap +
+          basePrimaryFont +
+          (secondaryLine ? baseSecondaryFont + baseGap * 0.6 : 0);
+        const availableHeight = layout.ballSize * 0.88;
+        const scaleFactor = Math.min(1, availableHeight / estimatedHeight);
+
+        const iconSide = Math.max(
+          Math.min(baseIconSide * scaleFactor, iconMax),
+          22
+        );
+        const gap = baseGap * scaleFactor;
+        const primaryFont = Math.max(basePrimaryFont * scaleFactor, 10);
+        const secondaryFont = Math.max(baseSecondaryFont * scaleFactor, 10);
+
+        return (
+          <div
+            className="flex h-full w-full flex-col items-center justify-center text-center"
+            style={{ gap: `${gap}px`, padding: `${layout.ballSize * 0.08}px` }}
+          >
+            <div
+              className="relative flex items-center justify-center"
+              style={{
+                width: `${iconSide}px`,
+                height: `${iconSide}px`
+              }}
+            >
+              <Image
+                src={ball.content.src}
+                alt={ball.content.alt}
+                fill
+                sizes={`${Math.round(iconSide)}px`}
+                className="object-contain"
+                style={{
+                  filter: monochromeFilter
+                }}
+                draggable={false}
+              />
+            </div>
+            <div
+              className="flex flex-col items-center justify-center leading-none"
+              style={{ color: ballForegroundColor }}
+            >
+              <span
+                className="text-sm font-semibold uppercase tracking-[0.24em]"
+                style={{ fontSize: `${primaryFont}px` }}
+              >
+                {primaryLine}
+              </span>
+              {secondaryLine ? (
+                <span
+                  className="text-sm font-semibold uppercase tracking-[0.24em]"
+                  style={{ fontSize: `${secondaryFont}px` }}
+                >
+                  {secondaryLine}
+                </span>
+              ) : null}
+            </div>
+          </div>
+        );
+      }
+
+      const placeholderFontSize = Math.max(contentFontSize * 0.7, 16);
+
+      return (
+        <span
+          className="select-none font-semibold uppercase"
+          style={{
+            fontSize: `${placeholderFontSize}px`,
+            lineHeight: 1.08,
+            letterSpacing: '0.18em',
+            color: ballForegroundColor,
+            textShadow:
+              '0 12px 26px rgba(16, 22, 32, 0.55), 0 0 18px rgba(255, 255, 255, 0.22)'
+          }}
+        >
+          {ball.content.text}
+        </span>
+      );
+    },
+    [ballForegroundColor, contentFontSize, layout.ballSize, monochromeFilter]
+  );
 
   // Resolve circle-circle collisions with impulse response and tangential friction.
   const resolveBallCollision = useCallback((a: BallState, b: BallState) => {
@@ -802,60 +950,58 @@ export default function ClientsSection() {
     const textElement2 = textRef2.current;
     const sectionElement = sectionRef.current;
 
-    const animateScroll = () => {
+    const updateTransforms = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const sectionTop = sectionElement.offsetTop;
-      const sectionHeight = sectionElement.offsetHeight;
+      const viewportBottom = scrollTop + windowHeight;
       const delay = windowHeight * 0.08;
 
-      if (
-        sectionTop <= scrollTop + windowHeight - delay &&
-        sectionTop + sectionHeight >= scrollTop
-      ) {
-        const progress = Math.min(
-          1,
-          Math.max(
-            0,
-            (scrollTop + windowHeight - sectionTop - delay - sectionHeight * 0.08) / sectionHeight
-          )
-        );
+      const sectionTop = sectionElement.offsetTop;
+      const nextSection = document.querySelector<HTMLElement>('#services');
+      const sectionEnd = nextSection ? nextSection.offsetTop : sectionTop + sectionElement.offsetHeight;
 
-        const easing = 1 - Math.pow(1 - progress, 3);
-        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
-        const ballRadius = greenPhysicsRef.current.radius;
-        const distance = ballRadius + textWidth / 2;
+      const effectiveBottom = viewportBottom - delay;
+      const span = Math.max(sectionEnd - sectionTop, 1);
 
-        const offset1 = distance - easing * (distance + textWidth * 0.24);
-        const offset2 = -distance + easing * (distance + textWidth * 0.24);
+      const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
+      const radius = greenPhysicsRef.current.radius;
+      const baseOffset = radius + textWidth / 2;
+      const travel = baseOffset + textWidth * 0.24;
 
-        textElement1.style.transform = `translateX(${offset1}px)`;
-        textElement2.style.transform = `translateX(${offset2}px)`;
-      } else {
-        const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
-        const ballRadius = greenPhysicsRef.current.radius;
-        textElement1.style.transform = `translateX(${ballRadius + textWidth / 2}px)`;
-        textElement2.style.transform = `translateX(${-(ballRadius + textWidth / 2)}px)`;
+      if (effectiveBottom <= sectionTop) {
+        textElement1.style.transform = `translateX(${baseOffset}px)`;
+        textElement2.style.transform = `translateX(${-baseOffset}px)`;
+        return;
       }
+
+      if (effectiveBottom >= sectionEnd) {
+        const finalOffset = baseOffset - travel;
+        textElement1.style.transform = `translateX(${finalOffset}px)`;
+        textElement2.style.transform = `translateX(${-finalOffset}px)`;
+        return;
+      }
+
+      const rawProgress = (effectiveBottom - sectionTop) / span;
+      const eased = 1 - Math.pow(1 - clampValue(rawProgress, 0, 1), 3);
+
+      const offset1 = baseOffset - eased * travel;
+      const offset2 = -baseOffset + eased * travel;
+
+      textElement1.style.transform = `translateX(${offset1}px)`;
+      textElement2.style.transform = `translateX(${offset2}px)`;
     };
 
-    const handleScroll = () => {
-      if (scrollAnimationFrame.current) {
-        cancelAnimationFrame(scrollAnimationFrame.current);
-      }
-      scrollAnimationFrame.current = requestAnimationFrame(animateScroll);
-    };
+    updateTransforms();
 
-    handleScroll();
+    const handleScroll = () => updateTransforms();
+    const handleResize = () => updateTransforms();
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+
     return () => {
-      if (scrollAnimationFrame.current) {
-        cancelAnimationFrame(scrollAnimationFrame.current);
-        scrollAnimationFrame.current = null;
-      }
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, [clampValue, circleDiameter, prefersReducedMotion]);
 
@@ -885,19 +1031,31 @@ export default function ClientsSection() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute top-0 left-0 w-[480px] h-full blur-3xl opacity-30"
-          style={{ background: 'linear-gradient(135deg, rgba(0, 215, 107, 0.22) 0%, rgba(0, 184, 92, 0.12) 55%, transparent 100%)' }}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(173, 216, 230, 0.12) 45%, transparent 100%)'
+          }}
         />
         <div
-          className="absolute bottom-[-25%] right-[-18%] w-[560px] h-[560px] rounded-full blur-3xl opacity-35"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.22) 0%, rgba(0, 215, 107, 0.08) 45%, transparent 70%)' }}
+          className="absolute bottom-[-25%] right-[-18%] w-[560px] h-[560px] rounded-full blur-3xl opacity-30"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(176, 196, 222, 0.28) 0%, rgba(176, 196, 222, 0.1) 48%, transparent 75%)'
+          }}
         />
         <div
           className="absolute top-[28%] right-[12%] w-[320px] h-[320px] rounded-full blur-3xl opacity-20"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.18) 0%, transparent 65%)' }}
+          style={{
+            background:
+              'radial-gradient(circle, rgba(224, 255, 255, 0.25) 0%, rgba(240, 248, 255, 0.05) 68%, transparent 100%)'
+          }}
         />
         <div
-          className="absolute top-[-18%] left-[22%] w-[260px] h-[260px] rounded-full blur-3xl opacity-28"
-          style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.14) 0%, transparent 60%)' }}
+          className="absolute top-[-18%] left-[22%] w-[260px] h-[260px] rounded-full blur-3xl opacity-24"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(245, 245, 245, 0.04) 62%, transparent 100%)'
+          }}
         />
       </div>
 
@@ -915,33 +1073,18 @@ export default function ClientsSection() {
             key={ball.id}
             ref={(element) => registerBall(ball.id, element)}
             className="absolute rounded-full cursor-grab active:cursor-grabbing select-none group"
-            style={{
-              width: `${layout.ballSize}px`,
-              height: `${layout.ballSize}px`,
-              transform: 'translate3d(-9999px, -9999px, 0)',
-              opacity: 0,
-              transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              background:
-                'radial-gradient(40% 40% at 30% 25%, rgba(255,255,255,0.88) 0%, rgba(250,250,250,0.72) 45%, rgba(240,240,240,0.62) 70%, rgba(232,232,232,0.52) 100%),' +
-                'radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,0.25) 0%, rgba(245,245,245,0.16) 60%, rgba(235,235,235,0.08) 100%)',
-              boxShadow: '0 18px 44px rgba(0,0,0,0.18), 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.08)'
-            }}
+            style={baseBallStyle}
           >
             <div
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{ boxShadow: 'inset 0 0 32px rgba(255,255,255,0.24), inset 0 0 64px rgba(255,255,255,0.12)' }}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(120% 130% at 50% 110%, rgba(206, 216, 228, 0.55) 0%, rgba(188, 198, 210, 0.26) 60%, rgba(170, 180, 194, 0.18) 100%)'
+              }}
             />
-            <div
-              className="absolute inset-0 flex items-center justify-center text-5xl md:text-6xl select-none pointer-events-none"
-              style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.25)', filter: 'drop-shadow(0 0 8px rgba(0, 215, 107, 0.2))' }}
-            >
-              <span style={{ fontSize: `${iconFontSize}px`, lineHeight: 1 }}>{ball.icon}</span>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {renderBallContent(ball)}
             </div>
-            <div
-              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-              style={{ background: 'radial-gradient(circle, rgba(0, 215, 107, 0.12) 0%, transparent 70%)', boxShadow: '0 0 36px rgba(0, 215, 107, 0.28)' }}
-            />
           </div>
         ))}
       </div>

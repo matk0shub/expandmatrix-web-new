@@ -65,17 +65,26 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
    PAYLOAD_SECRET=replace-with-long-random-string
    DATABASE_URI=mongodb://127.0.0.1:27017/expandmatrix
    ```
-2. **Run Payload alongside Next.js**
+2. **Run the Next.js dev server**
    ```bash
-   npx payload dev --config payload.config.ts
+   npm run dev
    ```
-   This spins up the admin UI at [http://localhost:3000/admin](http://localhost:3000/admin). The command watches the same files as Next.js, so keep it in a separate terminal.
-3. **Create the first admin user** via the UI prompt or CLI:
+   Payload mounts in the same app; visit [http://localhost:3000/admin](http://localhost:3000/admin) to access the dashboard.
+3. **Seed FAQs (optional, recommended)**  
    ```bash
-   npx payload create-user --config payload.config.ts --email you@example.com
-   ```
-4. **Uploads** land in `/media` by default. Optimised sizes (`thumbnail`, `card`, `tablet`) are generated automatically.
-5. **Consuming content**: the Next.js app currently reads from localized JSON. When you’re ready to fetch live payload content, use the generated `payload-types.ts` for end-to-end typing.
+   npm run seed:faqs
+   ```  
+   This upserts the default CZ/EN FAQ entries into Payload so the homepage section pulls real CMS data.
+4. **Seed Team members (optional, recommended)**  
+   ```bash
+   npm run seed:team
+   ```  
+   Adds the baseline team profiles (with localized bios, focus badges and social links). Upload avatars via the Payload Media library afterwards.
+5. **Create the first admin user** directly in the browser when prompted (first visit to `/admin`).
+6. **Uploads** land in `/media` by default. Optimised sizes (`thumbnail`, `card`, `tablet`) are generated automatically.
+7. **Consuming content**: the Next.js app currently reads from localized JSON. When you’re ready to fetch live payload content, use the generated `payload-types.ts` for end-to-end typing.
+
+> Need to update admin bundles? Use the Payload CLI, e.g. `npx payload generate:importmap` or `npx payload generate:types` (ensure your env vars are loaded first).
 
 ## Deployment Checklist
 

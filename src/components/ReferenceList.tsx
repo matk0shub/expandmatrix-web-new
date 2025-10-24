@@ -3,8 +3,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Instagram } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
-import { Reference } from './ReferencesSection';
+import type { Reference } from '@/types/references';
 
 interface ReferenceListProps {
   references: Reference[];
@@ -19,6 +20,7 @@ export default function ReferenceList({
   onSelect,
   prefersReducedMotion,
 }: ReferenceListProps) {
+  const t = useTranslations('sections.references');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +80,7 @@ export default function ReferenceList({
             }}
             tabIndex={0}
             role="button"
-            aria-label={`Select ${reference.name}`}
+            aria-label={t('selectReference', { name: reference.name })}
             aria-pressed={isActive}
             whileHover={{}}
             whileTap={{}}
@@ -141,10 +143,10 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label="View Instagram profile"
+                      aria-label={t('instagramAria', { name: reference.name })}
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">Instagram</span>
+                      <span className="whitespace-nowrap">{t('instagram')}</span>
                     </motion.a>
                   )}
 
@@ -162,10 +164,10 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label="Visit website"
+                      aria-label={t('websiteAria', { name: reference.name })}
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">Web</span>
+                      <span className="whitespace-nowrap">{t('website')}</span>
                     </motion.a>
                   )}
                 </div>

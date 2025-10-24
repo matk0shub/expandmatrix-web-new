@@ -8,26 +8,7 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import ReferenceList from './ReferenceList';
 import ReferenceBackground from './ReferenceBackground';
 import ReferenceStatsCard from './ReferenceStatsCard';
-
-export interface Reference {
-  id: string;
-  name: string;
-  slug: string;
-  subtitle?: string;
-  instagramUrl?: string;
-  websiteUrl?: string;
-  image: {
-    id: string;
-    url: string;
-    alt?: string;
-  };
-  metrics: Array<{
-    label: string;
-    value: string;
-  }>;
-  order: number;
-  isFeatured: boolean;
-}
+import type { Reference } from '@/types/references';
 
 interface ReferencesSectionProps {
   references: Reference[];
@@ -142,8 +123,8 @@ export default function ReferencesSection({ references }: ReferencesSectionProps
       itemScope
       itemType="https://schema.org/ItemList"
     >
-      <meta itemProp="name" content="Client References" />
-      <meta itemProp="description" content="Featured client success stories and AI implementation results" />
+      <meta itemProp="name" content={t('metaName')} />
+      <meta itemProp="description" content={t('metaDescription')} />
       {/* Full-width background images */}
       <div className={`${isPinned ? 'fixed inset-0 z-10' : 'relative'} h-screen`}>
         <AnimatePresence mode="wait">

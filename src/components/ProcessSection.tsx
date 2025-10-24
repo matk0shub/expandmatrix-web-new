@@ -67,12 +67,13 @@ const CARD_CONFIG = {
   }
 } as const;
 
-// Futuristic glassmorphism card style - bez borderů
+// Futuristic card style with solid background
 const cardBaseStyle = `
-  bg-gradient-to-br from-black/90 via-black/95 to-black/98
+  bg-gradient-to-br from-black/95 via-black/98 to-black/99
   backdrop-blur-2xl
   transition-all duration-700
   hover:scale-[1.03]
+  isolation-auto
 `;
 
 // Subtle rotations for scattered look
@@ -326,58 +327,43 @@ export default function ProcessSection() {
                   overflow-hidden
                 `}
               >
-                {/* Holographic Gradient Overlay */}
-                <div
-                  className="absolute inset-0 bg-gradient-to-br from-green-500/15 via-transparent via-50% to-cyan-500/10 opacity-60 rounded-3xl pointer-events-none transition-opacity duration-700 group-hover:opacity-80"
+                {/* Enhanced Glass Effect Layers */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-3xl pointer-events-none mix-blend-normal" />
+
+                {/* Border glow effect */}
+                <div 
+                  className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
+                  style={{
+                    '--glow-delay': Math.random() * 5,
+                    '--glow-duration': `${2 + Math.random() * 3}s`
+                  } as React.CSSProperties}
                 />
 
-                {/* Scan Line Effect */}
-                <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none opacity-30">
-                  <div 
-                    className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-green-400/80 to-transparent"
-                    style={{
-                      animation: 'scanLine 8s linear infinite',
-                    }}
-                  />
-                </div>
-
-                {/* Corner Accents - Glowing Dots */}
-                <div className="absolute top-8 left-8 w-2.5 h-2.5 bg-green-400 rounded-full opacity-80 animate-pulse" 
-                  style={{ 
-                    boxShadow: '0 0 16px rgba(0, 215, 107, 0.9)',
-                    animationDuration: '3s' 
-                  }} 
-                />
-                <div className="absolute top-8 right-8 w-2.5 h-2.5 bg-green-400 rounded-full opacity-80 animate-pulse" 
-                  style={{ 
-                    boxShadow: '0 0 16px rgba(0, 215, 107, 0.9)',
-                    animationDuration: '3.5s',
-                    animationDelay: '0.5s'
-                  }} 
-                />
-
-                {/* Bottom edge accent - stejně jako FAQ má z levé strany */}
+                {/* Bottom edge accent - zelená lajna jako ve FAQ */}
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Card Content */}
-                <div 
+                <div
                   className={`
                     ${CARD_CONFIG.padding.base}
                     ${CARD_CONFIG.padding.sm}
                     ${CARD_CONFIG.padding.md}
                     ${CARD_CONFIG.padding.lg}
                     ${CARD_CONFIG.padding.xl}
-                    h-full
-                    flex flex-col
-                    justify-between
                     relative
                     z-10
+                    flex
+                    h-full
+                    flex-col
                   `}
                 >
                   {/* Content */}
-                  <div>
+                  <div className="flex flex-1 flex-col items-start justify-center gap-6 sm:gap-8 md:gap-10">
                     {/* Step number with line */}
-                    <div className="flex items-center gap-4 sm:gap-5 mb-8 sm:mb-10">
+                    <div className="flex w-full items-center gap-4 sm:gap-5">
                       <div 
                         className={`
                           text-green-400 
@@ -399,13 +385,13 @@ export default function ProcessSection() {
                     {/* Title */}
                     <h3 
                       className={`
-                        text-white
-                        ${CARD_CONFIG.typography.heading.size}
-                        ${CARD_CONFIG.typography.heading.weight}
-                        font-lato
-                        mb-10 sm:mb-12 md:mb-16
-                        leading-[0.9]
-                        tracking-tight
+                        heading-secondary
+                        text-left
+                        uppercase
+                        tracking-[0.18em]
+                        sm:tracking-[0.22em]
+                        md:tracking-[0.24em]
+                        leading-tight
                       `}
                     >
                       <ScrambleText text={t(`steps.${step.key}`)} applyScramble={false} />
@@ -415,12 +401,16 @@ export default function ProcessSection() {
                     <p 
                       className={`
                         text-white/85
-                        ${CARD_CONFIG.typography.description.size}
-                        ${CARD_CONFIG.typography.description.weight}
+                        text-base
+                        sm:text-lg
+                        md:text-xl
+                        lg:text-2xl
                         font-lato
+                        font-medium
                         leading-relaxed
-                        max-w-full
-                        lg:max-w-[90%]
+                        text-left
+                        max-w-[680px]
+                        lg:max-w-[75%]
                       `}
                     >
                       <ScrambleText text={t(`stepDescriptions.${step.key}`)} applyScramble={false} />

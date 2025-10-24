@@ -149,14 +149,30 @@ export default function ServicesSection() {
                   ${CARD_CONFIG.height.md}
                   ${CARD_CONFIG.height.lg}
                   ${CARD_CONFIG.borderRadius}
-                  bg-black
+                  bg-gradient-to-br from-black/98 via-black/95 to-black/90
+                  backdrop-blur-2xl
                   transition-all duration-500
                   group-hover:scale-[1.02]
                   overflow-hidden
                 `}
               >
-                {/* Left edge accent - stejně jako FAQ */}
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00d76b] to-[#00b85c] opacity-60 rounded-l-3xl" />
+                {/* Premium Coal Liquid Glass Effect Layers */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-3xl pointer-events-none mix-blend-normal" />
+                
+                {/* Border glow effect */}
+                <div 
+                  className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
+                  style={{
+                    '--glow-delay': Math.random() * 5,
+                    '--glow-duration': `${2 + Math.random() * 3}s`
+                  } as React.CSSProperties}
+                />
+
+                {/* Bottom edge accent - zelená lajna jako ve FAQ */}
+                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Background glow effect on hover */}
                 <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
