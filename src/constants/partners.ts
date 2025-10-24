@@ -41,6 +41,24 @@ export const partnerItems: PartnerContent[] = [
   },
   {
     kind: 'logo',
+    src: '/images/partners/pruzinarna.svg',
+    alt: 'Pružinárna',
+    scale: 0.72
+  },
+  {
+    kind: 'logo',
+    src: '/images/partners/handball_hodonin.png',
+    alt: 'Handball Hodonín',
+    scale: 0.75
+  },
+  {
+    kind: 'logo',
+    src: '/images/partners/skh_velka_nad_velickou.png',
+    alt: 'SKH Velká nad Veličkou',
+    scale: 0.74
+  },
+  {
+    kind: 'logo',
     src: '/images/partners/openai_logo.svg',
     alt: 'OpenAI',
     scale: 0.64

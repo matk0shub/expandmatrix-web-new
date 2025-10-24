@@ -8,8 +8,8 @@ import ProcessSection from '@/components/ProcessSection';
 import ReferencesSection from '@/components/ReferencesSection';
 import TeamSection from '@/components/TeamSection';
 import FAQSection from '@/components/FAQSection';
-import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
+import Footer from '@/components/Footer';
 import { useCalEmbed } from '@/hooks/useCalEmbed';
 import { useReferences } from '@/hooks/useReferences';
 import type { Reference } from '@/types/references';
@@ -31,29 +31,33 @@ export default function HomePageClient({ locale, initialReferences }: HomePageCl
   const referenceData = references.length ? references : initialReferences;
 
   return (
-    <main className="min-h-screen">
-      <Hero />
-      <div id="about">
-        <AccuracySection />
-      </div>
-      <ClientsSection />
-      <div id="services">
-        <ServicesSection />
-      </div>
-      <ProcessSection />
-      <div id="references">
-        <ReferencesSection references={referenceData} />
-      </div>
-      <div id="team">
-        <TeamSection />
-      </div>
-      <div id="faq">
-        <FAQSection />
-      </div>
+    <>
+      <main className="min-h-screen">
+        <Hero />
+        <div id="about">
+          <AccuracySection />
+        </div>
+        <ClientsSection />
+        <div id="services">
+          <ServicesSection />
+        </div>
+        <div id="process">
+          <ProcessSection />
+        </div>
+        <div id="references">
+          <ReferencesSection references={referenceData} />
+        </div>
+        <div id="team">
+          <TeamSection />
+        </div>
+        <div id="faq">
+          <FAQSection />
+        </div>
+        <div id="contact">
+          <CookieConsent />
+        </div>
+      </main>
       <Footer />
-      <div id="contact">
-        <CookieConsent />
-      </div>
-    </main>
+    </>
   );
 }

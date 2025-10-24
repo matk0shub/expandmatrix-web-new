@@ -123,8 +123,8 @@ export default function ReferencesSection({ references }: ReferencesSectionProps
       itemScope
       itemType="https://schema.org/ItemList"
     >
-      <meta itemProp="name" content="Client References" />
-      <meta itemProp="description" content="Featured client success stories and AI implementation results" />
+      <meta itemProp="name" content={t('metaName')} />
+      <meta itemProp="description" content={t('metaDescription')} />
       {/* Full-width background images */}
       <div className={`${isPinned ? 'fixed inset-0 z-10' : 'relative'} h-screen`}>
         <AnimatePresence mode="wait">

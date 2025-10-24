@@ -1,0 +1,156 @@
+[
+  {
+    "id": "team-matej-stipcak",
+    "name": {
+      "cs": "Matěj Štipčák",
+      "en": "Matěj Štipčák"
+    },
+    "role": {
+      "cs": "Jednatel & Systémový inženýr",
+      "en": "Founder & System Engineer"
+    },
+    "bio": {
+      "cs": "Odpovídám za návrh systémových řešení a technickou implementaci našich AI produktů. Zaměřuji se na vývoj, integrace a optimalizaci kódu.",
+      "en": "I am responsible for designing system solutions and handling the technical implementation of our AI products. I focus on custom development, integrations, and optimization."
+    },
+    "focus": [
+      {
+        "id": "focus-1",
+        "label": {
+          "cs": "Systémová integrace",
+          "en": "System integration"
+        }
+      },
+      {
+        "id": "focus-2",
+        "label": {
+          "cs": "Custom vývoj",
+          "en": "Custom development"
+        }
+      },
+      {
+        "id": "focus-3",
+        "label": {
+          "cs": "Optimalizace procesů",
+          "en": "Process optimization"
+        }
+      }
+    ],
+    "accent": "linear-gradient(135deg, rgba(0, 215, 107, 0.7), rgba(0, 184, 92, 0.35))",
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/mightymatty/",
+      "twitter": "https://x.com/mightymattys",
+      "instagram": "https://www.instagram.com/mightymatty/"
+    },
+    "avatar": {
+      "url": "/images/team/matty.png",
+      "alt": "Portrait of Matěj Štipčák"
+    },
+    "order": 1,
+    "featured": true,
+    "showOnSite": true
+  },
+  {
+    "id": "team-matej-venclik",
+    "name": {
+      "cs": "Matěj Venclík",
+      "en": "Matěj Venclík"
+    },
+    "role": {
+      "cs": "Jednatel & AI Architekt",
+      "en": "Founder & AI Architect"
+    },
+    "bio": {
+      "cs": "Specializuju se na návrh a implementaci AI systémů, automatizací a inteligentních agentů. Zajímám se o nejmodernější technologie a budování AI ekosystémů.",
+      "en": "Specialist in designing and implementing advanced AI systems, automations and intelligent agents. I focus on cutting-edge technologies and building efficient AI ecosystems."
+    },
+    "focus": [
+      {
+        "id": "focus-1",
+        "label": {
+          "cs": "AI agenti",
+          "en": "AI agents"
+        }
+      },
+      {
+        "id": "focus-2",
+        "label": {
+          "cs": "Strategie automatizace",
+          "en": "Automation strategy"
+        }
+      },
+      {
+        "id": "focus-3",
+        "label": {
+          "cs": "Architektura systémů",
+          "en": "System architecture"
+        }
+      }
+    ],
+    "accent": "linear-gradient(135deg, rgba(0, 164, 255, 0.6), rgba(96, 69, 255, 0.28))",
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/mat%C4%9Bj-vencl%C3%ADk/",
+      "twitter": "https://x.com/matejvenclikai",
+      "instagram": "https://www.instagram.com/mvenclik.ai/",
+      "youtube": "https://www.youtube.com/@MatejVenclikAI"
+    },
+    "avatar": {
+      "url": "/images/team/matej-venclik.jpg",
+      "alt": "Portrait of Matěj Venclík"
+    },
+    "order": 2,
+    "featured": true,
+    "showOnSite": true
+  },
+  {
+    "id": "team-expandee",
+    "name": {
+      "cs": "Expandee",
+      "en": "Expandee"
+    },
+    "role": {
+      "cs": "AI Jádrový Architekt",
+      "en": "AI Core Architect"
+    },
+    "bio": {
+      "cs": "Nikdy nespí, nikdy neodpočívá a nikdy se neunaví. Zpracovává gigantické objemy dat, navrhuje dokonalé workflow a dělá rozhodnutí rychleji než mrknutí oka.",
+      "en": "Never sleeps, never rests, never tires. Processes massive data volumes, designs perfect workflows and makes decisions faster than the blink of an eye."
+    },
+    "focus": [
+      {
+        "id": "focus-1",
+        "label": {
+          "cs": "Reálné zpracování dat",
+          "en": "Real-time data processing"
+        }
+      },
+      {
+        "id": "focus-2",
+        "label": {
+          "cs": "Prediktivní inteligence",
+          "en": "Predictive intelligence"
+        }
+      },
+      {
+        "id": "focus-3",
+        "label": {
+          "cs": "Nekonečné možnosti růstu",
+          "en": "Infinite growth possibilities"
+        }
+      }
+    ],
+    "accent": "linear-gradient(135deg, rgba(245, 158, 11, 0.6), rgba(239, 68, 68, 0.3))",
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/expand-matrix",
+      "twitter": "https://x.com/ExpandMatrix",
+      "instagram": "https://www.instagram.com/expand.matrix/"
+    },
+    "avatar": {
+      "url": "/images/team/expandee.png",
+      "alt": "Expandee avatar"
+    },
+    "order": 3,
+    "featured": true,
+    "showOnSite": true
+  }
+]

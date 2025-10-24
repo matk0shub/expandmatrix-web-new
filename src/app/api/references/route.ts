@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getSampleReferencesResponse } from '@/data/references';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const locale = searchParams.get('locale') ?? undefined;
+
     // For now, return sample data to avoid Payload configuration issues
     // TODO: Implement proper Payload integration when environment is configured
-    const references = getSampleReferencesResponse();
+    const references = getSampleReferencesResponse(locale);
     return NextResponse.json(references);
   } catch (error) {
     console.error('Error fetching references:', error);

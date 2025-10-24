@@ -68,64 +68,226 @@
       "description": "Naším cílem je, aby celý proces byl co nejhladší a bezproblémový, abyste se mohli soustředit na provoz svého podnikání, zatímco my se za Vás postaráme o umělou inteligenci.",
       "cta": "Začít spolupráci",
       "steps": {
-        "meeting": "Úvodní meeting",
-        "contract": "Platba & smlouva",
-        "access": "Sdílení přístupů",
-        "implementation": "První implementace",
-        "optimization": "Optimalizace"
+        "meeting": "ÚVODNÍ MEETING",
+        "contract": "PROJEKT & SMLOUVA",
+        "access": "PŘEDÁNÍ PŘÍSTUPŮ",
+        "implementation": "IMPLEMENTACE ŘEŠENÍ",
+        "optimization": "OPTIMALIZACE"
       },
       "stepDescriptions": {
-        "meeting": "Provedeme analýzu vašich potřeb a definujeme konkrétní cíle pro implementaci AI řešení. Zjistíme, jaké procesy lze automatizovat a jaké AI nástroje budou nejefektivnější pro váš business.",
-        "contract": "Připravíme detailní smlouvu s jasně definovanými milníky, cenami a časovým harmonogramem. Zabezpečíme transparentní komunikaci a nastavíme očekávání pro celý projekt.",
-        "access": "Získáme potřebné přístupy k vašim systémům a datům. Vše probíhá bezpečně s dodržením GDPR a nejvyšších bezpečnostních standardů pro ochranu vašich citlivých informací.",
-        "implementation": "Začneme s implementací AI řešení podle dohodnutého plánu. Vytvoříme první funkční prototypy a postupně je integrujeme do vašich stávajících pracovních procesů.",
-        "optimization": "Nepřetržitě monitorujeme výkonnost AI systémů a optimalizujeme je pro dosažení nejlepších výsledků. Provádíme pravidelné aktualizace a vylepšujeme funkčnost podle vašich potřeb."
+        "meeting": "V rámci 45minutového AI workshopu prozkoumáme vaše cíle, priorizujeme procesy vhodné pro automatizaci a navrhneme use-case s rychlou návratností investice.",
+        "contract": "Upřesníme rozsah, výstupy, KPI i harmonogram a vše ukotvíme do přehledné smlouvy, aby každá AI iniciativa podporovala vaše obchodní cíle a legislativní požadavky.",
+        "access": "Naši specialisté bezpečně napojí vaše aplikace, CRM i datové zdroje pomocí šifrovaných přístupů a v souladu s GDPR, aby měla AI kvalitní data pro trénink a integrace.",
+        "implementation": "Prototypujeme, testujeme a nasazujeme AI agenty nebo automatizace přímo do workflow, integrujeme API i datové pipeline pro okamžitý přínos pro vaše týmy.",
+        "optimization": "Sledujeme výkon v dashboardech, ladíme modely a rozšiřujeme scénáře automatizace, aby vaše AI řešení zůstala optimalizovaná a škálovala s růstem firmy."
       }
     },
     "references": {
       "title": "Reference",
       "overline": "REFERENCE",
       "instagram": "Instagram",
-      "viewProfile": "Zobrazit profil"
+      "viewProfile": "Zobrazit profil",
+      "website": "Web",
+      "selectReference": "Vybrat referenci {name}",
+      "instagramAria": "Otevřít Instagram {name}",
+      "websiteAria": "Navštívit web {name}",
+      "impactHeading": "Přehled dopadu AI",
+      "metaName": "Klientské reference",
+      "metaDescription": "Vybrané úspěšné spolupráce a výsledky implementace AI.",
+      "samples": {
+        "techStartup": {
+          "subtitle": "SaaS platforma poháněná AI",
+          "metrics": [
+            {
+              "label": "Čas ušetřený AI agenty",
+              "value": "120+ hodin / měsíc"
+            },
+            {
+              "label": "Automatizace onboardingu klientů",
+              "value": "90 % automatizováno"
+            },
+            {
+              "label": "Rychlost řešení podpory",
+              "value": "3× rychlejší"
+            },
+            {
+              "label": "Snížení provozních nákladů",
+              "value": "-28 %"
+            },
+            {
+              "label": "Přínos AI k upsellu",
+              "value": "+62 % tržeb na klienta"
+            }
+          ]
+        },
+        "fashionBrand": {
+          "subtitle": "Udržitelná módní e-commerce",
+          "metrics": [
+            {
+              "label": "Příprava uvedení produktu",
+              "value": "2 týdny → 4 dny"
+            },
+            {
+              "label": "Obsah vytvořený AI studiem",
+              "value": "180 assetů / měsíc"
+            },
+            {
+              "label": "Iterace optimalizace kampaní",
+              "value": "12 denně"
+            },
+            {
+              "label": "Zákaznická péče řešená AI",
+              "value": "88 % požadavků"
+            },
+            {
+              "label": "Čas zpracování vratek",
+              "value": "↓ 65 %"
+            }
+          ]
+        },
+        "restaurantChain": {
+          "subtitle": "Síť restaurací na více místech",
+          "metrics": [
+            {
+              "label": "Čas ušetřený plánováním směn",
+              "value": "40 hodin / týden"
+            },
+            {
+              "label": "Automatizace objednávek surovin",
+              "value": "75 % objednávek"
+            },
+            {
+              "label": "Zpracovaná zpětná vazba hostů",
+              "value": "6 400+ recenzí / měsíc"
+            },
+            {
+              "label": "Frekvence optimalizace menu",
+              "value": "Týdně díky AI insightům"
+            },
+            {
+              "label": "Snížení plýtvání",
+              "value": "-32 %"
+            }
+          ]
+        },
+        "healthTech": {
+          "subtitle": "Digitální zdravotnická řešení",
+          "metrics": [
+            {
+              "label": "Automatizace třídění pacientů",
+              "value": "82 % dotazů"
+            },
+            {
+              "label": "Reakční doba pečujícího týmu",
+              "value": "↓ z 12 h na 1 h"
+            },
+            {
+              "label": "Návrhy diagnóz od AI",
+              "value": "Přesnost 97 %"
+            },
+            {
+              "label": "Čas na compliance dokumentaci",
+              "value": "↓ 55 %"
+            },
+            {
+              "label": "Spokojenost s telemedicínou",
+              "value": "Hodnocení 4,8 / 5"
+            }
+          ]
+        },
+        "eduPlatform": {
+          "subtitle": "Online vzdělávací platforma",
+          "metrics": [
+            {
+              "label": "Tvorba kurzů s pomocí AI",
+              "value": "65 % modulů"
+            },
+            {
+              "label": "Automatizovaná podpora studentů",
+              "value": "94 % chatů"
+            },
+            {
+              "label": "Personalizované studijní cesty",
+              "value": "18 tisíc vytvořeno"
+            },
+            {
+              "label": "Snížení odchodů studentů",
+              "value": "-37 %"
+            },
+            {
+              "label": "Ušetřené hodiny týmu",
+              "value": "160 hodin / měsíc"
+            }
+          ]
+        },
+        "finTech": {
+          "subtitle": "Digitální bankovní řešení",
+          "metrics": [
+            {
+              "label": "Automatizace detekce podvodů",
+              "value": "Pokrytí 99,2 %"
+            },
+            {
+              "label": "Schvalování úvěrů přes AI",
+              "value": "78 % end-to-end"
+            },
+            {
+              "label": "Ušetřený čas na compliance auditech",
+              "value": "210 hodin / čtvrtletí"
+            },
+            {
+              "label": "Rychlost ověření klienta",
+              "value": "↓ z 48 h na 6 min"
+            },
+            {
+              "label": "Dostupnost služeb díky AI ops",
+              "value": "99,98 %"
+            }
+          ]
+        }
+      }
     },
     "team": {
       "eyebrow": "poznejte náš",
       "title": "Tým",
       "description": "Jsme multidisciplinární parta, která kombinuje AI strategii, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
-      "availability": "Připravení na nové výzvy",
+    "availability": "Připravení na nové výzvy",
+    "loading": "Načítám tým…",
+    "error": "Tým se nepodařilo načíst. Zkuste to prosím znovu později.",
+    "empty": "Jakmile budou členové týmu publikováni v CMS, zobrazí se zde.",
     "members": {
-      "matejStipcak": {
-        "name": "Matěj Štipčák",
-        "role": "Jednatel & Systémový inženýr",
-        "bio": "Odpovídám za návrh systémových řešení a technickou implementaci našich AI produktů. Zaměřuji se na vývoj, integrace a optimalizaci kódu.",
-        "focus": [
-          "Systémová integrace",
-          "Custom vývoj",
-          "Optimalizace procesů"
-        ]
-      },
-      "matejVenclik": {
-        "name": "Matěj Venclík",
-        "role": "Jednatel & AI Architekt",
-        "bio": "Specializuju se na návrh a implementaci AI systémů, automatizací a inteligentních agentů. Zajímám se o nejmodernější technologie a budování AI ekosystémů.",
-        "focus": [
-          "AI agenti",
-          "Strategie automatizace",
-          "Architektura systémů"
-        ]
-      },
-      "expandee": {
-        "name": "Expandee",
-        "role": "AI Jádrový Architekt",
-        "bio": "Nikdy nespí, nikdy neodpočívá a nikdy se neunaví. Zpracovává gigantické objemy dat, navrhuje dokonalé workflow a dělá rozhodnutí rychleji než mrknutí oka.",
-        "focus": [
-          "Reálné zpracování dat",
-          "Prediktivní inteligence",
-          "Nekonečné možnosti růstu"
-        ]
+        "matejStipcak": {
+          "name": "Matěj Štipčák",
+          "role": "Jednatel & Systémový inženýr",
+          "bio": "Odpovídám za návrh systémových řešení a technickou implementaci našich AI produktů. Zaměřuji se na vývoj, integrace a optimalizaci kódu.",
+          "focus": [
+            "Systémová integrace",
+            "Custom vývoj",
+            "Optimalizace procesů"
+          ]
+        },
+        "matejVenclik": {
+          "name": "Matěj Venclík",
+          "role": "Jednatel & AI Architekt",
+          "bio": "Specializuju se na návrh a implementaci AI systémů, automatizací a inteligentních agentů. Zajímám se o nejmodernější technologie a budování AI ekosystémů.",
+          "focus": [
+            "AI agenti",
+            "Strategie automatizace",
+            "Architektura systémů"
+          ]
+        },
+        "expandee": {
+          "name": "Expandee",
+          "role": "AI Jádrový Architekt",
+          "bio": "Nikdy nespí, nikdy neodpočívá a nikdy se neunaví. Zpracovává gigantické objemy dat, navrhuje dokonalé workflow a dělá rozhodnutí rychleji než mrknutí oka.",
+          "focus": [
+            "Reálné zpracování dat",
+            "Prediktivní inteligence",
+            "Nekonečné možnosti růstu"
+          ]
+        }
       }
-    }
-  },
+    },
     "faq": {
       "title": {
         "line1": "ČASTÉ",
@@ -176,6 +338,96 @@
       "contact": "Kontakt",
       "privacy": "Zásady ochrany osobních údajů",
       "terms": "Obchodní podmínky"
+    },
+    "groups": {
+      "navigate": "Navigace",
+      "legal": "Právní",
+      "connect": "Spojení"
+    },
+    "cta": {
+      "pretitle": "Další krok",
+      "title": "Postavíme AI základ, na který se váš tým spolehne v roce 2025",
+      "description": "Rezervujte si strategickou konzultaci nebo nám napište — do 48 hodin navrhneme roadmapu vašeho dalšího růstu.",
+      "primary": "Domluvit strategický call",
+      "secondary": "Napsat našemu týmu"
+    },
+    "contact": {
+      "title": "Spojme se",
+      "subtitle": "Společně posuneme váš byznys do budoucnosti",
+      "addressLabel": "Kanceláře",
+      "addressValue": "PRAHA 1, PŘÍČNÁ 1892/4",
+      "emailLabel": "E-mail",
+      "emailValue": "info@expandmatrix.com",
+      "companyLabel": "Společnost",
+      "companyValue": "Expand Matrix, s.r.o.",
+      "icoLabel": "IČO",
+      "icoValue": "23530596"
+    }
+  },
+  "legal": {
+    "privacy": {
+      "metaTitle": "Zásady ochrany osobních údajů",
+      "metaDescription": "Získáte přehled o tom, jak ExpandMatrix pracuje s osobními údaji.",
+      "title": "Zásady ochrany osobních údajů",
+      "updated": "Poslední aktualizace: 1. ledna 2025",
+      "intro": "Tento dočasný dokument popisuje, jak můžeme shromažďovat, používat a chránit informace, které nám předáte. Před ostrým spuštěním jej nahradíme finální právní verzí.",
+      "sections": [
+        {
+          "heading": "1. Jaké údaje můžeme shromažďovat",
+          "body": [
+            "Získáváme údaje, které nám poskytnete při poptávce, registraci k odběru novinek nebo jiné komunikaci.",
+            "Můžeme zaznamenávat i technické informace jako typ prohlížeče, identifikátory zařízení nebo agregovanou analytiku provozu, abychom službu vyladili."
+          ]
+        },
+        {
+          "heading": "2. K čemu údaje využíváme",
+          "body": [
+            "Data používáme ke zodpovězení dotazů, doručení požadovaných materiálů a k vylepšování našich produktů a služeb.",
+            "Občas můžeme poslat novinku nebo informaci o službě; z odběru se lze kdykoliv odhlásit."
+          ]
+        },
+        {
+          "heading": "3. Vaše možnosti",
+          "body": [
+            "Můžete nás požádat o úpravu či smazání svých údajů a vyjádřit nesouhlas s některými způsoby zpracování, pokud to právo umožňuje.",
+            "Další nástroje pro správu preferencí přidáme spolu s finální právní verzí dokumentu."
+          ]
+        }
+      ],
+      "contact": "Dotazy k této politice? Napište na privacy@expandmatrix.com a ozveme se zpět.",
+      "back": "Zpět na úvod"
+    },
+    "terms": {
+      "metaTitle": "Obchodní podmínky",
+      "metaDescription": "Dočasné podmínky popisují, jak má spolupráce s ExpandMatrix fungovat.",
+      "title": "Obchodní podmínky",
+      "updated": "Poslední aktualizace: 1. ledna 2025",
+      "intro": "Tyto provizorní podmínky naznačují rámcová pravidla spolupráce. Před uvedením webu je nahradíme finálním právním textem.",
+      "sections": [
+        {
+          "heading": "1. Používání našich služeb",
+          "body": [
+            "Naše služby pomáhají firmám navrhovat a nasazovat řešení s umělou inteligencí. Přístup je určen pro legitimní obchodní účely.",
+            "Funkce se mohou průběžně měnit; součástí zodpovědného používání je sledovat aktualizace a doporučení."
+          ]
+        },
+        {
+          "heading": "2. Duševní vlastnictví",
+          "body": [
+            "Pokud není uvedeno jinak, ExpandMatrix vlastní platformu, designy i interní nástroje.",
+            "Klienti si ponechávají vlastnictví svých dat a udělují nám pouze nezbytná práva k jejich zpracování během poskytování služeb."
+          ]
+        },
+        {
+          "heading": "3. Odpovědnost a podpora",
+          "body": [
+            "Děláme maximum pro stabilní provoz, ale v režimu náhledu poskytujeme služby bez záruk za následné škody.",
+            "S dotazy na podporu se ozvěte na support@expandmatrix.com, odpovíme v rozumném čase."
+          ]
+        }
+      ],
+      "contact": "Máte k podmínkám dotaz? Napište na legal@expandmatrix.com a vše upřesníme.",
+      "back": "Zpět na úvod"
     }
   },
   "cookie": {

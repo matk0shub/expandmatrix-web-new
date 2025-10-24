@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import * as Collapsible from '@radix-ui/react-accordion';
@@ -24,12 +25,13 @@ type Props = {
 
 export default function FooterLinks({ groups }: Props) {
   const locale = useLocale();
+  const orderedGroups = useMemo(() => [...groups].sort((a, b) => a.order - b.order), [groups]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 w-full">
+    <div className="w-full">
       {/* Desktop/Tablet columns with advanced animations */}
-      <div className="hidden sm:grid sm:col-span-2 xl:col-span-3 grid-cols-2 xl:grid-cols-3 gap-8">
-        {groups.sort((a, b) => a.order - b.order).map((group, groupIndex) => (
+      <div className="hidden sm:grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {orderedGroups.map((group, groupIndex) => (
           <motion.div 
             key={group.groupTitle}
             className="footer-link-group"
@@ -97,7 +99,7 @@ export default function FooterLinks({ groups }: Props) {
       {/* Mobile accordion with enhanced animations */}
       <div className="sm:hidden">
         <Collapsible.Root type="single" collapsible>
-          {groups.sort((a, b) => a.order - b.order).map((group) => (
+          {orderedGroups.map((group) => (
             <Collapsible.Item 
               key={group.groupTitle} 
               value={group.groupTitle} 
@@ -165,5 +167,3 @@ export default function FooterLinks({ groups }: Props) {
     </div>
   );
 }
-
-
