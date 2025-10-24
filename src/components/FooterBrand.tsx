@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Instagram, Linkedin, Twitter, Mail } from 'lucide-react';
+import { Instagram, Linkedin, Twitter } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 
 type Props = {
@@ -66,24 +66,6 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
         <p className="text-white/90 text-base leading-relaxed font-lato">
           {t('brand.tagline')}
         </p>
-      </motion.div>
-
-      {/* Contact email with animated underline */}
-      <motion.div 
-        className="footer-brand-item mt-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-      >
-        <a
-          href="mailto:info@expandmatrix.com"
-          className="group relative inline-flex items-center gap-3 text-white/80 hover:text-white transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#00d76b]/40 rounded-lg p-2 -m-2"
-        >
-          <Mail className="w-5 h-5 text-[#00d76b] group-hover:text-[#00d76b] transition-colors duration-300" />
-          <span className="font-medium">info@expandmatrix.com</span>
-          {/* Animated underline */}
-          <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] group-hover:w-full transition-all duration-500 ease-out" />
-        </a>
       </motion.div>
 
       {/* Social links with advanced hover effects */}
@@ -159,5 +141,4 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
     </div>
   );
 }
-
 

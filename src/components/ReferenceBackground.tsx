@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Reference } from './ReferencesSection';
+import type { Reference } from '@/types/references';
 
 interface ReferenceBackgroundProps {
   reference: Reference;

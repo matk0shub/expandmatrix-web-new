@@ -88,18 +88,53 @@ export default function FAQSection() {
 
   return (
     <section 
-      className="relative w-full bg-black py-24 md:py-40 lg:py-48 overflow-hidden"
+      className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-40 lg:py-48 overflow-hidden"
       itemScope
       itemType="https://schema.org/FAQPage"
     >
       {/* Background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-1/2 left-1/4 w-[600px] h-[400px] rounded-full blur-3xl opacity-20"
+        <div
+          className="absolute top-[8%] left-[8%] h-[480px] w-[520px] blur-3xl opacity-70"
           style={{
-            background: 'radial-gradient(ellipse, rgba(0, 215, 107, 0.3) 0%, rgba(0, 184, 92, 0.2) 50%, transparent 80%)'
+            background:
+              'radial-gradient(ellipse 58% 42%, rgba(0, 255, 176, 0.8) 0%, rgba(0, 215, 107, 0.56) 52%, rgba(0, 184, 92, 0.25) 80%, transparent 92%)'
           }}
         />
+        <div
+          className="absolute top-[6%] right-[10%] h-[500px] w-[540px] blur-3xl opacity-62"
+          style={{
+            background:
+              'radial-gradient(ellipse 58% 48%, rgba(110, 255, 210, 0.8) 0%, rgba(0, 215, 107, 0.5) 48%, rgba(0, 184, 92, 0.26) 72%, transparent 90%)'
+          }}
+        />
+        <div
+          className="absolute top-[44%] left-[22%] h-[420px] w-[420px] blur-3xl opacity-52"
+          style={{
+            background:
+              'radial-gradient(ellipse 62% 44%, rgba(0, 215, 135, 0.68) 0%, rgba(0, 184, 92, 0.42) 58%, transparent 86%)'
+          }}
+        />
+        <div
+          className="absolute bottom-[24%] right-[24%] h-[420px] w-[440px] blur-3xl opacity-58"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(0, 215, 125, 0.66) 0%, rgba(0, 184, 92, 0.4) 60%, transparent 86%)'
+          }}
+        />
+        <div
+          className="absolute bottom-[10%] left-[46%] h-[320px] w-[340px] blur-3xl opacity-50"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(0, 255, 172, 0.6) 0%, rgba(0, 215, 107, 0.38) 55%, transparent 82%)'
+          }}
+        />
+        <div className="absolute inset-x-0 top-0 h-[400px] bg-gradient-to-b from-black via-[#03150df5] to-transparent opacity-100" />
+        <div className="absolute inset-x-0 bottom-0 h-[400px] bg-gradient-to-t from-black via-[#03150df5] to-transparent opacity-100" />
+        <div className="absolute inset-y-0 left-0 w-[320px] bg-gradient-to-r from-black via-[#03150df5] to-transparent opacity-100" />
+        <div className="absolute inset-y-0 right-0 w-[320px] bg-gradient-to-l from-black via-[#03150df5] to-transparent opacity-100" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_56%,rgba(0,0,0,0.78)_100%)] opacity-80 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.55),transparent_30%,transparent_70%,rgba(0,0,0,0.55))]" />
       </div>
 
       <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 relative z-10">
@@ -107,36 +142,31 @@ export default function FAQSection() {
           {/* Left Column - Headline and CTA */}
           <div className="flex flex-col min-h-[420px] py-4">
             <div className="flex flex-1 flex-col justify-between gap-10">
-              <div className="space-y-6">
-            {/* Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <h2 className="heading-main">
-                <div>{t('title.line1')}</div>
-                <div>{t('title.line2')}</div>
-              </h2>
-            </motion.div>
+              {/* Headline */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <h2 className="heading-main">
+                  <div>{t('title.line1')}</div>
+                  <div>{t('title.line2')}</div>
+                </h2>
+              </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-white/80 text-lg md:text-xl leading-relaxed max-w-xl"
-            >
-              {t('cta.overline')}
-            </motion.p>
-              </div>
-
+              {/* Bottom Section - CTA with text above button */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                className="pt-2"
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                className="flex justify-start items-end"
               >
-                <CalCTAButton>{t('cta.button')}</CalCTAButton>
+                <div className="text-left max-w-md">
+                  <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-lato">
+                    {t('cta.overline')}
+                  </p>
+                  <CalCTAButton>{t('cta.button')}</CalCTAButton>
+                </div>
               </motion.div>
             </div>
           </div>

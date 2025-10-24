@@ -2,6 +2,74 @@ const fs = require('fs');
 const path = require('path');
 
 const cacheDir = path.join(process.cwd(), '.next', 'cache', 'webpack');
+const serverDir = path.join(process.cwd(), '.next', 'server');
+
+function ensureNextStubs() {
+  try {
+    if (!fs.existsSync(serverDir)) {
+      fs.mkdirSync(serverDir, { recursive: true });
+    }
+
+    const vendorChunksDir = path.join(serverDir, 'vendor-chunks');
+    if (!fs.existsSync(vendorChunksDir)) {
+      fs.mkdirSync(vendorChunksDir, { recursive: true });
+    }
+
+    const fontManifest = { app: {}, pages: {} };
+    const middlewareManifest = {
+      version: 3,
+      sortedMiddleware: [],
+      middleware: {},
+      functions: {},
+    };
+    const stubs = [
+      {
+        file: path.join(serverDir, 'next-font-manifest.json'),
+        contents: JSON.stringify(fontManifest),
+      },
+      {
+        file: path.join(serverDir, 'next-font-manifest.js'),
+        contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};`,
+      },
+      {
+        file: path.join(serverDir, 'middleware-manifest.json'),
+        contents: JSON.stringify(middlewareManifest),
+      },
+      {
+        file: path.join(serverDir, 'pages-manifest.json'),
+        contents: JSON.stringify({}),
+      },
+      {
+        file: path.join(serverDir, 'app-paths-manifest.json'),
+        contents: JSON.stringify({}),
+      },
+      {
+        file: path.join(serverDir, 'app-path-routes-manifest.json'),
+        contents: JSON.stringify({}),
+      },
+      {
+        file: path.join(serverDir, 'app-build-manifest.json'),
+        contents: JSON.stringify({ pages: {} }),
+      },
+      {
+        file: path.join(vendorChunksDir, '@opentelemetry.js'),
+        contents: 'export {};',
+      },
+      {
+        file: path.join(vendorChunksDir, 'next.js'),
+        contents: 'module.exports = {};',
+      },
+    ];
+
+    for (const stub of stubs) {
+      if (!fs.existsSync(stub.file)) {
+        fs.writeFileSync(stub.file, stub.contents);
+      }
+    }
+  } catch (err) {
+    console.warn('⚠️  Failed to ensure Next manifests:', err);
+  }
+}
 
 function checkAndCleanCache() {
   if (!fs.existsSync(cacheDir)) {
@@ -54,4 +122,4 @@ function checkAndCleanCache() {
 }
 
 checkAndCleanCache();
-
+ensureNextStubs();

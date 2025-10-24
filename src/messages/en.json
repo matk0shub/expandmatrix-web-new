@@ -50,7 +50,7 @@
           "details": "From discovery to deployment we craft domain-trained agents, integrate APIs and data sources, and monitor them for continuous learning."
         },
         "web-development": {
-          "number": "002", 
+          "number": "002",
           "title": "WEBSITES AND E-SHOPS",
           "description": "We create modern, fast, and functional websites and e-shops with emphasis on UX/UI design and SEO optimization.",
           "details": "We use the latest technologies to create an excellent user experience and high conversion rates."
@@ -68,63 +68,225 @@
       "description": "Our goal is to make the entire process as smooth and problem-free as possible, so you can focus on running your business while we take care of artificial intelligence.",
       "cta": "Start cooperation",
       "steps": {
-        "meeting": "Initial meeting",
-        "contract": "Payment & contract",
-        "access": "Sharing access",
-        "implementation": "First implementation",
-        "optimization": "Optimization"
+        "meeting": "INITIAL MEETING",
+        "contract": "PROJECT & CONTRACT",
+        "access": "ACCESS HANDOVER",
+        "implementation": "SOLUTION IMPLEMENTATION",
+        "optimization": "OPTIMIZATION"
       },
       "stepDescriptions": {
-        "meeting": "We conduct a thorough analysis of your needs and define specific goals for AI implementation. We identify which processes can be automated and which AI tools will be most effective for your business.",
-        "contract": "We prepare a detailed contract with clearly defined milestones, pricing, and timeline. We ensure transparent communication and set expectations for the entire project.",
-        "access": "We obtain necessary access to your systems and data. Everything is done securely with GDPR compliance and the highest security standards to protect your sensitive information.",
-        "implementation": "We begin implementing AI solutions according to the agreed plan. We create first functional prototypes and gradually integrate them into your existing workflows.",
-        "optimization": "We continuously monitor AI system performance and optimize them to achieve the best results. We perform regular updates and improve functionality according to your needs."
+        "meeting": "We run a focused AI strategy workshop to uncover your goals, rank high-impact automation opportunities, and define quick-win use cases with measurable ROI.",
+        "contract": "We clarify scope, deliverables, KPIs, and timeline inside a transparent service agreement so every AI initiative drives your growth targets and compliance requirements.",
+        "access": "We securely connect to your tools, CRMs, and data sources with encrypted credentials to supply GDPR-ready data pipelines for AI training and integrations.",
+        "implementation": "We prototype, validate, and deploy AI agents or automations directly into your workflows, integrating APIs and data pipelines for immediate operational impact.",
+        "optimization": "We monitor performance dashboards, fine-tune models, and expand automation scenarios to keep your AI stack optimized and scaling with your business."
       }
     },
     "references": {
       "title": "References",
       "overline": "REFERENCE",
       "instagram": "Instagram",
-      "viewProfile": "View Profile"
+      "viewProfile": "View Profile",
+      "website": "Website",
+      "selectReference": "Select reference {name}",
+      "instagramAria": "View {name} on Instagram",
+      "websiteAria": "Visit {name}'s website",
+      "impactHeading": "AI Impact Overview",
+      "metaName": "Client References",
+      "metaDescription": "Featured client success stories and AI implementation results.",
+      "samples": {
+        "techStartup": {
+          "subtitle": "AI-Powered SaaS Platform",
+          "metrics": [
+            {
+              "label": "Time saved by AI agents",
+              "value": "120+ hrs / month"
+            },
+            {
+              "label": "Customer onboarding automation",
+              "value": "90% automated"
+            },
+            {
+              "label": "Support resolution speed",
+              "value": "3× faster"
+            },
+            {
+              "label": "Operational cost reduction",
+              "value": "-28%"
+            },
+            {
+              "label": "AI upsell contribution",
+              "value": "+62% revenue / client"
+            }
+          ]
+        },
+        "fashionBrand": {
+          "subtitle": "Sustainable Fashion E-commerce",
+          "metrics": [
+            {
+              "label": "Product launch preparation",
+              "value": "2 weeks → 4 days"
+            },
+            {
+              "label": "Content produced by AI studio",
+              "value": "180 assets / month"
+            },
+            {
+              "label": "Ad optimization iterations",
+              "value": "12 per day"
+            },
+            {
+              "label": "Customer service handled by AI",
+              "value": "88% of tickets"
+            },
+            {
+              "label": "Return processing time",
+              "value": "↓ 65%"
+            }
+          ]
+        },
+        "restaurantChain": {
+          "subtitle": "Multi-location Restaurant Group",
+          "metrics": [
+            {
+              "label": "Staff scheduling time saved",
+              "value": "40 hrs / week"
+            },
+            {
+              "label": "Supply ordering automation",
+              "value": "75% of orders"
+            },
+            {
+              "label": "Guest feedback processed",
+              "value": "6,400+ reviews / month"
+            },
+            {
+              "label": "Menu optimization frequency",
+              "value": "Weekly via AI insights"
+            },
+            {
+              "label": "Waste reduction",
+              "value": "-32%"
+            }
+          ]
+        },
+        "healthTech": {
+          "subtitle": "Digital Health Solutions",
+          "metrics": [
+            {
+              "label": "Patient triage automation",
+              "value": "82% of inquiries"
+            },
+            {
+              "label": "Care team response time",
+              "value": "↓ from 12h to 1h"
+            },
+            {
+              "label": "AI diagnostic suggestions",
+              "value": "97% accuracy"
+            },
+            {
+              "label": "Compliance documentation time",
+              "value": "↓ 55%"
+            },
+            {
+              "label": "Telehealth satisfaction",
+              "value": "4.8 / 5 rating"
+            }
+          ]
+        },
+        "eduPlatform": {
+          "subtitle": "Online Learning Platform",
+          "metrics": [
+            {
+              "label": "Course creation assisted by AI",
+              "value": "65% of modules"
+            },
+            {
+              "label": "Learner support automated",
+              "value": "94% of chats"
+            },
+            {
+              "label": "Personalized learning paths",
+              "value": "18K generated"
+            },
+            {
+              "label": "Drop-out reduction",
+              "value": "-37%"
+            },
+            {
+              "label": "Team hours saved",
+              "value": "160 hrs / month"
+            }
+          ]
+        },
+        "finTech": {
+          "subtitle": "Digital Banking Solutions",
+          "metrics": [
+            {
+              "label": "Fraud detection automation",
+              "value": "99.2% coverage"
+            },
+            {
+              "label": "Loan approvals processed by AI",
+              "value": "78% end-to-end"
+            },
+            {
+              "label": "Compliance audit time saved",
+              "value": "210 hrs / quarter"
+            },
+            {
+              "label": "Customer verification speed",
+              "value": "↓ from 48h to 6m"
+            },
+            {
+              "label": "Service uptime with AI ops",
+              "value": "99.98%"
+            }
+          ]
+        }
+      }
     },
     "team": {
       "eyebrow": "meet our",
       "title": "Team",
       "description": "We are a multidisciplinary crew blending AI strategy, product design and flawless delivery. Every project gets an accountable lead, transparent communication and measurable impact.",
-      "availability": "Ready for new missions",
+    "availability": "Ready for new missions",
+    "loading": "Loading team…",
+    "error": "Unable to load team members. Please try again later.",
+    "empty": "Team members will appear here once they are published in the CMS.",
     "members": {
-      "matejStipcak": {
-        "name": "Matěj Štipčák",
-        "role": "Founder & CEO",
-        "bio": "Leads vision, partnerships and the category narrative so every AI initiative lands with tangible business momentum.",
-        "focus": [
-          "Founder strategy",
-          "Enterprise alliances",
-          "Category design"
-        ]
-      },
-      "matejVenclik": {
-        "name": "Matěj Venclík",
-        "role": "Co-founder & AI Architect",
-        "bio": "Builds production-ready automations and content ecosystems that compound reach and revenue for our clients.",
-        "focus": [
-          "AI automation systems",
-          "Content growth loops",
-          "Applied experimentation"
-        ]
-      },
-      "jakubHruza": {
-        "name": "Jakub Hrůza",
-        "role": "Delivery & Operations Lead",
-        "bio": "Keeps delivery on schedule, orchestrates cross-team collaboration and turns strategy into measurable outcomes.",
-        "focus": [
-          "Program operations",
-          "Client success rituals",
-          "Performance intelligence"
-        ]
+        "matejStipcak": {
+          "name": "Matěj Štipčák",
+          "role": "Founder & System Engineer",
+          "bio": "I am responsible for designing system solutions and handling the technical implementation of our AI products. I focus on custom development, integrations, and optimization.",
+          "focus": [
+            "System integration",
+            "Custom development",
+            "Process optimization"
+          ]
+        },
+        "matejVenclik": {
+          "name": "Matěj Venclík",
+          "role": "Founder & AI Architect",
+          "bio": "Specialist in designing and implementing advanced AI systems, automations and intelligent agents. I focus on cutting-edge technologies and building efficient AI ecosystems.",
+          "focus": [
+            "AI agents",
+            "Automation strategy",
+            "System architecture"
+          ]
+        },
+        "expandee": {
+          "name": "Expandee",
+          "role": "AI Core Architect",
+          "bio": "Never sleeps, never rests, never tires. Processes massive data volumes, designs perfect workflows and makes decisions faster than the blink of an eye.",
+          "focus": [
+            "Real-time data processing",
+            "Predictive intelligence",
+            "Infinite growth possibilities"
+          ]
+        }
       }
-    }
     },
     "faq": {
       "title": {
@@ -176,6 +338,96 @@
       "contact": "Contact",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
+    },
+    "groups": {
+      "navigate": "Navigate",
+      "legal": "Legal",
+      "connect": "Connect"
+    },
+    "cta": {
+      "pretitle": "Next steps",
+      "title": "Build the AI core your team will rely on in 2025",
+      "description": "Book a strategy session or send us a note—within 48 hours we map the roadmap that unlocks your next growth leap.",
+      "primary": "Book a strategy call",
+      "secondary": "Email our team"
+    },
+    "contact": {
+      "title": "Stay connected",
+      "subtitle": "Let's build the future of your operations together",
+      "addressLabel": "Offices",
+      "addressValue": "PRAHA 1, PŘÍČNÁ 1892/4",
+      "emailLabel": "Email",
+      "emailValue": "info@expandmatrix.com",
+      "companyLabel": "Company",
+      "companyValue": "Expand Matrix, s.r.o.",
+      "icoLabel": "Company ID (IČO)",
+      "icoValue": "23530596"
+    }
+  },
+  "legal": {
+    "privacy": {
+      "metaTitle": "Privacy Policy",
+      "metaDescription": "Understand how ExpandMatrix handles personal data and cookies.",
+      "title": "Privacy Policy",
+      "updated": "Last updated: January 1, 2025",
+      "intro": "This placeholder policy outlines how we expect to collect, use, and protect information shared with us. We'll replace it with the final legal copy before launch.",
+      "sections": [
+        {
+          "heading": "1. Information We Collect",
+          "body": [
+            "We collect the details you share when you request a demo, subscribe to updates, or otherwise get in touch with us.",
+            "Technical information such as browser type, device identifiers, and aggregate usage analytics may also be captured to keep the experience smooth."
+          ]
+        },
+        {
+          "heading": "2. How We Use Information",
+          "body": [
+            "We use collected information to respond to enquiries, deliver requested resources, and improve the performance of our products and services.",
+            "Occasionally we may send service updates or relevant announcements; you can opt out of these communications at any time."
+          ]
+        },
+        {
+          "heading": "3. Your Choices",
+          "body": [
+            "You can ask us to update or delete your data, and you can object to certain types of processing where applicable.",
+            "Additional tooling for managing preferences will be provided when the final legal text is published."
+          ]
+        }
+      ],
+      "contact": "If you have questions about this policy, email privacy@expandmatrix.com and we’ll be happy to help.",
+      "back": "Back to homepage"
+    },
+    "terms": {
+      "metaTitle": "Terms of Service",
+      "metaDescription": "Preview the placeholder terms governing the use of ExpandMatrix services.",
+      "title": "Terms of Service",
+      "updated": "Last updated: January 1, 2025",
+      "intro": "These temporary terms describe how we expect our collaboration to work. They will be replaced with the final, legally reviewed document before the site goes live.",
+      "sections": [
+        {
+          "heading": "1. Using Our Services",
+          "body": [
+            "Our services help teams design, deploy, and manage AI-driven products. Access is provided for legitimate business activities and may not be misused.",
+            "We may update functionality from time to time; staying informed about updates is part of using the platform responsibly."
+          ]
+        },
+        {
+          "heading": "2. Intellectual Property",
+          "body": [
+            "Unless stated otherwise, ExpandMatrix retains ownership of platform assets, designs, and proprietary tooling.",
+            "Clients retain ownership of their own data and may grant us limited rights to process it for delivery of agreed services."
+          ]
+        },
+        {
+          "heading": "3. Liability and Support",
+          "body": [
+            "We work hard to deliver reliable solutions, but the service is provided as-is while in preview. We are not liable for indirect losses arising from experimental features.",
+            "Support requests can be sent to support@expandmatrix.com and we will respond within a reasonable timeframe."
+          ]
+        }
+      ],
+      "contact": "Questions about these terms? Email legal@expandmatrix.com so we can clarify anything you need.",
+      "back": "Back to homepage"
     }
   },
   "cookie": {

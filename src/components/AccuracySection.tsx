@@ -112,31 +112,26 @@ export default function AccuracySection() {
               }}
               viewport={{ once: true }}
             >
-              {/* Apple Liquid Glass Card with Advanced Effects */}
-              <div className="relative p-10 lg:p-12 bg-white/[0.02] backdrop-blur-3xl border border-white/[0.08] rounded-3xl hover:border-white/[0.15] hover:bg-white/[0.04] transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[320px] flex flex-col overflow-hidden shadow-2xl shadow-black/50">
-                {/* Liquid Glass Base Layer */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.15] via-white/[0.05] to-transparent opacity-60" />
-                
-                {/* Dynamic Shimmer Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.1] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 transform -skew-x-12 group-hover:animate-shimmer" />
-                
-                {/* Apple-style Glass Reflection */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.08] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-800" />
-                
-                {/* Green Neon Accent */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00d76b]/[0.08] via-transparent to-[#00d76b]/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-600" />
-                
-                {/* Inner Glow Border */}
-                <div className="absolute inset-[1px] rounded-3xl bg-gradient-to-r from-white/[0.1] via-transparent to-white/[0.1] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                {/* Floating Particles Effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-                  <div className="absolute top-4 left-4 w-1 h-1 bg-[#00d76b]/60 rounded-full animate-float-1" />
-                  <div className="absolute top-8 right-6 w-1.5 h-1.5 bg-[#00d76b]/40 rounded-full animate-float-2" />
-                  <div className="absolute bottom-6 left-8 w-1 h-1 bg-[#00d76b]/50 rounded-full animate-float-3" />
-                  <div className="absolute bottom-4 right-4 w-1.5 h-1.5 bg-[#00d76b]/30 rounded-full animate-float-4" />
-                </div>
-                
+              {/* Coal Liquid Glass Card */}
+              <div className="relative p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[320px] flex flex-col overflow-hidden">
+                {/* Enhanced Glass Effect Layers */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-3xl pointer-events-none mix-blend-normal" />
+
+                {/* Border glow effect */}
+                <div 
+                  className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
+                  style={{
+                    '--glow-delay': Math.random() * 5,
+                    '--glow-duration': `${2 + Math.random() * 3}s`
+                  } as React.CSSProperties}
+                />
+
+                {/* Bottom edge accent - zelená lajna jako ve FAQ */}
+                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
+
                 {/* Content wrapper */}
                 <div className="relative z-10 flex flex-col h-full">
                   {/* Label with enhanced styling */}
