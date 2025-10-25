@@ -43,10 +43,8 @@ export function normalizePayloadTeamMembers(
   docs: TeamMemberDocument[],
   locale: string,
 ): NormalizedTeamMember[] {
-  console.log('normalizePayloadTeamMembers called with:', { docs: docs.length, locale });
   return docs
     .map((doc) => {
-      console.log('Processing doc:', doc.name, 'bio:', doc.bio);
       const avatar =
         typeof doc.avatar === 'string'
           ? { url: doc.avatar }
@@ -57,7 +55,7 @@ export function normalizePayloadTeamMembers(
             }
           : undefined;
 
-      const normalized = {
+      return {
         id: doc.id,
         name: localizedValue(doc.name, locale),
         role: localizedValue(doc.role, locale),
@@ -70,8 +68,6 @@ export function normalizePayloadTeamMembers(
         featured: doc.featured,
         showOnSite: doc.showOnSite ?? true,
       };
-      console.log('Normalized result:', normalized.name, 'bio:', normalized.bio);
-      return normalized;
     })
     .filter((member) => member.showOnSite);
 }
