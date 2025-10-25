@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
@@ -89,6 +91,18 @@ export default function ProcessSection() {
   const prefersReducedMotion = useReducedMotion();
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Generate random animation values only on client side to prevent hydration mismatch
+  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  
+  useEffect(() => {
+    setAnimationValues(
+      Array.from({ length: 5 }, () => ({
+        delay: Math.random() * 5,
+        duration: `${2 + Math.random() * 3}s`
+      }))
+    );
+  }, []);
 
   const steps = [
     { key: 'meeting', number: '01' },
@@ -337,8 +351,8 @@ export default function ProcessSection() {
                 <div 
                   className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
                   style={{
-                    '--glow-delay': Math.random() * 5,
-                    '--glow-duration': `${2 + Math.random() * 3}s`
+                    '--glow-delay': animationValues[index]?.delay || 0,
+                    '--glow-duration': animationValues[index]?.duration || '2s'
                   } as React.CSSProperties}
                 />
 
