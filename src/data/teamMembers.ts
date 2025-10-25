@@ -12,12 +12,42 @@ function localizedValue(
   return value[locale] ?? value.cs ?? value.en ?? '';
 }
 
-function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
-  return (
-    doc.focus
-      ?.map((item) => localizedValue(item.value, locale))
-      .filter((item): item is string => Boolean(item)) ?? []
+function isLocalizedRecord(
+  value: unknown,
+): value is Record<string, string | undefined> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  return Object.values(value).some(
+    (entry) => typeof entry === 'string' || typeof entry === 'undefined',
   );
+}
+
+function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
+  if (!doc.focus || !Array.isArray(doc.focus)) {
+    return [];
+  }
+
+  return doc.focus
+    .map((item) => {
+      if (typeof item === 'string') {
+        // Old format: direct string
+        return item;
+      } else if (item && typeof item === 'object') {
+        if (item.value && typeof item.value === 'object') {
+          // New format: { value: { cs, en } }
+          return localizedValue(item.value, locale);
+        } else if (typeof item.value === 'string') {
+          // Mixed format: { value: string }
+          return item.value;
+        } else if (isLocalizedRecord(item)) {
+          // Fallback: try to get text from item itself
+          return localizedValue(item, locale);
+        } else {
+          return '';
+        }
+      }
+      return '';
+    })
+    .filter((item): item is string => Boolean(item));
 }
 
 export function normalizePayloadTeamMembers(
