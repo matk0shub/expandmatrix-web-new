@@ -56,6 +56,11 @@ export function useTeamMembers({ locale, featuredOnly = false }: UseTeamMembersO
           setTeamMembers(normalized);
         }
       } catch (err) {
+        // Don't log AbortError as it's expected when component unmounts
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        
         console.error('Error fetching team members:', err);
         if (!controller.signal.aborted) {
           setError('Failed to fetch team members');
