@@ -36,15 +36,18 @@ export default function TeamSection() {
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
   
   useEffect(() => {
-    if (teamMembers.length > 0) {
-      setAnimationValues(
-        teamMembers.map(() => ({
-          delay: Math.random() * 5,
-          duration: `${2 + Math.random() * 3}s`
-        }))
-      );
+    if (!teamMembers.length) {
+      setAnimationValues([]);
+      return;
     }
-  }, [teamMembers.length]);
+
+    setAnimationValues(
+      teamMembers.map(() => ({
+        delay: Math.random() * 5,
+        duration: `${2 + Math.random() * 3}s`,
+      }))
+    );
+  }, [teamMembers]);
 
   return (
     <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-36 lg:py-40 overflow-hidden">

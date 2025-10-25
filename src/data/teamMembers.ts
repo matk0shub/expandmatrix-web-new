@@ -12,6 +12,15 @@ function localizedValue(
   return value[locale] ?? value.cs ?? value.en ?? '';
 }
 
+function isLocalizedRecord(
+  value: unknown,
+): value is Record<string, string | undefined> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  return Object.values(value).some(
+    (entry) => typeof entry === 'string' || typeof entry === 'undefined',
+  );
+}
+
 function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
   if (!doc.focus || !Array.isArray(doc.focus)) {
     return [];
@@ -29,9 +38,11 @@ function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
         } else if (typeof item.value === 'string') {
           // Mixed format: { value: string }
           return item.value;
-        } else {
+        } else if (isLocalizedRecord(item)) {
           // Fallback: try to get text from item itself
           return localizedValue(item, locale);
+        } else {
+          return '';
         }
       }
       return '';

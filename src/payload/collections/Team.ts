@@ -17,12 +17,13 @@ export const Team: CollectionConfig = {
       hooks: {
         beforeChange: [
           ({ data }) => {
-            if (data.name && typeof data.name === 'object') {
-              return data.name.cs || data.name.en || 'Unknown';
+            const name = data?.name;
+            if (name && typeof name === 'object') {
+              return name.cs || name.en || 'Unknown';
             }
-            return data.name || 'Unknown';
-          }
-        ]
+            return (name as string) || 'Unknown';
+          },
+        ],
       }
     },
     {
@@ -35,12 +36,13 @@ export const Team: CollectionConfig = {
       hooks: {
         beforeChange: [
           ({ data }) => {
-            if (data.role && typeof data.role === 'object') {
-              return data.role.cs || data.role.en || 'Unknown';
+            const role = data?.role;
+            if (role && typeof role === 'object') {
+              return role.cs || role.en || 'Unknown';
             }
-            return data.role || 'Unknown';
-          }
-        ]
+            return (role as string) || 'Unknown';
+          },
+        ],
       }
     },
     {
