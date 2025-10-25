@@ -134,7 +134,7 @@ export default function TeamSection() {
                 .map(([key, url]) => ({
                   url: url as string,
                   icon: SOCIAL_ICON_MAP[key],
-                  label: `${(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} ${key}`,
+                  label: `${member.name} ${key}`,
                 }));
 
               return (
@@ -148,9 +148,9 @@ export default function TeamSection() {
                   itemScope
                   itemType="https://schema.org/Person"
                 >
-                  <meta itemProp="name" content={(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} />
-                  <meta itemProp="jobTitle" content={(member.role as any)[locale] || (member.role as any).en || (member.role as any).cs} />
-                  {(member.bio && ((member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs)) ? <meta itemProp="description" content={(member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs} /> : null}
+                  <meta itemProp="name" content={member.name} />
+                  <meta itemProp="jobTitle" content={member.role} />
+                  {member.bio ? <meta itemProp="description" content={member.bio} /> : null}
                   <div
                     className="absolute -top-8 -left-8 h-28 w-24 rounded-3xl opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
                     style={{ background: accent }}
@@ -160,7 +160,7 @@ export default function TeamSection() {
                       {member.avatar?.url ? (
                         <Image
                           src={member.avatar.url}
-                          alt={member.avatar.alt ?? `${(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} portrait`}
+                          alt={member.avatar.alt ?? `${member.name} portrait`}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                           className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105"
@@ -175,7 +175,7 @@ export default function TeamSection() {
                           }}
                         >
                           <span className="text-5xl font-semibold uppercase tracking-[0.35em] text-white/80 font-lato">
-                            {((member.name as any)[locale] || (member.name as any).en || (member.name as any).cs)
+                            {member.name
                               .split(' ')
                               .map((part: string) => part[0]?.toUpperCase() ?? '')
                               .join('')
@@ -199,49 +199,25 @@ export default function TeamSection() {
                       />
 
                       <div className="relative z-10">
-                        <h3 className="text-2xl font-semibold text-white font-lato">{(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs}</h3>
+                        <h3 className="text-2xl font-semibold text-white font-lato">{member.name}</h3>
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.45em] text-white/50 font-lato">
-                          {(member.role as any)[locale] || (member.role as any).en || (member.role as any).cs}
+                          {member.role}
                         </p>
-                        {((member.bio as any) && ((member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs)) ? (
+                        {member.bio ? (
                           <p className="mt-4 text-sm md:text-base text-white/70 leading-relaxed font-lato">
-                            {(member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs}
+                            {member.bio}
                           </p>
                         ) : null}
                         {member.focus.length > 0 && (
                           <ul className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                            {member.focus.map((item, focusIndex) => {
-                              // Handle different data formats
-                              let focusText = '';
-                              
-                              if (typeof item === 'string') {
-                                // Old format: direct string
-                                focusText = item;
-                              } else if (item && typeof item === 'object') {
-                                const itemObj = item as any;
-                                if (itemObj.value && typeof itemObj.value === 'object') {
-                                  // New format: { value: { cs, en } }
-                                  focusText = itemObj.value[locale] || itemObj.value.en || itemObj.value.cs || 'Unknown';
-                                } else if (typeof itemObj.value === 'string') {
-                                  // Mixed format: { value: string }
-                                  focusText = itemObj.value;
-                                } else {
-                                  // Fallback: try to get text from item itself
-                                  focusText = itemObj[locale] || itemObj.en || itemObj.cs || 'Unknown';
-                                }
-                              } else {
-                                focusText = 'Unknown';
-                              }
-
-                              return (
-                                <li
-                                  key={`${member.id}-focus-${focusIndex}`}
-                                  className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
-                                >
-                                  {focusText}
-                                </li>
-                              );
-                            })}
+                            {member.focus.map((focusText, focusIndex) => (
+                              <li
+                                key={`${member.id}-focus-${focusIndex}`}
+                                className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
+                              >
+                                {focusText}
+                              </li>
+                            ))}
                           </ul>
                         )}
                         {socialLinks.length > 0 && (
