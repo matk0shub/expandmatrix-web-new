@@ -2,6 +2,8 @@ import payload from 'payload'
 import path from 'path'
 import { pathToFileURL } from 'url'
 
+import { resolveDatabaseUri, resolvePayloadSecret } from '@/payload/env'
+
 type PayloadConfigShape = Record<string, unknown>
 
 let cachedConfig: PayloadConfigShape | null = null
@@ -18,9 +20,8 @@ const loadConfig = async (): Promise<PayloadConfigShape> => {
 }
 
 export const getPayloadClient = async () => {
-  if (!process.env.PAYLOAD_SECRET) {
-    throw new Error('PAYLOAD_SECRET is required to initialize Payload.')
-  }
+  const secret = resolvePayloadSecret()
+  resolveDatabaseUri()
 
   if (!payload.db) {
     const config = await loadConfig()
@@ -28,6 +29,7 @@ export const getPayloadClient = async () => {
     await payload.init({
       config: config as never,
       local: process.env.NODE_ENV !== 'production',
+      secret,
     } as never)
   }
 
