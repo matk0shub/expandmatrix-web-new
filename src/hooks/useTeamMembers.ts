@@ -49,10 +49,13 @@ export function useTeamMembers({ locale, featuredOnly = false }: UseTeamMembersO
           : [];
 
         const normalized = normalizePayloadTeamMembers(docs, locale);
+        console.log('Normalized team members:', normalized.length, normalized.map(m => ({ name: m.name, bio: m.bio })));
 
         if (normalized.length === 0) {
+          console.log('Using sample data fallback');
           setTeamMembers(getSampleTeamMembers({ locale, featuredOnly }));
         } else {
+          console.log('Using API data');
           setTeamMembers(normalized);
         }
       } catch (err) {

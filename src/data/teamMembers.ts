@@ -9,9 +9,7 @@ function localizedValue(
 ): string {
   if (!value) return '';
   if (typeof value === 'string') return value;
-  const result = value[locale] ?? value.cs ?? value.en ?? '';
-  console.log('localizedValue:', { value, locale, result });
-  return result;
+  return value[locale] ?? value.cs ?? value.en ?? '';
 }
 
 function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
