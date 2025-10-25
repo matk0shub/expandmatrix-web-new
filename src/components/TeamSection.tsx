@@ -203,7 +203,8 @@ export default function TeamSection() {
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.45em] text-white/50 font-lato">
                           {member.role}
                         </p>
-                        {member.bio ? (
+                        {console.log('Debug bio for', member.name, ':', member.bio)}
+                        {member.bio && member.bio.trim() ? (
                           <p className="mt-4 text-sm md:text-base text-white/70 leading-relaxed font-lato">
                             {member.bio}
                           </p>

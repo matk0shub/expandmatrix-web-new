@@ -9,7 +9,9 @@ function localizedValue(
 ): string {
   if (!value) return '';
   if (typeof value === 'string') return value;
-  return value[locale] ?? value.cs ?? value.en ?? '';
+  const result = value[locale] ?? value.cs ?? value.en ?? '';
+  console.log('localizedValue:', { value, locale, result });
+  return result;
 }
 
 function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
@@ -43,8 +45,10 @@ export function normalizePayloadTeamMembers(
   docs: TeamMemberDocument[],
   locale: string,
 ): NormalizedTeamMember[] {
+  console.log('normalizePayloadTeamMembers called with:', { docs: docs.length, locale });
   return docs
     .map((doc) => {
+      console.log('Processing doc:', doc.name, 'bio:', doc.bio);
       const avatar =
         typeof doc.avatar === 'string'
           ? { url: doc.avatar }
@@ -55,7 +59,7 @@ export function normalizePayloadTeamMembers(
             }
           : undefined;
 
-      return {
+      const normalized = {
         id: doc.id,
         name: localizedValue(doc.name, locale),
         role: localizedValue(doc.role, locale),
@@ -68,6 +72,8 @@ export function normalizePayloadTeamMembers(
         featured: doc.featured,
         showOnSite: doc.showOnSite ?? true,
       };
+      console.log('Normalized result:', normalized.name, 'bio:', normalized.bio);
+      return normalized;
     })
     .filter((member) => member.showOnSite);
 }
