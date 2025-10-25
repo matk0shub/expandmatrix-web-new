@@ -8,13 +8,22 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+  // Disable source maps completely in development
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
+  },
   // Disable source maps in development to prevent 404 errors
   webpack: (config, { dev, isServer }) => {
-    // Disable source maps in development to prevent 404 errors
+    // Completely disable source maps in development
     if (dev) {
       config.devtool = false;
       config.cache = false;
       config.parallelism = 1;
+      // Disable source map generation
+      config.optimization = {
+        ...config.optimization,
+        minimize: false,
+      };
     }
     
     // Fix webpack module issues
