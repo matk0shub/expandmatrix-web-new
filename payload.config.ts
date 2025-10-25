@@ -51,6 +51,20 @@ const initPayloadConfig = async () => {
     },
     editor: lexicalEditor({}),
     sharp,
+    localization: {
+      locales: [
+        {
+          label: 'English',
+          code: 'en',
+        },
+        {
+          label: 'Czech',
+          code: 'cs',
+        },
+      ],
+      defaultLocale: 'en',
+      fallback: true,
+    },
     collections: [Users, Team, References, FAQ, Media, FooterLinks, Subscribers],
     globals: [SiteSettings],
     typescript: {

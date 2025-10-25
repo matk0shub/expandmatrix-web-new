@@ -7,6 +7,7 @@ import { getSampleTeamResponse } from '@/data/teamMembers';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const featuredOnly = searchParams.get('featuredOnly') === 'true';
+  const locale = searchParams.get('locale') || 'en';
 
   try {
     const payload = await getPayloadClient();
@@ -33,6 +34,7 @@ export async function GET(request: Request) {
       sort: 'order',
       limit: 100,
       where,
+      locale: locale as 'en' | 'cs',
     });
 
     return NextResponse.json(result);

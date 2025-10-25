@@ -9,9 +9,19 @@ export const Team: CollectionConfig = {
   fields: [
     {
       name: 'name',
-      type: 'text',
-      required: true,
-      localized: true,
+      type: 'group',
+      fields: [
+        {
+          name: 'cs',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'en',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
     {
       name: 'role',
@@ -56,9 +66,19 @@ export const Team: CollectionConfig = {
         {
           name: 'value',
           label: 'Focus item',
-          type: 'text',
-          localized: true,
-          required: true,
+          type: 'group',
+          fields: [
+            {
+              name: 'cs',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'en',
+              type: 'text',
+              required: true,
+            },
+          ],
         },
       ],
     },
