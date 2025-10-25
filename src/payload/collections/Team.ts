@@ -3,15 +3,63 @@ import type { CollectionConfig } from 'payload'
 export const Team: CollectionConfig = {
   slug: 'teamMembers',
   admin: {
-    useAsTitle: 'name',
-    defaultColumns: ['name', 'role.cs', 'order', 'featured'],
+    useAsTitle: 'displayName',
+    defaultColumns: ['displayName', 'roleDisplay', 'order', 'featured'],
   },
   fields: [
     {
-      name: 'name',
+      name: 'displayName',
       type: 'text',
-      required: true,
-      localized: true,
+      admin: {
+        readOnly: true,
+        description: 'Auto-generated display name for admin interface',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            const name = data?.name;
+            if (name && typeof name === 'object') {
+              return name.cs || name.en || 'Unknown';
+            }
+            return (name as string) || 'Unknown';
+          },
+        ],
+      }
+    },
+    {
+      name: 'roleDisplay',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Auto-generated role display for admin interface',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            const role = data?.role;
+            if (role && typeof role === 'object') {
+              return role.cs || role.en || 'Unknown';
+            }
+            return (role as string) || 'Unknown';
+          },
+        ],
+      }
+    },
+    {
+      name: 'name',
+      type: 'group',
+      fields: [
+        {
+          name: 'cs',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'en',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
     {
       name: 'role',
@@ -56,9 +104,19 @@ export const Team: CollectionConfig = {
         {
           name: 'value',
           label: 'Focus item',
-          type: 'text',
-          localized: true,
-          required: true,
+          type: 'group',
+          fields: [
+            {
+              name: 'cs',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'en',
+              type: 'text',
+              required: true,
+            },
+          ],
         },
       ],
     },

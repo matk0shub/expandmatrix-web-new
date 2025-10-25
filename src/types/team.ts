@@ -4,10 +4,13 @@ export type LocalizedValue = {
   [locale: string]: string | undefined;
 };
 
-export type TeamMemberFocusItem = {
-  id?: string;
-  value?: LocalizedValue;
-};
+export type TeamMemberFocusItem =
+  | string
+  | LocalizedValue
+  | {
+      id?: string;
+      value?: LocalizedValue | string;
+    };
 
 export type TeamMemberSocials = {
   linkedin?: string;

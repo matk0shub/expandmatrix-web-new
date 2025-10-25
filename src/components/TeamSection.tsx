@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
@@ -30,6 +31,23 @@ export default function TeamSection() {
   });
 
   const isLoading = !hasMounted || loading;
+
+  // Generate random animation values only on client side to prevent hydration mismatch
+  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  
+  useEffect(() => {
+    if (!teamMembers.length) {
+      setAnimationValues([]);
+      return;
+    }
+
+    setAnimationValues(
+      teamMembers.map(() => ({
+        delay: Math.random() * 5,
+        duration: `${2 + Math.random() * 3}s`,
+      }))
+    );
+  }, [teamMembers]);
 
   return (
     <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-36 lg:py-40 overflow-hidden">
@@ -162,7 +180,7 @@ export default function TeamSection() {
                           <span className="text-5xl font-semibold uppercase tracking-[0.35em] text-white/80 font-lato">
                             {member.name
                               .split(' ')
-                              .map((part) => part[0]?.toUpperCase() ?? '')
+                              .map((part: string) => part[0]?.toUpperCase() ?? '')
                               .join('')
                               .slice(0, 2)}
                           </span>
@@ -178,8 +196,8 @@ export default function TeamSection() {
                       <div
                         className="absolute inset-0 rounded-b-[2rem] border border-white/30 animate-border-glow"
                         style={{
-                          '--glow-delay': Math.random() * 5,
-                          '--glow-duration': `${2 + Math.random() * 3}s`,
+                          '--glow-delay': animationValues[index]?.delay || 0,
+                          '--glow-duration': animationValues[index]?.duration || '2s',
                         } as React.CSSProperties}
                       />
 
@@ -188,19 +206,19 @@ export default function TeamSection() {
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.45em] text-white/50 font-lato">
                           {member.role}
                         </p>
-                        {member.bio ? (
+                        {member.bio && member.bio.trim() ? (
                           <p className="mt-4 text-sm md:text-base text-white/70 leading-relaxed font-lato">
                             {member.bio}
                           </p>
                         ) : null}
                         {member.focus.length > 0 && (
                           <ul className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                            {member.focus.map((item, focusIndex) => (
+                            {member.focus.map((focusText, focusIndex) => (
                               <li
                                 key={`${member.id}-focus-${focusIndex}`}
                                 className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
                               >
-                                {item}
+                                {focusText}
                               </li>
                             ))}
                           </ul>
