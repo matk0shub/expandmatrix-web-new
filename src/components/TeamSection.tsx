@@ -119,7 +119,7 @@ export default function TeamSection() {
                 .map(([key, url]) => ({
                   url: url as string,
                   icon: SOCIAL_ICON_MAP[key],
-                  label: `${member.name[locale] || member.name.en || member.name.cs} ${key}`,
+                  label: `${(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} ${key}`,
                 }));
 
               return (
@@ -133,9 +133,9 @@ export default function TeamSection() {
                   itemScope
                   itemType="https://schema.org/Person"
                 >
-                  <meta itemProp="name" content={member.name[locale] || member.name.en || member.name.cs} />
-                  <meta itemProp="jobTitle" content={member.role[locale] || member.role.en || member.role.cs} />
-                  {(member.bio && (member.bio[locale] || member.bio.en || member.bio.cs)) ? <meta itemProp="description" content={member.bio[locale] || member.bio.en || member.bio.cs} /> : null}
+                  <meta itemProp="name" content={(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} />
+                  <meta itemProp="jobTitle" content={(member.role as any)[locale] || (member.role as any).en || (member.role as any).cs} />
+                  {(member.bio && ((member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs)) ? <meta itemProp="description" content={(member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs} /> : null}
                   <div
                     className="absolute -top-8 -left-8 h-28 w-24 rounded-3xl opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
                     style={{ background: accent }}
@@ -145,7 +145,7 @@ export default function TeamSection() {
                       {member.avatar?.url ? (
                         <Image
                           src={member.avatar.url}
-                          alt={member.avatar.alt ?? `${member.name[locale] || member.name.en || member.name.cs} portrait`}
+                          alt={member.avatar.alt ?? `${(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs} portrait`}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                           className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105"
@@ -160,9 +160,9 @@ export default function TeamSection() {
                           }}
                         >
                           <span className="text-5xl font-semibold uppercase tracking-[0.35em] text-white/80 font-lato">
-                            {(member.name[locale] || member.name.en || member.name.cs)
+                            {((member.name as any)[locale] || (member.name as any).en || (member.name as any).cs)
                               .split(' ')
-                              .map((part) => part[0]?.toUpperCase() ?? '')
+                              .map((part: string) => part[0]?.toUpperCase() ?? '')
                               .join('')
                               .slice(0, 2)}
                           </span>
@@ -184,13 +184,13 @@ export default function TeamSection() {
                       />
 
                       <div className="relative z-10">
-                        <h3 className="text-2xl font-semibold text-white font-lato">{member.name[locale] || member.name.en || member.name.cs}</h3>
+                        <h3 className="text-2xl font-semibold text-white font-lato">{(member.name as any)[locale] || (member.name as any).en || (member.name as any).cs}</h3>
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.45em] text-white/50 font-lato">
-                          {member.role[locale] || member.role.en || member.role.cs}
+                          {(member.role as any)[locale] || (member.role as any).en || (member.role as any).cs}
                         </p>
-                        {(member.bio && (member.bio[locale] || member.bio.en || member.bio.cs)) ? (
+                        {((member.bio as any) && ((member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs)) ? (
                           <p className="mt-4 text-sm md:text-base text-white/70 leading-relaxed font-lato">
-                            {member.bio[locale] || member.bio.en || member.bio.cs}
+                            {(member.bio as any)[locale] || (member.bio as any).en || (member.bio as any).cs}
                           </p>
                         ) : null}
                         {member.focus.length > 0 && (
@@ -200,7 +200,7 @@ export default function TeamSection() {
                                 key={`${member.id}-focus-${focusIndex}`}
                                 className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
                               >
-                                {item.value[locale] || item.value.en || item.value.cs}
+                                {(item as any).value[locale] || (item as any).value.en || (item as any).value.cs}
                               </li>
                             ))}
                           </ul>
