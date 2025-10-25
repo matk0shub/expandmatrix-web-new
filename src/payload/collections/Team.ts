@@ -3,10 +3,46 @@ import type { CollectionConfig } from 'payload'
 export const Team: CollectionConfig = {
   slug: 'teamMembers',
   admin: {
-    useAsTitle: 'name',
-    defaultColumns: ['name', 'role.cs', 'order', 'featured'],
+    useAsTitle: 'displayName',
+    defaultColumns: ['displayName', 'roleDisplay', 'order', 'featured'],
   },
   fields: [
+    {
+      name: 'displayName',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Auto-generated display name for admin interface',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            if (data.name && typeof data.name === 'object') {
+              return data.name.cs || data.name.en || 'Unknown';
+            }
+            return data.name || 'Unknown';
+          }
+        ]
+      }
+    },
+    {
+      name: 'roleDisplay',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Auto-generated role display for admin interface',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            if (data.role && typeof data.role === 'object') {
+              return data.role.cs || data.role.en || 'Unknown';
+            }
+            return data.role || 'Unknown';
+          }
+        ]
+      }
+    },
     {
       name: 'name',
       type: 'group',
