@@ -99,9 +99,5 @@ const nextConfig: NextConfig = {
 };
 
 export default withPayload(withNextIntl(nextConfig), { 
-  devBundleServerPackages: false,
-  // Fix for OpenTelemetry module issue
-  experimental: {
-    serverComponentsExternalPackages: ['@opentelemetry/api', '@opentelemetry/sdk-node']
-  }
+  devBundleServerPackages: false
 });
