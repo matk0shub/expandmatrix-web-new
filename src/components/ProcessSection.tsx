@@ -304,7 +304,7 @@ export default function ProcessSection() {
           ref={cardsContainerRef}
           className={`relative w-full ${prefersReducedMotion ? 'space-y-12 sm:space-y-16' : ''}`}
         >
-          {steps.map((step) => (
+          {steps.map((step, index) => (
             <section
               key={step.key}
               className={`process-card-wrapper ${
