@@ -9,6 +9,7 @@ import { Media } from './src/payload/collections/Media'
 import { FooterLinks } from './src/payload/collections/FooterLinks'
 import { Subscribers } from './src/payload/collections/Subscribers'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
+import { resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env'
 
 const initPayloadConfig = async () => {
   const [{ lexicalEditor }, { default: sharp }, { default: nodemailer }] = await Promise.all([
@@ -40,8 +41,11 @@ const initPayloadConfig = async () => {
         })
       : null
 
+  const secret = resolvePayloadSecret()
+  const databaseUri = resolveDatabaseUri()
+
   return buildConfig({
-    secret: process.env.PAYLOAD_SECRET!,
+    secret,
     admin: {
       user: 'users',
     },
@@ -85,7 +89,7 @@ const initPayloadConfig = async () => {
           },
     plugins: [],
     db: mongooseAdapter({
-      url: process.env.DATABASE_URI!,
+      url: databaseUri,
     }),
   })
 }
