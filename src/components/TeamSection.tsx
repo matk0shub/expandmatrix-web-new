@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
@@ -30,6 +31,20 @@ export default function TeamSection() {
   });
 
   const isLoading = !hasMounted || loading;
+
+  // Generate random animation values only on client side to prevent hydration mismatch
+  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  
+  useEffect(() => {
+    if (teamMembers.length > 0) {
+      setAnimationValues(
+        teamMembers.map(() => ({
+          delay: Math.random() * 5,
+          duration: `${2 + Math.random() * 3}s`
+        }))
+      );
+    }
+  }, [teamMembers.length]);
 
   return (
     <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-36 lg:py-40 overflow-hidden">
@@ -178,8 +193,8 @@ export default function TeamSection() {
                       <div
                         className="absolute inset-0 rounded-b-[2rem] border border-white/30 animate-border-glow"
                         style={{
-                          '--glow-delay': Math.random() * 5,
-                          '--glow-duration': `${2 + Math.random() * 3}s`,
+                          '--glow-delay': animationValues[index]?.delay || 0,
+                          '--glow-duration': animationValues[index]?.duration || '2s',
                         } as React.CSSProperties}
                       />
 
