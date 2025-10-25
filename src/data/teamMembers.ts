@@ -13,11 +13,30 @@ function localizedValue(
 }
 
 function normalizeFocus(doc: TeamMemberDocument, locale: string): string[] {
-  return (
-    doc.focus
-      ?.map((item) => localizedValue(item.value, locale))
-      .filter((item): item is string => Boolean(item)) ?? []
-  );
+  if (!doc.focus || !Array.isArray(doc.focus)) {
+    return [];
+  }
+
+  return doc.focus
+    .map((item) => {
+      if (typeof item === 'string') {
+        // Old format: direct string
+        return item;
+      } else if (item && typeof item === 'object') {
+        if (item.value && typeof item.value === 'object') {
+          // New format: { value: { cs, en } }
+          return localizedValue(item.value, locale);
+        } else if (typeof item.value === 'string') {
+          // Mixed format: { value: string }
+          return item.value;
+        } else {
+          // Fallback: try to get text from item itself
+          return localizedValue(item, locale);
+        }
+      }
+      return '';
+    })
+    .filter((item): item is string => Boolean(item));
 }
 
 export function normalizePayloadTeamMembers(

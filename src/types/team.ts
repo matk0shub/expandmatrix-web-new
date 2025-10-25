@@ -6,8 +6,8 @@ export type LocalizedValue = {
 
 export type TeamMemberFocusItem = {
   id?: string;
-  value?: LocalizedValue;
-};
+  value?: LocalizedValue | string;
+} | string;
 
 export type TeamMemberSocials = {
   linkedin?: string;
