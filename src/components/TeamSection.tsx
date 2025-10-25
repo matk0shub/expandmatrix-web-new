@@ -195,14 +195,38 @@ export default function TeamSection() {
                         ) : null}
                         {member.focus.length > 0 && (
                           <ul className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                            {member.focus.map((item, focusIndex) => (
-                              <li
-                                key={`${member.id}-focus-${focusIndex}`}
-                                className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
-                              >
-                                {(item as any).value[locale] || (item as any).value.en || (item as any).value.cs}
-                              </li>
-                            ))}
+                            {member.focus.map((item, focusIndex) => {
+                              // Handle different data formats
+                              let focusText = '';
+                              
+                              if (typeof item === 'string') {
+                                // Old format: direct string
+                                focusText = item;
+                              } else if (item && typeof item === 'object') {
+                                const itemObj = item as any;
+                                if (itemObj.value && typeof itemObj.value === 'object') {
+                                  // New format: { value: { cs, en } }
+                                  focusText = itemObj.value[locale] || itemObj.value.en || itemObj.value.cs || 'Unknown';
+                                } else if (typeof itemObj.value === 'string') {
+                                  // Mixed format: { value: string }
+                                  focusText = itemObj.value;
+                                } else {
+                                  // Fallback: try to get text from item itself
+                                  focusText = itemObj[locale] || itemObj.en || itemObj.cs || 'Unknown';
+                                }
+                              } else {
+                                focusText = 'Unknown';
+                              }
+
+                              return (
+                                <li
+                                  key={`${member.id}-focus-${focusIndex}`}
+                                  className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
+                                >
+                                  {focusText}
+                                </li>
+                              );
+                            })}
                           </ul>
                         )}
                         {socialLinks.length > 0 && (
