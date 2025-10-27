@@ -1,13 +1,11 @@
 import HomePageShell from '@/components/HomePageShell';
-import { getSampleReferences } from '@/data/references';
 
 interface PageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export default function HomePage({ params }: PageProps) {
-  const { locale } = params;
-  const initialReferences = getSampleReferences(locale);
+export default async function HomePage({ params }: PageProps) {
+  const { locale } = await params;
 
-  return <HomePageShell locale={locale} initialReferences={initialReferences} />;
+  return <HomePageShell locale={locale} />;
 }
