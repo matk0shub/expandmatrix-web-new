@@ -14,16 +14,9 @@ const nextConfig: NextConfig = {
   },
   // Disable source maps in development to prevent 404 errors
   webpack: (config, { dev, isServer }) => {
-    // Completely disable source maps in development
+    // Disable source maps in development
     if (dev) {
       config.devtool = false;
-      config.cache = false;
-      config.parallelism = 1;
-      // Disable source map generation
-      config.optimization = {
-        ...config.optimization,
-        minimize: false,
-      };
     }
     
     // Fix webpack module issues

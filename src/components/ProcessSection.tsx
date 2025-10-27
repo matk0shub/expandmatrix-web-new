@@ -6,11 +6,21 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CalCTAButton } from './CalCTAButton';
 
-gsap.registerPlugin(ScrollTrigger);
+// Lazy load GSAP to prevent blocking webpack
+let gsap: any, ScrollTrigger: any;
+let gsapLoaded = false;
+
+async function loadGSAP() {
+  if (gsapLoaded) return { gsap, ScrollTrigger };
+  const gsapModule = await import('gsap');
+  gsap = gsapModule.gsap;
+  ScrollTrigger = (await import('gsap/ScrollTrigger')).ScrollTrigger;
+  gsap.registerPlugin(ScrollTrigger);
+  gsapLoaded = true;
+  return { gsap, ScrollTrigger };
+}
 
 // ============================================================================
 // CONFIGURATION - FUTURISTIC DESIGN
@@ -210,14 +220,14 @@ export default function ProcessSection() {
     const container = cardsContainerRef.current;
 
     if (!stackingEnabled || !container) {
-      if (container) {
-        const cards = container.querySelectorAll<HTMLElement>('.process-card');
-        gsap.set(cards, { clearProps: 'transform,rotation,x,y' });
-      }
       return;
     }
 
-    const ctx = gsap.context(() => {
+    // Lazy load GSAP to prevent blocking webpack compilation
+    loadGSAP().then(({ gsap: gsapLoaded, ScrollTrigger: scrollTrigger }) => {
+      if (!gsapLoaded || !scrollTrigger || !container) return;
+
+      const ctx = gsapLoaded.context(() => {
       const cardWrappers = gsap.utils.toArray<HTMLElement>(
         container.querySelectorAll('.process-card-wrapper')
       );
@@ -231,9 +241,9 @@ export default function ProcessSection() {
       const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
       if (existingCards.length === 0) return;
 
-      gsap.set(existingCards, { opacity: 1, yPercent: 0 });
+      gsapLoaded.set(existingCards, { opacity: 1, yPercent: 0 });
 
-      const lastCardTrigger = ScrollTrigger.create({
+      const lastCardTrigger = scrollTrigger.create({
         trigger: cardWrappers[cardWrappers.length - 1],
         start: 'bottom bottom',
       });
@@ -242,7 +252,7 @@ export default function ProcessSection() {
         const card = cards[index];
         if (!card) return;
 
-        ScrollTrigger.create({
+        scrollTrigger.create({
           id: `process-card-${index}`,
           trigger: wrapper,
           start: 'center center',
@@ -253,7 +263,7 @@ export default function ProcessSection() {
           invalidateOnRefresh: true,
           toggleActions: 'restart none none reverse',
           onEnter: () => {
-            gsap.to(card, {
+            gsapLoaded.to(card, {
               yPercent: 0,
               rotation: cardRotations[index],
               x: cardOffsets[index],
@@ -263,7 +273,7 @@ export default function ProcessSection() {
             });
           },
           onEnterBack: () => {
-            gsap.to(card, {
+            gsapLoaded.to(card, {
               yPercent: 0,
               rotation: cardRotations[index],
               x: cardOffsets[index],
@@ -275,14 +285,15 @@ export default function ProcessSection() {
         });
       });
 
-      ScrollTrigger.refresh();
-    }, container);
+      scrollTrigger.refresh();
+      }, container);
 
-    return () => {
-      ctx.revert();
-      const cards = container.querySelectorAll<HTMLElement>('.process-card');
-      gsap.set(cards, { clearProps: 'transform,rotation,x,y' });
-    };
+      return () => {
+        ctx.revert();
+        const cards = container.querySelectorAll<HTMLElement>('.process-card');
+        gsapLoaded.set(cards, { clearProps: 'transform,rotation,x,y' });
+      };
+    });
   }, [stackingEnabled]);
 
   // ============================================================================
