@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
@@ -92,6 +93,7 @@ export default function ProcessSection() {
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  const [stackingEnabled, setStackingEnabled] = useState(false);
   
   useEffect(() => {
     setAnimationValues(
@@ -102,23 +104,118 @@ export default function ProcessSection() {
     );
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+
+    const updateStacking = (matches: boolean) => {
+      setStackingEnabled((current) => {
+        const next = matches && !prefersReducedMotion;
+        return current === next ? current : next;
+      });
+    };
+
+    updateStacking(mediaQuery.matches);
+
+    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
+      updateStacking(event.matches);
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleChange);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(handleChange);
+    }
+
+    return () => {
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', handleChange);
+      } else if (typeof mediaQuery.removeListener === 'function') {
+        mediaQuery.removeListener(handleChange);
+      }
+    };
+  }, [prefersReducedMotion]);
+
   const steps = [
-    { key: 'meeting', number: '01' },
-    { key: 'contract', number: '02' },
-    { key: 'access', number: '03' },
-    { key: 'implementation', number: '04' },
-    { key: 'optimization', number: '05' }
-  ];
+    {
+      key: 'meeting',
+      number: '01',
+      icon: {
+        src: '/process-calendar.svg',
+        alt: 'Calendar icon symbolizing the kickoff workshop',
+        size: 'clamp(180px, 28vw, 320px)',
+        bottom: '-80px',
+        right: '-6px',
+        rotation: -8
+      }
+    },
+    {
+      key: 'contract',
+      number: '02',
+      icon: {
+        src: '/process-project.svg',
+        alt: 'Project blueprint icon for scoping and contracts',
+        size: 'clamp(200px, 30vw, 340px)',
+        bottom: '-90px',
+        right: '-36px',
+        rotation: 5
+      }
+    },
+    {
+      key: 'access',
+      number: '03',
+      icon: {
+        src: '/process-lock.svg',
+        alt: 'Security lock icon for access hand-off',
+        size: 'clamp(170px, 26vw, 300px)',
+        bottom: '-70px',
+        right: '-25px',
+        rotation: -2
+      }
+    },
+    {
+      key: 'implementation',
+      number: '04',
+      icon: {
+        src: '/process-done.svg',
+        alt: 'Completion checkmark icon for implementation',
+        size: 'clamp(190px, 28vw, 330px)',
+        bottom: '-85px',
+        right: '-28px',
+        rotation: 8
+      }
+    },
+    {
+      key: 'optimization',
+      number: '05',
+      icon: {
+        src: '/process-gears.svg',
+        alt: 'Dual gear icon for optimization cycles',
+        size: 'clamp(210px, 32vw, 360px)',
+        bottom: '-100px',
+        right: '-40px',
+        rotation: 12
+      }
+    }
+  ] as const;
 
   // ============================================================================
   // GSAP SCROLL TRIGGER - STACKING CARDS EFFECT
   // ============================================================================
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
-
     const container = cardsContainerRef.current;
-    if (!container) return;
+
+    if (!stackingEnabled || !container) {
+      if (container) {
+        const cards = container.querySelectorAll<HTMLElement>('.process-card');
+        gsap.set(cards, { clearProps: 'transform,rotation,x,y' });
+      }
+      return;
+    }
 
     const ctx = gsap.context(() => {
       const cardWrappers = gsap.utils.toArray<HTMLElement>(
@@ -134,45 +231,45 @@ export default function ProcessSection() {
       const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
       if (existingCards.length === 0) return;
 
-      // Set initial state
       gsap.set(existingCards, { opacity: 1, yPercent: 0 });
 
-      // Create last card trigger for pin end calculation
       const lastCardTrigger = ScrollTrigger.create({
         trigger: cardWrappers[cardWrappers.length - 1],
         start: 'bottom bottom',
       });
 
-      // Create scroll trigger for each card
       cardWrappers.forEach((wrapper, index) => {
         const card = cards[index];
         if (!card) return;
 
         ScrollTrigger.create({
+          id: `process-card-${index}`,
           trigger: wrapper,
           start: 'center center',
           end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
           pin: true,
           pinSpacing: false,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
           toggleActions: 'restart none none reverse',
           onEnter: () => {
-            gsap.to(card, { 
-              yPercent: 0, 
+            gsap.to(card, {
+              yPercent: 0,
               rotation: cardRotations[index],
               x: cardOffsets[index],
               duration: CARD_CONFIG.animation.duration,
               ease: CARD_CONFIG.animation.ease,
-              overwrite: 'auto' 
+              overwrite: 'auto',
             });
           },
           onEnterBack: () => {
-            gsap.to(card, { 
-              yPercent: 0, 
+            gsap.to(card, {
+              yPercent: 0,
               rotation: cardRotations[index],
               x: cardOffsets[index],
               duration: CARD_CONFIG.animation.duration,
               ease: CARD_CONFIG.animation.ease,
-              overwrite: 'auto' 
+              overwrite: 'auto',
             });
           },
         });
@@ -181,8 +278,12 @@ export default function ProcessSection() {
       ScrollTrigger.refresh();
     }, container);
 
-    return () => ctx.revert();
-  }, [prefersReducedMotion]);
+    return () => {
+      ctx.revert();
+      const cards = container.querySelectorAll<HTMLElement>('.process-card');
+      gsap.set(cards, { clearProps: 'transform,rotation,x,y' });
+    };
+  }, [stackingEnabled]);
 
   // ============================================================================
   // RENDER
@@ -194,67 +295,13 @@ export default function ProcessSection() {
       className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
       id="process"
     >
-      {/* Modern Background Effects - Green Blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated blob - top left */}
-        <div 
-          className="absolute top-[5%] left-[8%] w-[480px] h-[380px] blur-3xl opacity-40 animate-pulse" 
-          style={{ 
-            background: 'radial-gradient(ellipse 55% 45%, rgba(0, 255, 120, 0.6) 0%, rgba(0, 215, 107, 0.4) 40%, rgba(0, 184, 92, 0.2) 70%, transparent 85%)',
-            animationDuration: '8s'
-          }} 
-        />
-
-        {/* Animated blob - top right */}
-        <div 
-          className="absolute top-[10%] right-[5%] w-[520px] h-[400px] blur-3xl opacity-45 animate-pulse" 
-          style={{ 
-            background: 'radial-gradient(ellipse 50% 50%, rgba(0, 215, 107, 0.65) 0%, rgba(0, 255, 120, 0.45) 35%, rgba(0, 184, 92, 0.25) 65%, transparent 80%)',
-            animationDuration: '10s',
-            animationDelay: '1s'
-          }} 
-        />
-
-        {/* Animated blob - center */}
-        <div 
-          className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[400px] h-[320px] blur-3xl opacity-35 animate-pulse" 
-          style={{ 
-            background: 'radial-gradient(circle, rgba(0, 184, 92, 0.4) 0%, rgba(0, 215, 107, 0.25) 50%, transparent 75%)',
-            animationDuration: '12s',
-            animationDelay: '2s'
-          }} 
-        />
-
-        {/* Animated blob - bottom left */}
-        <div 
-          className="absolute bottom-[10%] left-[10%] w-[380px] h-[320px] blur-3xl opacity-30 animate-pulse" 
-          style={{ 
-            background: 'radial-gradient(circle, rgba(0, 255, 120, 0.5) 0%, rgba(0, 215, 107, 0.3) 50%, transparent 75%)',
-            animationDuration: '9s',
-            animationDelay: '3s'
-          }} 
-        />
-
-        {/* Animated blob - bottom right */}
-        <div 
-          className="absolute bottom-[15%] right-[8%] w-[420px] h-[340px] blur-3xl opacity-35 animate-pulse" 
-          style={{ 
-            background: 'radial-gradient(circle, rgba(0, 215, 107, 0.55) 0%, rgba(0, 184, 92, 0.35) 50%, transparent 75%)',
-            animationDuration: '11s',
-            animationDelay: '1.5s'
-          }} 
-        />
-
-        {/* Small glowing particles */}
-        <div className="absolute top-[20%] left-[15%] w-2 h-2 bg-green-400 rounded-full opacity-60 animate-ping" style={{ animationDuration: '3s' }} />
-        <div className="absolute top-[60%] right-[20%] w-1 h-1 bg-green-500 rounded-full opacity-40 animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }} />
-        <div className="absolute bottom-[30%] left-[25%] w-1.5 h-1.5 bg-green-400 rounded-full opacity-50 animate-ping" style={{ animationDuration: '5s', animationDelay: '2s' }} />
-      </div>
-
       {/* Content Container */}
       <div className="relative z-10">
         {/* Header Section */}
         <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
+          <div className="pointer-events-none absolute inset-x-[-8%] -top-20 h-[320px] flex justify-center">
+            <div className="h-full w-full max-w-4xl rounded-full bg-[radial-gradient(circle,rgba(0,215,107,0.55)_0%,rgba(0,215,107,0.14)_50%,transparent_80%)] blur-3xl opacity-65" />
+          </div>
           {/* Title */}
           <div className="mb-16 lg:mb-24">
             <div className="relative inline-block mb-8">
@@ -302,13 +349,15 @@ export default function ProcessSection() {
       <section className="relative w-full overflow-hidden bg-transparent py-20 sm:py-32 md:py-48 lg:py-64">
         <div
           ref={cardsContainerRef}
-          className={`relative w-full ${prefersReducedMotion ? 'space-y-12 sm:space-y-16' : ''}`}
+          className={`relative w-full ${stackingEnabled ? '' : 'space-y-12 sm:space-y-16'}`}
         >
           {steps.map((step, index) => (
             <section
               key={step.key}
               className={`process-card-wrapper ${
-                prefersReducedMotion ? 'relative' : 'flex min-h-screen items-center justify-center'
+                stackingEnabled
+                  ? 'flex min-h-screen items-center justify-center'
+                  : 'relative py-8 sm:py-12'
               }`}
             >
               {/* Futuristic Card Container */}
@@ -356,6 +405,46 @@ export default function ProcessSection() {
 
                 {/* Bottom edge accent - zelená lajna jako ve FAQ */}
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
+
+                {/* Icon Accent */}
+                <motion.div
+                  className="pointer-events-none absolute z-[2]"
+                  style={{
+                    width: step.icon.size,
+                    height: step.icon.size,
+                    bottom: step.icon.bottom,
+                    right: step.icon.right
+                  }}
+                  initial={{ rotate: step.icon.rotation }}
+                  animate={
+                    prefersReducedMotion
+                      ? undefined
+                      : {
+                          rotate: [
+                            step.icon.rotation - 4,
+                            step.icon.rotation + 4,
+                            step.icon.rotation - 4
+                          ],
+                          y: [-10, 8, -10]
+                        }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? undefined
+                      : { duration: 9 + index * 0.6, repeat: Infinity, ease: 'easeInOut' }
+                  }
+                >
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={step.icon.src}
+                      alt={step.icon.alt}
+                      fill
+                      sizes="(min-width: 1280px) 360px, (min-width: 768px) 300px, 220px"
+                      className="object-contain opacity-80 drop-shadow-[0_22px_40px_rgba(12,16,20,0.28)] mix-blend-screen select-none"
+                      priority={index === 0}
+                    />
+                  </div>
+                </motion.div>
 
                 {/* Card Content */}
                 <div
@@ -430,9 +519,6 @@ export default function ProcessSection() {
                   </div>
 
                   {/* Bottom glow accent */}
-                  <div className="absolute bottom-10 right-10 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                    <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-green-400/30 to-transparent rounded-full blur-3xl" />
-                  </div>
                 </div>
               </div>
             </section>
