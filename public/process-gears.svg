@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg
+  width="800px"
+  height="800px"
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="process-gears-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0fffa6" />
+      <stop offset="100%" stop-color="#00b463" />
+    </linearGradient>
+  </defs>
+  <g stroke="url(#process-gears-gradient)" stroke-width="2.5" stroke-linecap="round">
+    <circle cx="24" cy="24" r="14" />
+    <circle cx="24" cy="24" r="7" />
+    <rect x="22" y="4" width="4" height="6" rx="2" fill="url(#process-gears-gradient)" />
+    <rect x="22" y="44" width="4" height="6" rx="2" fill="url(#process-gears-gradient)" />
+    <rect x="4" y="22" width="6" height="4" rx="2" fill="url(#process-gears-gradient)" />
+    <rect x="44" y="22" width="6" height="4" rx="2" fill="url(#process-gears-gradient)" />
+  </g>
+  <g
+    transform="translate(16 16)"
+    stroke="url(#process-gears-gradient)"
+    stroke-width="2.25"
+    stroke-linecap="round"
+  >
+    <circle cx="28" cy="28" r="9" />
+    <circle cx="28" cy="28" r="4.5" />
+    <rect x="27" y="13" width="2" height="6" rx="1" fill="url(#process-gears-gradient)" />
+    <rect x="27" y="37" width="2" height="6" rx="1" fill="url(#process-gears-gradient)" />
+    <rect x="13" y="27" width="6" height="2" rx="1" fill="url(#process-gears-gradient)" />
+    <rect x="37" y="27" width="6" height="2" rx="1" fill="url(#process-gears-gradient)" />
+  </g>
+</svg>

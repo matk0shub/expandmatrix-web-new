@@ -36,9 +36,18 @@ function createErrorReport(variant, reason) {
   };
 }
 
+const TRACE_SUFFIX = '-trace.json';
+const HTML_EXTENSION = '.html';
+
 async function run(variant) {
   const configPath = path.resolve(process.cwd(), `${variant}.config.js`);
   const outputPath = path.resolve(process.cwd(), 'docs/lighthouse/reports', `${variant}.json`);
+  const htmlOutputPath = path.resolve(process.cwd(), 'docs/lighthouse/reports', `${variant}.html`);
+  const traceOutputPath = path.resolve(
+    process.cwd(),
+    'docs/lighthouse/reports',
+    `${variant}${TRACE_SUFFIX}`,
+  );
 
   let config;
   try {
@@ -70,7 +79,13 @@ async function run(variant) {
   try {
     chrome = await chromeLauncher.launch({
       chromePath,
-      chromeFlags: ['--headless=new', '--no-sandbox', '--disable-gpu'],
+      chromeFlags: [
+        '--headless=new',
+        '--no-sandbox',
+        '--disable-gpu',
+        '--allow-insecure-localhost',
+        '--ignore-certificate-errors',
+      ],
     });
   } catch (error) {
     writeJson(outputPath, createErrorReport(variant, error));
@@ -81,13 +96,24 @@ async function run(variant) {
   try {
     const options = {
       logLevel: 'error',
-      output: 'json',
+      output: ['json', 'html'],
       port: chrome.port,
     };
 
     const result = await runLighthouse(url, options, config);
-    const report = Array.isArray(result.report) ? result.report[0] : result.report;
-    const parsed = typeof report === 'string' ? JSON.parse(report) : report;
+    const reports = Array.isArray(result.report) ? result.report : [result.report];
+    const jsonReport = reports.find(
+      (entry) => typeof entry === 'string' && entry.trim().startsWith('{'),
+    );
+    const htmlReport = reports.find(
+      (entry) => typeof entry === 'string' && entry.trim().startsWith('<'),
+    );
+
+    if (!jsonReport) {
+      throw new Error('Lighthouse run did not return a JSON report.');
+    }
+
+    const parsed = JSON.parse(jsonReport);
     const payload = {
       ...parsed,
       status: 'ok',
@@ -96,6 +122,23 @@ async function run(variant) {
       generatedAt: new Date().toISOString(),
     };
     writeJson(outputPath, payload);
+
+    if (htmlReport) {
+      fs.mkdirSync(path.dirname(htmlOutputPath), { recursive: true });
+      fs.writeFileSync(htmlOutputPath, htmlReport, 'utf8');
+    }
+
+    const tracesArtifact = result.artifacts?.traces ?? result.artifacts?.Traces;
+    if (tracesArtifact) {
+      const passes = Object.keys(tracesArtifact);
+      const selectedKey = passes.find((key) => key.toLowerCase().includes('default')) ?? passes[0];
+      const trace = tracesArtifact[selectedKey];
+
+      if (trace) {
+        writeJson(traceOutputPath, trace);
+      }
+    }
+
     process.stdout.write(`Saved ${variant} report to ${outputPath}\n`);
     return true;
   } catch (error) {

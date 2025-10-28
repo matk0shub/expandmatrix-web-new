@@ -46,7 +46,7 @@
       "url": "/images/team/matty.png",
       "alt": "Portrait of Matěj Štipčák"
     },
-    "order": 1,
+    "order": 3,
     "featured": true,
     "showOnSite": true
   },
@@ -98,7 +98,7 @@
       "url": "/images/team/matej-venclik.jpg",
       "alt": "Portrait of Matěj Venclík"
     },
-    "order": 2,
+    "order": 1,
     "featured": true,
     "showOnSite": true
   },
@@ -149,7 +149,7 @@
       "url": "/images/team/expandee.png",
       "alt": "Expandee avatar"
     },
-    "order": 3,
+    "order": 2,
     "featured": true,
     "showOnSite": true
   }

@@ -12,17 +12,14 @@ const nextConfig: NextConfig = {
   generateBuildId: async () => {
     return 'build-' + Date.now()
   },
-  // Disable source maps in development to prevent 404 errors
+  // Minimal webpack configuration for faster dev server
   webpack: (config, { dev, isServer }) => {
-    // Completely disable source maps in development
     if (dev) {
       config.devtool = false;
-      config.cache = false;
-      config.parallelism = 1;
-      // Disable source map generation
-      config.optimization = {
-        ...config.optimization,
-        minimize: false,
+      
+      // Optimize webpack performance in dev
+      config.cache = {
+        type: 'filesystem',
       };
     }
     
