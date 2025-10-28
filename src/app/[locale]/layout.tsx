@@ -10,9 +10,9 @@ const LOGO_URL = `${BASE_URL}/logo.png`;
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = params;
+  const { locale } = await params;
   const isCzech = locale === 'cs';
   const localePath = isCzech ? '/cs' : '/en';
   const pageUrl = `${BASE_URL}${localePath}`;
@@ -71,9 +71,9 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   // Import messages dynamically with error handling
   let messages;
