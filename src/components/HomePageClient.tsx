@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useCalEmbed } from '@/hooks/useCalEmbed';
-import { useReferences } from '@/hooks/useReferences';
 import type { Reference } from '@/types/references';
 
 // Dynamicky importovat VŠECHNY komponenty pro co nejrychlejší dev server
@@ -63,13 +62,9 @@ export default function HomePageClient({ locale, initialReferences }: HomePageCl
   // Hook se načte s lazy import, ale nevykoná se kvůli mounted check uvnitř
   useCalEmbed();
 
-  const { references } = useReferences({
-    locale,
-    featuredOnly: true,
-    initialReferences,
-  });
-
-  const referenceData = references.length ? references : initialReferences;
+  // Use initialReferences directly instead of calling useReferences hook
+  // This prevents unnecessary API calls on initial page load
+  const referenceData = initialReferences;
 
   return (
     <>

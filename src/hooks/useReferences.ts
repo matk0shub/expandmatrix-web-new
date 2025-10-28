@@ -21,11 +21,16 @@ export function useReferences(options: UseReferencesOptions = {}) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If we already have initialReferences, use them and skip API call
+    if (initialReferences.length > 0) {
+      setReferences(initialReferences);
+      setLoading(false);
+      return;
+    }
+
     const fetchReferences = async () => {
       try {
-        if (!initialReferences.length) {
-          setLoading(true);
-        }
+        setLoading(true);
         setError(null);
 
         const params = new URLSearchParams({
@@ -47,16 +52,14 @@ export function useReferences(options: UseReferencesOptions = {}) {
         console.error('Error fetching references:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch references');
         // Fallback to sample data for development
-        if (!initialReferences.length) {
-          setReferences(getSampleReferences(locale));
-        }
+        setReferences(getSampleReferences(locale));
       } finally {
         setLoading(false);
       }
     };
 
     fetchReferences();
-  }, [locale, featuredOnly, initialReferences.length]);
+  }, [locale, featuredOnly]);
 
   return { references, loading, error };
 }
