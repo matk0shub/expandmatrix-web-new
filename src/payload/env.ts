@@ -5,6 +5,8 @@ let secretWarned = false;
 let databaseWarned = false;
 
 const isProduction = () => process.env.NODE_ENV === 'production';
+const isNextBuildPhase = () =>
+  process.env.NEXT_PHASE === 'phase-production-build' || process.env.npm_lifecycle_event === 'build';
 
 export const resolvePayloadSecret = (): string => {
   const existingSecret = process.env.PAYLOAD_SECRET;
@@ -13,7 +15,7 @@ export const resolvePayloadSecret = (): string => {
     return existingSecret;
   }
 
-  if (isProduction()) {
+  if (isProduction() && !isNextBuildPhase()) {
     throw new Error('PAYLOAD_SECRET environment variable is required in production.');
   }
 
@@ -35,7 +37,7 @@ export const resolveDatabaseUri = (): string => {
     return existingUri;
   }
 
-  if (isProduction()) {
+  if (isProduction() && !isNextBuildPhase()) {
     throw new Error('DATABASE_URI environment variable is required in production.');
   }
 

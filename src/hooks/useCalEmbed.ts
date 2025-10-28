@@ -1,11 +1,15 @@
-import { getCalApi } from "@calcom/embed-react";
 import { useEffect } from "react";
 
 export const useCalEmbed = () => {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return;
+    
+    // Delayed initialization to prevent blocking webpack compilation
+    const initCal = setTimeout(() => {
       (async function () {
         try {
+          // Lazy load @calcom/embed-react AFTER webpack finishes
+          const { getCalApi } = await import("@calcom/embed-react");
           const cal = await getCalApi({
             namespace: "strategy",
             embedJsUrl: "https://meet.expandmatrix.com/embed/embed.js"
@@ -78,6 +82,8 @@ export const useCalEmbed = () => {
           console.warn('Cal.com embed failed to load:', error);
         }
       })();
-    }
+    }, 2000); // 2 second delay to let webpack finish
+
+    return () => clearTimeout(initCal);
   }, []);
 };
