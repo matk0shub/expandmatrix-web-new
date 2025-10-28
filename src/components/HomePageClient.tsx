@@ -1,57 +1,19 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useCalEmbed } from '@/hooks/useCalEmbed';
 import type { Reference } from '@/types/references';
 
-// Dynamicky importovat VŠECHNY komponenty pro co nejrychlejší dev server
-const Hero = dynamic(() => import('@/components/Hero'), {
-  loading: () => <div className="min-h-screen" />,
-  ssr: false
-});
-
-const AccuracySection = dynamic(() => import('@/components/AccuracySection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const ClientsSection = dynamic(() => import('@/components/ClientsSection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const ServicesSection = dynamic(() => import('@/components/ServicesSection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const ProcessSection = dynamic(() => import('@/components/ProcessSection'), {
-  loading: () => <div className="min-h-screen" />,
-  ssr: false
-});
-
-const ReferencesSection = dynamic(() => import('@/components/ReferencesSection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const TeamSection = dynamic(() => import('@/components/TeamSection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const FAQSection = dynamic(() => import('@/components/FAQSection'), {
-  loading: () => <div className="min-h-[60vh]" />,
-  ssr: false
-});
-
-const CookieConsent = dynamic(() => import('@/components/CookieConsent'), {
-  ssr: false
-});
-
-const Footer = dynamic(() => import('@/components/Footer'), {
-  ssr: false
-});
+// Import komponent přímo pro SSR rendering (rychlější zobrazení)
+import Hero from '@/components/Hero';
+import AccuracySection from '@/components/AccuracySection';
+import ClientsSection from '@/components/ClientsSection';
+import ServicesSection from '@/components/ServicesSection';
+import ProcessSection from '@/components/ProcessSection';
+import ReferencesSection from '@/components/ReferencesSection';
+import TeamSection from '@/components/TeamSection';
+import FAQSection from '@/components/FAQSection';
+import CookieConsent from '@/components/CookieConsent';
+import Footer from '@/components/Footer';
 
 interface HomePageClientProps {
   locale: string;
