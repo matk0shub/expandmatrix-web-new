@@ -83,7 +83,7 @@ export default function HeroStatic() {
         <div className="flex-1 flex flex-col justify-between pb-16">
           <div className="space-y-4">
             <p className="text-xs uppercase tracking-[0.4em] text-white/60">
-              {t('eyebrow', { defaultValue: 'AI Innovation Studio' })}
+              AI Innovation Studio
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl leading-tight font-semibold max-w-4xl">
               <span className="block text-white">
