@@ -1,5 +1,6 @@
 const DEV_PAYLOAD_SECRET = 'expandmatrix-development-secret';
 const DEV_DATABASE_URI = 'mongodb://127.0.0.1:27017/expandmatrix-dev';
+const DEV_DATABASE_URI_WITH_TIMEOUTS = `${DEV_DATABASE_URI}?serverSelectionTimeoutMS=1500&connectTimeoutMS=1500&socketTimeoutMS=1500`;
 
 let secretWarned = false;
 let databaseWarned = false;
@@ -12,6 +13,7 @@ export const resolvePayloadSecret = (): string => {
   const existingSecret = process.env.PAYLOAD_SECRET;
 
   if (existingSecret && existingSecret.trim().length > 0) {
+    process.env.PAYLOAD_USING_FALLBACK_SECRET = 'false';
     return existingSecret;
   }
 
@@ -27,6 +29,7 @@ export const resolvePayloadSecret = (): string => {
   }
 
   process.env.PAYLOAD_SECRET = DEV_PAYLOAD_SECRET;
+  process.env.PAYLOAD_USING_FALLBACK_SECRET = 'true';
   return DEV_PAYLOAD_SECRET;
 };
 
@@ -34,6 +37,7 @@ export const resolveDatabaseUri = (): string => {
   const existingUri = process.env.DATABASE_URI;
 
   if (existingUri && existingUri.trim().length > 0) {
+    process.env.PAYLOAD_USING_FALLBACK_DB = 'false';
     return existingUri;
   }
 
@@ -49,6 +53,7 @@ export const resolveDatabaseUri = (): string => {
     databaseWarned = true;
   }
 
-  process.env.DATABASE_URI = DEV_DATABASE_URI;
-  return DEV_DATABASE_URI;
+  process.env.PAYLOAD_USING_FALLBACK_DB = 'true';
+  process.env.DATABASE_URI = DEV_DATABASE_URI_WITH_TIMEOUTS;
+  return DEV_DATABASE_URI_WITH_TIMEOUTS;
 };

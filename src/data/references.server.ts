@@ -1,6 +1,7 @@
 import { cache } from 'react';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
+import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
 import { getSampleReferences } from '@/data/references';
 import type { Reference } from '@/types/references';
 
@@ -147,26 +148,40 @@ export interface ReferencesResult {
   isFallback: boolean;
 }
 
+let payloadOfflineLogged = false;
+const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => {
+  const error = new Error(`Payload references query timed out after ${timeoutMs}ms`) as NodeJS.ErrnoException;
+  error.code = 'PAYLOAD_OFFLINE';
+  return error;
+};
+
 export const getReferences = cache(
   async ({ locale, featuredOnly = true }: GetReferencesOptions): Promise<ReferencesResult> => {
+    const benchmarkLabel = `[references] fetch (locale=${locale}, featuredOnly=${featuredOnly})`;
+    console.time?.(benchmarkLabel);
     try {
       const payload = await getPayloadClient();
       const resolvedLocale = resolveLocale(locale);
       const payloadLocale = 'all' as const;
-      const result = await payload.find({
-        collection: 'references',
-        depth: 2,
-        sort: 'order',
-        limit: 100,
-        locale: payloadLocale,
-        where: featuredOnly
-          ? {
-              isFeatured: {
-                equals: true,
-              },
-            }
-          : undefined,
-      });
+      const timeoutMs = resolvePayloadQueryTimeout();
+      const result = await withTimeout(
+        payload.find({
+          collection: 'references',
+          depth: 2,
+          sort: 'order',
+          limit: 100,
+          locale: payloadLocale,
+          where: featuredOnly
+            ? {
+                isFeatured: {
+                  equals: true,
+                },
+              }
+            : undefined,
+        }),
+        timeoutMs,
+        () => createPayloadTimeoutError(timeoutMs),
+      );
 
       const docs = Array.isArray(result.docs)
         ? (result.docs as PayloadReference[])
@@ -180,9 +195,21 @@ export const getReferences = cache(
         return { references, isFallback: false };
       }
     } catch (error) {
-      console.error('References fetch failed, falling back to samples:', error);
+      const code = (error as NodeJS.ErrnoException | undefined)?.code;
+      if (code === 'PAYLOAD_OFFLINE') {
+        if (!payloadOfflineLogged) {
+          console.info(
+            '[references] Payload CMS unavailable, serving embedded sample references. ' +
+              'Set DATABASE_URI to connect to a running Payload instance.'
+          );
+          payloadOfflineLogged = true;
+        }
+      } else {
+        console.error('References fetch failed, falling back to samples:', error);
+      }
     }
 
+    console.timeEnd?.(benchmarkLabel);
     return {
       references: getSampleReferences(resolveLocale(locale)),
       isFallback: true,
