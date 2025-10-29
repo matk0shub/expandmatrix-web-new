@@ -24,5 +24,13 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "node_modules.old",
+    "node_modules.bak",
+    "src/types/team 2.ts",
+    "src/components/TeamSection 2.tsx",
+    "src/data/teamMembers 2.ts",
+    "types/nodemailer.d 2.ts"
+  ]
 }
