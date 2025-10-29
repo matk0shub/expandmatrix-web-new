@@ -1,15 +1,15 @@
 import { buildConfig } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
-import { Users } from './src/payload/collections/Users'
-import { Team } from './src/payload/collections/Team'
-import { References } from './src/payload/collections/References'
-import { FAQ } from './src/payload/collections/FAQ'
-import { Media } from './src/payload/collections/Media'
-import { FooterLinks } from './src/payload/collections/FooterLinks'
-import { Subscribers } from './src/payload/collections/Subscribers'
-import { SiteSettings } from './src/payload/globals/SiteSettings'
-import { resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env'
+import { Users } from './src/payload/collections/Users.ts'
+import { Team } from './src/payload/collections/Team.ts'
+import { References } from './src/payload/collections/References.ts'
+import { FAQ } from './src/payload/collections/FAQ.ts'
+import { Media } from './src/payload/collections/Media.ts'
+import { FooterLinks } from './src/payload/collections/FooterLinks.ts'
+import { Subscribers } from './src/payload/collections/Subscribers.ts'
+import { SiteSettings } from './src/payload/globals/SiteSettings.ts'
+import { isUsingFallbackDatabase, resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env.ts'
 
 const initPayloadConfig = async () => {
   const [{ lexicalEditor }, { default: sharp }, { default: nodemailer }] = await Promise.all([
@@ -43,6 +43,14 @@ const initPayloadConfig = async () => {
 
   const secret = resolvePayloadSecret()
   const databaseUri = resolveDatabaseUri()
+
+  const connectOptions = isUsingFallbackDatabase()
+    ? {
+        serverSelectionTimeoutMS: 1500,
+        connectTimeoutMS: 1500,
+        socketTimeoutMS: 1500,
+      }
+    : undefined
 
   return buildConfig({
     secret,
@@ -104,11 +112,7 @@ const initPayloadConfig = async () => {
     plugins: [],
     db: mongooseAdapter({
       url: databaseUri,
-      connectOptions: {
-        serverSelectionTimeoutMS: 1500,
-        connectTimeoutMS: 1500,
-        socketTimeoutMS: 1500,
-      },
+      ...(connectOptions ? { connectOptions } : {}),
     }),
   })
 }

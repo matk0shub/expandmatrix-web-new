@@ -57,3 +57,5 @@ export const resolveDatabaseUri = (): string => {
   process.env.DATABASE_URI = DEV_DATABASE_URI_WITH_TIMEOUTS;
   return DEV_DATABASE_URI_WITH_TIMEOUTS;
 };
+
+export const isUsingFallbackDatabase = (): boolean => process.env.PAYLOAD_USING_FALLBACK_DB === 'true';
