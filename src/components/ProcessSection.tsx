@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { CalCTAButton } from './CalCTAButton';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 type GsapCore = typeof import('gsap').gsap;
 type ScrollTriggerCore = typeof import('gsap/ScrollTrigger').ScrollTrigger;
@@ -112,6 +113,8 @@ const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -376,7 +379,7 @@ export default function ProcessSection() {
           </div>
 
           {/* Description and CTA */}
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ 
               opacity: 1, 
@@ -394,7 +397,7 @@ export default function ProcessSection() {
               
               {/* CTA Button */}
               <div className="flex justify-start">
-                <motion.div
+                <MotionDiv
                   whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
                   whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
                   className="inline-flex"
@@ -402,10 +405,10 @@ export default function ProcessSection() {
                   <CalCTAButton>
                     <ScrambleText text={t('cta')} applyScramble={false} />
                   </CalCTAButton>
-                </motion.div>
+                </MotionDiv>
               </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </div>
 
@@ -471,7 +474,7 @@ export default function ProcessSection() {
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Icon Accent */}
-                <motion.div
+                <MotionDiv
                   className="pointer-events-none absolute z-[2]"
                   style={{
                     width: step.icon.size,
@@ -508,7 +511,7 @@ export default function ProcessSection() {
                       priority={index === 0}
                     />
                   </div>
-                </motion.div>
+                </MotionDiv>
 
                 {/* Card Content */}
                 <div

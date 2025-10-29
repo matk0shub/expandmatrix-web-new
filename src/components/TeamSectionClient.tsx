@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 import type { NormalizedTeamMember } from '@/types/team';
 import ScrambleText from './ScrambleText';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 const DEFAULT_ACCENT =
   'linear-gradient(135deg, rgba(0, 215, 107, 0.7), rgba(0, 184, 92, 0.35))';
@@ -33,6 +34,8 @@ interface TeamSectionClientProps {
 
 export default function TeamSectionClient({ members, copy, showFallbackNotice }: TeamSectionClientProps) {
   const { title, error: errorCopy, empty } = copy;
+  const framer = useFramerMotion();
+  const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
@@ -131,7 +134,7 @@ export default function TeamSectionClient({ members, copy, showFallbackNotice }:
                 }));
 
               return (
-                <motion.article
+                <MotionArticle
                   key={member.id}
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -234,7 +237,7 @@ export default function TeamSectionClient({ members, copy, showFallbackNotice }:
                       </div>
                     </div>
                   </div>
-                </motion.article>
+                </MotionArticle>
               );
             })}
 

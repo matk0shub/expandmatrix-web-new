@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
 import { ANIMATION_DURATION, ANIMATION_DELAYS } from '@/constants/animations';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 export default function AccuracySection() {
   const t = useTranslations('sections.accuracy');
   const prefersReducedMotion = useReducedMotion();
-  
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+
   // Use GSAP animation hook
   const { ref: sectionRef } = useGSAPAnimation({
     selector: '.stat-item',
@@ -113,7 +116,7 @@ export default function AccuracySection() {
         {/* Bottom Section - 4 Stats in a row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {stats.map((stat, index) => (
-            <motion.div
+            <MotionDiv
               key={index}
               className="stat-item relative group"
               initial={{ opacity: 0, y: 50 }}
@@ -171,7 +174,7 @@ export default function AccuracySection() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </MotionDiv>
           ))}
         </div>
       </div>

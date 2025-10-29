@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import type { Reference } from '@/types/references';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 interface ReferenceListCopy {
   selectReference: string;
@@ -32,6 +33,9 @@ export default function ReferenceList({
   prefersReducedMotion,
   copy,
 }: ReferenceListProps) {
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -73,7 +77,7 @@ export default function ReferenceList({
         const shouldAnimate = isActive || isHovered;
 
         return (
-          <motion.div
+          <MotionDiv
             key={reference.id}
             className={`cursor-pointer transition-all duration-300 ${
               isActive 
@@ -113,8 +117,8 @@ export default function ReferenceList({
                     />
                     
                     {/* Subtitle */}
-                    {reference.subtitle && (
-                      <motion.div
+                  {reference.subtitle && (
+                      <MotionDiv
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ 
                           opacity: isActive ? 1 : 0.6,
@@ -131,7 +135,7 @@ export default function ReferenceList({
                         }`}
                       >
                         {reference.subtitle}
-                      </motion.div>
+                      </MotionDiv>
                     )}
                   </div>
                 </div>
@@ -141,7 +145,7 @@ export default function ReferenceList({
               {isActive && (
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
                   {reference.instagramUrl && (
-                    <motion.a
+                    <MotionAnchor
                       href={reference.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -158,11 +162,11 @@ export default function ReferenceList({
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.instagram}</span>
-                    </motion.a>
+                    </MotionAnchor>
                   )}
 
                   {reference.websiteUrl && (
-                    <motion.a
+                    <MotionAnchor
                       href={reference.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -179,12 +183,12 @@ export default function ReferenceList({
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.website}</span>
-                    </motion.a>
+                    </MotionAnchor>
                   )}
                 </div>
               )}
             </div>
-          </motion.div>
+          </MotionDiv>
         );
       })}
       </div>

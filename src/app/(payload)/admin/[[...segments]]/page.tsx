@@ -1,26 +1,41 @@
 /* THIS FILE WAS GENERATED BASED ON THE OFFICIAL PAYLOAD TEMPLATE. */
-import type { Metadata } from 'next'
+import type { Metadata } from 'next';
 
-import config from '@payload-config'
-import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
-
-import { importMap } from '../importMap'
+import config from '@payload-config';
+import { importMap } from '../importMap';
 
 type Params = Promise<{
-  segments: string[]
-}>
+  segments: string[];
+}>;
 
-type SearchParams = Promise<Record<string, string | string[]>>
+type SearchParams = Promise<Record<string, string | string[]>>;
 
 type PageArgs = {
-  params: Params
-  searchParams: SearchParams
-}
+  params: Params;
+  searchParams: SearchParams;
+};
 
-export const generateMetadata = ({ params, searchParams }: PageArgs): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams })
+const adminViewsPromise = import('@payloadcms/next/views');
 
-const Page = ({ params, searchParams }: PageArgs) =>
-  RootPage({ config, params, searchParams, importMap })
+export const generateMetadata = async ({ params, searchParams }: PageArgs): Promise<Metadata> => {
+  const viewsModule = await adminViewsPromise;
 
-export default Page
+  return viewsModule.generatePageMetadata({
+    config,
+    params,
+    searchParams,
+  });
+};
+
+const Page = async ({ params, searchParams }: PageArgs) => {
+  const viewsModule = await adminViewsPromise;
+
+  return viewsModule.RootPage({
+    config,
+    params,
+    searchParams,
+    importMap,
+  });
+};
+
+export default Page;

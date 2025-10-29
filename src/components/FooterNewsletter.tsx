@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocale, useTranslations } from 'next-intl';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
 
 type FormValues = { email: string; consent: boolean };
 
@@ -18,6 +19,12 @@ export default function FooterNewsletter() {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionButton = framer?.motion.button ?? fallbackMotion.button;
+  const MotionP = framer?.motion.p ?? fallbackMotion.p;
+  const MotionSpan = framer?.motion.span ?? fallbackMotion.span;
+  const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setError, clearErrors } = useForm<FormValues>({
     defaultValues: { email: '', consent: false },
@@ -157,7 +164,7 @@ export default function FooterNewsletter() {
   return (
     <section aria-labelledby="newsletter-heading" className="w-full max-w-md">
       {/* Animated header with scramble effect */}
-      <motion.div className="footer-newsletter-item">
+      <MotionDiv className="footer-newsletter-item">
         <h2 id="newsletter-heading" className="text-white font-semibold text-base tracking-wide mb-2">
           <ScrambleText
             text={t('title')}
@@ -169,10 +176,10 @@ export default function FooterNewsletter() {
           />
         </h2>
         <p className="text-white/80 text-sm mb-6 font-lato">{t('helper')}</p>
-      </motion.div>
+      </MotionDiv>
 
       {/* Premium form with animated elements */}
-      <motion.div 
+      <MotionDiv 
         className="footer-newsletter-item"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -203,7 +210,7 @@ export default function FooterNewsletter() {
               <div className="input-underline absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] scale-x-0 origin-left" />
             </div>
             {errors.email && (
-              <motion.p 
+              <MotionP 
                 id="newsletter-email-error" 
                 className="mt-2 text-sm text-red-400 flex items-center gap-2"
                 initial={{ opacity: 0, y: -10 }}
@@ -212,12 +219,12 @@ export default function FooterNewsletter() {
               >
                 <AlertCircle className="w-4 h-4" />
                 {t('emailError')}
-              </motion.p>
+              </MotionP>
             )}
           </div>
 
           {/* Premium CTA button */}
-          <motion.button
+          <MotionButton
             ref={buttonRef}
             type="submit"
             disabled={isSubmitting}
@@ -238,19 +245,19 @@ export default function FooterNewsletter() {
               ) : (
                 <>
                   <span>{t('cta')}</span>
-                  <motion.div
+                  <MotionSpan
                     animate={{ x: [0, 4, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                   >
                     →
-                  </motion.div>
+                  </MotionSpan>
                 </>
               )}
             </div>
-          </motion.button>
+          </MotionButton>
 
           {/* Consent checkbox with enhanced styling */}
-          <motion.div 
+          <MotionDiv 
             className="flex items-start gap-3"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -280,14 +287,14 @@ export default function FooterNewsletter() {
               {' '}
               {t('consentText.after')}
             </label>
-          </motion.div>
+          </MotionDiv>
         </form>
-      </motion.div>
+      </MotionDiv>
 
       {/* Status messages with animations */}
       <AnimatePresence>
         {status === 'success' && (
-          <motion.div
+          <MotionDiv
             className="footer-newsletter-item mt-4 p-4 rounded-xl bg-green-500/10 border border-green-500/20"
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -298,11 +305,11 @@ export default function FooterNewsletter() {
               <CheckCircle className="w-5 h-5 text-green-400" />
               <p className="text-green-300 text-sm font-medium">{t('success')}</p>
             </div>
-          </motion.div>
+          </MotionDiv>
         )}
         
         {status === 'error' && (
-          <motion.div
+          <MotionDiv
             className="footer-newsletter-item mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20"
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -313,7 +320,7 @@ export default function FooterNewsletter() {
               <AlertCircle className="w-5 h-5 text-red-400" />
               <p className="text-red-300 text-sm font-medium">{t('error')}</p>
             </div>
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
 
@@ -322,4 +329,3 @@ export default function FooterNewsletter() {
     </section>
   );
 }
-
