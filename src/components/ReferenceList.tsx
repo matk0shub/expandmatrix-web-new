@@ -3,24 +3,35 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Instagram } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
 import type { Reference } from '@/types/references';
+
+interface ReferenceListCopy {
+  selectReference: string;
+  instagram: string;
+  instagramAria: string;
+  website: string;
+  websiteAria: string;
+}
 
 interface ReferenceListProps {
   references: Reference[];
   activeIndex: number;
   onSelect: (index: number) => void;
   prefersReducedMotion: boolean;
+  copy: ReferenceListCopy;
 }
+
+const formatByName = (template: string, name: string) =>
+  template.replace(/\{name\}/g, name);
 
 export default function ReferenceList({
   references,
   activeIndex,
   onSelect,
   prefersReducedMotion,
+  copy,
 }: ReferenceListProps) {
-  const t = useTranslations('sections.references');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +91,7 @@ export default function ReferenceList({
             }}
             tabIndex={0}
             role="button"
-            aria-label={t('selectReference', { name: reference.name })}
+            aria-label={formatByName(copy.selectReference, reference.name)}
             aria-pressed={isActive}
             whileHover={{}}
             whileTap={{}}
@@ -143,10 +154,10 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={t('instagramAria', { name: reference.name })}
+                      aria-label={formatByName(copy.instagramAria, reference.name)}
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">{t('instagram')}</span>
+                      <span className="whitespace-nowrap">{copy.instagram}</span>
                     </motion.a>
                   )}
 
@@ -164,10 +175,10 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={t('websiteAria', { name: reference.name })}
+                      aria-label={formatByName(copy.websiteAria, reference.name)}
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">{t('website')}</span>
+                      <span className="whitespace-nowrap">{copy.website}</span>
                     </motion.a>
                   )}
                 </div>

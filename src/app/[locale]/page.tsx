@@ -9,7 +9,6 @@ import ProcessSection from '@/components/ProcessSection';
 import ReferencesSection from '@/components/ReferencesSection';
 import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
-import { getSampleReferences } from '@/data/references';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -17,7 +16,6 @@ interface PageProps {
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  const initialReferences = getSampleReferences(locale);
 
   return (
     <>
@@ -34,7 +32,7 @@ export default async function HomePage({ params }: PageProps) {
           <ProcessSection />
         </div>
         <div id="references">
-          <ReferencesSection references={initialReferences} />
+          <ReferencesSection locale={locale} />
         </div>
         <div id="team">
           <TeamSection locale={locale} />
