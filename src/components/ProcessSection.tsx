@@ -287,7 +287,14 @@ export default function ProcessSection() {
         const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
         if (existingCards.length === 0) return;
 
-        gsapCore.set(existingCards, { opacity: 1, yPercent: 0 });
+        existingCards.forEach((card, idx) => {
+          gsapCore.set(card, {
+            opacity: 1,
+            yPercent: 0,
+            rotation: cardRotations[idx] ?? 0,
+            x: cardOffsets[idx] ?? 0,
+          });
+        });
 
         const lastCardTrigger = scrollTrigger.create({
           trigger: cardWrappers[cardWrappers.length - 1],
