@@ -71,6 +71,7 @@ export const References: CollectionConfig = {
           name: 'value',
           type: 'text',
           required: true,
+          localized: true,
           admin: {
             description: 'Metric value (e.g., "887 655 CZK", "9.2 %")',
           },

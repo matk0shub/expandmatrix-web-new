@@ -36,82 +36,63 @@ const sampleDocs = JSON.parse(
   fs.readFileSync(path.join(projectRoot, 'src', 'data', 'teamMembers.json'), 'utf-8'),
 );
 
-function normalizeFocus(focus = [], locale = 'en') {
+const ensureLocalizedGroup = (group = {}) => ({
+  cs: group?.cs ?? group?.en ?? '',
+  en: group?.en ?? group?.cs ?? '',
+});
+
+function normalizeFocus(focus = []) {
   return focus.map((item) => ({
     id: item.id,
-    value: item.value?.[locale] ?? item.value?.en ?? item.value?.cs ?? '',
+    value: {
+      cs: item.label?.cs ?? item.label?.en ?? '',
+      en: item.label?.en ?? item.label?.cs ?? '',
+    },
   }));
 }
 
-function buildLocalizedData(sample, locale) {
-  return {
-    name: sample.name?.[locale] ?? sample.name?.en ?? sample.name?.cs ?? '',
-    focus: normalizeFocus(sample.focus, locale),
-  };
-}
-
-function buildSharedData(sample) {
-  return {
-    role: sample.role,
-    bio: sample.bio,
+function buildTeamPayload(sample) {
+  const payloadData = {
+    name: ensureLocalizedGroup(sample.name),
+    role: ensureLocalizedGroup(sample.role),
+    bio: ensureLocalizedGroup(sample.bio),
+    focus: normalizeFocus(sample.focus),
     accent: sample.accent,
-    socials: sample.socials,
-    order: sample.order,
-    featured: sample.featured,
+    socials: sample.socials ?? {},
+    order: typeof sample.order === 'number' ? sample.order : Number(sample.order ?? 0),
+    featured: Boolean(sample.featured),
     showOnSite: sample.showOnSite ?? true,
   };
+
+  return payloadData;
 }
 
 async function upsertTeamMember(sample) {
   const existing = await payload.find({
     collection: 'teamMembers',
     where: {
-      name: {
-        equals: sample.name?.en ?? sample.name?.cs,
+      'name.cs': {
+        equals: sample.name?.cs ?? sample.name?.en,
       },
     },
     limit: 1,
   });
 
-  const sharedData = buildSharedData(sample);
-  const englishData = {
-    ...sharedData,
-    ...buildLocalizedData(sample, 'en'),
-  };
-  const czechData = {
-    ...sharedData,
-    ...buildLocalizedData(sample, 'cs'),
-  };
+  const data = buildTeamPayload(sample);
 
   if (existing.totalDocs > 0) {
     const existingDoc = existing.docs[0];
     await payload.update({
       collection: 'teamMembers',
       id: existingDoc.id,
-      data: englishData,
-      locale: 'en',
-    });
-
-    await payload.update({
-      collection: 'teamMembers',
-      id: existingDoc.id,
-      data: czechData,
-      locale: 'cs',
+      data,
     });
     return { action: 'updated', id: existingDoc.id, name: sample.name?.cs ?? sample.name?.en };
   }
 
   const created = await payload.create({
     collection: 'teamMembers',
-    data: englishData,
-    locale: 'en',
-  });
-
-  await payload.update({
-    collection: 'teamMembers',
-    id: created.id,
-    data: czechData,
-    locale: 'cs',
+    data,
   });
 
   return { action: 'created', id: created.id, name: sample.name?.cs ?? sample.name?.en };

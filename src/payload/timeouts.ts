@@ -1,3 +1,5 @@
+import { isUsingFallbackDatabase } from '@/payload/env'
+
 const clampTimeout = (value: number, fallback: number, min = 500, max = 15_000): number => {
   if (!Number.isFinite(value) || value <= 0) {
     return fallback
@@ -7,11 +9,17 @@ const clampTimeout = (value: number, fallback: number, min = 500, max = 15_000):
 }
 
 export const resolvePayloadInitTimeout = (): number => {
+  if (!isUsingFallbackDatabase()) {
+    return 0
+  }
   const parsed = Number(process.env.PAYLOAD_INIT_TIMEOUT_MS ?? '')
   return clampTimeout(parsed, 2_500)
 }
 
 export const resolvePayloadQueryTimeout = (): number => {
+  if (!isUsingFallbackDatabase()) {
+    return 0
+  }
   const parsed = Number(process.env.PAYLOAD_QUERY_TIMEOUT_MS ?? '')
   return clampTimeout(parsed, 2_000)
 }

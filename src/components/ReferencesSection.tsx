@@ -18,11 +18,11 @@ export default async function ReferencesSection({ locale }: ReferencesSectionPro
     metaName: t('metaName'),
     metaDescription: t('metaDescription'),
     overline: t('overline'),
-    selectReference: t('selectReference'),
+    selectReference: (name: string) => t('selectReference', { name }),
     instagram: t('instagram'),
-    instagramAria: t('instagramAria'),
+    instagramAria: (name: string) => t('instagramAria', { name }),
     website: t('website'),
-    websiteAria: t('websiteAria'),
+    websiteAria: (name: string) => t('websiteAria', { name }),
     impactHeading: t('impactHeading'),
   };
 

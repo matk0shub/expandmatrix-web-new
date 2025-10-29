@@ -2,6 +2,7 @@ import { cache } from 'react';
 import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
+import { isUsingFallbackDatabase } from '@/payload/env';
 import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
 import { getSampleTeamMembers, normalizePayloadTeamMembers } from '@/data/teamMembers';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
@@ -49,7 +50,7 @@ export const getTeamMembers = cache(
               showOnSite: { equals: true },
             };
 
-      const timeoutMs = resolvePayloadQueryTimeout();
+      const timeoutMs = isUsingFallbackDatabase() ? resolvePayloadQueryTimeout() : 0;
       const result = await withTimeout(
         payload.find({
           collection: 'teamMembers',
