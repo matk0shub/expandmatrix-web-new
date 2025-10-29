@@ -7,11 +7,9 @@ module.exports = {
     onlyCategories: ['performance', 'accessibility', 'seo', 'best-practices'],
     screenEmulation: {
       mobile: true,
-      width: 390,
-      height: 844,
-      deviceScaleFactor: 3,
       disabled: false,
     },
+    throttlingMethod: 'simulate',
     locale: 'en',
   },
   urls: [resolveAuditUrl()],

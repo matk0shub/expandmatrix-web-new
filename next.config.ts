@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
+import createBundleAnalyzer from '@next/bundle-analyzer';
 import { withPayload } from '@payloadcms/next/withPayload';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+const withBundleAnalyzer = createBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -95,6 +99,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(withNextIntl(nextConfig), { 
-  devBundleServerPackages: false
-});
+export default withBundleAnalyzer(
+  withPayload(withNextIntl(nextConfig), { 
+    devBundleServerPackages: false
+  })
+);

@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 
 interface ReferenceStatsCardProps {
   metrics: Array<{
@@ -9,13 +8,14 @@ interface ReferenceStatsCardProps {
     value: string;
   }>;
   prefersReducedMotion: boolean;
+  heading: string;
 }
 
 export default function ReferenceStatsCard({
   metrics,
   prefersReducedMotion,
+  heading,
 }: ReferenceStatsCardProps) {
-  const t = useTranslations('sections.references');
 
   if (!metrics.length) return null;
 
@@ -32,7 +32,7 @@ export default function ReferenceStatsCard({
     >
       <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[400px] lg:max-w-[600px] shadow-2xl">
         <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
-          {t('impactHeading')}
+          {heading}
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           <table className="w-full">
