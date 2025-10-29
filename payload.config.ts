@@ -104,6 +104,11 @@ const initPayloadConfig = async () => {
     plugins: [],
     db: mongooseAdapter({
       url: databaseUri,
+      connectOptions: {
+        serverSelectionTimeoutMS: 1500,
+        connectTimeoutMS: 1500,
+        socketTimeoutMS: 1500,
+      },
     }),
   })
 }
