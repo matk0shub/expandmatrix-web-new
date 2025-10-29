@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
@@ -10,6 +9,8 @@ import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useClient } from '@/hooks/useClient';
 import { CalCTAButton } from './CalCTAButton';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 type GSAPTimeline = gsap.core.Timeline;
 
@@ -21,6 +22,12 @@ export default function Hero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isClient = useClient();
   const prefersReducedMotion = useReducedMotion();
+  const framer = useFramerMotion();
+  const motion = framer?.motion ?? fallbackMotion;
+  const MotionDiv = motion.div;
+  const MotionNav = motion.nav;
+  const MotionButton = motion.button;
+  const logoSizes = '(max-width: 768px) 160px, (max-width: 1280px) 200px, 240px';
 
 
   useEffect(() => {
@@ -101,7 +108,7 @@ export default function Hero() {
           <div className="w-full max-w-[1780px] mx-auto py-16 md:py-20 px-0">
             <div className="flex items-center justify-between px-6 md:px-12 xl:px-0">
               {/* Logo */}
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -130,10 +137,10 @@ export default function Hero() {
                    >
                       <ScrambleText text="EXPAND MATRIX" applyScramble={false} />
                     </span>
-              </motion.div>
+              </MotionDiv>
 
               {/* Desktop Navigation */}
-              <motion.nav
+              <MotionNav
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -170,10 +177,10 @@ export default function Hero() {
                   <ScrambleText text={nav('contact')} applyScramble={false} />
                 </button>
                 <LocaleSwitcher />
-              </motion.nav>
+              </MotionNav>
 
               {/* Mobile Menu Button */}
-              <motion.button
+              <MotionButton
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -181,12 +188,12 @@ export default function Hero() {
                 className="lg:hidden text-white p-2"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </motion.button>
+              </MotionButton>
             </div>
 
             {/* Mobile Navigation */}
             {isMenuOpen && (
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -227,7 +234,7 @@ export default function Hero() {
                     <LocaleSwitcher />
                   </div>
                 </nav>
-              </motion.div>
+              </MotionDiv>
             )}
           </div>
         </header>
@@ -235,7 +242,7 @@ export default function Hero() {
             {/* Main Content */}
             <div className="relative z-10 min-h-screen flex flex-col justify-between py-15 md:py-19 px-0">
            {/* Top Section - Modern Heading Layout */}
-           <motion.div
+           <MotionDiv
              initial={{ opacity: 0, y: 50 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.8, delay: 0.6 }}
@@ -284,10 +291,10 @@ export default function Hero() {
                  </span>
               </h1>
             </div>
-           </motion.div>
+           </MotionDiv>
 
           {/* Bottom Section - CTA with better positioning */}
-           <motion.div
+           <MotionDiv
              initial={{ opacity: 0, y: 30 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.8, delay: 1.4 }}
@@ -301,7 +308,7 @@ export default function Hero() {
                 <ScrambleText text={t('cta')} applyScramble={false} />
               </CalCTAButton>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </div>
 
@@ -319,7 +326,7 @@ export default function Hero() {
            >
 
             {/* True 3D Logo with Extrusion */}
-            <motion.div
+            <MotionDiv
               className="relative w-full h-full"
               animate={prefersReducedMotion ? {} : {
                 rotateY: [0, 360],
@@ -338,14 +345,14 @@ export default function Hero() {
               }}
             >
               {/* Extrusion Layers - Creating Real 3D Thickness */}
-        {[...Array(40)].map((_, i) => (
+              {[...Array(40)].map((_, i) => (
                 <div
                   key={`extrusion-${i}`}
                   className="absolute inset-0 flex items-center justify-center"
                   style={{
                     transformStyle: 'preserve-3d',
                     transform: `translateZ(-${i * 2}px)`,
-                    opacity: Math.max(0, 1 - (i * 0.02)),
+                    opacity: Math.max(0, 1 - i * 0.02),
                   }}
                 >
                   <Image
@@ -359,7 +366,8 @@ export default function Hero() {
                       transform: 'scale(1.05)',
                       willChange: 'transform',
                     }}
-                    priority
+                    sizes={logoSizes}
+                    priority={i === 0}
                   />
                 </div>
               ))}
@@ -376,17 +384,18 @@ export default function Hero() {
                   {/* Base Logo with Consistent Lighting */}
                   <Image
                     src="/logo.svg"
-                    alt="Expand Matrix logo"
-                    width={200}
-                    height={200}
-                    className="w-full h-full object-contain relative z-10"
-                    style={{
-                      filter: 'brightness(1.0) contrast(1.0) saturate(1.0)',
-                      transform: 'scale(1.05)',
-                      willChange: 'transform',
-                    }}
-                    priority
-                  />
+                  alt="Expand Matrix logo"
+                  width={200}
+                  height={200}
+                  className="w-full h-full object-contain relative z-10"
+                  style={{
+                    filter: 'brightness(1.0) contrast(1.0) saturate(1.0)',
+                    transform: 'scale(1.05)',
+                    willChange: 'transform',
+                  }}
+                  sizes={logoSizes}
+                  priority
+                />
                   
                   {/* Smooth Gradient Glow Effect */}
                   <div
@@ -401,7 +410,7 @@ export default function Hero() {
                 </div>
               </div>
 
-            </motion.div>
+            </MotionDiv>
           </div>
         )}
 
@@ -415,7 +424,7 @@ export default function Hero() {
               const charCode = 0x30A0 + (i % 96);
               
               return (
-                <motion.div
+                <MotionDiv
                   key={`matrix-${i}`}
                   className="absolute text-[#00d76b] font-mono text-xs"
                   style={{
@@ -435,7 +444,7 @@ export default function Hero() {
                   }}
                 >
                   {String.fromCharCode(charCode)}
-                </motion.div>
+                </MotionDiv>
               );
             })}
 
@@ -448,7 +457,7 @@ export default function Hero() {
           const delay = (i % 4);
           
           return (
-            <motion.div
+            <MotionDiv
               key={`neural-${i}`}
               className="absolute"
               style={{
@@ -475,7 +484,7 @@ export default function Hero() {
 
         {/* Advanced Digital Grid Lines */}
         {isClient && [...Array(15)].map((_, i) => (
-          <motion.div
+          <MotionDiv
             key={`grid-${i}`}
             className="absolute border border-[#00d76b]/30"
         style={{
@@ -499,7 +508,7 @@ export default function Hero() {
 
         {/* Holographic Scan Lines */}
         {isClient && [...Array(8)].map((_, i) => (
-          <motion.div
+          <MotionDiv
             key={`scan-${i}`}
             className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#00d76b]/40 to-transparent"
             style={{
@@ -531,7 +540,7 @@ export default function Hero() {
               const codes = ['01', '10', '11', '00', 'AI', 'ML'];
               
               return (
-                <motion.div
+                <MotionDiv
                   key={`code-${i}`}
                   className="absolute text-[#00d76b]/70 font-mono text-xs"
                   style={{
@@ -553,7 +562,7 @@ export default function Hero() {
                   }}
                 >
                   {codes[codeIndex]}
-                </motion.div>
+                </MotionDiv>
               );
             })}
 
@@ -568,7 +577,7 @@ export default function Hero() {
           const delay = (i % 4);
           
           return (
-            <motion.div
+            <MotionDiv
               key={`quantum-${i}`}
               className="absolute w-1 h-1 rounded-full"
               style={{
@@ -599,7 +608,7 @@ export default function Hero() {
         
         {/* Dynamic Energy Fields */}
         {isClient && [...Array(3)].map((_, i) => (
-          <motion.div
+          <MotionDiv
             key={`energy-${i}`}
             className="absolute rounded-full blur-2xl"
             style={{

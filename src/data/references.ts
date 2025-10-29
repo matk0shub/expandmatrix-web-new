@@ -31,7 +31,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://techstartup.ai',
     image: {
       id: 'img1',
-      url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Tech startup office',
     },
     order: 1,
@@ -46,7 +46,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://fashionbrand.studio',
     image: {
       id: 'img2',
-      url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Fashion brand store',
     },
     order: 2,
@@ -61,7 +61,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://restaurantchain.digital',
     image: {
       id: 'img3',
-      url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Restaurant interior',
     },
     order: 3,
@@ -76,7 +76,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://healthtech.care',
     image: {
       id: 'img4',
-      url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Healthcare technology',
     },
     order: 4,
@@ -91,7 +91,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://eduplatform.academy',
     image: {
       id: 'img5',
-      url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Online education',
     },
     order: 5,
@@ -106,7 +106,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://fintech.global',
     image: {
       id: 'img6',
-      url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop',
+      url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=960&h=640&q=75',
       alt: 'Financial technology',
     },
     order: 6,

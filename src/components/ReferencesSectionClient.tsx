@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import ReferenceList from './ReferenceList';
 import ReferenceBackground from './ReferenceBackground';
@@ -27,6 +28,9 @@ interface ReferencesSectionClientProps {
 }
 
 export default function ReferencesSectionClient({ references, copy }: ReferencesSectionClientProps) {
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const prefersReducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
@@ -153,14 +157,14 @@ export default function ReferencesSectionClient({ references, copy }: References
           {/* Left side - Reference list */}
           <div className="w-full lg:w-1/2 flex flex-col justify-start lg:justify-center px-4 sm:px-8 lg:px-16 py-8 lg:py-0 relative z-10 min-h-0">
             <div className="max-w-md w-full flex flex-col min-h-0">
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                 className="text-sm font-medium text-gray-300 uppercase tracking-wider mb-6 lg:mb-8 flex-shrink-0"
               >
                 {copy.overline}
-              </motion.div>
+              </MotionDiv>
               
               <div className="flex-1 min-h-0 overflow-hidden">
                 <ReferenceList
