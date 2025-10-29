@@ -3,7 +3,7 @@ import payload from 'payload'
 import path from 'path'
 import { pathToFileURL } from 'url'
 
-import { resolveDatabaseUri, resolvePayloadSecret } from '@/payload/env'
+import { isUsingFallbackDatabase, resolveDatabaseUri, resolvePayloadSecret } from '@/payload/env'
 import { resolvePayloadInitTimeout, withTimeout } from '@/payload/timeouts'
 
 type PayloadConfigShape = Record<string, unknown>
@@ -25,8 +25,6 @@ const loadConfig = async (): Promise<PayloadConfigShape> => {
 
   return cachedConfig
 }
-
-const isFallbackDatabase = (): boolean => process.env.PAYLOAD_USING_FALLBACK_DB === 'true'
 
 const createOfflineError = (message?: string): NodeJS.ErrnoException => {
   const offlineError = new Error(message ?? 'Payload CMS offline') as NodeJS.ErrnoException
@@ -66,7 +64,7 @@ const shouldSkipPayloadInit = async (uri: string): Promise<boolean> => {
     return false
   }
 
-  if (!isFallbackDatabase()) {
+  if (!isUsingFallbackDatabase()) {
     return false
   }
 
@@ -75,14 +73,21 @@ const shouldSkipPayloadInit = async (uri: string): Promise<boolean> => {
 
 const initializePayload = async (secret: string) => {
   const config = await loadConfig()
+  const init = payload.init({
+    config: config as never,
+    local: process.env.NODE_ENV !== 'production',
+    secret,
+  } as never)
+
+  if (!isUsingFallbackDatabase()) {
+    await init
+    return
+  }
+
   const timeoutMs = resolvePayloadInitTimeout()
 
   await withTimeout(
-    payload.init({
-      config: config as never,
-      local: process.env.NODE_ENV !== 'production',
-      secret,
-    } as never),
+    init,
     timeoutMs,
     () => createOfflineError(`Payload initialization timed out after ${timeoutMs}ms`)
   )

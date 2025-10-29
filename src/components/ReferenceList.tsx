@@ -8,11 +8,11 @@ import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 
 interface ReferenceListCopy {
-  selectReference: string;
+  selectReference: (name: string) => string;
   instagram: string;
-  instagramAria: string;
+  instagramAria: (name: string) => string;
   website: string;
-  websiteAria: string;
+  websiteAria: (name: string) => string;
 }
 
 interface ReferenceListProps {
@@ -22,9 +22,6 @@ interface ReferenceListProps {
   prefersReducedMotion: boolean;
   copy: ReferenceListCopy;
 }
-
-const formatByName = (template: string, name: string) =>
-  template.replace(/\{name\}/g, name);
 
 export default function ReferenceList({
   references,
@@ -95,7 +92,7 @@ export default function ReferenceList({
             }}
             tabIndex={0}
             role="button"
-            aria-label={formatByName(copy.selectReference, reference.name)}
+            aria-label={copy.selectReference(reference.name)}
             aria-pressed={isActive}
             whileHover={{}}
             whileTap={{}}
@@ -158,7 +155,7 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={formatByName(copy.instagramAria, reference.name)}
+                      aria-label={copy.instagramAria(reference.name)}
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.instagram}</span>
@@ -179,7 +176,7 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={formatByName(copy.websiteAria, reference.name)}
+                      aria-label={copy.websiteAria(reference.name)}
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.website}</span>

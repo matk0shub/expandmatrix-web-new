@@ -1,6 +1,7 @@
 import { cache } from 'react';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
+import { isUsingFallbackDatabase } from '@/payload/env';
 import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
 import { getSampleReferences } from '@/data/references';
 import type { Reference } from '@/types/references';
@@ -163,7 +164,7 @@ export const getReferences = cache(
       const payload = await getPayloadClient();
       const resolvedLocale = resolveLocale(locale);
       const payloadLocale = 'all' as const;
-      const timeoutMs = resolvePayloadQueryTimeout();
+      const timeoutMs = isUsingFallbackDatabase() ? resolvePayloadQueryTimeout() : 0;
       const result = await withTimeout(
         payload.find({
           collection: 'references',
