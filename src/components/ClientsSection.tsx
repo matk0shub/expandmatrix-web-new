@@ -353,14 +353,12 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
       opacity: 0,
       borderRadius: '9999px',
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-      border: '1px solid rgba(220, 230, 240, 0.52)',
+      border: '1.5px solid transparent',
       background:
-        'radial-gradient(140% 120% at 50% 100%, rgba(218, 228, 240, 0.48) 0%, rgba(196, 204, 216, 0.28) 52%, rgba(174, 186, 200, 0.18) 78%, rgba(156, 166, 182, 0.12) 100%),' +
-        'linear-gradient(180deg, rgba(244, 248, 254, 0.45) 0%, rgba(210, 220, 234, 0.22) 58%, rgba(188, 198, 212, 0.18) 100%)',
-      boxShadow: '0 28px 52px rgba(12, 18, 26, 0.32), 0 12px 22px rgba(12, 18, 26, 0.22)',
-      backdropFilter: 'blur(22px) saturate(140%)',
-      WebkitBackdropFilter: 'blur(22px) saturate(140%)',
-      backgroundColor: 'rgba(210, 220, 232, 0.24)',
+        'linear-gradient(145deg, rgba(8, 8, 12, 0.98), rgba(16, 16, 24, 0.94)) padding-box,' +
+        'linear-gradient(135deg, #00d76b, #00b85c) border-box',
+      backgroundClip: 'padding-box, border-box',
+      boxShadow: '0 26px 46px rgba(0, 0, 0, 0.55), 0 12px 22px rgba(0, 0, 0, 0.38)',
       overflow: 'hidden'
     }),
     [layout.ballSize, prefersReducedMotion]
@@ -1012,7 +1010,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(120% 130% at 50% 110%, rgba(206, 216, 228, 0.55) 0%, rgba(188, 198, 210, 0.26) 60%, rgba(170, 180, 194, 0.18) 100%)'
+                  'radial-gradient(120% 135% at 50% 108%, rgba(0, 215, 107, 0.32) 0%, rgba(0, 184, 92, 0.18) 55%, rgba(0, 0, 0, 0) 100%)'
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
