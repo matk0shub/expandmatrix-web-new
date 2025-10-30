@@ -5,6 +5,7 @@ import { isUsingFallbackDatabase } from '@/payload/env';
 import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
 import { getSampleReferences } from '@/data/references';
 import type { Reference } from '@/types/references';
+import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
 
 interface PayloadReference {
   id?: string | number;
@@ -85,7 +86,7 @@ const resolveImage = (
     return '';
   };
 
-  const url = findUrl();
+  const url = resolveMediaUrl(findUrl());
 
   if (!url) {
     return null;
