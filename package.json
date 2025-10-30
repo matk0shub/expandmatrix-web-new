@@ -5,6 +5,7 @@
   "scripts": {
     "predev": "node scripts/check-cache.js",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
+    "dev:turbo": "NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

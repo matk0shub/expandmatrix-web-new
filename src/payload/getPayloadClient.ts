@@ -8,6 +8,11 @@ import { resolvePayloadInitTimeout, withTimeout } from '@/payload/timeouts'
 
 type PayloadConfigShape = Record<string, unknown>
 
+type GlobalWithPayloadInit = typeof globalThis & {
+  __payloadInit?: Promise<void> | null
+  __payloadOffline?: boolean
+}
+
 const PAYLOAD_OFFLINE_CODE = 'PAYLOAD_OFFLINE' as const
 
 let cachedConfig: PayloadConfigShape | null = null
@@ -94,6 +99,12 @@ const initializePayload = async (secret: string) => {
 }
 
 export const getPayloadClient = async () => {
+  const g = globalThis as GlobalWithPayloadInit
+
+  if (typeof g.__payloadOffline === 'boolean') {
+    payloadOffline = g.__payloadOffline
+  }
+
   if (payloadOffline) {
     console.debug?.('[payload] getPayloadClient short-circuited: offline flag set')
     throw createOfflineError()
@@ -112,18 +123,20 @@ export const getPayloadClient = async () => {
     }
 
     payloadOffline = true
+    g.__payloadOffline = true
     console.debug?.('[payload] Marked offline because fallback database unreachable')
     throw createOfflineError()
   }
 
   if (!payload.db) {
     if (!payloadInitPromise) {
-      console.debug?.('[payload] Initializing Payload CMS client...')
-      payloadInitPromise = initializePayload(secret).catch((error: unknown) => {
+      // Reuse global init promise across HMR cycles in dev
+      payloadInitPromise = (g.__payloadInit ||= initializePayload(secret).catch((error: unknown) => {
         const err = error as NodeJS.ErrnoException | undefined
 
         if (err?.code === PAYLOAD_OFFLINE_CODE) {
           payloadOffline = true
+          g.__payloadOffline = true
 
           if (!loggedOfflineWarning) {
             console.warn(
@@ -135,13 +148,14 @@ export const getPayloadClient = async () => {
         }
 
         throw error
-      })
+      }))
     }
 
     try {
       await payloadInitPromise
       console.debug?.('[payload] Payload initialization finished')
     } finally {
+      // Do not null out the global promise; keep it for HMR cycles
       payloadInitPromise = null
     }
   }
