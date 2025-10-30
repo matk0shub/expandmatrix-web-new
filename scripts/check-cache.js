@@ -53,11 +53,11 @@ function ensureNextStubs() {
       },
       {
         file: path.join(vendorChunksDir, '@opentelemetry.js'),
-        contents: 'export {};',
+        contents: 'module.exports = {};',
       },
       {
         file: path.join(vendorChunksDir, 'next.js'),
-        contents: 'module.exports = {};',
+        contents: 'module.exports = [];',
       },
     ];
 
