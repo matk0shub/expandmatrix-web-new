@@ -18,7 +18,7 @@ const initiateReplicaSet = () => {
       rs.initiate(config);
       try {
         printjson(rs.status());
-      } catch (statusError) {
+      } catch {
         print('[mongo-init] Replica set initiated, waiting for PRIMARY state.');
       }
       return;
@@ -33,7 +33,7 @@ const initiateReplicaSet = () => {
   rs.initiate(config);
   try {
     printjson(rs.status());
-  } catch (statusError) {
+  } catch {
     print('[mongo-init] Replica set initiated, waiting for PRIMARY state.');
   }
 };
