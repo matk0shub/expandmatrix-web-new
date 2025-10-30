@@ -18,6 +18,7 @@ interface PageProps {
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
   const { partners } = await getPartners();
+  const safePartners = Array.isArray(partners) ? partners : [];
 
   return (
     <>
@@ -26,7 +27,7 @@ export default async function HomePage({ params }: PageProps) {
         <div id="about">
           <AccuracySection />
         </div>
-        <ClientsSection partners={partners} />
+        <ClientsSection partners={safePartners} />
         <div id="services">
           <ServicesSection locale={locale} />
         </div>

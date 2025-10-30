@@ -71,7 +71,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const partnerCount = Math.max(partners.length, 0);
+  const partnerCount = Math.max(Array.isArray(partners) ? partners.length : 0, 0);
   const [layout, setLayout] = useState(() => ({
     ballSize: 160,
     greenRadius: 180,
