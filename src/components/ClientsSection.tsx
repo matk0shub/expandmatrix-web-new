@@ -353,11 +353,8 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
       opacity: 0,
       borderRadius: '9999px',
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-      border: '1.5px solid transparent',
-      background:
-        'linear-gradient(145deg, rgba(8, 8, 12, 0.98), rgba(16, 16, 24, 0.94)) padding-box,' +
-        'linear-gradient(135deg, #00d76b, #00b85c) border-box',
-      backgroundClip: 'padding-box, border-box',
+      border: '3px solid #00c86a',
+      backgroundColor: 'rgba(8, 8, 14, 0.96)',
       boxShadow: '0 26px 46px rgba(0, 0, 0, 0.55), 0 12px 22px rgba(0, 0, 0, 0.38)',
       overflow: 'hidden'
     }),
@@ -1009,8 +1006,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background:
-                  'radial-gradient(120% 135% at 45% 15%, rgba(255, 255, 255, 0.16) 0%, rgba(80, 88, 104, 0.1) 40%, rgba(0, 0, 0, 0) 85%)'
+                backgroundColor: 'transparent'
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
