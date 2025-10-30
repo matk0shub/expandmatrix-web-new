@@ -385,7 +385,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
 
   const renderBallContent = useCallback(
     (ball: BallConfig) => {
-      const scale = ball.content.scale ?? 0.62;
+      const scale = ball.content.scale ?? 0.56;
       const side = Math.max(layout.ballSize * scale, 32);
 
       return (
