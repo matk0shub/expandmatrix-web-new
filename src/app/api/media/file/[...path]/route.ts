@@ -56,18 +56,22 @@ const serveMedia = async (segments: string[]) => {
   }
 };
 
+type ParamsPromise = Promise<{ path?: string[] }>;
+
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { path?: string[] } },
+  context: { params: ParamsPromise },
 ) {
-  return serveMedia(params.path ?? []);
+  const { path = [] } = await context.params;
+  return serveMedia(path);
 }
 
 export async function HEAD(
   _request: NextRequest,
-  context: { params: { path?: string[] } },
+  context: { params: ParamsPromise },
 ) {
-  const response = await serveMedia(context.params.path ?? []);
+  const { path = [] } = await context.params;
+  const response = await serveMedia(path);
 
   return new NextResponse(null, {
     status: response.status,
