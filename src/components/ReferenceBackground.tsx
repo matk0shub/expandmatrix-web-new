@@ -18,7 +18,8 @@ export default function ReferenceBackground({
   const framer = useFramerMotion();
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
-  const imageUrl = reference.image?.url ?? '';
+  const imageUrl =
+    reference.image?.sources?.hero?.url ?? reference.image?.url ?? '';
 
   return (
     <div className="absolute inset-0 overflow-hidden">

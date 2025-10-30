@@ -212,21 +212,6 @@ export interface TeamMember {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "partners".
- */
-export interface Partner {
-  id: string;
-  name: string;
-  logo: string | Media;
-  logoAlt?: string | null;
-  scale?: number | null;
-  order: number;
-  showOnSite?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
@@ -268,7 +253,46 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    grid?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
+}
+/**
+ * Upload partner logos that appear in the “Our Partners” section. Entries marked as hidden are excluded from the website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: string;
+  name: string;
+  logo: string | Media;
+  /**
+   * Defaults to the partner name if left blank.
+   */
+  logoAlt?: string | null;
+  /**
+   * Optional size multiplier applied to the logo inside the orbiting ball.
+   */
+  scale?: number | null;
+  order: number;
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -388,6 +412,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'teamMembers';
         value: string | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: string | Partner;
       } | null)
     | ({
         relationTo: 'references';
@@ -629,6 +657,26 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         tablet?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        grid?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
           | T
           | {
               url?: T;
