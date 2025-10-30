@@ -31,7 +31,6 @@ export const getPartners = cache(async (): Promise<PartnersResult> => {
       payload.find({
         collection: 'partners',
         depth: 1,
-        sort: 'order',
         limit: 100,
         where: {
           showOnSite: {

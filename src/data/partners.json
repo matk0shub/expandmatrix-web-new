@@ -2,65 +2,57 @@
   {
     "name": "BodyBody",
     "logo": "/images/partners/bodybody_logo.svg",
-    "logoAlt": "BodyBody",
+    "alt": "BodyBody",
     "scale": 0.7,
-    "order": 1,
     "showOnSite": true
   },
   {
     "name": "Klimatizace Tomeš",
     "logo": "/images/partners/klimatizace_tomes.svg",
-    "logoAlt": "Klimatizace Tomeš",
+    "alt": "Klimatizace Tomeš",
     "scale": 0.7,
-    "order": 2,
     "showOnSite": true
   },
   {
     "name": "Pružinárna",
     "logo": "/images/partners/pruzinarna.svg",
-    "logoAlt": "Pružinárna",
+    "alt": "Pružinárna",
     "scale": 0.72,
-    "order": 3,
     "showOnSite": true
   },
   {
     "name": "Handball Hodonín",
     "logo": "/images/partners/handball_hodonin.png",
-    "logoAlt": "Handball Hodonín",
+    "alt": "Handball Hodonín",
     "scale": 0.75,
-    "order": 4,
     "showOnSite": true
   },
   {
     "name": "SKH Velká nad Veličkou",
     "logo": "/images/partners/skh_velka_nad_velickou.png",
-    "logoAlt": "SKH Velká nad Veličkou",
+    "alt": "SKH Velká nad Veličkou",
     "scale": 0.74,
-    "order": 5,
     "showOnSite": true
   },
   {
     "name": "OpenAI",
     "logo": "/images/partners/openai_logo.svg",
-    "logoAlt": "OpenAI",
+    "alt": "OpenAI",
     "scale": 0.64,
-    "order": 6,
     "showOnSite": true
   },
   {
     "name": "Cursor",
     "logo": "/images/partners/cursor_logo.svg",
-    "logoAlt": "Cursor",
+    "alt": "Cursor",
     "scale": 0.6,
-    "order": 7,
     "showOnSite": true
   },
   {
     "name": "n8n",
     "logo": "/images/partners/n8n_logo.svg",
-    "logoAlt": "n8n",
+    "alt": "n8n",
     "scale": 0.68,
-    "order": 8,
     "showOnSite": true
   }
 ]

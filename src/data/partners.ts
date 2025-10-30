@@ -6,35 +6,42 @@ import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
 type SamplePartner = {
   name: string;
   logo: string;
-  logoAlt?: string;
+  alt?: string;
   scale?: number;
-  order?: number;
   showOnSite?: boolean;
 };
 
 const samplePartners = partnersJson as SamplePartner[];
 
 const normalizePayloadPartner = (doc: PartnerDocument): NormalizedPartner | null => {
+  if (doc.showOnSite === false) {
+    return null;
+  }
+
+  const logoData = typeof doc.logo === 'object' && doc.logo ? doc.logo : null;
   const logoSource =
     typeof doc.logo === 'string'
       ? doc.logo
-      : doc.logo?.url ?? doc.logo?.filename ?? null;
+      : logoData?.url ?? logoData?.filename ?? null;
 
   const logoUrl = resolveMediaUrl(logoSource ?? undefined);
   if (!logoUrl) {
     return null;
   }
 
+  const altText =
+    (logoData && typeof logoData === 'object' && 'alt' in logoData
+      ? (logoData.alt as string | null | undefined)
+      : undefined) ?? doc.name;
+
   return {
     id: doc.id,
     name: doc.name,
     logo: {
       url: logoUrl,
-      alt: doc.logoAlt ?? doc.name,
+      alt: altText,
     },
     scale: typeof doc.scale === 'number' ? doc.scale : undefined,
-    order: typeof doc.order === 'number' ? doc.order : 0,
-    showOnSite: doc.showOnSite ?? true,
   };
 };
 
@@ -43,24 +50,19 @@ export function normalizePayloadPartners(
 ): NormalizedPartner[] {
   return docs
     .map(normalizePayloadPartner)
-    .filter((partner): partner is NormalizedPartner => Boolean(partner?.showOnSite))
-    .sort((a, b) => a.order - b.order);
+    .filter((partner): partner is NormalizedPartner => Boolean(partner));
 }
 
 export function getSamplePartners(): NormalizedPartner[] {
   return samplePartners
     .filter((partner) => partner.showOnSite ?? true)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map((partner, index) => ({
       id: `sample-partner-${index}`,
       name: partner.name,
       logo: {
         url: partner.logo,
-        alt: partner.logoAlt ?? partner.name,
+        alt: partner.alt ?? partner.name,
       },
       scale: partner.scale,
-      order: partner.order ?? index,
-      showOnSite: partner.showOnSite ?? true,
     }));
 }
-

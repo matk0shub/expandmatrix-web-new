@@ -282,14 +282,9 @@ export interface Partner {
   name: string;
   logo: string | Media;
   /**
-   * Defaults to the partner name if left blank.
-   */
-  logoAlt?: string | null;
-  /**
    * Optional size multiplier applied to the logo inside the orbiting ball.
    */
   scale?: number | null;
-  order: number;
   showOnSite?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -562,9 +557,7 @@ export interface TeamMembersSelect<T extends boolean = true> {
 export interface PartnersSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
-  logoAlt?: T;
   scale?: T;
-  order?: T;
   showOnSite?: T;
   updatedAt?: T;
   createdAt?: T;
