@@ -29,14 +29,11 @@ export const Media: CollectionConfig = {
     ],
     adminThumbnail: 'thumbnail',
     mimeTypes: [
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'image/gif',
+      'image/*',
       'image/svg+xml',
-      'image/avif',
-      'image/heic',
-      'image/heif',
+      'application/svg+xml',
+      'application/xml',
+      'text/xml',
     ],
   },
   fields: [
