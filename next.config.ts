@@ -130,6 +130,10 @@ const nextConfig: NextConfig = {
                 contents: 'module.exports = {};'
               },
               {
+                file: path.join(vendorChunksDir, 'date-fns.js'),
+                contents: 'module.exports = {};'
+              },
+              {
                 file: path.join(vendorChunksDir, 'payload.js'),
                 contents: 'module.exports = {};'
               },
