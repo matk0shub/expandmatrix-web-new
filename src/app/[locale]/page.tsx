@@ -9,6 +9,7 @@ import ProcessSection from '@/components/ProcessSection';
 import ReferencesSection from '@/components/ReferencesSection';
 import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
+import { getPartners } from '@/data/partners.server';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -16,6 +17,7 @@ interface PageProps {
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
+  const { partners } = await getPartners();
 
   return (
     <>
@@ -24,7 +26,7 @@ export default async function HomePage({ params }: PageProps) {
         <div id="about">
           <AccuracySection />
         </div>
-        <ClientsSection />
+        <ClientsSection partners={partners} />
         <div id="services">
           <ServicesSection locale={locale} />
         </div>
