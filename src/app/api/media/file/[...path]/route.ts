@@ -1,3 +1,53 @@
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+
+export const runtime = 'nodejs'
+
+function resolvePayloadBase(): URL | null {
+  const base = process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL
+  if (!base) return null
+  try {
+    return new URL(base)
+  } catch {
+    return null
+  }
+}
+
+export async function GET(req: NextRequest, { params }: { params: { path?: string[] } }) {
+  const base = resolvePayloadBase()
+  if (!base) {
+    return NextResponse.json({ error: 'Payload base URL not configured' }, { status: 500 })
+  }
+
+  const segments = params.path || []
+  if (!Array.isArray(segments) || segments.length === 0) {
+    return NextResponse.json({ error: 'Missing file path' }, { status: 400 })
+  }
+
+  // Build target URL: /media/<...segments>
+  const pathname = ['/media', ...segments].join('/')
+  const target = new URL(pathname, base)
+
+  try {
+    const upstream = await fetch(target, { cache: 'no-cache' })
+    if (!upstream.ok) {
+      return NextResponse.json({ error: 'Upstream not found' }, { status: upstream.status })
+    }
+
+    const contentType = upstream.headers.get('content-type') || 'application/octet-stream'
+    const res = new NextResponse(upstream.body, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=31536000, immutable, stale-while-revalidate=86400',
+      },
+    })
+    return res
+  } catch (error) {
+    return NextResponse.json({ error: 'Proxy error' }, { status: 502 })
+  }
+}
+
 'use server';
 
 import { NextRequest, NextResponse } from 'next/server';
