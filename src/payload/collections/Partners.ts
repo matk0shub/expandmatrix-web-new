@@ -4,20 +4,9 @@ export const Partners: CollectionConfig = {
   slug: 'partners',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'order', 'showOnSite', 'updatedAt'],
+    defaultColumns: ['name', 'showOnSite', 'updatedAt'],
     description:
       'Upload partner logos that appear in the “Our Partners” section. Entries marked as hidden are excluded from the website.',
-  },
-  hooks: {
-    beforeValidate: [
-      ({ data }) => {
-        if (!data) return data;
-        if (!data.logoAlt && data.name) {
-          data.logoAlt = data.name;
-        }
-        return data;
-      },
-    ],
   },
   fields: [
     {
@@ -32,14 +21,6 @@ export const Partners: CollectionConfig = {
       required: true,
     },
     {
-      name: 'logoAlt',
-      label: 'Logo alt text',
-      type: 'text',
-      admin: {
-        description: 'Defaults to the partner name if left blank.',
-      },
-    },
-    {
       name: 'scale',
       type: 'number',
       admin: {
@@ -48,15 +29,6 @@ export const Partners: CollectionConfig = {
       },
       min: 0.3,
       max: 1.4,
-    },
-    {
-      name: 'order',
-      type: 'number',
-      required: true,
-      defaultValue: 0,
-      admin: {
-        position: 'sidebar',
-      },
     },
     {
       name: 'showOnSite',
@@ -69,4 +41,3 @@ export const Partners: CollectionConfig = {
     },
   ],
 };
-
