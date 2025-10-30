@@ -353,9 +353,9 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
       opacity: 0,
       borderRadius: '9999px',
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-      border: '3px solid #00c86a',
-      background: 'linear-gradient(135deg, rgba(26, 32, 44, 0.96), rgba(40, 48, 64, 0.92))',
-      boxShadow: '0 28px 50px rgba(0, 0, 0, 0.6), 0 16px 28px rgba(0, 0, 0, 0.4)',
+      border: '2px solid rgba(140, 148, 156, 0.6)',
+      backgroundColor: '#333333',
+      boxShadow: '0 24px 44px rgba(0, 0, 0, 0.5), 0 12px 24px rgba(0, 0, 0, 0.35)',
       overflow: 'hidden'
     }),
     [layout.ballSize, prefersReducedMotion]
