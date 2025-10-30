@@ -40,10 +40,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  // Disable source maps completely in development
-  generateBuildId: async () => {
-    return 'build-' + Date.now()
-  },
   // Minimal webpack configuration for faster dev server
   webpack: (config, { dev, isServer }) => {
     if (dev) {
