@@ -7,11 +7,11 @@ import { importMap } from '../importMap';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-type Params = Promise<{
-  segments: string[];
-}>;
+type Params = {
+  segments?: string[];
+};
 
-type SearchParams = Promise<Record<string, string | string[]>>;
+type SearchParams = Record<string, string | string[] | undefined>;
 
 type PageArgs = {
   params: Params;
@@ -25,7 +25,7 @@ export const generateMetadata = async ({ params, searchParams }: PageArgs): Prom
 
   return viewsModule.generatePageMetadata({
     config,
-    params,
+    params: { segments: params?.segments ?? [] },
     searchParams,
   });
 };
@@ -35,7 +35,7 @@ const Page = async ({ params, searchParams }: PageArgs) => {
 
   return viewsModule.RootPage({
     config,
-    params,
+    params: { segments: params?.segments ?? [] },
     searchParams,
     importMap,
   });
