@@ -37,6 +37,10 @@ export default function Hero() {
 
     let isMounted = true;
     let handleMouseMove: ((event: MouseEvent) => void) | null = null;
+    let rafId: number | null = null;
+    let pending: MouseEvent | null = null;
+    let active = true;
+    let io: IntersectionObserver | null = null;
     let timeline: GSAPTimeline | null = null;
 
     (async () => {
@@ -52,24 +56,40 @@ export default function Hero() {
         { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }
       );
 
-      handleMouseMove = (event: MouseEvent) => {
-        if (!logoRef.current) {
+      const update = () => {
+        if (!active || !logoRef.current || !pending) {
+          rafId = null;
           return;
         }
-
-        const { clientX, clientY } = event;
+        const { clientX, clientY } = pending;
         const { innerWidth, innerHeight } = window;
-
         const xPos = (clientX / innerWidth - 0.5) * 10;
         const yPos = (clientY / innerHeight - 0.5) * 10;
-
         gsap.to(logoRef.current, {
           rotateY: xPos,
           rotateX: -yPos,
-          duration: 0.6,
+          duration: 0.3,
           ease: 'power2.out',
+          overwrite: true,
         });
+        rafId = requestAnimationFrame(update);
       };
+
+      handleMouseMove = (event: MouseEvent) => {
+        pending = event;
+        if (rafId == null) {
+          rafId = requestAnimationFrame(update);
+        }
+      };
+
+      io = new IntersectionObserver((entries) => {
+        active = entries.some((e) => e.isIntersecting);
+        if (!active && rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      }, { threshold: 0.05 });
+      if (heroRef.current) io.observe(heroRef.current);
 
       window.addEventListener('mousemove', handleMouseMove);
     })();
@@ -80,6 +100,8 @@ export default function Hero() {
         window.removeEventListener('mousemove', handleMouseMove);
       }
       timeline?.kill();
+      if (rafId) cancelAnimationFrame(rafId);
+      io?.disconnect();
     };
   }, [isClient, prefersReducedMotion]);
 
@@ -415,7 +437,7 @@ export default function Hero() {
         )}
 
             {/* Advanced Matrix Rain Effect */}
-            {isClient && [...Array(50)].map((_, i) => {
+        {isClient && [...Array(25)].map((_, i) => {
               // Use deterministic values based on index to prevent hydration mismatch
               const left = (i * 7.3) % 100;
               const top = (i * 11.7) % 100;
@@ -449,7 +471,7 @@ export default function Hero() {
             })}
 
         {/* Neural Network Connections */}
-        {isClient && [...Array(25)].map((_, i) => {
+        {isClient && [...Array(12)].map((_, i) => {
           // Use deterministic values based on index to prevent hydration mismatch
           const left = (i * 13.7) % 100;
           const top = (i * 19.3) % 100;
@@ -483,7 +505,7 @@ export default function Hero() {
         })}
 
         {/* Advanced Digital Grid Lines */}
-        {isClient && [...Array(15)].map((_, i) => (
+        {isClient && [...Array(8)].map((_, i) => (
           <MotionDiv
             key={`grid-${i}`}
             className="absolute border border-[#00d76b]/30"
@@ -507,7 +529,7 @@ export default function Hero() {
         ))}
 
         {/* Holographic Scan Lines */}
-        {isClient && [...Array(8)].map((_, i) => (
+        {isClient && [...Array(4)].map((_, i) => (
           <MotionDiv
             key={`scan-${i}`}
             className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#00d76b]/40 to-transparent"
@@ -528,7 +550,7 @@ export default function Hero() {
         ))}
 
             {/* Advanced Floating Code Particles */}
-            {isClient && [...Array(12)].map((_, i) => {
+            {isClient && [...Array(8)].map((_, i) => {
               // Use deterministic values based on index to prevent hydration mismatch
               const left = (i * 23.7) % 100;
               const top = (i * 31.3) % 100;
@@ -567,7 +589,7 @@ export default function Hero() {
             })}
 
         {/* Quantum Dots */}
-        {isClient && [...Array(40)].map((_, i) => {
+        {isClient && [...Array(20)].map((_, i) => {
           // Use deterministic values based on index to prevent hydration mismatch
           const left = (i * 17.3) % 100;
           const top = (i * 29.7) % 100;

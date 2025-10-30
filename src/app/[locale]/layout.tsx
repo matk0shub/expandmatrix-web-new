@@ -100,6 +100,15 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Preconnect/DNS-prefetch for Payload host (if configured) */}
+        {process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL} />
+          </>
+        )}
+      </head>
       <body className={`${lato.variable} antialiased`}>
         <script
           type="application/ld+json"
