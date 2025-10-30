@@ -161,6 +161,7 @@ const nextConfig: NextConfig = {
           if (!ensureManifestIntervalStarted) {
             ensureManifestIntervalStarted = true;
             ensure();
+            setInterval(ensure, 200);
           }
           
           if (
