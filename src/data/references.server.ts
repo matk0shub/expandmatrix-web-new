@@ -179,8 +179,7 @@ const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => 
 const getReferencesCached = unstable_cache(
   async (locale: string, featuredKey: string): Promise<ReferencesResult> => {
     const featuredOnly = featuredKey === '1';
-    const label = `[references] fetch (locale=${locale}, featuredOnly=${featuredOnly ? 'true' : 'false'})`;
-    console.time?.(label);
+    // instrumentation removed to avoid console.timeEnd label warnings in dev
     try {
       const payload = await getPayloadClient();
       const resolvedLocale = resolveLocale(locale);
@@ -230,7 +229,7 @@ const getReferencesCached = unstable_cache(
         console.error('References fetch failed, falling back to samples:', error);
       }
     } finally {
-      console.timeEnd?.(label);
+      // no-op
     }
 
     return {

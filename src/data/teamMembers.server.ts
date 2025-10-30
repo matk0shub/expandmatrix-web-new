@@ -30,8 +30,7 @@ const getTeamMembersCached = unstable_cache(
     featuredKey: string,
   ): Promise<TeamMembersResult> => {
     const featuredOnly = featuredKey === '1'
-    const benchmarkLabel = `[team] fetch (locale=${locale}, featuredOnly=${featuredOnly ? 'true' : 'false'})`;
-    console.time?.(benchmarkLabel);
+    // instrumentation removed to avoid console.timeEnd label warnings in dev
     try {
       const payload = await getPayloadClient();
 
@@ -86,7 +85,7 @@ const getTeamMembersCached = unstable_cache(
         console.error('Team members fetch failed, falling back to samples:', error);
       }
     } finally {
-      console.timeEnd?.(benchmarkLabel);
+      // no-op
     }
 
     return {
