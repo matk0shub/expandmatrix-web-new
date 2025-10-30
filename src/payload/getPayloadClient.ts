@@ -154,6 +154,11 @@ export const getPayloadClient = async () => {
     try {
       await payloadInitPromise
       console.debug?.('[payload] Payload initialization finished')
+      // If init succeeded, clear offline flags
+      if (payload.db) {
+        payloadOffline = false
+        g.__payloadOffline = false
+      }
     } finally {
       // Do not null out the global promise; keep it for HMR cycles
       payloadInitPromise = null
