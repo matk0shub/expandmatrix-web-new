@@ -23,20 +23,26 @@ const adminViewsPromise = import('@payloadcms/next/views');
 export const generateMetadata = async ({ params, searchParams }: PageArgs): Promise<Metadata> => {
   const viewsModule = await adminViewsPromise;
 
+  const { segments = [] } = await params;
+  const sp = await searchParams;
+
   return viewsModule.generatePageMetadata({
     config,
-    params: { segments: params?.segments ?? [] },
-    searchParams,
+    params: { segments },
+    searchParams: sp,
   });
 };
 
 const Page = async ({ params, searchParams }: PageArgs) => {
   const viewsModule = await adminViewsPromise;
 
+  const { segments = [] } = await params;
+  const sp = await searchParams;
+
   return viewsModule.RootPage({
     config,
-    params: { segments: params?.segments ?? [] },
-    searchParams,
+    params: { segments },
+    searchParams: sp,
     importMap,
   });
 };
