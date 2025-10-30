@@ -1,5 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+const WEBP_OPTIONS = {
+  quality: 80,
+  alphaQuality: 85,
+  smartSubsample: true,
+  effort: 6,
+} as const;
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
@@ -7,14 +14,10 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: 'media',
-    // Convert uploaded rasters (e.g., PNG/JPG) to WebP for smaller size.
-    // SVGs are left as-is by Sharp.
+    // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
     formatOptions: {
       format: 'webp',
-      options: {
-        quality: 78,
-        nearLossless: true,
-      },
+      options: WEBP_OPTIONS,
     },
     imageSizes: [
       {
@@ -22,22 +25,22 @@ export const Media: CollectionConfig = {
         width: 400,
         height: 300,
         position: 'centre',
-        // Ensure sizes are also output as WebP
-        formatOptions: { format: 'webp', options: { quality: 78 } },
+        // Ensure generated sizes use the same WebP settings
+        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
       },
       {
         name: 'card',
         width: 768,
         height: 1024,
         position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 78 } },
+        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
       },
       {
         name: 'tablet',
         width: 1024,
         height: undefined,
         position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 78 } },
+        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
       },
     ],
     adminThumbnail: 'thumbnail',
