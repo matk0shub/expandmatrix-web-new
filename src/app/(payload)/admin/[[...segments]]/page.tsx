@@ -4,6 +4,9 @@ import type { Metadata } from 'next';
 import config from '@payload-config';
 import { importMap } from '../importMap';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type Params = Promise<{
   segments: string[];
 }>;

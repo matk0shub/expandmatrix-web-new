@@ -160,12 +160,13 @@ export const getPayloadClient = async () => {
         g.__payloadOffline = false
       }
     } finally {
-      // Do not null out the global promise; keep it for HMR cycles
+      // Keep global promise for HMR; local ref can be cleared
       payloadInitPromise = null
     }
   }
 
   if (payloadOffline || !payload.db) {
+    // Return early if offline; callers can choose fallback paths
     console.debug?.('[payload] Initialization unsuccessful, returning offline error')
     throw createOfflineError()
   }

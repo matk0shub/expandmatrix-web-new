@@ -11,6 +11,13 @@ import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
 import { getPartners } from '@/data/partners.server';
 
+export const dynamicParams = true;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'cs' }];
+}
+
 interface PageProps {
   params: Promise<{ locale: string }>;
 }
