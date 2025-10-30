@@ -1,5 +1,6 @@
 import teamMembersJson from './teamMembers.json';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
+import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
 
 const baseTeamMembers = teamMembersJson as TeamMemberDocument[];
 
@@ -58,10 +59,13 @@ export function normalizePayloadTeamMembers(
     .map((doc) => {
       const avatar =
         typeof doc.avatar === 'string'
-          ? { url: doc.avatar }
+          ? {
+              url: resolveMediaUrl(doc.avatar),
+              alt: localizedValue(doc.name, locale),
+            }
           : doc.avatar?.url
           ? {
-              url: doc.avatar.url,
+              url: resolveMediaUrl(doc.avatar.url),
               alt: doc.avatar.alt ?? localizedValue(doc.name, locale),
             }
           : undefined;

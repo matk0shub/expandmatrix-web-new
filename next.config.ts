@@ -8,6 +8,34 @@ const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const payloadServerUrl =
+  process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ??
+  process.env.PAYLOAD_PUBLIC_SERVER_URL ??
+  '';
+
+const imageRemotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = [
+  {
+    protocol: 'https',
+    hostname: 'images.unsplash.com',
+  },
+];
+
+if (payloadServerUrl) {
+  try {
+    const parsed = new URL(payloadServerUrl);
+    imageRemotePatterns.push({
+      protocol: parsed.protocol.replace(':', '') as 'http' | 'https',
+      hostname: parsed.hostname,
+      ...(parsed.port ? { port: parsed.port } : {}),
+    });
+  } catch (error) {
+    console.warn(
+      '[next.config] Invalid PAYLOAD_PUBLIC_SERVER_URL/NEXT_PUBLIC_PAYLOAD_SERVER_URL:',
+      error instanceof Error ? error.message : error,
+    );
+  }
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -41,12 +69,7 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-    ],
+    remotePatterns: imageRemotePatterns,
     minimumCacheTTL: 60 * 60 * 24 * 30,
     formats: ['image/avif', 'image/webp'],
   },
