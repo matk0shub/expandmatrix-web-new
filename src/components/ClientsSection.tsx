@@ -1010,7 +1010,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(120% 135% at 50% 108%, rgba(0, 215, 107, 0.32) 0%, rgba(0, 184, 92, 0.18) 55%, rgba(0, 0, 0, 0) 100%)'
+                  'radial-gradient(120% 135% at 45% 15%, rgba(255, 255, 255, 0.16) 0%, rgba(80, 88, 104, 0.1) 40%, rgba(0, 0, 0, 0) 85%)'
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
