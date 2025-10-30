@@ -122,6 +122,14 @@ const nextConfig: NextConfig = {
                 contents: 'module.exports = {};'
               },
               {
+                file: path.join(vendorChunksDir, '@payloadcms.js'),
+                contents: 'module.exports = {};'
+              },
+              {
+                file: path.join(vendorChunksDir, 'payload.js'),
+                contents: 'module.exports = {};'
+              },
+              {
                 file: path.join(vendorChunksDir, 'next.js'),
                 contents: 'module.exports = [];'
               },
