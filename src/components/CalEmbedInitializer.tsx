@@ -8,6 +8,6 @@ import { useCalEmbed } from '@/hooks/useCalEmbed';
  * majority of the homepage can render as a server component.
  */
 export default function CalEmbedInitializer() {
-  useCalEmbed();
+  useCalEmbed({ autoPrime: true });
   return null;
 }
