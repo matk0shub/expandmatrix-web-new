@@ -1,4 +1,4 @@
-import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 
 import { getSamplePartners, normalizePayloadPartners } from '@/data/partners';
 import { getPayloadClient } from '@/payload/getPayloadClient';
@@ -19,7 +19,8 @@ const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => 
   return error;
 };
 
-export const getPartners = cache(async (): Promise<PartnersResult> => {
+const getPartnersCached = unstable_cache(
+  async (): Promise<PartnersResult> => {
   const benchmarkLabel = '[partners] fetch';
   console.time?.(benchmarkLabel);
 
@@ -73,4 +74,9 @@ export const getPartners = cache(async (): Promise<PartnersResult> => {
     partners: getSamplePartners(),
     isFallback: true,
   };
-});
+  },
+  ['partners'],
+  { revalidate: 60, tags: ['partners'] }
+);
+
+export const getPartners = async (): Promise<PartnersResult> => getPartnersCached();

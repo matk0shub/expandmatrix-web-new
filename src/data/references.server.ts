@@ -1,4 +1,4 @@
-import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
 import { isUsingFallbackDatabase } from '@/payload/env';
@@ -176,8 +176,9 @@ const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => 
   return error;
 };
 
-export const getReferences = cache(
-  async ({ locale, featuredOnly = true }: GetReferencesOptions): Promise<ReferencesResult> => {
+const getReferencesCached = unstable_cache(
+  async (locale: string, featuredKey: string): Promise<ReferencesResult> => {
+    const featuredOnly = featuredKey === '1';
     const benchmarkLabel = `[references] fetch (locale=${locale}, featuredOnly=${featuredOnly})`;
     console.time?.(benchmarkLabel);
     try {
@@ -237,4 +238,10 @@ export const getReferences = cache(
       isFallback: true,
     };
   },
+  ['references'],
+  { revalidate: 60, tags: ['references'] }
 );
+
+export const getReferences = async (
+  { locale, featuredOnly = true }: GetReferencesOptions
+): Promise<ReferencesResult> => getReferencesCached(locale, featuredOnly ? '1' : '0');

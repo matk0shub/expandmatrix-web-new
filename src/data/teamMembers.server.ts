@@ -1,4 +1,4 @@
-import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
@@ -24,11 +24,12 @@ const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => 
   return error;
 };
 
-export const getTeamMembers = cache(
-  async ({
-    locale,
-    featuredOnly = false,
-  }: GetTeamMembersOptions): Promise<TeamMembersResult> => {
+const getTeamMembersCached = unstable_cache(
+  async (
+    locale: string,
+    featuredKey: string,
+  ): Promise<TeamMembersResult> => {
+    const featuredOnly = featuredKey === '1'
     const benchmarkLabel = `[team] fetch (locale=${locale}, featuredOnly=${featuredOnly})`;
     console.time?.(benchmarkLabel);
     try {
@@ -93,4 +94,11 @@ export const getTeamMembers = cache(
       isFallback: true,
     };
   },
+  ['team-members'],
+  { revalidate: 60, tags: ['team-members'] }
 );
+
+export const getTeamMembers = async ({
+  locale,
+  featuredOnly = false,
+}: GetTeamMembersOptions): Promise<TeamMembersResult> => getTeamMembersCached(locale, featuredOnly ? '1' : '0');

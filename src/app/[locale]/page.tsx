@@ -11,13 +11,19 @@ import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
 import { getPartners } from '@/data/partners.server';
 
+export const revalidate = 60;
+
 interface PageProps {
   params: Promise<{ locale: string }>;
 }
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  const { partners } = await getPartners();
+  const t0 = Date.now();
+  const [{ partners }] = await Promise.all([
+    getPartners(),
+  ]);
+  console.log('[page] first-render orchestration took', Date.now() - t0, 'ms');
 
   return (
     <>
