@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 import createBundleAnalyzer from '@next/bundle-analyzer';
 import { withPayload } from '@payloadcms/next/withPayload';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 const withBundleAnalyzer = createBundleAnalyzer({
@@ -36,6 +38,8 @@ if (payloadServerUrl) {
   }
 }
 
+let ensureManifestIntervalStarted = false;
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -61,6 +65,114 @@ const nextConfig: NextConfig = {
         os: false,
       },
     };
+    
+    if (dev && isServer) {
+      class EnsureNextDevManifestsPlugin {
+        ensureManifests() {
+          const serverDir = path.join(process.cwd(), '.next', 'server');
+          
+          try {
+            mkdirSync(serverDir, { recursive: true });
+            const vendorChunksDir = path.join(serverDir, 'vendor-chunks');
+            mkdirSync(vendorChunksDir, { recursive: true });
+            
+            const fontManifest = { app: {}, pages: {} };
+            const middlewareManifest = {
+              version: 3,
+              sortedMiddleware: [],
+              middleware: {},
+              functions: {},
+            };
+            
+            const stubs: Array<{ file: string; contents: string }> = [
+              {
+                file: path.join(serverDir, 'next-font-manifest.json'),
+                contents: JSON.stringify(fontManifest),
+              },
+              {
+                file: path.join(serverDir, 'next-font-manifest.js'),
+                contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};`,
+              },
+              {
+                file: path.join(serverDir, 'middleware-manifest.json'),
+                contents: JSON.stringify(middlewareManifest),
+              },
+              {
+                file: path.join(serverDir, 'pages-manifest.json'),
+                contents: JSON.stringify({}),
+              },
+              {
+                file: path.join(serverDir, 'app-paths-manifest.json'),
+                contents: JSON.stringify({}),
+              },
+              {
+                file: path.join(serverDir, 'app-path-routes-manifest.json'),
+                contents: JSON.stringify({}),
+              },
+              {
+                file: path.join(serverDir, 'app-build-manifest.json'),
+                contents: JSON.stringify({ pages: {} }),
+              },
+              {
+                file: path.join(vendorChunksDir, '@opentelemetry.js'),
+                contents: 'export {};'
+              },
+              {
+                file: path.join(vendorChunksDir, 'next.js'),
+                contents: 'module.exports = [];'
+              },
+            ];
+            
+            for (const stub of stubs) {
+              if (!existsSync(stub.file)) {
+                writeFileSync(stub.file, stub.contents);
+              }
+            }
+            
+            if (process.env.DEBUG_NEXT_MANIFESTS === 'true') {
+              console.log('[next.config] ensured dev manifest stubs');
+            }
+          } catch (error) {
+            console.warn('[next.config] Failed to ensure dev manifests:', error);
+          }
+        }
+        
+        apply(compiler: unknown) {
+          const ensure = () => this.ensureManifests();
+          
+          if (!ensureManifestIntervalStarted) {
+            ensureManifestIntervalStarted = true;
+            ensure();
+            setInterval(ensure, 200);
+          }
+          
+          if (
+            typeof compiler === 'object' &&
+            compiler &&
+            'hooks' in compiler &&
+            typeof (compiler as { hooks?: unknown }).hooks === 'object'
+          ) {
+            const typedCompiler = compiler as {
+              hooks: {
+                beforeCompile?: { tap: (name: string, handler: () => void) => void };
+                afterEmit: { tap: (name: string, handler: () => void) => void };
+                done: { tap: (name: string, handler: () => void) => void };
+              };
+            };
+            
+            typedCompiler.hooks.beforeCompile?.tap('EnsureNextDevManifestsPlugin', ensure);
+            typedCompiler.hooks.afterEmit.tap('EnsureNextDevManifestsPlugin', ensure);
+            typedCompiler.hooks.done.tap('EnsureNextDevManifestsPlugin', ensure);
+          } else {
+            // Fallback execution in case webpack internals change
+            ensure();
+          }
+        }
+      }
+      
+      config.plugins = config.plugins ?? [];
+      config.plugins.push(new EnsureNextDevManifestsPlugin());
+    }
     
     return config;
   },
