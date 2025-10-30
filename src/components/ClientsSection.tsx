@@ -677,29 +677,28 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
       effectiveHeight - padding.top - padding.bottom,
       radius * 2
     );
-    const horizontalOrigin = padding.horizontal;
-    const verticalOrigin = padding.top;
     const vxRange = velocity.horizontal;
     const vyRange = velocity.vertical;
 
+    const centerX = clampValue(
+      padding.horizontal + usableWidth / 2,
+      radius,
+      Math.max(width - radius, radius)
+    );
+    const centerY = clampValue(
+      padding.top + usableHeight / 2,
+      radius,
+      Math.max(effectiveHeight - radius, radius)
+    );
+
     activeBallConfigs.forEach((config) => {
-      const x = clampValue(
-        horizontalOrigin + Math.random() * usableWidth,
-        radius,
-        Math.max(width - radius, radius)
-      );
-      const y = clampValue(
-        verticalOrigin + Math.random() * usableHeight,
-        radius,
-        Math.max(effectiveHeight - radius, radius)
-      );
       const vx = (Math.random() - 0.5) * vxRange;
       const vy = Math.random() * -vyRange;
 
       newStates.set(config.id, {
         id: config.id,
-        x,
-        y,
+        x: centerX,
+        y: centerY,
         vx,
         vy,
         radius,
