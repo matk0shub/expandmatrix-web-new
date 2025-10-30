@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import AccuracySection from '@/components/AccuracySection';
 import CalEmbedInitializer from '@/components/CalEmbedInitializer';
 import ClientsSection from '@/components/ClientsSection';
@@ -12,19 +11,13 @@ import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
 import { getPartners } from '@/data/partners.server';
 
-export const revalidate = 60;
-
 interface PageProps {
   params: Promise<{ locale: string }>;
 }
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  const t0 = Date.now();
-  const [{ partners }] = await Promise.all([
-    getPartners(),
-  ]);
-  console.log('[page] first-render orchestration took', Date.now() - t0, 'ms');
+  const { partners } = await getPartners();
 
   return (
     <>
@@ -41,20 +34,13 @@ export default async function HomePage({ params }: PageProps) {
           <ProcessSection />
         </div>
         <div id="references">
-          <Suspense fallback={<div className="min-h-[300px]" />}> 
-            {/* server component, stream as ready */}
-            <ReferencesSection locale={locale} />
-          </Suspense>
+          <ReferencesSection locale={locale} />
         </div>
         <div id="team">
-          <Suspense fallback={<div className="min-h-[240px]" />}> 
-            <TeamSection locale={locale} />
-          </Suspense>
+          <TeamSection locale={locale} />
         </div>
         <div id="faq">
-          <Suspense fallback={<div className="min-h-[200px]" />}> 
-            <FAQSection />
-          </Suspense>
+          <FAQSection />
         </div>
         <div id="contact">
           <CookieConsent />

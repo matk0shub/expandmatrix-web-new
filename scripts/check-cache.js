@@ -60,6 +60,10 @@ function ensureNextStubs() {
         contents: 'module.exports = {};',
       },
       {
+        file: path.join(vendorChunksDir, '@swc.js'),
+        contents: 'module.exports = {};',
+      },
+      {
         file: path.join(vendorChunksDir, 'payload.js'),
         contents: 'module.exports = {};',
       },
