@@ -46,12 +46,6 @@ const ensureString = (value: unknown, preferredLocale?: string): string => {
   return '';
 };
 
-const ensureNumber = (value: unknown): number | undefined =>
-  typeof value === 'number' ? value : undefined;
-
-const ensureOptionalString = (value: unknown): string | undefined =>
-  typeof value === 'string' && value.trim() ? value : undefined;
-
 const resolveImage = (
   image: PayloadReference['image'],
   locale: string,
@@ -71,76 +65,37 @@ const resolveImage = (
   const id = ensureString(image.id);
   const alt = ensureString(image.alt, locale);
 
-  const rawOriginalUrl =
-    typeof image.url === 'string'
-      ? image.url
-      : typeof image.filename === 'string'
-      ? `/media/${image.filename}`
-      : '';
-
-  const originalUrl = resolveMediaUrl(rawOriginalUrl);
-
-  const sizeRecord =
-    image.sizes && typeof image.sizes === 'object' ? (image.sizes as Record<string, unknown>) : undefined;
-
-  type ReferenceImageSources = NonNullable<Reference['image']['sources']>;
-
-  const toVariant = (value: unknown): ReferenceImageSources[keyof ReferenceImageSources] | undefined => {
-    if (!value || typeof value !== 'object') {
-      return undefined;
+  const findUrl = (): string => {
+    if (typeof image.url === 'string') {
+      return image.url;
     }
-    const record = value as Record<string, unknown>;
-    const urlCandidate = resolveMediaUrl(ensureString(record.url));
-    if (!urlCandidate) {
-      return undefined;
+
+    if (image.sizes && typeof image.sizes === 'object') {
+      const sizes = image.sizes as Record<string, unknown>;
+      for (const size of Object.values(sizes)) {
+        if (size && typeof size === 'object' && typeof (size as Record<string, unknown>).url === 'string') {
+          return (size as Record<string, unknown>).url as string;
+        }
+      }
     }
-    return {
-      url: urlCandidate,
-      width: ensureNumber(record.width),
-      height: ensureNumber(record.height),
-      filesize: ensureNumber(record.filesize),
-      mimeType: ensureOptionalString(record.mimeType),
-    };
+
+    if (typeof image.filename === 'string') {
+      return `/media/${image.filename}`;
+    }
+
+    return '';
   };
 
-  const hero = toVariant(sizeRecord?.hero);
-  const grid = toVariant(sizeRecord?.grid);
-  const tablet = toVariant(sizeRecord?.tablet);
-  const card = toVariant(sizeRecord?.card);
-  const thumbnail = toVariant(sizeRecord?.thumbnail);
-
-  const original = originalUrl
-    ? {
-        url: originalUrl,
-        width: ensureNumber(image.width),
-        height: ensureNumber(image.height),
-        filesize: ensureNumber(image.filesize),
-        mimeType: ensureOptionalString(image.mimeType),
-      }
-    : undefined;
-
-  const preferredUrl = hero?.url ?? grid?.url ?? tablet?.url ?? card?.url ?? original?.url ?? thumbnail?.url;
-
-  const url = preferredUrl ?? '';
+  const url = resolveMediaUrl(findUrl());
 
   if (!url) {
     return null;
   }
 
-  const sources = {
-    ...(original ? { original } : {}),
-    ...(hero ? { hero } : {}),
-    ...(grid ? { grid } : {}),
-    ...(tablet ? { tablet } : {}),
-    ...(card ? { card } : {}),
-    ...(thumbnail ? { thumbnail } : {}),
-  } satisfies Reference['image']['sources'];
-
   return {
     id: id || url,
     url,
     alt: alt || undefined,
-    sources: Object.keys(sources).length ? sources : undefined,
   };
 };
 

@@ -42,20 +42,6 @@ export const Media: CollectionConfig = {
         position: 'centre',
         formatOptions: { format: 'webp', options: WEBP_OPTIONS },
       },
-      {
-        name: 'grid',
-        width: 960,
-        height: 640,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
-      },
-      {
-        name: 'hero',
-        width: 1920,
-        height: 1080,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
-      },
     ],
     adminThumbnail: 'thumbnail',
     mimeTypes: [

@@ -253,22 +253,6 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
-    grid?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    hero?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
   };
 }
 /**
@@ -282,9 +266,14 @@ export interface Partner {
   name: string;
   logo: string | Media;
   /**
+   * Defaults to the partner name if left blank.
+   */
+  logoAlt?: string | null;
+  /**
    * Optional size multiplier applied to the logo inside the orbiting ball.
    */
   scale?: number | null;
+  order: number;
   showOnSite?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -557,7 +546,9 @@ export interface TeamMembersSelect<T extends boolean = true> {
 export interface PartnersSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
+  logoAlt?: T;
   scale?: T;
+  order?: T;
   showOnSite?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -650,26 +641,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         tablet?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        grid?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        hero?:
           | T
           | {
               url?: T;

@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
       },
     };
     
-    if (dev && isServer) {
+    if (isServer) {
       class EnsureNextDevManifestsPlugin {
         ensureManifests() {
           const serverDir = path.join(process.cwd(), '.next', 'server');
@@ -114,8 +114,12 @@ const nextConfig: NextConfig = {
                 contents: JSON.stringify({ pages: {} }),
               },
               {
+                file: path.join(serverDir, 'server-reference-manifest.json'),
+                contents: JSON.stringify({}),
+              },
+              {
                 file: path.join(vendorChunksDir, '@opentelemetry.js'),
-                contents: 'export {};'
+                contents: 'module.exports = {};'
               },
               {
                 file: path.join(vendorChunksDir, 'next.js'),
@@ -127,6 +131,34 @@ const nextConfig: NextConfig = {
               if (!existsSync(stub.file)) {
                 writeFileSync(stub.file, stub.contents);
               }
+            }
+
+            // Also ensure client static manifests if BUILD_ID is available
+            try {
+              const buildIdFile = path.join(process.cwd(), '.next', 'BUILD_ID');
+              if (existsSync(buildIdFile)) {
+                const buildId = String(require('node:fs').readFileSync(buildIdFile)).trim();
+                if (buildId) {
+                  const staticDir = path.join(process.cwd(), '.next', 'static', buildId);
+                  mkdirSync(staticDir, { recursive: true });
+                  const ssgManifestPath = path.join(staticDir, '_ssgManifest.js');
+                  const buildManifestPath = path.join(staticDir, '_buildManifest.js');
+                  if (!existsSync(ssgManifestPath)) {
+                    writeFileSync(
+                      ssgManifestPath,
+                      'self.__SSG_MANIFEST=new Set();self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()'
+                    );
+                  }
+                  if (!existsSync(buildManifestPath)) {
+                    writeFileSync(
+                      buildManifestPath,
+                      'self.__BUILD_MANIFEST={};self.__BUILD_MANIFEST_CB&&self.__BUILD_MANIFEST_CB()'
+                    );
+                  }
+                }
+              }
+            } catch (_) {
+              // ignore
             }
             
             if (process.env.DEBUG_NEXT_MANIFESTS === 'true') {
