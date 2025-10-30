@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     teamMembers: TeamMember;
+    partners: Partner;
     references: Reference;
     faqs: Faq;
     media: Media;
@@ -82,6 +83,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     teamMembers: TeamMembersSelect<false> | TeamMembersSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
     references: ReferencesSelect<false> | ReferencesSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -100,7 +102,7 @@ export interface Config {
   globalsSelect: {
     siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'cs';
   user: User & {
     collection: 'users';
   };
@@ -158,18 +160,68 @@ export interface User {
  */
 export interface TeamMember {
   id: string;
-  name: string;
+  /**
+   * Auto-generated display name for admin interface
+   */
+  displayName?: string | null;
+  /**
+   * Auto-generated role display for admin interface
+   */
+  roleDisplay?: string | null;
+  name: {
+    cs: string;
+    en: string;
+  };
   role: {
     cs: string;
     en: string;
   };
-  avatar?: (string | null) | Media;
-  order: number;
-  featured?: boolean | null;
   bio?: {
     cs?: string | null;
     en?: string | null;
   };
+  /**
+   * Displayed as expertise badges on the website.
+   */
+  focus?:
+    | {
+        value: {
+          cs: string;
+          en: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * CSS color or gradient used for card glow (e.g. linear-gradient(...)).
+   */
+  accent?: string | null;
+  avatar?: (string | null) | Media;
+  socials?: {
+    linkedin?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+    youtube?: string | null;
+    website?: string | null;
+  };
+  order: number;
+  featured?: boolean | null;
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: string;
+  name: string;
+  logo: string | Media;
+  logoAlt?: string | null;
+  scale?: number | null;
+  order: number;
+  showOnSite?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -288,6 +340,7 @@ export interface Faq {
     en: string;
   };
   order: number;
+  showOnSite?: boolean | null;
   isFeatured?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -426,22 +479,65 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "teamMembers_select".
  */
 export interface TeamMembersSelect<T extends boolean = true> {
-  name?: T;
+  displayName?: T;
+  roleDisplay?: T;
+  name?:
+    | T
+    | {
+        cs?: T;
+        en?: T;
+      };
   role?:
     | T
     | {
         cs?: T;
         en?: T;
       };
-  avatar?: T;
-  order?: T;
-  featured?: T;
   bio?:
     | T
     | {
         cs?: T;
         en?: T;
       };
+  focus?:
+    | T
+    | {
+        value?:
+          | T
+          | {
+              cs?: T;
+              en?: T;
+            };
+        id?: T;
+      };
+  accent?: T;
+  avatar?: T;
+  socials?:
+    | T
+    | {
+        linkedin?: T;
+        twitter?: T;
+        instagram?: T;
+        youtube?: T;
+        website?: T;
+      };
+  order?: T;
+  featured?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  logoAlt?: T;
+  scale?: T;
+  order?: T;
+  showOnSite?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -487,6 +583,7 @@ export interface FaqsSelect<T extends boolean = true> {
         en?: T;
       };
   order?: T;
+  showOnSite?: T;
   isFeatured?: T;
   updatedAt?: T;
   createdAt?: T;

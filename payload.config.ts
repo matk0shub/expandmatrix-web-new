@@ -8,6 +8,7 @@ import { FAQ } from './src/payload/collections/FAQ.ts'
 import { Media } from './src/payload/collections/Media.ts'
 import { FooterLinks } from './src/payload/collections/FooterLinks.ts'
 import { Subscribers } from './src/payload/collections/Subscribers.ts'
+import { Partners } from './src/payload/collections/Partners.ts'
 import { SiteSettings } from './src/payload/globals/SiteSettings.ts'
 import { isUsingFallbackDatabase, resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env.ts'
 
@@ -73,7 +74,7 @@ const initPayloadConfig = async () => {
       defaultLocale: 'en',
       fallback: true,
     },
-    collections: [Users, Team, References, FAQ, Media, FooterLinks, Subscribers],
+    collections: [Users, Team, Partners, References, FAQ, Media, FooterLinks, Subscribers],
     globals: [SiteSettings],
     typescript: {
       outputFile: path.resolve(process.cwd(), 'payload-types.ts'),
