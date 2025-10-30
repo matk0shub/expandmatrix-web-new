@@ -14,11 +14,11 @@ interface ReferencesSectionCopy {
   metaName: string;
   metaDescription: string;
   overline: string;
-  selectReference: (name: string) => string;
+  selectReference: string | ((name: string) => string);
   instagram: string;
-  instagramAria: (name: string) => string;
+  instagramAria: string | ((name: string) => string);
   website: string;
-  websiteAria: (name: string) => string;
+  websiteAria: string | ((name: string) => string);
   impactHeading: string;
 }
 
