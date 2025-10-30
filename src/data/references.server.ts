@@ -99,16 +99,35 @@ const resolveImage = (
   };
 };
 
+const missingReferenceImages = new Set<string>();
+
 const normalizeReferences = (docs: PayloadReference[], locale: string): Reference[] => {
   const normalized: Reference[] = [];
 
   docs.forEach((doc) => {
     const name = ensureString(doc.name, locale);
     const slug = ensureString(doc.slug);
-    const image = resolveImage(doc.image, locale);
 
-    if (!name || !slug || !image) {
+    if (!name || !slug) {
       return;
+    }
+
+    let image = resolveImage(doc.image, locale);
+
+    if (!image) {
+      if (!missingReferenceImages.has(slug)) {
+        console.warn(
+          `[references] Missing media asset for "${slug}". Using gradient fallback. ` +
+            'Upload an image in Payload > Media and re-run the references seed to restore visuals.',
+        );
+        missingReferenceImages.add(slug);
+      }
+
+      image = {
+        id: String(doc.id ?? slug),
+        url: '',
+        alt: ensureString(doc.subtitle, locale) || name,
+      };
     }
 
     const metrics = Array.isArray(doc.metrics)
@@ -209,9 +228,10 @@ export const getReferences = cache(
       } else {
         console.error('References fetch failed, falling back to samples:', error);
       }
+    } finally {
+      console.timeEnd?.(benchmarkLabel);
     }
 
-    console.timeEnd?.(benchmarkLabel);
     return {
       references: getSampleReferences(resolveLocale(locale)),
       isFallback: true,

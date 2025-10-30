@@ -84,9 +84,10 @@ export const getTeamMembers = cache(
       } else {
         console.error('Team members fetch failed, falling back to samples:', error);
       }
+    } finally {
+      console.timeEnd?.(benchmarkLabel);
     }
 
-    console.timeEnd?.(benchmarkLabel);
     return {
       members: getSampleTeamMembers({ locale, featuredOnly }),
       isFallback: true,

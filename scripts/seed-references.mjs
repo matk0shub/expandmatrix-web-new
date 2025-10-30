@@ -6,6 +6,11 @@ import dotenv from 'dotenv'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '..')
+const mediaDir = path.join(projectRoot, 'media')
+
+if (!fs.existsSync(mediaDir)) {
+  fs.mkdirSync(mediaDir, { recursive: true })
+}
 
 const loadEnv = () => {
   const candidates = ['.env.local', '.env']
@@ -198,7 +203,23 @@ const findMediaByFilename = async (filename) => {
 
   if (existing.totalDocs > 0) {
     const doc = existing.docs[0]
-    return { id: doc.id ?? doc._id, doc }
+    const diskFilename = doc.filename ?? filename
+    const diskPath = diskFilename ? path.join(mediaDir, diskFilename) : null
+
+    if (diskPath && fs.existsSync(diskPath)) {
+      return { id: doc.id ?? doc._id, doc }
+    }
+
+    const identifier = doc.id ?? doc._id
+    if (identifier) {
+      console.warn(
+        `[seed:references] Media document "${diskFilename}" missing on disk, deleting and re-uploading.`,
+      )
+      await payload.delete({
+        collection: 'media',
+        id: identifier,
+      })
+    }
   }
 
   return { id: null, doc: null }
