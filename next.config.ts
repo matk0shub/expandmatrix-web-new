@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
       },
     };
     
-    if (isServer) {
+    if (dev && isServer) {
       class EnsureNextDevManifestsPlugin {
         ensureManifests() {
           const serverDir = path.join(process.cwd(), '.next', 'server');
@@ -76,47 +76,7 @@ const nextConfig: NextConfig = {
             const vendorChunksDir = path.join(serverDir, 'vendor-chunks');
             mkdirSync(vendorChunksDir, { recursive: true });
             
-            const fontManifest = { app: {}, pages: {} };
-            const middlewareManifest = {
-              version: 3,
-              sortedMiddleware: [],
-              middleware: {},
-              functions: {},
-            };
-            
             const stubs: Array<{ file: string; contents: string }> = [
-              {
-                file: path.join(serverDir, 'next-font-manifest.json'),
-                contents: JSON.stringify(fontManifest),
-              },
-              {
-                file: path.join(serverDir, 'next-font-manifest.js'),
-                contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};`,
-              },
-              {
-                file: path.join(serverDir, 'middleware-manifest.json'),
-                contents: JSON.stringify(middlewareManifest),
-              },
-              {
-                file: path.join(serverDir, 'pages-manifest.json'),
-                contents: JSON.stringify({}),
-              },
-              {
-                file: path.join(serverDir, 'app-paths-manifest.json'),
-                contents: JSON.stringify({}),
-              },
-              {
-                file: path.join(serverDir, 'app-path-routes-manifest.json'),
-                contents: JSON.stringify({}),
-              },
-              {
-                file: path.join(serverDir, 'app-build-manifest.json'),
-                contents: JSON.stringify({ pages: {} }),
-              },
-              {
-                file: path.join(serverDir, 'server-reference-manifest.json'),
-                contents: JSON.stringify({}),
-              },
               {
                 file: path.join(vendorChunksDir, '@opentelemetry.js'),
                 contents: 'module.exports = {};'
@@ -145,33 +105,6 @@ const nextConfig: NextConfig = {
               }
             }
 
-            // Also ensure client static manifests if BUILD_ID is available
-            try {
-              const buildIdFile = path.join(process.cwd(), '.next', 'BUILD_ID');
-              if (existsSync(buildIdFile)) {
-                const buildId = String(require('node:fs').readFileSync(buildIdFile)).trim();
-                if (buildId) {
-                  const staticDir = path.join(process.cwd(), '.next', 'static', buildId);
-                  mkdirSync(staticDir, { recursive: true });
-                  const ssgManifestPath = path.join(staticDir, '_ssgManifest.js');
-                  const buildManifestPath = path.join(staticDir, '_buildManifest.js');
-                  if (!existsSync(ssgManifestPath)) {
-                    writeFileSync(
-                      ssgManifestPath,
-                      'self.__SSG_MANIFEST=new Set();self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()'
-                    );
-                  }
-                  if (!existsSync(buildManifestPath)) {
-                    writeFileSync(
-                      buildManifestPath,
-                      'self.__BUILD_MANIFEST={};self.__BUILD_MANIFEST_CB&&self.__BUILD_MANIFEST_CB()'
-                    );
-                  }
-                }
-              }
-            } catch (_) {
-              // ignore
-            }
             
             if (process.env.DEBUG_NEXT_MANIFESTS === 'true') {
               console.log('[next.config] ensured dev manifest stubs');
@@ -187,7 +120,6 @@ const nextConfig: NextConfig = {
           if (!ensureManifestIntervalStarted) {
             ensureManifestIntervalStarted = true;
             ensure();
-            setInterval(ensure, 200);
           }
           
           if (

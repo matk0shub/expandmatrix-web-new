@@ -30,7 +30,7 @@ const getTeamMembersCached = unstable_cache(
     featuredKey: string,
   ): Promise<TeamMembersResult> => {
     const featuredOnly = featuredKey === '1'
-    const benchmarkLabel = `[team] fetch (locale=${locale}, featuredOnly=${featuredOnly})`;
+    const benchmarkLabel = `[team] fetch (locale=${locale}, featuredOnly=${featuredOnly ? 'true' : 'false'})`;
     console.time?.(benchmarkLabel);
     try {
       const payload = await getPayloadClient();
