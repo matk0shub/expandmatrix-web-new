@@ -1,8 +1,5 @@
-import teamMembersJson from './teamMembers.json';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
 import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
-
-const baseTeamMembers = teamMembersJson as TeamMemberDocument[];
 
 function localizedValue(
   value: string | Record<string, string | undefined> | undefined,
@@ -85,31 +82,4 @@ export function normalizePayloadTeamMembers(
       };
     })
     .filter((member) => member.showOnSite);
-}
-
-export function getSampleTeamResponse(options: { featuredOnly?: boolean } = {}) {
-  const { featuredOnly = false } = options;
-  const docs = baseTeamMembers
-    .filter((member) => member.showOnSite ?? true)
-    .filter((member) => (featuredOnly ? member.featured : true))
-    .sort((a, b) => a.order - b.order);
-
-  return {
-    docs,
-    totalDocs: docs.length,
-    limit: docs.length,
-    totalPages: 1,
-    page: 1,
-    pagingCounter: 1,
-    hasPrevPage: false,
-    hasNextPage: false,
-    prevPage: null,
-    nextPage: null,
-  };
-}
-
-export function getSampleTeamMembers(options: { locale: string; featuredOnly?: boolean }) {
-  const { locale, featuredOnly = false } = options;
-  const response = getSampleTeamResponse({ featuredOnly });
-  return normalizePayloadTeamMembers(response.docs, locale);
 }
