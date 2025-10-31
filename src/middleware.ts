@@ -20,6 +20,11 @@ export default function middleware(request: NextRequest) {
   const hasCookieLocale = cookieLocale && locales.includes(cookieLocale as (typeof locales)[number]);
   const pathname = request.nextUrl.pathname;
   const currentLocale = getLocaleFromPath(pathname);
+  const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/');
+
+  if (isAdminRoute) {
+    return NextResponse.next();
+  }
 
   if (hasCookieLocale && cookieLocale !== currentLocale) {
     const localePrefixLength = currentLocale ? currentLocale.length + 1 : 0;
