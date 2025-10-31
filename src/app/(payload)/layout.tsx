@@ -1,5 +1,6 @@
 /* THIS FILE WAS GENERATED BASED ON THE OFFICIAL PAYLOAD TEMPLATE. */
 import '@payloadcms/next/css';
+import '@/payload/prewarm';
 
 import type { ServerFunctionClient } from 'payload';
 import React from 'react';

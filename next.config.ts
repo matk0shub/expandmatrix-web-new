@@ -240,6 +240,6 @@ const nextConfig: NextConfig = {
 
 export default withBundleAnalyzer(
   withPayload(withNextIntl(nextConfig), {
-    devBundleServerPackages: true,
+    devBundleServerPackages: false,
   }),
 );
