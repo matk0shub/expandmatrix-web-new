@@ -24,10 +24,15 @@ type PageArgs = {
 const adminViewsPromise = import('@payloadcms/next/views');
 const configPromise = Promise.resolve(config);
 
-const normalizeParams = (paramsPromise: Promise<Params>) =>
-  paramsPromise.then((value) => ({
-    segments: Array.isArray(value.segments) ? value.segments : [],
-  }));
+const normalizeParams = (
+  paramsPromise: Promise<Params>,
+): Promise<{ segments: string[] }> =>
+  paramsPromise.then((value) => {
+    if (Array.isArray(value.segments) && value.segments.length > 0) {
+      return { segments: value.segments };
+    }
+    return { segments: undefined as unknown as string[] };
+  });
 
 const normalizeSearchParams = (searchParamsPromise: Promise<SearchParams>) =>
   searchParamsPromise.then((value) => {
