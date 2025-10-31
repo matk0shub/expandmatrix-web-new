@@ -1,8 +1,8 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://expandmatrix.cz'
-  
+  const baseUrl = 'https://expandmatrix.com';
+
   return [
     {
       url: baseUrl,
@@ -22,5 +22,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 1,
     },
-  ]
+  ];
 }
