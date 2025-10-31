@@ -130,7 +130,6 @@ export const getPayloadClient = async () => {
 
   if (!payload.db) {
     if (!payloadInitPromise) {
-      // Reuse global init promise across HMR cycles in dev
       payloadInitPromise = (g.__payloadInit ||= initializePayload(secret).catch((error: unknown) => {
         const err = error as NodeJS.ErrnoException | undefined
 
@@ -154,19 +153,16 @@ export const getPayloadClient = async () => {
     try {
       await payloadInitPromise
       console.debug?.('[payload] Payload initialization finished')
-      // If init succeeded, clear offline flags
       if (payload.db) {
         payloadOffline = false
         g.__payloadOffline = false
       }
     } finally {
-      // Keep global promise for HMR; local ref can be cleared
       payloadInitPromise = null
     }
   }
 
   if (payloadOffline || !payload.db) {
-    // Return early if offline; callers can choose fallback paths
     console.debug?.('[payload] Initialization unsuccessful, returning offline error')
     throw createOfflineError()
   }

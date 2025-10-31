@@ -60,6 +60,8 @@ All three commands should pass before merging or deploying. When Chrome is unava
 
 Payload powers team members, references, FAQs, footer links, subscribers and global settings.
 
+> Use `env.production.example` as a template when preparing production `.env` files. Never commit secrets – copy it outside of Git and fill in real credentials there.
+
 1. **Environment variables** (create `.env.local` / `.env`):
    ```bash
    PAYLOAD_SECRET=replace-with-long-random-string
@@ -121,3 +123,7 @@ Pull requests are welcome. Please:
 ---
 
 Crafted with care by the Expand Matrix engineering team.
+
+## Single-Server Deployment
+
+Looking to run the marketing site and Payload CMS from one host? See [`docs/deployment/single-server.md`](docs/deployment/single-server.md) for a step-by-step guide covering environment management, systemd setup, reverse proxying and backups.

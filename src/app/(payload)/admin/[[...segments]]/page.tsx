@@ -14,35 +14,43 @@ type Params = {
 type SearchParams = Record<string, string | string[] | undefined>;
 
 type PageArgs = {
-  params: Params;
-  searchParams: SearchParams;
+  params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
 };
 
 const adminViewsPromise = import('@payloadcms/next/views');
+const configPromise = Promise.resolve(config);
+
+const normalizeParams = (paramsPromise: Promise<Params>) =>
+  paramsPromise.then((value) => ({
+    segments: Array.isArray(value.segments) ? value.segments : [],
+  }));
+
+const normalizeSearchParams = (searchParamsPromise: Promise<SearchParams>) =>
+  searchParamsPromise.then((value) => {
+    const entries = Object.entries(value).filter(
+      (entry): entry is [string, string | string[]] => entry[1] !== undefined,
+    );
+    return Object.fromEntries(entries);
+  });
 
 export const generateMetadata = async ({ params, searchParams }: PageArgs): Promise<Metadata> => {
   const viewsModule = await adminViewsPromise;
 
-  const { segments = [] } = await params;
-  const sp = await searchParams;
-
   return viewsModule.generatePageMetadata({
-    config,
-    params: { segments },
-    searchParams: sp,
+    config: configPromise,
+    params: normalizeParams(params),
+    searchParams: normalizeSearchParams(searchParams),
   });
 };
 
 const Page = async ({ params, searchParams }: PageArgs) => {
   const viewsModule = await adminViewsPromise;
 
-  const { segments = [] } = await params;
-  const sp = await searchParams;
-
   return viewsModule.RootPage({
-    config,
-    params: { segments },
-    searchParams: sp,
+    config: configPromise,
+    params: normalizeParams(params),
+    searchParams: normalizeSearchParams(searchParams),
     importMap,
   });
 };
