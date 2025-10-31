@@ -2,11 +2,17 @@ import payload from 'payload'
 import path from 'path'
 import { pathToFileURL } from 'url'
 
-import { resolveDatabaseUri, resolvePayloadSecret } from '@/payload/env'
+import { resolvePayloadSecret } from '@/payload/env'
+import { serverLog } from '@/utils/serverLog'
 
 type PayloadConfigShape = Record<string, unknown>
 
+type GlobalWithPayloadInit = typeof globalThis & {
+  __payloadInit?: Promise<void> | null
+}
+
 let cachedConfig: PayloadConfigShape | null = null
+let payloadInitPromise: Promise<void> | null = null
 
 const loadConfig = async (): Promise<PayloadConfigShape> => {
   if (!cachedConfig) {
@@ -19,20 +25,48 @@ const loadConfig = async (): Promise<PayloadConfigShape> => {
   return cachedConfig
 }
 
-export const getPayloadClient = async () => {
+const initializePayload = async () => {
+  serverLog('[payload] initializePayload: start')
+  const config = await loadConfig()
   const secret = resolvePayloadSecret()
-  resolveDatabaseUri()
+
+  const init = payload.init({
+    config: config as never,
+    local: true,
+    secret,
+  } as never)
+  await init
+  serverLog('[payload] initializePayload: finished')
+}
+
+export const getPayloadClient = async () => {
+  const g = globalThis as GlobalWithPayloadInit
 
   if (!payload.db) {
-    const config = await loadConfig()
+    serverLog('[payload] getPayloadClient: payload.db missing, initializing...')
+    if (!payloadInitPromise) {
+      payloadInitPromise = (g.__payloadInit ||= initializePayload().finally(() => {
+        g.__payloadInit = null
+      }))
+    }
 
-    await payload.init({
-      config: config as never,
-      local: process.env.NODE_ENV !== 'production',
-      secret,
-    } as never)
+    try {
+      await payloadInitPromise
+      console.debug?.('[payload] Payload initialization finished')
+      if (payload.db) {
+        serverLog('[payload] getPayloadClient: payload.db present after init')
+        return payload
+      }
+    } finally {
+      payloadInitPromise = null
+    }
   }
 
+  if (!payload.db) {
+    throw new Error('[payload] Initialization unsuccessful. Verify MongoDB connectivity and configuration.')
+  }
+
+  serverLog('[payload] getPayloadClient: returning existing payload instance')
   return payload
 }
 

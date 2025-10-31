@@ -38,6 +38,9 @@ export default function SmoothScroll() {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let loadHandler: (() => void) | undefined;
     let scrollCleanup: (() => void) | undefined;
+    let interactionCleanup: (() => void) | undefined;
+    let interactionFallbackTimeout: ReturnType<typeof setTimeout> | undefined;
+    let interactionTriggered = false;
 
     const dispose = () => {
       if (disposed) {
@@ -64,6 +67,14 @@ export default function SmoothScroll() {
 
       if (scrollCleanup) {
         scrollCleanup();
+      }
+
+      if (interactionCleanup) {
+        interactionCleanup();
+      }
+
+      if (interactionFallbackTimeout) {
+        clearTimeout(interactionFallbackTimeout);
       }
 
       lenisInstance?.destroy();
@@ -151,7 +162,52 @@ export default function SmoothScroll() {
       }
     };
 
-    queueInitialization();
+    const triggerInitialization = () => {
+      if (interactionTriggered || disposed) {
+        return;
+      }
+
+      interactionTriggered = true;
+
+      if (interactionCleanup) {
+        interactionCleanup();
+        interactionCleanup = undefined;
+      }
+
+      if (interactionFallbackTimeout) {
+        clearTimeout(interactionFallbackTimeout);
+        interactionFallbackTimeout = undefined;
+      }
+
+      queueInitialization();
+    };
+
+    const setupInteractionListeners = () => {
+      const wheelListener = () => triggerInitialization();
+      const touchListener = () => triggerInitialization();
+      const keyListener = (event: KeyboardEvent) => {
+        const triggerKeys = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '];
+        if (triggerKeys.includes(event.key)) {
+          triggerInitialization();
+        }
+      };
+
+      window.addEventListener('wheel', wheelListener, { passive: true });
+      window.addEventListener('touchstart', touchListener, { passive: true });
+      window.addEventListener('keydown', keyListener, { passive: false });
+
+      interactionCleanup = () => {
+        window.removeEventListener('wheel', wheelListener);
+        window.removeEventListener('touchstart', touchListener);
+        window.removeEventListener('keydown', keyListener);
+      };
+    };
+
+    setupInteractionListeners();
+
+    interactionFallbackTimeout = setTimeout(() => {
+      triggerInitialization();
+    }, 6000);
 
     return dispose;
   }, [prefersReducedMotion]);

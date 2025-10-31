@@ -6,11 +6,18 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import ScrambleText from './ScrambleText';
-import { partnerItems, type PartnerContent } from '@/constants/partners';
+import type { NormalizedPartner } from '@/types/partners';
+
+interface PartnerBallContent {
+  src: string;
+  alt: string;
+  scale?: number;
+}
 
 interface BallConfig {
   id: number;
-  content: PartnerContent;
+  partnerId: string;
+  content: PartnerBallContent;
 }
 
 interface BallState {
@@ -42,7 +49,11 @@ const WALL_RESTITUTION = 0.82;
 const GROUND_FRICTION = 0.84;
 const SURFACE_FRICTION = 0.18;
 
-export default function ClientsSection() {
+interface ClientsSectionProps {
+  partners: NormalizedPartner[];
+}
+
+export default function ClientsSection({ partners }: ClientsSectionProps) {
   const t = useTranslations('sections.clients');
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,26 +71,34 @@ export default function ClientsSection() {
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const [layout, setLayout] = useState({
+  const partnerCount = Math.max(Array.isArray(partners) ? partners.length : 0, 0);
+  const [layout, setLayout] = useState(() => ({
     ballSize: 160,
     greenRadius: 180,
     topRatio: 0.45,
     sectionMinHeight: 720,
-    ballCount: 11,
-  });
+    ballCount: Math.max(partnerCount, 1),
+  }));
   const clampValue = useCallback(
     (value: number, min: number, max: number) => Math.min(Math.max(value, min), max),
     []
   );
 
-  const ballConfigs = useMemo<BallConfig[]>(
-    () =>
-      partnerItems.map((content, index) => ({
-        id: index,
-        content
-      })),
-    []
-  );
+  const ballConfigs = useMemo<BallConfig[]>(() => {
+    if (!partners.length) {
+      return [];
+    }
+
+    return partners.map((partner, index) => ({
+      id: index,
+      partnerId: partner.id,
+      content: {
+        src: partner.logo.url,
+        alt: partner.logo.alt ?? partner.name,
+        scale: partner.scale,
+      },
+    }));
+  }, [partners]);
 
   const computeResponsiveValues = useCallback(
     (width: number, height: number) => {
@@ -229,6 +248,12 @@ export default function ClientsSection() {
         config = largeConfig;
       }
 
+      const partnerTotal = Math.max(ballConfigs.length, 1);
+      const idealCount = Math.max(config.ballCount, 1);
+      const densityRatio = partnerTotal / idealCount;
+      const sizeFactor = clampValue(Math.sqrt(idealCount / partnerTotal), 0.65, 1.2);
+      const velocityFactor = clampValue(Math.sqrt(densityRatio), 0.75, 1.28);
+
       const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : height;
       const sectionTargetHeight = Math.max(
         height,
@@ -241,7 +266,11 @@ export default function ClientsSection() {
       const effectiveHeight = Math.max(height, sectionMinHeight);
 
       const ballSize = Math.round(
-        clampValue(width * config.ballScale, config.ballMin, config.ballMax)
+        clampValue(
+          width * config.ballScale * sizeFactor,
+          config.ballMin * sizeFactor,
+          config.ballMax * sizeFactor
+        )
       );
       const greenRadius = clampValue(
         width * config.greenScale,
@@ -271,14 +300,14 @@ export default function ClientsSection() {
       );
 
       const horizontalVelocityRange = clampValue(
-        width * config.velocityHorizontalScale,
-        config.velocityHorizontalMin,
-        config.velocityHorizontalMax
+        width * config.velocityHorizontalScale * velocityFactor,
+        config.velocityHorizontalMin * velocityFactor,
+        config.velocityHorizontalMax * velocityFactor
       );
       const verticalVelocityRange = clampValue(
-        effectiveHeight * config.velocityVerticalScale,
-        config.velocityVerticalMin,
-        config.velocityVerticalMax
+        effectiveHeight * config.velocityVerticalScale * velocityFactor,
+        config.velocityVerticalMin * velocityFactor,
+        config.velocityVerticalMax * velocityFactor
       );
 
       return {
@@ -287,7 +316,7 @@ export default function ClientsSection() {
           greenRadius,
           topRatio,
           sectionMinHeight,
-          ballCount: config.ballCount
+          ballCount: partnerTotal
         },
         padding: {
           horizontal: horizontalPadding,
@@ -300,12 +329,12 @@ export default function ClientsSection() {
           vertical: verticalVelocityRange
         },
         maxVelocity: {
-          x: config.maxVelocity.x,
-          y: config.maxVelocity.y
+          x: config.maxVelocity.x * velocityFactor,
+          y: config.maxVelocity.y * velocityFactor
         }
       };
     },
-    [clampValue]
+    [ballConfigs.length, clampValue]
   );
 
   const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 200, 420));
@@ -314,8 +343,6 @@ export default function ClientsSection() {
   const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 30, 60);
   const primaryTextSize = unifiedHeadingSize;
   const secondaryTextSize = unifiedHeadingSize;
-  const contentFontSize = clampValue(layout.ballSize * 0.38, 20, 52);
-  const ballForegroundColor = '#e6ecf5';
   const monochromeFilter = 'none';
 
   const baseBallStyle = useMemo<CSSProperties>(
@@ -326,14 +353,9 @@ export default function ClientsSection() {
       opacity: 0,
       borderRadius: '9999px',
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
-      border: '1px solid rgba(220, 230, 240, 0.52)',
-      background:
-        'radial-gradient(140% 120% at 50% 100%, rgba(218, 228, 240, 0.48) 0%, rgba(196, 204, 216, 0.28) 52%, rgba(174, 186, 200, 0.18) 78%, rgba(156, 166, 182, 0.12) 100%),' +
-        'linear-gradient(180deg, rgba(244, 248, 254, 0.45) 0%, rgba(210, 220, 234, 0.22) 58%, rgba(188, 198, 212, 0.18) 100%)',
-      boxShadow: '0 28px 52px rgba(12, 18, 26, 0.32), 0 12px 22px rgba(12, 18, 26, 0.22)',
-      backdropFilter: 'blur(22px) saturate(140%)',
-      WebkitBackdropFilter: 'blur(22px) saturate(140%)',
-      backgroundColor: 'rgba(210, 220, 232, 0.24)',
+      border: '2px solid rgba(140, 148, 156, 0.6)',
+      backgroundColor: '#333333',
+      boxShadow: '0 24px 44px rgba(0, 0, 0, 0.5), 0 12px 24px rgba(0, 0, 0, 0.35)',
       overflow: 'hidden'
     }),
     [layout.ballSize, prefersReducedMotion]
@@ -363,126 +385,32 @@ export default function ClientsSection() {
 
   const renderBallContent = useCallback(
     (ball: BallConfig) => {
-      if (ball.content.kind === 'logo') {
-        const scale = ball.content.scale ?? 0.62;
-        const side = Math.max(layout.ballSize * scale, 28);
-
-        return (
-          <div
-            className="relative flex items-center justify-center"
-            style={{
-              width: `${side}px`,
-              height: `${side}px`
-            }}
-          >
-            <Image
-              src={ball.content.src}
-              alt={ball.content.alt}
-              fill
-              sizes={`${Math.round(side)}px`}
-              className="object-contain"
-              style={{
-                filter: monochromeFilter
-              }}
-              draggable={false}
-            />
-          </div>
-        );
-      }
-
-      if (ball.content.kind === 'logoStacked') {
-        const baseIconScale = ball.content.scale ?? 0.6;
-        const maxIconRatio = 0.62;
-        const minIconPixels = 28;
-        const baseIconSide = Math.max(layout.ballSize * baseIconScale, minIconPixels);
-        const iconMax = layout.ballSize * maxIconRatio;
-        const [primaryLine, secondaryLine] = ball.content.labelLines;
-
-        const baseGap = Math.max(layout.ballSize * 0.06, 6);
-        const basePrimaryFont = Math.max(layout.ballSize * 0.18, 12);
-        const baseSecondaryFont = Math.max(layout.ballSize * 0.16, 11);
-        const estimatedHeight =
-          baseIconSide +
-          baseGap +
-          basePrimaryFont +
-          (secondaryLine ? baseSecondaryFont + baseGap * 0.6 : 0);
-        const availableHeight = layout.ballSize * 0.88;
-        const scaleFactor = Math.min(1, availableHeight / estimatedHeight);
-
-        const iconSide = Math.max(
-          Math.min(baseIconSide * scaleFactor, iconMax),
-          22
-        );
-        const gap = baseGap * scaleFactor;
-        const primaryFont = Math.max(basePrimaryFont * scaleFactor, 10);
-        const secondaryFont = Math.max(baseSecondaryFont * scaleFactor, 10);
-
-        return (
-          <div
-            className="flex h-full w-full flex-col items-center justify-center text-center"
-            style={{ gap: `${gap}px`, padding: `${layout.ballSize * 0.08}px` }}
-          >
-            <div
-              className="relative flex items-center justify-center"
-              style={{
-                width: `${iconSide}px`,
-                height: `${iconSide}px`
-              }}
-            >
-              <Image
-                src={ball.content.src}
-                alt={ball.content.alt}
-                fill
-                sizes={`${Math.round(iconSide)}px`}
-                className="object-contain"
-                style={{
-                  filter: monochromeFilter
-                }}
-                draggable={false}
-              />
-            </div>
-            <div
-              className="flex flex-col items-center justify-center leading-none"
-              style={{ color: ballForegroundColor }}
-            >
-              <span
-                className="text-sm font-semibold uppercase tracking-[0.24em]"
-                style={{ fontSize: `${primaryFont}px` }}
-              >
-                {primaryLine}
-              </span>
-              {secondaryLine ? (
-                <span
-                  className="text-sm font-semibold uppercase tracking-[0.24em]"
-                  style={{ fontSize: `${secondaryFont}px` }}
-                >
-                  {secondaryLine}
-                </span>
-              ) : null}
-            </div>
-          </div>
-        );
-      }
-
-      const placeholderFontSize = Math.max(contentFontSize * 0.7, 16);
+      const scale = ball.content.scale ?? 0.56;
+      const side = Math.max(layout.ballSize * scale, 32);
 
       return (
-        <span
-          className="select-none font-semibold uppercase"
+        <div
+          className="relative flex items-center justify-center"
           style={{
-            fontSize: `${placeholderFontSize}px`,
-            lineHeight: 1.08,
-            letterSpacing: '0.18em',
-            color: ballForegroundColor,
-            textShadow:
-              '0 12px 26px rgba(16, 22, 32, 0.55), 0 0 18px rgba(255, 255, 255, 0.22)'
+            width: `${side}px`,
+            height: `${side}px`,
           }}
         >
-          {ball.content.text}
-        </span>
+          <Image
+            src={ball.content.src}
+            alt={ball.content.alt}
+            fill
+            sizes={`${Math.round(side)}px`}
+            className="object-contain"
+            style={{
+              filter: monochromeFilter,
+            }}
+            draggable={false}
+          />
+        </div>
       );
     },
-    [ballForegroundColor, contentFontSize, layout.ballSize, monochromeFilter]
+    [layout.ballSize, monochromeFilter]
   );
 
   // Resolve circle-circle collisions with impulse response and tangential friction.
@@ -749,29 +677,28 @@ export default function ClientsSection() {
       effectiveHeight - padding.top - padding.bottom,
       radius * 2
     );
-    const horizontalOrigin = padding.horizontal;
-    const verticalOrigin = padding.top;
     const vxRange = velocity.horizontal;
     const vyRange = velocity.vertical;
 
+    const centerX = clampValue(
+      padding.horizontal + usableWidth / 2,
+      radius,
+      Math.max(width - radius, radius)
+    );
+    const centerY = clampValue(
+      padding.top + usableHeight / 2,
+      radius,
+      Math.max(effectiveHeight - radius, radius)
+    );
+
     activeBallConfigs.forEach((config) => {
-      const x = clampValue(
-        horizontalOrigin + Math.random() * usableWidth,
-        radius,
-        Math.max(width - radius, radius)
-      );
-      const y = clampValue(
-        verticalOrigin + Math.random() * usableHeight,
-        radius,
-        Math.max(effectiveHeight - radius, radius)
-      );
       const vx = (Math.random() - 0.5) * vxRange;
       const vy = Math.random() * -vyRange;
 
       newStates.set(config.id, {
         id: config.id,
-        x,
-        y,
+        x: centerX,
+        y: centerY,
         vx,
         vy,
         radius,
@@ -1070,7 +997,7 @@ export default function ClientsSection() {
       >
         {ballConfigs.slice(0, layout.ballCount).map((ball) => (
           <div
-            key={ball.id}
+            key={ball.partnerId}
             ref={(element) => registerBall(ball.id, element)}
             className="absolute rounded-full cursor-grab active:cursor-grabbing select-none group"
             style={baseBallStyle}
@@ -1078,8 +1005,7 @@ export default function ClientsSection() {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background:
-                  'radial-gradient(120% 130% at 50% 110%, rgba(206, 216, 228, 0.55) 0%, rgba(188, 198, 210, 0.26) 60%, rgba(170, 180, 194, 0.18) 100%)'
+                backgroundColor: 'transparent'
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

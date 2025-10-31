@@ -2,10 +2,11 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import * as Collapsible from '@radix-ui/react-accordion';
 import { useLocale } from 'next-intl';
 import { ChevronDown } from 'lucide-react';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 export type FooterLink = {
   label: string;
@@ -26,13 +27,17 @@ type Props = {
 export default function FooterLinks({ groups }: Props) {
   const locale = useLocale();
   const orderedGroups = useMemo(() => [...groups].sort((a, b) => a.order - b.order), [groups]);
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionUl = framer?.motion.ul ?? fallbackMotion.ul;
+  const MotionLi = framer?.motion.li ?? fallbackMotion.li;
 
   return (
     <div className="w-full">
       {/* Desktop/Tablet columns with advanced animations */}
       <div className="hidden sm:grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {orderedGroups.map((group, groupIndex) => (
-          <motion.div 
+          <MotionDiv 
             key={group.groupTitle}
             className="footer-link-group"
             initial={{ opacity: 0, y: 10 }}
@@ -44,18 +49,18 @@ export default function FooterLinks({ groups }: Props) {
               <h3 className="text-white font-bold text-sm tracking-wider uppercase font-lato">
                 {group.groupTitle}
               </h3>
-              <motion.div 
+              <MotionDiv 
                 className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c]"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: groupIndex * 0.05 + 0.2, duration: 0.3 }}
               />
             </div>
-            
+
             {/* Links with staggered animations */}
             <ul className="space-y-3">
               {group.links.map((link, linkIndex) => (
-                    <motion.li 
+                    <MotionLi 
                       key={`${group.groupTitle}-${link.label}`}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -89,10 +94,10 @@ export default function FooterLinks({ groups }: Props) {
                       <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] group-hover:w-full transition-all duration-500 ease-out" />
                     </Link>
                   )}
-                </motion.li>
+                </MotionLi>
               ))}
             </ul>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
 
@@ -108,24 +113,24 @@ export default function FooterLinks({ groups }: Props) {
               <Collapsible.Header>
                 <Collapsible.Trigger className="group w-full text-left py-4 text-white font-semibold flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#00d76b]/40 rounded-lg px-2 -mx-2">
                   <span className="font-lato tracking-wide">{group.groupTitle}</span>
-                  <motion.div
+                  <MotionDiv
                     className="text-white/60 group-hover:text-white transition-colors duration-300"
                     animate={{ rotate: 0 }}
                     transition={{ duration: 0.3 }}
                   >
                     <ChevronDown className="w-5 h-5" />
-                  </motion.div>
+                  </MotionDiv>
                 </Collapsible.Trigger>
               </Collapsible.Header>
               <Collapsible.Content className="pb-4">
-                <motion.ul 
+                <MotionUl 
                   className="space-y-3"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
                   {group.links.map((link, linkIndex) => (
-                    <motion.li 
+                    <MotionLi 
                       key={`${group.groupTitle}-${link.label}`}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -156,9 +161,9 @@ export default function FooterLinks({ groups }: Props) {
                           <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] group-hover:w-full transition-all duration-500 ease-out" />
                         </Link>
                       )}
-                    </motion.li>
+                    </MotionLi>
                   ))}
-                </motion.ul>
+                </MotionUl>
               </Collapsible.Content>
             </Collapsible.Item>
           ))}

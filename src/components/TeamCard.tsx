@@ -1,16 +1,20 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
-import type { TeamMember } from '@/hooks/useTeamMembers';
+import type { NormalizedTeamMember } from '@/types/team';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 interface TeamCardProps {
-  member: TeamMember;
+  member: NormalizedTeamMember;
 }
 
 export default function TeamCard({ member }: TeamCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const framer = useFramerMotion();
+  const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
   // Generate initials from name
   const getInitials = (name: string) => {
@@ -23,7 +27,7 @@ export default function TeamCard({ member }: TeamCardProps) {
   };
 
   return (
-    <motion.article
+    <MotionArticle
       className="group relative bg-[#0B0B0B] rounded-2xl p-6 md:p-8 text-center cursor-pointer transition-all duration-300"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -59,7 +63,7 @@ export default function TeamCard({ member }: TeamCardProps) {
         </div>
         
         {/* Hover effect overlay */}
-        <motion.div
+        <MotionDiv
           className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0"
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
@@ -77,11 +81,11 @@ export default function TeamCard({ member }: TeamCardProps) {
       </p>
 
       {/* Subtle glow effect on hover */}
-      <motion.div
+      <MotionDiv
         className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 pointer-events-none"
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       />
-    </motion.article>
+    </MotionArticle>
   );
 }
