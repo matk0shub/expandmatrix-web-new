@@ -1,3 +1,5 @@
+import { serverLog } from '@/utils/serverLog'
+
 const requireEnv = (key: string): string => {
   const value = process.env[key];
   if (typeof value === 'string' && value.trim().length > 0) {
@@ -30,6 +32,14 @@ const assertNotLocalMongo = (uri: string): string => {
     throw new Error(
       '[payload] Local MongoDB connection strings are not supported. Provide a remote MongoDB cluster URI.',
     );
+  }
+
+  try {
+    // Log only host part to avoid leaking credentials
+    const host = uri.replace(/^mongodb(?:\+srv)?:\/\/[^@]*@/, 'mongodb+srv://').split('/')[2] || 'unknown-host'
+    serverLog('[env] using remote MongoDB host', host)
+  } catch {
+    // ignore
   }
 
   return uri;

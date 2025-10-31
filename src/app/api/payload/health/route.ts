@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
+import { serverLog } from '@/utils/serverLog'
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
 
 export async function GET() {
   const startedAt = Date.now();
   try {
+    serverLog('[health] checking Payload and MongoDB ping...')
     const payload = await getPayloadClient();
 
     const payloadDb = (payload as { db?: { connection?: unknown; client?: unknown } })?.db;
@@ -35,6 +37,7 @@ export async function GET() {
 
     const latencyMs = Date.now() - startedAt;
 
+    serverLog('[health] ok', { latencyMs })
     return NextResponse.json({
       status: 'ok',
       latencyMs,
@@ -44,6 +47,7 @@ export async function GET() {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown Payload health error';
+    serverLog('[health] error', message)
     return NextResponse.json(
       {
         status: 'error',

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
+import { serverLog } from '@/utils/serverLog';
 
 const locales = ['en', 'cs'] as const;
 const defaultLocale = 'en';
@@ -23,6 +24,7 @@ export default function middleware(request: NextRequest) {
   const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/');
 
   if (isAdminRoute) {
+    serverLog('[middleware] bypass intl for admin route', pathname)
     return NextResponse.next();
   }
 
@@ -33,6 +35,7 @@ export default function middleware(request: NextRequest) {
 
     const url = request.nextUrl.clone();
     url.pathname = `/${cookieLocale}${normalizedSuffix === '/' ? '' : normalizedSuffix}`;
+    serverLog('[middleware] redirecting to cookie locale', { from: pathname, to: url.pathname })
     return NextResponse.redirect(url);
   }
 
