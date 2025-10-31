@@ -15,7 +15,7 @@ _Prior desktop snapshot (earlier on 2025-10-29) reported LCP 3.6 s and the sam
 
 ## Current Architecture Notes
 - `src/app/[locale]/page.tsx` now renders the landing shell on the server and streams only the required client islands (`Hero`, physics clients, FAQ accordion, etc.). The old `HomePageClient` facade has been removed.
-- `src/components/ReferencesSection.tsx` and `src/data/references.server.ts` fetch featured references through the Payload local API (with sample fallback) before hydrating `ReferencesSectionClient`. All reference copy strings are resolved server-side via `next-intl`.
+- `src/components/ReferencesSection.tsx` and `src/data/references.server.ts` fetch featured references through the Payload local API before hydrating `ReferencesSectionClient`. All reference copy strings are resolved server-side via `next-intl`.
 - `TeamSection` and `ServicesSection` follow the same RSC + client island split; the client components only handle animations, hover states, and scramble effects.
 - `CalEmbedInitializer` isolates the Cal.com embed scripts so they load outside of the main render path.
 

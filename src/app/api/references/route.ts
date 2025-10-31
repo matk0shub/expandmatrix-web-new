@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
-import { getSampleReferencesResponse } from '@/data/references';
 
 const resolveLocale = (raw: string | null): 'en' | 'cs' | undefined => {
   if (!raw) {
@@ -48,12 +47,11 @@ export async function GET(request: Request) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching references from Payload:', error);
-    const fallback = getSampleReferencesResponse(localeParam ?? undefined);
-
-    if (featuredOnly) {
-      fallback.docs = fallback.docs.filter((doc) => doc.isFeatured);
-    }
-
-    return NextResponse.json(fallback);
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch references from Payload CMS',
+      },
+      { status: 503 },
+    );
   }
 }

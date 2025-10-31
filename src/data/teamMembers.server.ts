@@ -2,9 +2,7 @@ import { unstable_cache } from 'next/cache';
 import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
-import { isUsingFallbackDatabase } from '@/payload/env';
-import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
-import { getSampleTeamMembers, normalizePayloadTeamMembers } from '@/data/teamMembers';
+import { normalizePayloadTeamMembers } from '@/data/teamMembers';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
 
 interface GetTeamMembersOptions {
@@ -14,15 +12,7 @@ interface GetTeamMembersOptions {
 
 export interface TeamMembersResult {
   members: NormalizedTeamMember[];
-  isFallback: boolean;
 }
-
-let payloadOfflineLogged = false;
-const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => {
-  const error = new Error(`Payload team members query timed out after ${timeoutMs}ms`) as NodeJS.ErrnoException;
-  error.code = 'PAYLOAD_OFFLINE';
-  return error;
-};
 
 const getTeamMembersCached = unstable_cache(
   async (
@@ -30,71 +20,43 @@ const getTeamMembersCached = unstable_cache(
     featuredKey: string,
   ): Promise<TeamMembersResult> => {
     const featuredOnly = featuredKey === '1'
-    // instrumentation removed to avoid console.timeEnd label warnings in dev
-    try {
-      const payload = await getPayloadClient();
+    const payload = await getPayloadClient();
 
-      const where: Where =
-        featuredOnly
-          ? {
-              and: [
-                {
-                  showOnSite: { equals: true },
-                },
-                {
-                  featured: { equals: true },
-                },
-              ],
-            }
-          : {
-              showOnSite: { equals: true },
-            };
+    const where: Where =
+      featuredOnly
+        ? {
+            and: [
+              {
+                showOnSite: { equals: true },
+              },
+              {
+                featured: { equals: true },
+              },
+            ],
+          }
+        : {
+            showOnSite: { equals: true },
+          };
 
-      const timeoutMs = isUsingFallbackDatabase() ? resolvePayloadQueryTimeout() : 0;
-      const result = await withTimeout(
-        payload.find({
-          collection: 'teamMembers',
-          depth: 1,
-          sort: 'order',
-          limit: 100,
-          where,
-        }),
-        timeoutMs,
-        () => createPayloadTimeoutError(timeoutMs),
-      );
+    const result = await payload.find({
+      collection: 'teamMembers',
+      depth: 1,
+      sort: 'order',
+      limit: 100,
+      where,
+    });
 
-      const docs = Array.isArray(result.docs)
-        ? (result.docs as TeamMemberDocument[])
-        : [];
-      const normalized = normalizePayloadTeamMembers(docs, locale);
+    const docs = Array.isArray(result.docs) ? (result.docs as TeamMemberDocument[]) : [];
+    const normalized = normalizePayloadTeamMembers(docs, locale);
 
-      if (normalized.length > 0) {
-        return { members: normalized, isFallback: false };
-      }
-    } catch (error) {
-      const code = (error as NodeJS.ErrnoException | undefined)?.code;
-      if (code === 'PAYLOAD_OFFLINE') {
-        if (!payloadOfflineLogged) {
-          console.info(
-            '[team] Payload CMS unavailable, serving embedded team members. ' +
-              'Set DATABASE_URI to connect to a running Payload instance.',
-          );
-          payloadOfflineLogged = true;
-        }
-      } else {
-        console.error('Team members fetch failed, falling back to samples:', error);
-      }
-    } finally {
-      // no-op
+    if (!normalized.length) {
+      console.warn('[team] No team members were returned from Payload CMS.');
     }
 
-    return {
-      members: getSampleTeamMembers({ locale, featuredOnly }),
-      isFallback: true,
-    };
+    return { members: normalized };
   },
   ['team-members'],
-  { revalidate: 60, tags: ['team-members'] }
+  { revalidate: 60, tags: ['team-members'] },
 );
 
 export const getTeamMembers = async ({

@@ -1,9 +1,6 @@
 import { unstable_cache } from 'next/cache';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
-import { isUsingFallbackDatabase } from '@/payload/env';
-import { resolvePayloadQueryTimeout, withTimeout } from '@/payload/timeouts';
-import { getSampleReferences } from '@/data/references';
 import type { Reference } from '@/types/references';
 import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
 
@@ -166,79 +163,44 @@ interface GetReferencesOptions {
 
 export interface ReferencesResult {
   references: Reference[];
-  isFallback: boolean;
 }
-
-let payloadOfflineLogged = false;
-const createPayloadTimeoutError = (timeoutMs: number): NodeJS.ErrnoException => {
-  const error = new Error(`Payload references query timed out after ${timeoutMs}ms`) as NodeJS.ErrnoException;
-  error.code = 'PAYLOAD_OFFLINE';
-  return error;
-};
 
 const getReferencesCached = unstable_cache(
   async (locale: string, featuredKey: string): Promise<ReferencesResult> => {
     const featuredOnly = featuredKey === '1';
-    // instrumentation removed to avoid console.timeEnd label warnings in dev
-    try {
-      const payload = await getPayloadClient();
-      const resolvedLocale = resolveLocale(locale);
-      const payloadLocale = 'all' as const;
-      const timeoutMs = isUsingFallbackDatabase() ? resolvePayloadQueryTimeout() : 0;
-      const result = await withTimeout(
-        payload.find({
-          collection: 'references',
-          depth: 2,
-          sort: 'order',
-          limit: 100,
-          locale: payloadLocale,
-          where: featuredOnly
-            ? {
-                isFeatured: {
-                  equals: true,
-                },
-              }
-            : undefined,
-        }),
-        timeoutMs,
-        () => createPayloadTimeoutError(timeoutMs),
-      );
+    const payload = await getPayloadClient();
+    const resolvedLocale = resolveLocale(locale);
+    const payloadLocale = 'all' as const;
 
-      const docs = Array.isArray(result.docs)
-        ? (result.docs as PayloadReference[])
-        : [];
-      const references = normalizeReferences(docs, resolvedLocale).map((reference) => ({
-        ...reference,
-        isFeatured: featuredOnly ? reference.isFeatured : reference.isFeatured,
-      }));
+    const result = await payload.find({
+      collection: 'references',
+      depth: 2,
+      sort: 'order',
+      limit: 100,
+      locale: payloadLocale,
+      where: featuredOnly
+        ? {
+            isFeatured: {
+              equals: true,
+            },
+          }
+        : undefined,
+    });
 
-      if (references.length > 0) {
-        return { references, isFallback: false };
-      }
-    } catch (error) {
-      const code = (error as NodeJS.ErrnoException | undefined)?.code;
-      if (code === 'PAYLOAD_OFFLINE') {
-        if (!payloadOfflineLogged) {
-          console.info(
-            '[references] Payload CMS unavailable, serving embedded sample references. ' +
-              'Set DATABASE_URI to connect to a running Payload instance.'
-          );
-          payloadOfflineLogged = true;
-        }
-      } else {
-        console.error('References fetch failed, falling back to samples:', error);
-      }
-    } finally {
-      // no-op
+    const docs = Array.isArray(result.docs) ? (result.docs as PayloadReference[]) : [];
+    const references = normalizeReferences(docs, resolvedLocale).map((reference) => ({
+      ...reference,
+      isFeatured: featuredOnly ? reference.isFeatured : reference.isFeatured,
+    }));
+
+    if (!references.length) {
+      console.warn('[references] No references were returned from Payload CMS.');
     }
 
-    return {
-      references: getSampleReferences(resolveLocale(locale)),
-      isFallback: true,
-    };
+    return { references };
   },
   ['references'],
-  { revalidate: 60, tags: ['references'] }
+  { revalidate: 60, tags: ['references'] },
 );
 
 export const getReferences = async (

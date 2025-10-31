@@ -142,3 +142,5 @@ Crafted with care by the Expand Matrix engineering team.
 ## Single-Server Deployment
 
 Looking to run the marketing site and Payload CMS from one host? See [`docs/deployment/single-server.md`](docs/deployment/single-server.md) for a step-by-step guide covering environment management, systemd setup, reverse proxying and backups.
+
+For a full environment and configuration checklist, consult [`docs/healthcheck/system-readiness.md`](docs/healthcheck/system-readiness.md).
