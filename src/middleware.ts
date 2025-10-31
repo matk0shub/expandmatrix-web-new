@@ -45,9 +45,8 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (hasCookieLocale && cookieLocale !== currentLocale) {
-    const localePrefixLength = currentLocale ? currentLocale.length + 1 : 0;
-    const suffix = pathname.slice(localePrefixLength) || '/';
+  if (!currentLocale && hasCookieLocale) {
+    const suffix = pathname || '/';
     const normalizedSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
 
     const url = request.nextUrl.clone();
