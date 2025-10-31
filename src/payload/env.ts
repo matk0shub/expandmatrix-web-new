@@ -1,4 +1,11 @@
-import { serverLog } from '@/utils/serverLog'
+// Note: This file is executed by Node (via jiti) outside Next bundling.
+// Avoid TS path aliases here.
+const logDebug = (...args: unknown[]) => {
+  if ((process.env.LOG_LEVEL || '').toLowerCase() === 'debug') {
+    // eslint-disable-next-line no-console
+    console.log('[debug]', ...args)
+  }
+}
 
 const requireEnv = (key: string): string => {
   const value = process.env[key];
@@ -37,7 +44,7 @@ const assertNotLocalMongo = (uri: string): string => {
   try {
     // Log only host part to avoid leaking credentials
     const host = uri.replace(/^mongodb(?:\+srv)?:\/\/[^@]*@/, 'mongodb+srv://').split('/')[2] || 'unknown-host'
-    serverLog('[env] using remote MongoDB host', host)
+    logDebug('[env] using remote MongoDB host', host)
   } catch {
     // ignore
   }
