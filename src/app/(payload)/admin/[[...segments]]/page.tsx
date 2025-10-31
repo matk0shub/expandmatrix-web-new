@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 
 import config from '@payload-config';
 import { importMap } from '../importMap';
+import '../vendor-chunks/date-fns';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

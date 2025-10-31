@@ -178,10 +178,9 @@ const nextConfig: NextConfig = {
       },
     };
 
-    if (dev) {
-      config.plugins = config.plugins ?? [];
-      config.plugins.push(new PreserveNextServerArtifactsPlugin());
-    }
+    // PreserveNextServerArtifactsPlugin was intended to cache .next/server outputs between builds,
+    // but it causes noisy copy failures and slows down compilation. Admin assets are rebuilt on demand
+    // so we can drop the plugin entirely for both dev and prod.
 
     return config;
   },
