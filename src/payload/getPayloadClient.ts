@@ -30,7 +30,7 @@ const initializePayload = async () => {
 
   const init = payload.init({
     config: config as never,
-    local: process.env.NODE_ENV !== 'production',
+    local: true,
     secret,
   } as never)
   await init
