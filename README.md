@@ -65,7 +65,7 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
 1. **Environment variables** (create `.env.local` / `.env`):
    ```bash
    PAYLOAD_SECRET=replace-with-long-random-string
-   DATABASE_URI=mongodb://127.0.0.1:27017/expandmatrix
+   DATABASE_URI="mongodb+srv://username:password@cluster-hostname/expandmatrix?retryWrites=true&w=majority"
    NEXT_PUBLIC_PAYLOAD_SERVER_URL=http://localhost:3000
    PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
    SMTP_HOST=smtp.gmail.com
@@ -75,6 +75,7 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
    SMTP_PASS=app-password
    SMTP_FROM_NAME="Expand Matrix"
    ```
+   > ℹ️ Lokální `mongodb://127.0.0.1` / `mongodb://localhost` adresy jsou nyní blokované. Použij vzdálený MongoDB cluster (Atlas, vlastní repliku atd.).
 2. **Run the Next.js dev server**
    ```bash
    npm run dev
