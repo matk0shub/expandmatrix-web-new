@@ -24,13 +24,21 @@ export default function middleware(request: NextRequest) {
   const normalizedPathname = currentLocale
     ? pathname.slice((`/${currentLocale}`).length) || '/'
     : pathname;
+  const canonicalAdminPath = '/admin';
   const isAdminRoute = normalizedPathname === '/admin' || normalizedPathname.startsWith('/admin/');
 
   if (isAdminRoute) {
     // Canonicalize locale-prefixed admin path to bare /admin
     if (currentLocale && pathname !== normalizedPathname) {
       const url = request.nextUrl.clone();
-      url.pathname = normalizedPathname;
+      url.pathname = canonicalAdminPath;
+      return NextResponse.redirect(url);
+    }
+
+    // Canonicalize trailing slashes (/admin/ -> /admin)
+    if (normalizedPathname !== canonicalAdminPath && normalizedPathname.replace(/\/+$/, '') === canonicalAdminPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = canonicalAdminPath;
       return NextResponse.redirect(url);
     }
     serverLog('[middleware] bypass intl for admin route', pathname)

@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 
 import config from '@payload-config';
+import { serverLog } from '@/utils/serverLog';
 import { importMap } from '../importMap';
 import '../vendor-chunks/date-fns';
 
@@ -37,6 +38,7 @@ const normalizeSearchParams = (searchParamsPromise: Promise<SearchParams>) =>
 
 export const generateMetadata = async ({ params, searchParams }: PageArgs): Promise<Metadata> => {
   const viewsModule = await adminViewsPromise;
+  serverLog('[admin/page] generateMetadata params', await params);
 
   return viewsModule.generatePageMetadata({
     config: configPromise,
@@ -47,6 +49,7 @@ export const generateMetadata = async ({ params, searchParams }: PageArgs): Prom
 
 const Page = async ({ params, searchParams }: PageArgs) => {
   const viewsModule = await adminViewsPromise;
+  serverLog('[admin/page] render', await params);
 
   return viewsModule.RootPage({
     config: configPromise,
