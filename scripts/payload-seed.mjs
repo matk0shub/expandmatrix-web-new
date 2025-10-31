@@ -9,6 +9,7 @@ const projectRoot = path.resolve(__dirname, '..')
 const steps = [
   { name: 'team', script: 'scripts/seed-team.mjs' },
   { name: 'faqs', script: 'scripts/seed-faqs.mjs' },
+  { name: 'partners', script: 'scripts/seed-partners.mjs' },
   { name: 'references', script: 'scripts/seed-references.mjs' },
   { name: 'site-settings', script: 'scripts/seed-site-settings.mjs' },
 ]
