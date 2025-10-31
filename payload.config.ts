@@ -42,10 +42,23 @@ const transporter =
 const secret = resolvePayloadSecret()
 const databaseUri = resolveDatabaseUri()
 
+const enableAutoLogin = process.env.PAYLOAD_AUTOLOGIN === 'true'
+const autoLoginEmail = process.env.PAYLOAD_ADMIN_EMAIL
+const autoLoginPassword = process.env.PAYLOAD_ADMIN_PASSWORD
+
 export default buildConfig({
   secret,
   admin: {
     user: 'users',
+    ...(enableAutoLogin && autoLoginEmail && autoLoginPassword
+      ? {
+          autoLogin: {
+            email: autoLoginEmail,
+            password: autoLoginPassword,
+            prefillOnly: true,
+          },
+        }
+      : {}),
   },
   editor: lexicalEditor({}),
   sharp,
