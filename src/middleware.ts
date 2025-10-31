@@ -21,9 +21,18 @@ export default function middleware(request: NextRequest) {
   const hasCookieLocale = cookieLocale && locales.includes(cookieLocale as (typeof locales)[number]);
   const pathname = request.nextUrl.pathname;
   const currentLocale = getLocaleFromPath(pathname);
-  const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/');
+  const normalizedPathname = currentLocale
+    ? pathname.slice((`/${currentLocale}`).length) || '/'
+    : pathname;
+  const isAdminRoute = normalizedPathname === '/admin' || normalizedPathname.startsWith('/admin/');
 
   if (isAdminRoute) {
+    // Canonicalize locale-prefixed admin path to bare /admin
+    if (currentLocale && pathname !== normalizedPathname) {
+      const url = request.nextUrl.clone();
+      url.pathname = normalizedPathname;
+      return NextResponse.redirect(url);
+    }
     serverLog('[middleware] bypass intl for admin route', pathname)
     return NextResponse.next();
   }
