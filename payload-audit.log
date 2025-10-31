@@ -49,3 +49,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-10-31 18:26:16] Fix: Adjusted admin [[...segments]] normalizer to keep empty segments undefined via type-safe cast, preventing /admin trailing slash mismatch.
 [2025-10-31 18:26:16] Verification: LOG_LEVEL=debug pnpm dev → login & authenticated GET /admin returned 200 (dashboard rendered).
 [2025-10-31 18:26:16] Verification: pnpm build && pnpm start → authenticated /admin, /api/graphql all return 200.
+[2025-10-31 18:27:47] Note: Created test admin user admin@example.com for verification (password Admin123!) via local Payload API.
