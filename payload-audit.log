@@ -45,3 +45,7 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
     2. pnpm build && pnpm start → repeat curls above.
 [2025-10-31 17:35:32] Hotfix: Restored /api/graphql route to mirror root /graphql so admin GraphQL client hits the expected path.
 [2025-10-31 17:42:46] Investigated admin console 404 reports: could not reproduce after restoring /api/graphql; confirmed pnpm dev returns 200 for /admin and GraphQL 200 via curl.
+[2025-10-31 18:21:10] Debug: Identified /admin 404 caused by normalizing params to [] (yielding '/admin/' route); patched normalizeParams to preserve undefined segments.
+[2025-10-31 18:26:16] Fix: Adjusted admin [[...segments]] normalizer to keep empty segments undefined via type-safe cast, preventing /admin trailing slash mismatch.
+[2025-10-31 18:26:16] Verification: LOG_LEVEL=debug pnpm dev → login & authenticated GET /admin returned 200 (dashboard rendered).
+[2025-10-31 18:26:16] Verification: pnpm build && pnpm start → authenticated /admin, /api/graphql all return 200.
