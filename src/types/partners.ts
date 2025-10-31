@@ -8,7 +8,6 @@ export interface NormalizedPartner {
     alt: string;
   };
   scale?: number;
-  order: number;
   showOnSite: boolean;
 }
 

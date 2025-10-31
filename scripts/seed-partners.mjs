@@ -35,7 +35,6 @@ const partners = [
       alt: 'n8n automation logo',
     },
     scale: 1,
-    order: 1,
   },
   {
     name: 'OpenAI',
@@ -45,7 +44,6 @@ const partners = [
       alt: 'OpenAI logo',
     },
     scale: 0.9,
-    order: 2,
   },
   {
     name: 'Cal.com',
@@ -55,7 +53,6 @@ const partners = [
       alt: 'Cal.com scheduling logo',
     },
     scale: 1,
-    order: 3,
   },
   {
     name: 'Cursor',
@@ -65,7 +62,6 @@ const partners = [
       alt: 'Cursor AI pair programming logo',
     },
     scale: 0.75,
-    order: 4,
   },
   {
     name: 'BodyBody',
@@ -75,7 +71,6 @@ const partners = [
       alt: 'BodyBody wellness brand artwork',
     },
     scale: 1,
-    order: 5,
   },
   {
     name: 'Pruzinárna',
@@ -85,7 +80,6 @@ const partners = [
       alt: 'Manufacturing abstract illustration',
     },
     scale: 1,
-    order: 6,
   },
 ]
 
@@ -171,9 +165,7 @@ const upsertPartner = async (payload, partner) => {
   const baseData = {
     name: partner.name,
     logo: mediaId,
-    logoAlt: partner.logo.alt ?? partner.name,
     scale: partner.scale,
-    order: partner.order,
     showOnSite: true,
   }
 

@@ -15,7 +15,7 @@ const getPartnersCached = unstable_cache(
     const result = await payload.find({
       collection: 'partners',
       depth: 1,
-      sort: 'order',
+      sort: 'name',
       limit: 100,
       where: {
         showOnSite: {

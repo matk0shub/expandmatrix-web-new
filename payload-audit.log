@@ -50,3 +50,5 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-10-31 18:26:16] Verification: LOG_LEVEL=debug pnpm dev → login & authenticated GET /admin returned 200 (dashboard rendered).
 [2025-10-31 18:26:16] Verification: pnpm build && pnpm start → authenticated /admin, /api/graphql all return 200.
 [2025-10-31 18:27:47] Note: Created test admin user admin@example.com for verification (password Admin123!) via local Payload API.
+[2025-10-31 22:38:09] Partners cleanup: removed duplicate logoAlt field and manual order from collection; set default admin sort to name.
+[2025-10-31 22:39:56] Verification: pnpm build successful after partners schema update.
