@@ -43,3 +43,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
   Verification steps:
     1. pnpm dev → curl http://localhost:3000/admin (expect Payload login), /api/faqs?limit=1 (200), /graphql redirect to locale.
     2. pnpm build && pnpm start → repeat curls above.
+[2025-10-31 17:35:32] Hotfix: Restored /api/graphql route to mirror root /graphql so admin GraphQL client hits the expected path.
