@@ -60,11 +60,22 @@ All three commands should pass before merging or deploying. When Chrome is unava
 
 Payload powers team members, references, FAQs, footer links, subscribers and global settings.
 
+> Use `env.production.example` as a template when preparing production `.env` files. Never commit secrets – copy it outside of Git and fill in real credentials there.
+
 1. **Environment variables** (create `.env.local` / `.env`):
    ```bash
    PAYLOAD_SECRET=replace-with-long-random-string
-   DATABASE_URI=mongodb://127.0.0.1:27017/expandmatrix
+   DATABASE_URI="mongodb+srv://username:password@cluster-hostname/expandmatrix?retryWrites=true&w=majority"
+   NEXT_PUBLIC_PAYLOAD_SERVER_URL=http://localhost:3000
+   PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_SECURE=true
+   SMTP_USER=info@expandmatrix.com
+   SMTP_PASS=app-password
+   SMTP_FROM_NAME="Expand Matrix"
    ```
+   > ℹ️ Lokální `mongodb://127.0.0.1` / `mongodb://localhost` adresy jsou nyní blokované. Použij vzdálený MongoDB cluster (Atlas, vlastní repliku atd.).
 2. **Run the Next.js dev server**
    ```bash
    npm run dev
@@ -91,8 +102,15 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
 1. `npm run lint`
 2. `npm run build`
 3. `npm run audit:all` (against a production URL or a local `npm run start` server)
-4. Ensure environment variables are supplied (`PAYLOAD_SECRET`, `DATABASE_URI`, analytics keys, etc.).
+4. Ensure environment variables are supplied (`PAYLOAD_SECRET`, `DATABASE_URI`, `NEXT_PUBLIC_PAYLOAD_SERVER_URL`, SMTP credentials, analytics keys, etc.).
 5. Upload optimised imagery to `public/images` (Next.js will convert to WebP on the fly) and keep CMS media metadata current.
+6. Run post-deploy tasks with production env vars loaded:
+   ```bash
+   npm run payload:migrate
+   npm run payload:seed   # optional content bootstrap
+   # or ./scripts/post-deploy.sh /opt/expandmatrix/shared/env/.env.production
+   ```
+7. Wire up infrastructure monitoring (check `/api/payload/health`) and configure log rotation for the app service.
 
 ## Project Structure
 
@@ -121,3 +139,9 @@ Pull requests are welcome. Please:
 ---
 
 Crafted with care by the Expand Matrix engineering team.
+
+## Single-Server Deployment
+
+Looking to run the marketing site and Payload CMS from one host? See [`docs/deployment/single-server.md`](docs/deployment/single-server.md) for a step-by-step guide covering environment management, systemd setup, reverse proxying and backups.
+
+For a full environment and configuration checklist, consult [`docs/healthcheck/system-readiness.md`](docs/healthcheck/system-readiness.md).

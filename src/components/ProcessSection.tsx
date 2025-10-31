@@ -3,23 +3,38 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { CalCTAButton } from './CalCTAButton';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
-// Lazy load GSAP to prevent blocking webpack
-let gsap: any, ScrollTrigger: any;
-let gsapLoaded = false;
+type GsapCore = typeof import('gsap').gsap;
+type ScrollTriggerCore = typeof import('gsap/ScrollTrigger').ScrollTrigger;
 
-async function loadGSAP() {
-  if (gsapLoaded) return { gsap, ScrollTrigger };
-  const gsapModule = await import('gsap');
-  gsap = gsapModule.gsap;
-  ScrollTrigger = (await import('gsap/ScrollTrigger')).ScrollTrigger;
-  gsap.registerPlugin(ScrollTrigger);
-  gsapLoaded = true;
-  return { gsap, ScrollTrigger };
+let gsapInstance: GsapCore | undefined;
+let scrollTriggerInstance: ScrollTriggerCore | undefined;
+let gsapModulesLoaded = false;
+
+async function loadGSAP(): Promise<{
+  gsap: GsapCore | undefined;
+  ScrollTrigger: ScrollTriggerCore | undefined;
+}> {
+  if (!gsapModulesLoaded) {
+    const gsapModule = await import('gsap');
+    const scrollTriggerModule = await import('gsap/ScrollTrigger');
+
+    gsapInstance = gsapModule.gsap;
+    scrollTriggerInstance = scrollTriggerModule.ScrollTrigger;
+
+    if (gsapInstance && scrollTriggerInstance) {
+      gsapInstance.registerPlugin(scrollTriggerInstance);
+    }
+
+    gsapModulesLoaded = true;
+  }
+
+  return { gsap: gsapInstance, ScrollTrigger: scrollTriggerInstance };
 }
 
 // ============================================================================
@@ -98,12 +113,15 @@ const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
   const [stackingEnabled, setStackingEnabled] = useState(false);
+  const [shouldInitGsap, setShouldInitGsap] = useState(false);
   
   useEffect(() => {
     setAnimationValues(
@@ -148,6 +166,37 @@ export default function ProcessSection() {
       }
     };
   }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (!stackingEnabled) {
+      setShouldInitGsap(false);
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const target = sectionRef.current;
+    if (!target) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const isVisible = entries.some((entry) => entry.isIntersecting);
+        if (isVisible) {
+          setShouldInitGsap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px 0px' },
+    );
+
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [stackingEnabled]);
 
   const steps = [
     {
@@ -219,82 +268,89 @@ export default function ProcessSection() {
   useEffect(() => {
     const container = cardsContainerRef.current;
 
-    if (!stackingEnabled || !container) {
+    if (!stackingEnabled || !shouldInitGsap || !container) {
       return;
     }
 
     // Lazy load GSAP to prevent blocking webpack compilation
-    loadGSAP().then(({ gsap: gsapLoaded, ScrollTrigger: scrollTrigger }) => {
-      if (!gsapLoaded || !scrollTrigger || !container) return;
+    loadGSAP().then(({ gsap: gsapCore, ScrollTrigger: scrollTrigger }) => {
+      if (!gsapCore || !scrollTrigger || !container) return;
 
-      const ctx = gsapLoaded.context(() => {
-      const cardWrappers = gsap.utils.toArray<HTMLElement>(
-        container.querySelectorAll('.process-card-wrapper')
-      );
+      const ctx = gsapCore.context(() => {
+        const cardWrappers = gsapCore.utils.toArray<HTMLElement>(
+          container.querySelectorAll('.process-card-wrapper'),
+        );
 
-      if (cardWrappers.length === 0) return;
+        if (cardWrappers.length === 0) return;
 
-      const cards = cardWrappers.map((wrapper) =>
-        wrapper.querySelector<HTMLElement>('.process-card')
-      );
+        const cards = cardWrappers.map((wrapper) =>
+          wrapper.querySelector<HTMLElement>('.process-card'),
+        );
 
-      const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
-      if (existingCards.length === 0) return;
+        const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
+        if (existingCards.length === 0) return;
 
-      gsapLoaded.set(existingCards, { opacity: 1, yPercent: 0 });
-
-      const lastCardTrigger = scrollTrigger.create({
-        trigger: cardWrappers[cardWrappers.length - 1],
-        start: 'bottom bottom',
-      });
-
-      cardWrappers.forEach((wrapper, index) => {
-        const card = cards[index];
-        if (!card) return;
-
-        scrollTrigger.create({
-          id: `process-card-${index}`,
-          trigger: wrapper,
-          start: 'center center',
-          end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
-          pin: true,
-          pinSpacing: false,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          toggleActions: 'restart none none reverse',
-          onEnter: () => {
-            gsapLoaded.to(card, {
-              yPercent: 0,
-              rotation: cardRotations[index],
-              x: cardOffsets[index],
-              duration: CARD_CONFIG.animation.duration,
-              ease: CARD_CONFIG.animation.ease,
-              overwrite: 'auto',
-            });
-          },
-          onEnterBack: () => {
-            gsapLoaded.to(card, {
-              yPercent: 0,
-              rotation: cardRotations[index],
-              x: cardOffsets[index],
-              duration: CARD_CONFIG.animation.duration,
-              ease: CARD_CONFIG.animation.ease,
-              overwrite: 'auto',
-            });
-          },
+        existingCards.forEach((card, idx) => {
+          gsapCore.set(card, {
+            opacity: 1,
+            yPercent: 0,
+            rotation: cardRotations[idx] ?? 0,
+            x: cardOffsets[idx] ?? 0,
+          });
         });
-      });
 
-      scrollTrigger.refresh();
+        const lastCardTrigger = scrollTrigger.create({
+          trigger: cardWrappers[cardWrappers.length - 1],
+          start: 'bottom bottom',
+        });
+
+        cardWrappers.forEach((wrapper, index) => {
+          const card = cards[index];
+          if (!card) return;
+
+          scrollTrigger.create({
+            id: `process-card-${index}`,
+            trigger: wrapper,
+            start: 'center center',
+            end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
+            pin: true,
+            pinSpacing: false,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            toggleActions: 'restart none none reverse',
+            onEnter: () => {
+              gsapCore.to(card, {
+                yPercent: 0,
+                rotation: cardRotations[index],
+                x: cardOffsets[index],
+                duration: CARD_CONFIG.animation.duration,
+                ease: CARD_CONFIG.animation.ease,
+                overwrite: 'auto',
+              });
+            },
+            onEnterBack: () => {
+              gsapCore.to(card, {
+                yPercent: 0,
+                rotation: cardRotations[index],
+                x: cardOffsets[index],
+                duration: CARD_CONFIG.animation.duration,
+                ease: CARD_CONFIG.animation.ease,
+                overwrite: 'auto',
+              });
+            },
+          });
+        });
+
+        scrollTrigger.refresh();
       }, container);
 
       return () => {
         ctx.revert();
         const cards = container.querySelectorAll<HTMLElement>('.process-card');
-        gsapLoaded.set(cards, { clearProps: 'transform,rotation,x,y' });
+        gsapCore.set(cards, { clearProps: 'transform,rotation,x,y' });
       };
     });
-  }, [stackingEnabled]);
+  }, [stackingEnabled, shouldInitGsap]);
 
   // ============================================================================
   // RENDER
@@ -323,7 +379,7 @@ export default function ProcessSection() {
           </div>
 
           {/* Description and CTA */}
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ 
               opacity: 1, 
@@ -341,7 +397,7 @@ export default function ProcessSection() {
               
               {/* CTA Button */}
               <div className="flex justify-start">
-                <motion.div
+                <MotionDiv
                   whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
                   whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
                   className="inline-flex"
@@ -349,10 +405,10 @@ export default function ProcessSection() {
                   <CalCTAButton>
                     <ScrambleText text={t('cta')} applyScramble={false} />
                   </CalCTAButton>
-                </motion.div>
+                </MotionDiv>
               </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </div>
 
@@ -418,7 +474,7 @@ export default function ProcessSection() {
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Icon Accent */}
-                <motion.div
+                <MotionDiv
                   className="pointer-events-none absolute z-[2]"
                   style={{
                     width: step.icon.size,
@@ -455,7 +511,7 @@ export default function ProcessSection() {
                       priority={index === 0}
                     />
                   </div>
-                </motion.div>
+                </MotionDiv>
 
                 {/* Card Content */}
                 <div

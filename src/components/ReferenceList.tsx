@@ -1,17 +1,26 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Globe, Instagram } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
 import type { Reference } from '@/types/references';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
+
+interface ReferenceListCopy {
+  selectReference: string | ((name: string) => string);
+  instagram: string;
+  instagramAria: string | ((name: string) => string);
+  website: string;
+  websiteAria: string | ((name: string) => string);
+}
 
 interface ReferenceListProps {
   references: Reference[];
   activeIndex: number;
   onSelect: (index: number) => void;
   prefersReducedMotion: boolean;
+  copy: ReferenceListCopy;
 }
 
 export default function ReferenceList({
@@ -19,10 +28,23 @@ export default function ReferenceList({
   activeIndex,
   onSelect,
   prefersReducedMotion,
+  copy,
 }: ReferenceListProps) {
-  const t = useTranslations('sections.references');
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const formatLabel = useCallback(
+    (template: string | ((name: string) => string), name: string) => {
+      if (typeof template === 'function') {
+        return template(name);
+      }
+
+      return template.replace(/\{name\}/g, name);
+    },
+    []
+  );
 
   // Auto-scroll to keep active item visible
   useEffect(() => {
@@ -62,7 +84,7 @@ export default function ReferenceList({
         const shouldAnimate = isActive || isHovered;
 
         return (
-          <motion.div
+          <MotionDiv
             key={reference.id}
             className={`cursor-pointer transition-all duration-300 ${
               isActive 
@@ -80,7 +102,7 @@ export default function ReferenceList({
             }}
             tabIndex={0}
             role="button"
-            aria-label={t('selectReference', { name: reference.name })}
+            aria-label={formatLabel(copy.selectReference, reference.name)}
             aria-pressed={isActive}
             whileHover={{}}
             whileTap={{}}
@@ -102,8 +124,8 @@ export default function ReferenceList({
                     />
                     
                     {/* Subtitle */}
-                    {reference.subtitle && (
-                      <motion.div
+                  {reference.subtitle && (
+                      <MotionDiv
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ 
                           opacity: isActive ? 1 : 0.6,
@@ -120,7 +142,7 @@ export default function ReferenceList({
                         }`}
                       >
                         {reference.subtitle}
-                      </motion.div>
+                      </MotionDiv>
                     )}
                   </div>
                 </div>
@@ -130,7 +152,7 @@ export default function ReferenceList({
               {isActive && (
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
                   {reference.instagramUrl && (
-                    <motion.a
+                    <MotionAnchor
                       href={reference.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -143,15 +165,15 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={t('instagramAria', { name: reference.name })}
+                      aria-label={formatLabel(copy.instagramAria, reference.name)}
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">{t('instagram')}</span>
-                    </motion.a>
+                      <span className="whitespace-nowrap">{copy.instagram}</span>
+                    </MotionAnchor>
                   )}
 
                   {reference.websiteUrl && (
-                    <motion.a
+                    <MotionAnchor
                       href={reference.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -164,16 +186,16 @@ export default function ReferenceList({
                       }}
                       whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
                       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                      aria-label={t('websiteAria', { name: reference.name })}
+                      aria-label={formatLabel(copy.websiteAria, reference.name)}
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="whitespace-nowrap">{t('website')}</span>
-                    </motion.a>
+                      <span className="whitespace-nowrap">{copy.website}</span>
+                    </MotionAnchor>
                   )}
                 </div>
               )}
             </div>
-          </motion.div>
+          </MotionDiv>
         );
       })}
       </div>

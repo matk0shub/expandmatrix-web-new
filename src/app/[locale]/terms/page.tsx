@@ -9,9 +9,9 @@ interface PageParams {
 export async function generateMetadata({
   params,
 }: {
-  params: PageParams;
+  params: Promise<PageParams>;
 }): Promise<Metadata> {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
 
   return {
@@ -23,9 +23,9 @@ export async function generateMetadata({
 export default async function TermsPage({
   params,
 }: {
-  params: PageParams;
+  params: Promise<PageParams>;
 }) {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
   const sections = t.raw('sections') as Array<{
     heading: string;

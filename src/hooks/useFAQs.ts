@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import type { FAQ } from '@/types/faqs';
-import { getSampleFAQs } from '@/data/faqs';
 
 interface UseFAQsOptions {
   locale: string;
@@ -55,7 +54,7 @@ export function useFAQs({ locale, featuredOnly = false }: UseFAQsOptions) {
 
         if (isMounted) {
           setError(err instanceof Error ? err.message : 'Failed to fetch FAQs');
-          setFaqs(getSampleFAQs({ featuredOnly }));
+          setFaqs([]);
         }
       } finally {
         if (isMounted) {

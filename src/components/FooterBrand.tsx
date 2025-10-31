@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
-import { motion } from 'framer-motion';
 import { Instagram, Linkedin, Twitter } from 'lucide-react';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 import ScrambleText from './ScrambleText';
 
 type Props = {
@@ -16,11 +17,14 @@ type Props = {
 export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: Props) {
   const t = useTranslations('footer');
   const locale = useLocale();
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
 
   return (
     <div className="max-w-md">
       {/* Logo with animated glow effect */}
-      <motion.div className="footer-brand-item">
+      <MotionDiv className="footer-brand-item">
         <Link 
           href={`/${locale}`} 
           className="group relative inline-flex items-center gap-4 focus:outline-none focus:ring-4 focus:ring-[#00d76b]/40 rounded-xl p-2 -m-2 transition-all duration-300"
@@ -54,10 +58,10 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
             />
           </div>
         </Link>
-      </motion.div>
+      </MotionDiv>
 
       {/* Animated tagline */}
-      <motion.div 
+      <MotionDiv 
         className="footer-brand-item mt-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,10 +70,10 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
         <p className="text-white/90 text-base leading-relaxed font-lato">
           {t('brand.tagline')}
         </p>
-      </motion.div>
+      </MotionDiv>
 
       {/* Social links with advanced hover effects */}
-      <motion.div 
+      <MotionDiv 
         className="footer-brand-item mt-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,7 +81,7 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
       >
         <div className="flex items-center gap-3" aria-label={t('brand.socialAria')}>
           {instagramUrl && (
-            <motion.a 
+            <MotionAnchor 
               href={instagramUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
@@ -89,10 +93,10 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
               <Instagram className="w-5 h-5 text-white group-hover:text-[#00d76b] transition-colors duration-300" />
               {/* Glow effect */}
               <div className="absolute inset-0 rounded-xl bg-[#00d76b]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-            </motion.a>
+            </MotionAnchor>
           )}
           {linkedinUrl && (
-            <motion.a 
+            <MotionAnchor 
               href={linkedinUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
@@ -104,10 +108,10 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
               <Linkedin className="w-5 h-5 text-white group-hover:text-[#00d76b] transition-colors duration-300" />
               {/* Glow effect */}
               <div className="absolute inset-0 rounded-xl bg-[#00d76b]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-            </motion.a>
+            </MotionAnchor>
           )}
           {twitterUrl && (
-            <motion.a 
+            <MotionAnchor 
               href={twitterUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
@@ -119,13 +123,13 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
               <Twitter className="w-5 h-5 text-white group-hover:text-[#00d76b] transition-colors duration-300" />
               {/* Glow effect */}
               <div className="absolute inset-0 rounded-xl bg-[#00d76b]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-            </motion.a>
+            </MotionAnchor>
           )}
         </div>
-      </motion.div>
+      </MotionDiv>
 
       {/* Subtle brand statement */}
-      <motion.div 
+      <MotionDiv 
         className="footer-brand-item mt-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,8 +141,7 @@ export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: P
             &ldquo;We build AI agents, websites and AI implementations.&rdquo;
           </p>
         </div>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 }
-

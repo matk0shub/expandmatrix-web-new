@@ -2,19 +2,23 @@
 
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 import { useFAQs } from '@/hooks/useFAQs';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { CalCTAButton } from './CalCTAButton';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
 
 export default function FAQSection() {
   const t = useTranslations('sections.faq');
   const locale = useLocale();
   const prefersReducedMotion = useReducedMotion();
   const hasMounted = useHasMounted();
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const { faqs, loading, error } = useFAQs({ locale, featuredOnly: true });
   
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -143,7 +147,7 @@ export default function FAQSection() {
           <div className="flex flex-col min-h-[420px] py-4">
             <div className="flex flex-1 flex-col justify-between gap-10">
               {/* Headline */}
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -152,10 +156,10 @@ export default function FAQSection() {
                   <div>{t('title.line1')}</div>
                   <div>{t('title.line2')}</div>
                 </h2>
-              </motion.div>
+              </MotionDiv>
 
               {/* Bottom Section - CTA with text above button */}
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -167,13 +171,13 @@ export default function FAQSection() {
                   </p>
                   <CalCTAButton>{t('cta.button')}</CalCTAButton>
                 </div>
-              </motion.div>
+              </MotionDiv>
             </div>
           </div>
 
           {/* Right Column - FAQ Accordion */}
           <div className="space-y-4">
-            <motion.div
+            <MotionDiv
               ref={accordionRef}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -186,7 +190,7 @@ export default function FAQSection() {
                 const answer = locale === 'cs' ? faq.answer.cs : faq.answer.en;
 
                 return (
-                  <motion.div
+                  <MotionDiv
                     key={faq.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -218,7 +222,7 @@ export default function FAQSection() {
                           {question}
                         </h3>
                         <div className="relative flex-shrink-0">
-                          <motion.div
+                          <MotionDiv
                             className="w-10 h-10 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] flex items-center justify-center shadow-lg shadow-[#00d76b]/30"
                             whileHover={{ 
                               scale: prefersReducedMotion ? 1 : 1.05,
@@ -227,7 +231,7 @@ export default function FAQSection() {
                             whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
                             transition={{ duration: 0.2 }}
                           >
-                            <motion.div
+                            <MotionDiv
                               animate={{ rotate: isOpen ? 45 : 0 }}
                               transition={{ duration: 0.3, ease: "easeInOut" }}
                             >
@@ -236,15 +240,15 @@ export default function FAQSection() {
                               ) : (
                                 <Plus className="w-5 h-5 text-white" aria-hidden="true" />
                               )}
-                            </motion.div>
-                          </motion.div>
+                            </MotionDiv>
+                          </MotionDiv>
                         </div>
                       </button>
 
                       {/* Answer Panel */}
                       <AnimatePresence>
                         {isOpen && (
-                          <motion.div
+                          <MotionDiv
                             id={`faq-panel-${index}`}
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ 
@@ -271,14 +275,14 @@ export default function FAQSection() {
                                 </p>
                               </div>
                             </div>
-                          </motion.div>
+                          </MotionDiv>
                         )}
                       </AnimatePresence>
                     </div>
-                  </motion.div>
+                  </MotionDiv>
                 );
               })}
-            </motion.div>
+            </MotionDiv>
           </div>
         </div>
       </div>

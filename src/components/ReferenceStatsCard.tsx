@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 interface ReferenceStatsCardProps {
   metrics: Array<{
@@ -9,18 +9,23 @@ interface ReferenceStatsCardProps {
     value: string;
   }>;
   prefersReducedMotion: boolean;
+  heading: string;
 }
 
 export default function ReferenceStatsCard({
   metrics,
   prefersReducedMotion,
+  heading,
 }: ReferenceStatsCardProps) {
-  const t = useTranslations('sections.references');
+  const framer = useFramerMotion();
+  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const MotionTr = framer?.motion.tr ?? fallbackMotion.tr;
+  const MotionTd = framer?.motion.td ?? fallbackMotion.td;
 
   if (!metrics.length) return null;
 
   return (
-    <motion.div
+    <MotionDiv
       className="absolute bottom-8 left-4 right-4 lg:top-1/2 lg:right-8 lg:left-auto lg:bottom-auto lg:transform lg:-translate-y-1/2 z-20"
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -32,13 +37,13 @@ export default function ReferenceStatsCard({
     >
       <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[400px] lg:max-w-[600px] shadow-2xl">
         <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
-          {t('impactHeading')}
+          {heading}
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           <table className="w-full">
             <tbody>
               {metrics.map((metric, index) => (
-                <motion.tr
+                <MotionTr
                   key={`${metric.label}-${index}`}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -53,7 +58,7 @@ export default function ReferenceStatsCard({
                       {metric.label}
                     </span>
                   </td>
-                  <motion.td
+                  <MotionTd
                     className="px-6 py-5 text-right text-lg font-semibold text-white drop-shadow-[0_0_12px_rgba(0,0,0,0.6)]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -63,15 +68,15 @@ export default function ReferenceStatsCard({
                     }}
                   >
                     {metric.value}
-                  </motion.td>
-                </motion.tr>
+                  </MotionTd>
+                </MotionTr>
               ))}
             </tbody>
           </table>
         </div>
 
         {/* Subtle glow effect */}
-        <motion.div
+        <MotionDiv
           className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-blue-500/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -81,6 +86,6 @@ export default function ReferenceStatsCard({
           }}
         />
       </div>
-    </motion.div>
+    </MotionDiv>
   );
 }

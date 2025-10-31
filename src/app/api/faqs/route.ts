@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
-import { getSampleFAQsResponse } from '@/data/faqs';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -43,6 +42,11 @@ export async function GET(request: Request) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching FAQs from Payload:', error);
-    return NextResponse.json(getSampleFAQsResponse({ featuredOnly }));
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch FAQs from Payload CMS',
+      },
+      { status: 503 },
+    );
   }
 }
