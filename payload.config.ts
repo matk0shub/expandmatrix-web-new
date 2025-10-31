@@ -60,6 +60,9 @@ export default buildConfig({
         }
       : {}),
   },
+  routes: {
+    admin: '/admin',
+  },
   editor: lexicalEditor({}),
   sharp,
   localization: {
