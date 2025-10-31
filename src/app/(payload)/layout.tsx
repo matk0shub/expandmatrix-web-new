@@ -1,6 +1,9 @@
 /* THIS FILE WAS GENERATED BASED ON THE OFFICIAL PAYLOAD TEMPLATE. */
 import '@payloadcms/next/css';
-import '@/payload/prewarm';
+// Optional Payload prewarm: enable by setting PAYLOAD_PREWARM=true in env
+if (process.env.PAYLOAD_PREWARM === 'true') {
+  void import('@/payload/prewarm');
+}
 
 import type { ServerFunctionClient } from 'payload';
 import React from 'react';
