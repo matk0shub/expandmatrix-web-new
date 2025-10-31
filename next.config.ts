@@ -178,8 +178,10 @@ const nextConfig: NextConfig = {
       },
     };
 
-    config.plugins = config.plugins ?? [];
-    config.plugins.push(new PreserveNextServerArtifactsPlugin());
+    if (dev) {
+      config.plugins = config.plugins ?? [];
+      config.plugins.push(new PreserveNextServerArtifactsPlugin());
+    }
 
     return config;
   },
