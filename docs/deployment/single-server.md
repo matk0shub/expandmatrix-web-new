@@ -36,6 +36,12 @@ PAYLOAD_SECRET=generate-a-long-random-string
 DATABASE_URI=mongodb://localhost:27017/expandmatrix?replicaSet=rs0
 NEXT_PUBLIC_PAYLOAD_SERVER_URL=https://cms.expandmatrix.com
 PAYLOAD_PUBLIC_SERVER_URL=https://cms.expandmatrix.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=info@expandmatrix.com
+SMTP_PASS=app-password-or-token
+SMTP_FROM_NAME=Expand Matrix
 ```
 
 Load this file before running any Payload CLI commands (`payload migrate`, seeders, etc.).
@@ -128,6 +134,7 @@ Use certbot or your preferred ACME client to secure the site with HTTPS.
    . /opt/expandmatrix/shared/env/.env.production
    npm run payload:migrate
    npm run payload:seed   # optional
+   # or ./scripts/post-deploy.sh /opt/expandmatrix/shared/env/.env.production
    ```
 2. Reload the service:
    ```bash
@@ -140,8 +147,22 @@ Use certbot or your preferred ACME client to secure the site with HTTPS.
 
 ## 9. Next Steps
 
-- Add monitoring (Healthchecks, uptime robot) against `/api/payload/health`.
-- Configure log rotation for `/opt/expandmatrix/shared/logs`.
+- Add synthetic monitoring (Healthchecks.io, UptimeRobot, etc.) against `https://expandmatrix.com/api/payload/health`.
+- Configure log rotation for `/opt/expandmatrix/shared/logs`. A simple `/etc/logrotate.d/expandmatrix` entry works:
+  ```
+  /opt/expandmatrix/shared/logs/*.log {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    create 0640 www-data www-data
+    sharedscripts
+    postrotate
+      systemctl kill -s HUP expandmatrix.service
+    endscript
+  }
+  ```
 - When scaling becomes necessary, split Mongo to a managed cluster and front the app with a load balancer + horizontal replicas.
 
 ## 10. Official References
