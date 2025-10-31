@@ -25,6 +25,7 @@
 # misc
 .DS_Store
 *.pem
+*.log
 
 # debug
 npm-debug.log*
@@ -44,3 +45,6 @@ next-env.d.ts
 
 # payload uploads
 /media/
+
+# backup directories
+/node_modules.*
