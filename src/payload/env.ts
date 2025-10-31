@@ -2,7 +2,6 @@
 // Avoid TS path aliases here.
 const logDebug = (...args: unknown[]) => {
   if ((process.env.LOG_LEVEL || '').toLowerCase() === 'debug') {
-    // eslint-disable-next-line no-console
     console.log('[debug]', ...args)
   }
 }
