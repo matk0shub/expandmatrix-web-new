@@ -9,16 +9,13 @@ interface TeamSectionProps {
 
 export default async function TeamSection({ locale }: TeamSectionProps) {
   const t = await getTranslations({ locale, namespace: 'sections.team' });
-  const { members, isFallback } = await getTeamMembers({
+  const { members } = await getTeamMembers({
     locale,
     featuredOnly: true,
   });
 
   const copy = {
     title: t('title'),
-    error: t('error', {
-      defaultValue: 'Unable to load team members. Please try again later.',
-    }),
     empty: t('empty', {
       defaultValue: 'Team members will appear here once they are published in the CMS.',
     }),
@@ -28,7 +25,6 @@ export default async function TeamSection({ locale }: TeamSectionProps) {
     <TeamSectionClient
       members={members}
       copy={copy}
-      showFallbackNotice={isFallback}
     />
   );
 }

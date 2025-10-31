@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
-import {
-  getSampleTeamMembers,
-  normalizePayloadTeamMembers,
-} from '@/data/teamMembers';
+import { normalizePayloadTeamMembers } from '@/data/teamMembers';
 
 interface UseTeamMembersOptions {
   locale: string;
@@ -50,11 +47,7 @@ export function useTeamMembers({ locale, featuredOnly = false }: UseTeamMembersO
 
         const normalized = normalizePayloadTeamMembers(docs, locale);
 
-        if (normalized.length === 0) {
-          setTeamMembers(getSampleTeamMembers({ locale, featuredOnly }));
-        } else {
-          setTeamMembers(normalized);
-        }
+        setTeamMembers(normalized);
       } catch (err) {
         // Don't log AbortError as it's expected when component unmounts
         if (err instanceof Error && err.name === 'AbortError') {
@@ -64,7 +57,7 @@ export function useTeamMembers({ locale, featuredOnly = false }: UseTeamMembersO
         console.error('Error fetching team members:', err);
         if (!controller.signal.aborted) {
           setError('Failed to fetch team members');
-          setTeamMembers(getSampleTeamMembers({ locale, featuredOnly }));
+          setTeamMembers([]);
         }
       } finally {
         if (!controller.signal.aborted) {

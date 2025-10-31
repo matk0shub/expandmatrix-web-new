@@ -22,18 +22,16 @@ const SOCIAL_ICON_MAP = {
 
 interface TeamSectionCopy {
   title: string;
-  error: string;
   empty: string;
 }
 
 interface TeamSectionClientProps {
   members: NormalizedTeamMember[];
   copy: TeamSectionCopy;
-  showFallbackNotice: boolean;
 }
 
-export default function TeamSectionClient({ members, copy, showFallbackNotice }: TeamSectionClientProps) {
-  const { title, error: errorCopy, empty } = copy;
+export default function TeamSectionClient({ members, copy }: TeamSectionClientProps) {
+  const { title, empty } = copy;
   const framer = useFramerMotion();
   const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
 
@@ -115,12 +113,6 @@ export default function TeamSectionClient({ members, copy, showFallbackNotice }:
         </div>
 
         <div className="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
-          {showFallbackNotice && (
-            <div className="col-span-full rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-10 text-center text-red-200">
-              {errorCopy}
-            </div>
-          )}
-
           {members.map((member, index) => {
               const accent = member.accent ?? DEFAULT_ACCENT;
               const socialLinks = (Object.entries(member.socials ?? {}) as Array<

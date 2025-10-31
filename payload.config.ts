@@ -15,7 +15,7 @@ import { Subscribers } from './src/payload/collections/Subscribers'
 import { Team } from './src/payload/collections/Team'
 import { Users } from './src/payload/collections/Users'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
-import { isUsingFallbackDatabase, resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env'
+import { resolveDatabaseUri, resolvePayloadSecret } from './src/payload/env'
 
 const defaultFromAddress =
   process.env.SMTP_FROM ?? (process.env.SMTP_USER ? `${process.env.SMTP_USER}` : 'info@expandmatrix.com')
@@ -41,14 +41,6 @@ const transporter =
 
 const secret = resolvePayloadSecret()
 const databaseUri = resolveDatabaseUri()
-
-const connectOptions = isUsingFallbackDatabase()
-  ? {
-      serverSelectionTimeoutMS: 1500,
-      connectTimeoutMS: 1500,
-      socketTimeoutMS: 1500,
-    }
-  : undefined
 
 export default buildConfig({
   secret,
@@ -108,6 +100,5 @@ export default buildConfig({
   plugins: [],
   db: mongooseAdapter({
     url: databaseUri,
-    ...(connectOptions ? { connectOptions } : {}),
   }),
 })
