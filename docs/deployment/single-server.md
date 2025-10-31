@@ -138,14 +138,15 @@ Use certbot or your preferred ACME client to secure the site with HTTPS.
    journalctl -u expandmatrix.service -f
    ```
 
-## 9. Optional Docker Compose Alternative
-
-If you prefer containers, create `docker-compose.yml` with two services (`app`, `mongo`) and bind `./media` into the `app` container. Build the app image with a multi-stage Dockerfile that runs `npm run build` in the builder stage and `next start` in the runtime stage.
-
-## 10. Next Steps
+## 9. Next Steps
 
 - Add monitoring (Healthchecks, uptime robot) against `/api/payload/health`.
 - Configure log rotation for `/opt/expandmatrix/shared/logs`.
 - When scaling becomes necessary, split Mongo to a managed cluster and front the app with a load balancer + horizontal replicas.
+
+## 10. Official References
+
+- Next.js self-hosting guide: [https://nextjs.org/docs/app/building-your-application/deploying#self-hosting](https://nextjs.org/docs/app/building-your-application/deploying#self-hosting)
+- Payload + Next.js production guidance: [https://payloadcms.com/docs/production/deployment#nextjs](https://payloadcms.com/docs/production/deployment#nextjs)
 
 This setup keeps Next.js and Payload co-located, minimizes moving parts, and stays close to how the development environment already behaves.
