@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import config from '@payload-config';
 import { serverLog } from '@/utils/serverLog';
 import { importMap } from '../importMap';
-import '../vendor-chunks/date-fns';
+import '../vendor-chunks/date-fns.js';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
