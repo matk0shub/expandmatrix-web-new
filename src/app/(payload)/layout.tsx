@@ -5,6 +5,8 @@ if (process.env.PAYLOAD_PREWARM === 'true') {
   void import('@/payload/prewarm');
 }
 
+export const runtime = 'nodejs';
+
 import type { ServerFunctionClient } from 'payload';
 import React from 'react';
 
