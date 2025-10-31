@@ -1,4 +1,3 @@
-import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import createBundleAnalyzer from '@next/bundle-analyzer';
 import { withPayload } from '@payloadcms/next/withPayload';
@@ -15,7 +14,7 @@ const payloadServerUrl =
   process.env.PAYLOAD_PUBLIC_SERVER_URL ??
   '';
 
-const imageRemotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = [
+const imageRemotePatterns = [
   {
     protocol: 'https',
     hostname: 'images.unsplash.com',
@@ -26,7 +25,7 @@ if (payloadServerUrl) {
   try {
     const parsed = new URL(payloadServerUrl);
     imageRemotePatterns.push({
-      protocol: parsed.protocol.replace(':', '') as 'http' | 'https',
+      protocol: parsed.protocol.replace(':', ''),
       hostname: parsed.hostname,
       ...(parsed.port ? { port: parsed.port } : {}),
     });
@@ -41,7 +40,7 @@ if (payloadServerUrl) {
 const serverOutputDir = path.join(process.cwd(), '.next', 'server');
 const serverBackupDir = path.join(process.cwd(), '.next', '.server-backup');
 
-const dirExists = async (dir: string) => {
+const dirExists = async (dir) => {
   try {
     const stats = await fs.promises.stat(dir);
     return stats.isDirectory();
@@ -50,10 +49,10 @@ const dirExists = async (dir: string) => {
   }
 };
 
-const copyDirectory = async (source: string, destination: string) => {
-  const cp = (fs.promises as unknown as { cp?: typeof fs.promises.cp }).cp;
+const copyDirectory = async (source, destination) => {
+  const cp = (fs.promises?.cp);
 
-  const ensureParent = async (dir: string) => {
+  const ensureParent = async (dir) => {
     await fs.promises.mkdir(path.dirname(dir), { recursive: true });
   };
 
@@ -64,7 +63,7 @@ const copyDirectory = async (source: string, destination: string) => {
     return;
   }
 
-  const recursiveCopy = async (src: string, dest: string) => {
+  const recursiveCopy = async (src, dest) => {
     await fs.promises.mkdir(dest, { recursive: true });
     const entries = await fs.promises.readdir(src, { withFileTypes: true });
 
@@ -93,8 +92,7 @@ let backingUp = false;
 let restoring = false;
 
 class PreserveNextServerArtifactsPlugin {
-
-  private async syncBackup() {
+  async syncBackup() {
     if (backingUp || !(await dirExists(serverOutputDir))) {
       return;
     }
@@ -109,7 +107,7 @@ class PreserveNextServerArtifactsPlugin {
     }
   }
 
-  private async restoreIfMissing() {
+  async restoreIfMissing() {
     if (restoring || (await dirExists(serverOutputDir)) || !(await dirExists(serverBackupDir))) {
       return;
     }
@@ -124,7 +122,7 @@ class PreserveNextServerArtifactsPlugin {
     }
   }
 
-  apply(compiler: { hooks: { afterEmit: { tapPromise: (name: string, fn: () => Promise<void>) => void } } }) {
+  apply(compiler) {
     compiler.hooks.afterEmit.tapPromise('PreserveNextServerArtifactsPlugin', async () => {
       await this.syncBackup();
     });
@@ -153,7 +151,7 @@ class PreserveNextServerArtifactsPlugin {
   }
 }
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
