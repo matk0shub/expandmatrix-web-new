@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 import { CalCTAButton } from './CalCTAButton';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const t = useTranslations('footer.cta');
 
   return (
     <footer
@@ -82,10 +84,10 @@ export default function Footer() {
 
           <div className="flex flex-col items-center gap-4 md:items-end md:text-right">
             <span className="text-sm uppercase tracking-[0.32em] opacity-70">
-              Úvodní konzultace
+              {t('label')}
             </span>
             <CalCTAButton className="md:self-end">
-              Book a discovery call
+              {t('primary')}
             </CalCTAButton>
           </div>
         </div>
