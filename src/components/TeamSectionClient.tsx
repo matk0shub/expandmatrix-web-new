@@ -111,7 +111,6 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                     <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                       <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.18),transparent_70%)] rotate-12" />
                     </div>
-                    <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[inherit]" />
                     <div className="relative aspect-[4/5] overflow-hidden">
                       {member.avatar?.url ? (
                         <Image
