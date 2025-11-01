@@ -265,10 +265,7 @@ export default function Hero() {
             {/* Main Content */}
             <div className="relative z-10 min-h-screen flex flex-col justify-between py-15 md:py-19 px-0">
            {/* Top Section - Modern Heading Layout */}
-           <MotionDiv
-             initial={{ opacity: 0, y: 50 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.8, delay: 0.6 }}
+           <div
              className="pt-16 md:pt-20 px-6 md:px-12 xl:px-0 relative z-50"
            >
              {/* Grid-based heading layout with ghost sizer for perfect alignment */}
@@ -316,7 +313,7 @@ export default function Hero() {
                  </span>
               </AnimatedHeading>
             </div>
-           </MotionDiv>
+           </div>
 
           {/* Bottom Section - CTA with better positioning */}
            <MotionDiv

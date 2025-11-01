@@ -35,19 +35,43 @@ export default function AnimatedHeading({
   const motion = (framer?.motion ?? fallbackMotion) as MotionLike;
   const MotionComponent = (motion[as] ?? motion.h2 ?? motion.div) as ComponentType<Record<string, unknown>>;
 
+  const computeDistance = () => {
+    if (typeof window === 'undefined') {
+      return distance;
+    }
+
+    const width = window.innerWidth;
+
+    if (width >= 1440) {
+      return distance;
+    }
+
+    if (width >= 1024) {
+      return distance * 0.8;
+    }
+
+    if (width >= 768) {
+      return distance * 0.6;
+    }
+
+    return distance * 0.45;
+  };
+
+  const effectiveDistance = computeDistance();
+
   const initial = prefersReducedMotion
     ? undefined
     : (() => {
         switch (direction) {
           case 'left':
-            return { x: -distance };
+            return { x: -effectiveDistance };
           case 'right':
-            return { x: distance };
+            return { x: effectiveDistance };
           case 'down':
-            return { y: -distance };
+            return { y: -effectiveDistance };
           case 'up':
           default:
-            return { y: distance };
+            return { y: effectiveDistance };
         }
       })();
 
