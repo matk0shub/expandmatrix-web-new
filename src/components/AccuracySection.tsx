@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
+import AnimatedHeading from './AnimatedHeading';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
 import { ANIMATION_DURATION, ANIMATION_DELAYS } from '@/constants/animations';
@@ -73,8 +74,9 @@ export default function AccuracySection() {
         <div className="mb-20 lg:mb-32">
           {/* Main Title - aligned left, stacked vertically */}
           <div className="relative inline-block mb-8">
-            <h2 
-              className="heading-main block" 
+            <AnimatedHeading
+              as="h2"
+              className="heading-main block"
             >
               <div>
                 <ScrambleText text={t('title.line1')} applyScramble={false} />
@@ -82,7 +84,7 @@ export default function AccuracySection() {
               <div>
                 <ScrambleText text={t('title.line2')} applyScramble={false} />
               </div>
-            </h2>
+            </AnimatedHeading>
             
             {/* One large traveling neon blob with multiple gradient areas */}
             <div className="absolute -bottom-48 left-0 right-0 h-64 pointer-events-none">

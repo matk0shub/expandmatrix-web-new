@@ -8,6 +8,7 @@ import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
+import AnimatedHeading from './AnimatedHeading';
 
 type GsapCore = typeof import('gsap').gsap;
 type ScrollTriggerCore = typeof import('gsap/ScrollTrigger').ScrollTrigger;
@@ -372,9 +373,9 @@ export default function ProcessSection() {
           {/* Title */}
           <div className="mb-16 lg:mb-24">
             <div className="relative inline-block mb-8">
-              <h2 className="heading-main">
+              <AnimatedHeading as="h2" className="heading-main">
                 <ScrambleText text={t('title')} applyScramble={false} />
-              </h2>
+              </AnimatedHeading>
             </div>
           </div>
 

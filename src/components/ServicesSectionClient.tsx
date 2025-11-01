@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import ScrambleText from './ScrambleText';
+import AnimatedHeading from './AnimatedHeading';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
@@ -127,9 +128,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         {/* Top Section - Title */}
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
-            <h2 className="heading-main">
+            <AnimatedHeading as="h2" className="heading-main">
               <ScrambleText text={title} applyScramble={false} />
-            </h2>
+            </AnimatedHeading>
           </div>
         </div>
 

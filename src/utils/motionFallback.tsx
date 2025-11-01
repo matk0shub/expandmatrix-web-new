@@ -58,6 +58,12 @@ const createFallback = <T extends IntrinsicTag>(tag: T): FallbackComponent => {
 };
 
 export const fallbackMotion = {
+  h1: createFallback('h1'),
+  h2: createFallback('h2'),
+  h3: createFallback('h3'),
+  h4: createFallback('h4'),
+  h5: createFallback('h5'),
+  h6: createFallback('h6'),
   div: createFallback('div'),
   span: createFallback('span'),
   section: createFallback('section'),

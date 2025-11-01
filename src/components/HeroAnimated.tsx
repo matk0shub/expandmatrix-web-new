@@ -11,6 +11,7 @@ import { useClient } from '@/hooks/useClient';
 import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
+import AnimatedHeading from './AnimatedHeading';
 
 type GSAPTimeline = gsap.core.Timeline;
 
@@ -272,9 +273,11 @@ export default function Hero() {
            >
              {/* Grid-based heading layout with ghost sizer for perfect alignment */}
              <div className="hero-heading-container">
-               <h1 
-                 className="hero-heading hero-heading-grid" 
+               <AnimatedHeading
+                 as="h1"
+                 className="hero-heading hero-heading-grid"
                  aria-label={`${t('heading.line1')} ${t('heading.line2a')} ${t('heading.line2b')} ${t('heading.line3')} ${t('heading.line4')}`}
+                 delay={0.2}
                >
                  {/* First line - WE CREATE / VYVÍJÍME - right-aligned */}
                  <span className="hero-heading-line-first" data-line="1">
@@ -311,7 +314,7 @@ export default function Hero() {
                      className="block"
                    />
                  </span>
-              </h1>
+              </AnimatedHeading>
             </div>
            </MotionDiv>
 

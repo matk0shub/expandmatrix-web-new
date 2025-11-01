@@ -8,6 +8,7 @@ import type { NormalizedTeamMember } from '@/types/team';
 import ScrambleText from './ScrambleText';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
+import AnimatedHeading from './AnimatedHeading';
 
 const DEFAULT_ACCENT =
   'linear-gradient(135deg, rgba(0, 215, 107, 0.7), rgba(0, 184, 92, 0.35))';
@@ -101,9 +102,12 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
 
       <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
         <div className="relative mx-auto max-w-3xl text-center">
-          <h2 className="heading-main inline-flex flex-col items-center gap-2 text-center">
+          <AnimatedHeading
+            as="h2"
+            className="heading-main inline-flex flex-col items-center gap-2 text-center"
+          >
             <ScrambleText text={title} applyScramble={false} cursor={false} trigger="hover" />
-          </h2>
+          </AnimatedHeading>
           <span
             aria-hidden="true"
             className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/3 text-7xl md:text-[8rem] lg:text-[10rem] font-extrabold uppercase tracking-[0.4em] text-white/5"
