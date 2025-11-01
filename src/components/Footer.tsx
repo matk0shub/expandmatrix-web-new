@@ -82,10 +82,10 @@ export default function Footer() {
 
           <div className="flex flex-col items-center gap-4 md:items-end md:text-right">
             <span className="text-sm uppercase tracking-[0.32em] opacity-70">
-              Strategický call
+              Úvodní konzultace
             </span>
             <CalCTAButton className="md:self-end">
-              Book a strategy call
+              Book a discovery call
             </CalCTAButton>
           </div>
         </div>

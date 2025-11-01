@@ -27,7 +27,7 @@
         "line1": "PŘESNOST A",
         "line2": "TRANSPARENTNOST"
       },
-      "description": "Děláme jen to, v čem jsme nejlepší – AI agenti, weby a implementace AI do businessu. Nesnažíme se být agenturou na všechno. Stavíme na jasné strategii, silných nápadech a exekuci, která přináší výsledky.",
+      "description": "Děláme jen to, v čem jsme nejlepší – AI agenti, weby a implementace AI do businessu. Nesnažíme se být agenturou na všechno. Stavíme na jasném plánu, silných nápadech a exekuci, která přináší výsledky.",
       "stats": {
         "clients": "Spokojení klienti",
         "years": "Roky zkušeností",
@@ -250,7 +250,7 @@
     "team": {
       "eyebrow": "poznejte náš",
       "title": "Tým",
-      "description": "Jsme multidisciplinární parta, která kombinuje AI strategii, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
+      "description": "Jsme multidisciplinární parta, která kombinuje AI směřování, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
     "availability": "Připravení na nové výzvy",
     "loading": "Načítám tým…",
     "error": "Tým se nepodařilo načíst. Zkuste to prosím znovu později.",
@@ -272,7 +272,7 @@
           "bio": "Specializuju se na návrh a implementaci AI systémů, automatizací a inteligentních agentů. Zajímám se o nejmodernější technologie a budování AI ekosystémů.",
           "focus": [
             "AI agenti",
-            "Strategie automatizace",
+            "Návrh automatizace",
             "Architektura systémů"
           ]
         },
@@ -347,8 +347,8 @@
     "cta": {
       "pretitle": "Další krok",
       "title": "Postavíme AI základ, na který se váš tým spolehne v roce 2025",
-      "description": "Rezervujte si strategickou konzultaci nebo nám napište — do 48 hodin navrhneme roadmapu vašeho dalšího růstu.",
-      "primary": "Domluvit strategický call",
+      "description": "Rezervujte si úvodní konzultaci nebo nám napište — do 48 hodin navrhneme roadmapu vašeho dalšího růstu.",
+      "primary": "Domluvit úvodní konzultaci",
       "secondary": "Napsat našemu týmu"
     },
     "contact": {
