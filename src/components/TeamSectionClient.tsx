@@ -103,11 +103,15 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                   <meta itemProp="name" content={member.name} />
                   <meta itemProp="jobTitle" content={member.role} />
                   {member.bio ? <meta itemProp="description" content={member.bio} /> : null}
-                  <div
-                    className="absolute -top-8 -left-8 h-28 w-24 rounded-3xl opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
-                    style={{ background: accent }}
-                  />
-                  <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-black/[0.94] via-black/[0.97] to-black/[0.99] shadow-[0_28px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2">
+                  <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-black/[0.95] via-black/[0.98] to-black/[0.99] shadow-[0_30px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-[inherit] pointer-events-none mix-blend-normal" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-[inherit] pointer-events-none mix-blend-normal" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-[inherit] pointer-events-none mix-blend-normal" />
+                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-[inherit] pointer-events-none mix-blend-normal" />
+                    <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                      <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.18),transparent_70%)] rotate-12" />
+                    </div>
+                    <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-[inherit]" />
                     <div className="relative aspect-[4/5] overflow-hidden">
                       {member.avatar?.url ? (
                         <Image
@@ -137,7 +141,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                       )}
                       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/30 to-black/75 opacity-100 transition-opacity duration-700 group-hover:via-black/25 group-hover:to-black/65" />
                     </div>
-                    <div className="relative px-6 pb-8 pt-8 text-center bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent overflow-hidden rounded-b-[2rem]">
+                    <div className="relative px-6 pb-8 pt-8 text-center bg-transparent overflow-hidden rounded-b-[2rem]">
                       <div className="absolute inset-0 rounded-b-[2rem] bg-white/[0.08] opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
                       <div className="relative z-10 flex flex-col items-center">
                         <h3 className="text-2xl font-semibold text-white font-lato">{member.name}</h3>
