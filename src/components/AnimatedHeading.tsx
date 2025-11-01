@@ -46,28 +46,20 @@ export default function AnimatedHeading({
       motionModule?.div ??
       (fallbackMotion[as] ?? fallbackMotion.h2)) as ComponentType<Record<string, unknown>>;
 
-  // Calculate offset dynamically, but keep logic simple
+  // Calculate offset dynamically on mount; we avoid resize listeners to keep runtime overhead minimal.
   const [offset, setOffset] = useState(() => distance);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || typeof window === 'undefined') {
       return;
     }
 
-    const computeOffset = () => {
-      if (typeof window === 'undefined') {
-        return distance;
-      }
+    const width = window.innerWidth;
+    const intensity =
+      DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth)?.intensity ??
+      DISTANCE_BREAKPOINTS[DISTANCE_BREAKPOINTS.length - 1].intensity;
 
-      const width = window.innerWidth;
-      const breakpoint = DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth) ?? DISTANCE_BREAKPOINTS.at(-1);
-      const intensity = breakpoint?.intensity ?? 1;
-      setOffset(distance * intensity);
-    };
-
-    computeOffset();
-    window.addEventListener('resize', computeOffset);
-    return () => window.removeEventListener('resize', computeOffset);
+    setOffset(distance * intensity);
   }, [distance, prefersReducedMotion]);
 
   const hiddenTransform = useMemo(() => {
