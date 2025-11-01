@@ -1,13 +1,11 @@
 'use client';
 
-import type { ComponentType, HTMLAttributes } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState, type HTMLAttributes } from 'react';
+import type { ComponentType } from 'react';
 
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
-
-const DEFAULT_DISTANCE = 200;
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -19,7 +17,14 @@ type AnimatedHeadingProps = HTMLAttributes<HTMLHeadingElement> & {
   once?: boolean;
 };
 
-type MotionLike = Record<string, ComponentType<Record<string, unknown>>>;
+const DEFAULT_DISTANCE = 200;
+
+const DISTANCE_BREAKPOINTS: Array<{ minWidth: number; intensity: number }> = [
+  { minWidth: 1440, intensity: 1 },
+  { minWidth: 1024, intensity: 0.8 },
+  { minWidth: 768, intensity: 0.6 },
+  { minWidth: 0, intensity: 0.45 },
+];
 
 export default function AnimatedHeading({
   as = 'h2',
@@ -33,129 +38,85 @@ export default function AnimatedHeading({
 }: AnimatedHeadingProps) {
   const framer = useFramerMotion();
   const prefersReducedMotion = useReducedMotion();
-  const motion = (framer?.motion ?? fallbackMotion) as MotionLike;
-  const MotionComponent = (motion[as] ?? motion.h2 ?? motion.div) as ComponentType<Record<string, unknown>>;
-  const elementRef = useRef<HTMLHeadingElement | null>(null);
+  // Resolve target component (Framer motion element or fallback heading)
+  const motionModule = framer?.motion as Record<string, ComponentType<Record<string, unknown>>> | undefined;
+  const MotionComponent =
+    (motionModule?.[as] ??
+      motionModule?.h2 ??
+      motionModule?.div ??
+      (fallbackMotion[as] ?? fallbackMotion.h2)) as ComponentType<Record<string, unknown>>;
 
-  const computeDistance = useCallback(
-    (width?: number) => {
-      if (!width) {
-        return distance;
-      }
-
-      if (width >= 1440) {
-        return distance;
-      }
-
-      if (width >= 1024) {
-        return distance * 0.8;
-      }
-
-      if (width >= 768) {
-        return distance * 0.6;
-      }
-
-      return distance * 0.45;
-    },
-    [distance],
-  );
-
-  const [effectiveDistance, setEffectiveDistance] = useState(() =>
-    typeof window === 'undefined' ? distance : computeDistance(window.innerWidth),
-  );
+  // Calculate offset dynamically, but keep logic simple
+  const [offset, setOffset] = useState(() => distance);
 
   useEffect(() => {
     if (prefersReducedMotion) {
       return;
     }
 
-    const updateDistance = () => {
-      setEffectiveDistance(computeDistance(window.innerWidth));
+    const computeOffset = () => {
+      if (typeof window === 'undefined') {
+        return distance;
+      }
+
+      const width = window.innerWidth;
+      const breakpoint = DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth) ?? DISTANCE_BREAKPOINTS.at(-1);
+      const intensity = breakpoint?.intensity ?? 1;
+      setOffset(distance * intensity);
     };
 
-    updateDistance();
-    window.addEventListener('resize', updateDistance);
-    return () => {
-      window.removeEventListener('resize', updateDistance);
-    };
-  }, [prefersReducedMotion, computeDistance]);
-
-  const [isInView, setIsInView] = useState(prefersReducedMotion);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    const node = elementRef.current;
-    if (!node) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio >= 0.5) {
-          setIsInView(true);
-          if (once) {
-            observer.disconnect();
-          }
-        } else if (!once) {
-          setIsInView(false);
-        }
-      },
-      {
-        threshold: 0.5,
-      },
-    );
-
-    observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [prefersReducedMotion, once]);
+    computeOffset();
+    window.addEventListener('resize', computeOffset);
+    return () => window.removeEventListener('resize', computeOffset);
+  }, [distance, prefersReducedMotion]);
 
   const hiddenTransform = useMemo(() => {
+    if (prefersReducedMotion) {
+      return undefined;
+    }
+
     switch (direction) {
       case 'left':
-        return { x: -effectiveDistance, y: 0 };
+        return { x: -offset, y: 0 };
       case 'right':
-        return { x: effectiveDistance, y: 0 };
+        return { x: offset, y: 0 };
       case 'down':
-        return { x: 0, y: -effectiveDistance };
+        return { x: 0, y: -offset };
       case 'up':
       default:
-        return { x: 0, y: effectiveDistance };
+        return { x: 0, y: offset };
     }
-  }, [direction, effectiveDistance]);
+  }, [direction, offset, prefersReducedMotion]);
 
-  const visibleTransform = useMemo(() => ({ x: 0, y: 0 }), []);
+  const animationProps =
+    prefersReducedMotion || !motionModule
+      ? {}
+      : {
+          initial: hiddenTransform,
+          whileInView: { x: 0, y: 0 },
+          viewport: { once, amount: 0.5 },
+          transition: {
+            type: 'spring',
+            stiffness: 160,
+            damping: 22,
+            mass: 0.9,
+            delay,
+          },
+        };
 
-  const animateProps = prefersReducedMotion
-    ? {}
-    : {
-        initial: hiddenTransform,
-        animate: isInView ? visibleTransform : hiddenTransform,
-        transition: {
-          type: 'spring',
-          stiffness: 160,
-          damping: 20,
-          mass: 0.9,
-          delay,
-        },
-      };
+  // For non-Framer fallback, ensure we don't pass motion-specific props
+  if (!motionModule || prefersReducedMotion) {
+    const FallbackComponent = fallbackMotion[as] ?? fallbackMotion.h2;
 
-  const setRef = (node: HTMLHeadingElement | null) => {
-    elementRef.current = node;
-  };
+    return (
+      <FallbackComponent className={className} {...rest}>
+        {children}
+      </FallbackComponent>
+    );
+  }
 
   return (
-    <MotionComponent
-      ref={setRef as unknown as React.Ref<HTMLHeadingElement>}
-      {...animateProps}
-      className={className}
-      {...rest}
-    >
+    <MotionComponent {...animationProps} className={className} {...rest}>
       {children}
     </MotionComponent>
   );
