@@ -37,15 +37,6 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
   const framer = useFramerMotion();
   const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
 
-  const glowAnimation = useMemo(
-    () =>
-      members.map((_, index) => ({
-        delay: `${(index % 3) * 0.18}s`,
-        duration: `${2.8 + (index % 2) * 0.25}s`,
-      })),
-    [members],
-  );
-
   const backgroundStyle = useMemo<CSSProperties>(
     () => ({
       backgroundImage: [
@@ -146,16 +137,8 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                       )}
                       <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/30 to-black/75 opacity-100 transition-opacity duration-700 group-hover:via-black/25 group-hover:to-black/65" />
                     </div>
-                    <div className="relative px-6 pb-8 pt-8 text-center bg-gradient-to-br from-white/[0.06] via-white/[0.025] to-transparent overflow-hidden rounded-b-[2rem]">
+                    <div className="relative px-6 pb-8 pt-8 text-center bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent overflow-hidden rounded-b-[2rem]">
                       <div className="absolute inset-0 rounded-b-[2rem] bg-white/[0.08] opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
-                      <div
-                        className="absolute inset-0 rounded-b-[2rem] border border-white/18 animate-border-glow"
-                        style={{
-                          '--glow-delay': glowAnimation[index]?.delay ?? '0s',
-                          '--glow-duration': glowAnimation[index]?.duration ?? '2.6s',
-                        } as CSSProperties}
-                      />
-
                       <div className="relative z-10 flex flex-col items-center">
                         <h3 className="text-2xl font-semibold text-white font-lato">{member.name}</h3>
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.4em] text-white/55 font-lato">
