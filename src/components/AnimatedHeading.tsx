@@ -6,7 +6,7 @@ import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 
-const DEFAULT_DISTANCE = 32;
+const DEFAULT_DISTANCE = 200;
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -23,7 +23,7 @@ type MotionLike = Record<string, ComponentType<Record<string, unknown>>>;
 export default function AnimatedHeading({
   as = 'h2',
   delay = 0,
-  direction = 'up',
+  direction = 'right',
   distance = DEFAULT_DISTANCE,
   once = true,
   className,
@@ -35,27 +35,27 @@ export default function AnimatedHeading({
   const motion = (framer?.motion ?? fallbackMotion) as MotionLike;
   const MotionComponent = (motion[as] ?? motion.h2 ?? motion.div) as ComponentType<Record<string, unknown>>;
 
-    const initial = prefersReducedMotion
-      ? undefined
-      : (() => {
-          switch (direction) {
-            case 'left':
-              return { opacity: 0, x: -distance };
-            case 'right':
-              return { opacity: 0, x: distance };
-            case 'down':
-              return { opacity: 0, y: -distance };
-            case 'up':
-            default:
-              return { opacity: 0, y: distance };
-          }
-        })();
+  const initial = prefersReducedMotion
+    ? undefined
+    : (() => {
+        switch (direction) {
+          case 'left':
+            return { x: -distance };
+          case 'right':
+            return { x: distance };
+          case 'down':
+            return { y: -distance };
+          case 'up':
+          default:
+            return { y: distance };
+        }
+      })();
 
-    const animate = prefersReducedMotion ? undefined : { opacity: 1, x: 0, y: 0 };
+  const animate = prefersReducedMotion ? undefined : { x: 0, y: 0 };
     const viewport = prefersReducedMotion ? undefined : { once, amount: 0.6 };
-    const transition = prefersReducedMotion
-      ? undefined
-      : { duration: 0.8, ease: 'easeOut', delay };
+  const transition = prefersReducedMotion
+    ? undefined
+    : { duration: 0.75, ease: 'circOut', delay };
 
   return (
     <MotionComponent
