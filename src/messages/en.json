@@ -27,7 +27,7 @@
         "line1": "ACCURACY AND",
         "line2": "TRANSPARENCY"
       },
-      "description": "We only do what we're best at – AI agents, websites and AI implementation in business. We don't try to be an agency for everything. We build on clear strategy, strong ideas and execution that delivers results.",
+      "description": "We only do what we're best at – AI agents, websites and AI implementation in business. We don't try to be an agency for everything. We build on clear plans, strong ideas and execution that delivers results.",
       "stats": {
         "clients": "Satisfied clients",
         "years": "Years of experience",
@@ -75,7 +75,7 @@
         "optimization": "OPTIMIZATION"
       },
       "stepDescriptions": {
-        "meeting": "We run a focused AI strategy workshop to uncover your goals, rank high-impact automation opportunities, and define quick-win use cases with measurable ROI.",
+        "meeting": "We run a focused AI discovery workshop to uncover your goals, rank high-impact automation opportunities, and define quick-win use cases with measurable ROI.",
         "contract": "We clarify scope, deliverables, KPIs, and timeline inside a transparent service agreement so every AI initiative drives your growth targets and compliance requirements.",
         "access": "We securely connect to your tools, CRMs, and data sources with encrypted credentials to supply GDPR-ready data pipelines for AI training and integrations.",
         "implementation": "We prototype, validate, and deploy AI agents or automations directly into your workflows, integrating APIs and data pipelines for immediate operational impact.",
@@ -347,8 +347,8 @@
     "cta": {
       "pretitle": "Next steps",
       "title": "Build the AI core your team will rely on in 2025",
-      "description": "Book a strategy session or send us a note—within 48 hours we map the roadmap that unlocks your next growth leap.",
-      "primary": "Book a strategy call",
+      "description": "Book a discovery session or send us a note—within 48 hours we map the roadmap that unlocks your next growth leap.",
+      "primary": "Book a discovery call",
       "secondary": "Email our team"
     },
     "contact": {
