@@ -76,7 +76,7 @@ export default function AnimatedHeading({
       })();
 
   const animate = prefersReducedMotion ? undefined : { x: 0, y: 0 };
-  const viewport = prefersReducedMotion ? undefined : { once, amount: 0.85 };
+  const viewport = prefersReducedMotion ? undefined : { once, amount: 0.5 };
   const transition = prefersReducedMotion
     ? undefined
     : { duration: 0.75, ease: 'circOut', delay };
