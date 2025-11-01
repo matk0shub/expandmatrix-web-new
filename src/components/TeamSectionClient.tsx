@@ -40,8 +40,8 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
   const glowAnimation = useMemo(
     () =>
       members.map((_, index) => ({
-        delay: `${index * 0.18}s`,
-        duration: `${2.6 + (index % 3) * 0.2}s`,
+        delay: `${(index % 3) * 0.18}s`,
+        duration: `${2.8 + (index % 2) * 0.25}s`,
       })),
     [members],
   );
@@ -61,18 +61,6 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
       ].join(', '),
       backgroundSize: '100% 100%',
       backgroundPosition: 'center',
-    }),
-    [],
-  );
-
-  const cardOverlayStyle = useMemo<CSSProperties>(
-    () => ({
-      backgroundImage: [
-        'linear-gradient(to bottom, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06))',
-        'linear-gradient(to right, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0))',
-        'linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
-        'linear-gradient(to top left, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0))',
-      ].join(', '),
     }),
     [],
   );
@@ -128,7 +116,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                     className="absolute -top-8 -left-8 h-28 w-24 rounded-3xl opacity-70 blur-3xl transition-transform duration-700 group-hover:scale-110"
                     style={{ background: accent }}
                   />
-                  <div className="relative overflow-hidden rounded-[2rem] border border-white/25 bg-gradient-to-b from-white/[0.12] via-white/[0.06] to-white/[0.03] backdrop-blur-2xl shadow-[0_35px_120px_-40px_rgba(0,0,0,0.8)]">
+                  <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-br from-black/[0.94] via-black/[0.97] to-black/[0.99] shadow-[0_30px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2">
                     <div className="relative aspect-[4/5] overflow-hidden">
                       {member.avatar?.url ? (
                         <Image
@@ -156,25 +144,25 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                           </span>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80 opacity-100 transition-opacity duration-700 group-hover:via-black/35 group-hover:to-black/70" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/30 to-black/75 opacity-100 transition-opacity duration-700 group-hover:via-black/25 group-hover:to-black/65" />
                     </div>
-                    <div className="relative px-6 pb-8 pt-8 text-center backdrop-blur-3xl bg-white/[0.08] border-t border-white/15 overflow-hidden rounded-b-[2rem]">
-                      <div className="absolute inset-0 pointer-events-none rounded-b-[2rem]" style={cardOverlayStyle} />
+                    <div className="relative px-6 pb-8 pt-8 text-center bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent border-t border-white/10 overflow-hidden rounded-b-[2rem]">
+                      <div className="absolute inset-0 rounded-b-[2rem] bg-white/[0.06] opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
                       <div
-                        className="absolute inset-0 rounded-b-[2rem] border border-white/30 animate-border-glow"
+                        className="absolute inset-0 rounded-b-[2rem] border border-white/18 animate-border-glow"
                         style={{
                           '--glow-delay': glowAnimation[index]?.delay ?? '0s',
                           '--glow-duration': glowAnimation[index]?.duration ?? '2.6s',
                         } as CSSProperties}
                       />
 
-                      <div className="relative z-10">
+                      <div className="relative z-10 flex flex-col items-center">
                         <h3 className="text-2xl font-semibold text-white font-lato">{member.name}</h3>
-                        <p className="mt-2 text-[0.75rem] uppercase tracking-[0.45em] text-white/50 font-lato">
+                        <p className="mt-2 text-[0.75rem] uppercase tracking-[0.4em] text-white/55 font-lato">
                           {member.role}
                         </p>
                         {member.bio && member.bio.trim() ? (
-                          <p className="mt-4 text-sm md:text-base text-white/70 leading-relaxed font-lato">
+                          <p className="mt-4 text-sm md:text-base text-white/75 leading-relaxed font-lato">
                             {member.bio}
                           </p>
                         ) : null}
@@ -183,7 +171,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                             {member.focus.map((focusText, focusIndex) => (
                               <li
                                 key={`${member.id}-focus-${focusIndex}`}
-                                className="rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-[0.26em] text-white/80 transition-all duration-300 group-hover:border-white/30 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
+                                className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/80 transition-colors duration-300 group-hover:border-white/25 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
                               >
                                 {focusText}
                               </li>
@@ -199,7 +187,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                                 target="_blank"
                                 rel="me noopener noreferrer"
                                 aria-label={label}
-                                className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-sm text-white/80 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.12] hover:text-white"
+                                className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-gradient-to-br from-white/[0.08] to-white/[0.02] text-white/80 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.18] hover:text-white"
                                 itemProp="sameAs"
                               >
                                 <Icon className="h-5 w-5" />
