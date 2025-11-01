@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
@@ -36,69 +37,49 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
   const framer = useFramerMotion();
   const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
 
-  // Generate random animation values only on client side to prevent hydration mismatch
-  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
-  
-  useEffect(() => {
-    if (!members.length) {
-      setAnimationValues([]);
-      return;
-    }
+  const glowAnimation = useMemo(
+    () =>
+      members.map((_, index) => ({
+        delay: `${index * 0.18}s`,
+        duration: `${2.6 + (index % 3) * 0.2}s`,
+      })),
+    [members],
+  );
 
-    setAnimationValues(
-      members.map(() => ({
-        delay: Math.random() * 5,
-        duration: `${2 + Math.random() * 3}s`,
-      }))
-    );
-  }, [members]);
+  const backgroundStyle = useMemo<CSSProperties>(
+    () => ({
+      backgroundImage: [
+        'radial-gradient(ellipse 58% 42% at 24% 12%, rgba(0, 255, 186, 0.8) 0%, rgba(0, 215, 107, 0.54) 55%, rgba(0, 184, 92, 0.24) 78%, transparent 92%)',
+        'radial-gradient(ellipse 55% 50% at 72% 10%, rgba(110, 255, 206, 0.75) 0%, rgba(0, 215, 107, 0.5) 48%, rgba(0, 184, 92, 0.24) 70%, transparent 90%)',
+        'radial-gradient(ellipse 60% 40% at 30% 44%, rgba(0, 215, 150, 0.64) 0%, rgba(0, 184, 92, 0.38) 58%, transparent 86%)',
+        'radial-gradient(circle at 70% 78%, rgba(0, 215, 120, 0.6) 0%, rgba(0, 184, 92, 0.32) 60%, transparent 82%)',
+        'radial-gradient(circle at 46% 88%, rgba(0, 255, 170, 0.5) 0%, rgba(0, 215, 107, 0.32) 55%, transparent 82%)',
+        'linear-gradient(to bottom, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.0) 40%)',
+        'linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.0) 40%)',
+        'linear-gradient(to right, rgba(3, 21, 13, 0.9) 0%, rgba(3, 21, 13, 0.0) 45%)',
+        'linear-gradient(to left, rgba(3, 21, 13, 0.9) 0%, rgba(3, 21, 13, 0.0) 45%)',
+      ].join(', '),
+      backgroundSize: '100% 100%',
+      backgroundPosition: 'center',
+    }),
+    [],
+  );
+
+  const cardOverlayStyle = useMemo<CSSProperties>(
+    () => ({
+      backgroundImage: [
+        'linear-gradient(to bottom, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06))',
+        'linear-gradient(to right, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0))',
+        'linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
+        'linear-gradient(to top left, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0))',
+      ].join(', '),
+    }),
+    [],
+  );
 
   return (
     <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-36 lg:py-40 overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-[12%] left-[24%] h-[460px] w-[500px] blur-3xl opacity-68"
-          style={{
-            background:
-              'radial-gradient(ellipse 58% 42%, rgba(0, 255, 186, 0.85) 0%, rgba(0, 215, 107, 0.58) 55%, rgba(0, 184, 92, 0.25) 78%, transparent 90%)',
-          }}
-        />
-        <div
-          className="absolute top-[8%] right-[28%] h-[480px] w-[520px] blur-3xl opacity-60"
-          style={{
-            background:
-              'radial-gradient(ellipse 55% 50%, rgba(110, 255, 206, 0.8) 0%, rgba(0, 215, 107, 0.52) 48%, rgba(0, 184, 92, 0.28) 70%, transparent 88%)',
-          }}
-        />
-        <div
-          className="absolute top-[44%] left-[30%] h-[420px] w-[420px] blur-3xl opacity-52"
-          style={{
-            background:
-              'radial-gradient(ellipse 60% 40%, rgba(0, 215, 150, 0.68) 0%, rgba(0, 184, 92, 0.45) 58%, transparent 86%)',
-          }}
-        />
-        <div
-          className="absolute bottom-[22%] right-[30%] h-[420px] w-[440px] blur-3xl opacity-60"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(0, 215, 120, 0.66) 0%, rgba(0, 184, 92, 0.4) 60%, transparent 86%)',
-          }}
-        />
-        <div
-          className="absolute bottom-[12%] left-[46%] h-[340px] w-[360px] blur-3xl opacity-50"
-          style={{
-            background:
-              'radial-gradient(circle, rgba(0, 255, 170, 0.6) 0%, rgba(0, 215, 107, 0.4) 55%, transparent 82%)',
-          }}
-        />
-        <div className="absolute inset-x-0 top-0 h-[400px] bg-gradient-to-b from-black via-[#03150df5] to-transparent opacity-100" />
-        <div className="absolute inset-x-0 bottom-0 h-[400px] bg-gradient-to-t from-black via-[#03150df5] to-transparent opacity-100" />
-        <div className="absolute inset-y-0 left-0 w-[320px] bg-gradient-to-r from-black via-[#03150df5] to-transparent opacity-100" />
-        <div className="absolute inset-y-0 right-0 w-[320px] bg-gradient-to-l from-black via-[#03150df5] to-transparent opacity-100" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_56%,rgba(0,0,0,0.78)_100%)] opacity-80 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.55),transparent_30%,transparent_70%,rgba(0,0,0,0.55))]" />
-      </div>
+      <div className="absolute inset-0 pointer-events-none" style={backgroundStyle} />
 
       <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
         <div className="relative mx-auto max-w-3xl text-center">
@@ -156,7 +137,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                           className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105"
-                          priority={index < 2}
+                          priority={index === 0}
                           itemProp="image"
                         />
                       ) : (
@@ -178,16 +159,13 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80 opacity-100 transition-opacity duration-700 group-hover:via-black/35 group-hover:to-black/70" />
                     </div>
                     <div className="relative px-6 pb-8 pt-8 text-center backdrop-blur-3xl bg-white/[0.08] border-t border-white/15 overflow-hidden rounded-b-[2rem]">
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.18] via-white/[0.08] to-white/[0.04] rounded-b-[2rem]" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent opacity-70" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.15] via-transparent to-transparent opacity-50" />
-                      <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.08] to-transparent opacity-40" />
+                      <div className="absolute inset-0 pointer-events-none rounded-b-[2rem]" style={cardOverlayStyle} />
                       <div
                         className="absolute inset-0 rounded-b-[2rem] border border-white/30 animate-border-glow"
                         style={{
-                          '--glow-delay': animationValues[index]?.delay || 0,
-                          '--glow-duration': animationValues[index]?.duration || '2s',
-                        } as React.CSSProperties}
+                          '--glow-delay': glowAnimation[index]?.delay ?? '0s',
+                          '--glow-duration': glowAnimation[index]?.duration ?? '2.6s',
+                        } as CSSProperties}
                       />
 
                       <div className="relative z-10">
