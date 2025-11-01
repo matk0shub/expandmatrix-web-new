@@ -8,6 +8,7 @@ import { useFAQs } from '@/hooks/useFAQs';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { CalCTAButton } from './CalCTAButton';
+import AnimatedHeading from './AnimatedHeading';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
 
@@ -147,16 +148,10 @@ export default function FAQSection() {
           <div className="flex flex-col min-h-[420px] py-4">
             <div className="flex flex-1 flex-col justify-between gap-10">
               {/* Headline */}
-              <MotionDiv
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <h2 className="heading-main">
-                  <div>{t('title.line1')}</div>
-                  <div>{t('title.line2')}</div>
-                </h2>
-              </MotionDiv>
+              <AnimatedHeading as="h2" className="heading-main">
+                <div>{t('title.line1')}</div>
+                <div>{t('title.line2')}</div>
+              </AnimatedHeading>
 
               {/* Bottom Section - CTA with text above button */}
               <MotionDiv

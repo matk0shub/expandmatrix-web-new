@@ -11,6 +11,7 @@ import { useClient } from '@/hooks/useClient';
 import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
+import AnimatedHeading from './AnimatedHeading';
 
 type GSAPTimeline = gsap.core.Timeline;
 
@@ -264,17 +265,16 @@ export default function Hero() {
             {/* Main Content */}
             <div className="relative z-10 min-h-screen flex flex-col justify-between py-15 md:py-19 px-0">
            {/* Top Section - Modern Heading Layout */}
-           <MotionDiv
-             initial={{ opacity: 0, y: 50 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.8, delay: 0.6 }}
+           <div
              className="pt-16 md:pt-20 px-6 md:px-12 xl:px-0 relative z-50"
            >
              {/* Grid-based heading layout with ghost sizer for perfect alignment */}
              <div className="hero-heading-container">
-               <h1 
-                 className="hero-heading hero-heading-grid" 
+               <AnimatedHeading
+                 as="h1"
+                 className="hero-heading hero-heading-grid"
                  aria-label={`${t('heading.line1')} ${t('heading.line2a')} ${t('heading.line2b')} ${t('heading.line3')} ${t('heading.line4')}`}
+                 delay={0.2}
                >
                  {/* First line - WE CREATE / VYVÍJÍME - right-aligned */}
                  <span className="hero-heading-line-first" data-line="1">
@@ -311,9 +311,9 @@ export default function Hero() {
                      className="block"
                    />
                  </span>
-              </h1>
+              </AnimatedHeading>
             </div>
-           </MotionDiv>
+           </div>
 
           {/* Bottom Section - CTA with better positioning */}
            <MotionDiv
