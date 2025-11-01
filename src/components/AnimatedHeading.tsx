@@ -37,25 +37,28 @@ export default function AnimatedHeading({
   const MotionComponent = (motion[as] ?? motion.h2 ?? motion.div) as ComponentType<Record<string, unknown>>;
   const elementRef = useRef<HTMLHeadingElement | null>(null);
 
-  const computeDistance = useCallback((width?: number) => {
-    if (!width) {
-      return distance;
-    }
+  const computeDistance = useCallback(
+    (width?: number) => {
+      if (!width) {
+        return distance;
+      }
 
-    if (width >= 1440) {
-      return distance;
-    }
+      if (width >= 1440) {
+        return distance;
+      }
 
-    if (width >= 1024) {
-      return distance * 0.8;
-    }
+      if (width >= 1024) {
+        return distance * 0.8;
+      }
 
-    if (width >= 768) {
-      return distance * 0.6;
-    }
+      if (width >= 768) {
+        return distance * 0.6;
+      }
 
-    return distance * 0.45;
-  }, [distance]);
+      return distance * 0.45;
+    },
+    [distance],
+  );
 
   const [effectiveDistance, setEffectiveDistance] = useState(() =>
     typeof window === 'undefined' ? distance : computeDistance(window.innerWidth),
@@ -80,14 +83,18 @@ export default function AnimatedHeading({
   const [isInView, setIsInView] = useState(prefersReducedMotion);
 
   useEffect(() => {
-    if (prefersReducedMotion || !elementRef.current) {
+    if (prefersReducedMotion) {
       return;
     }
 
     const node = elementRef.current;
+    if (!node) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.intersectionRatio >= 0.5) {
           setIsInView(true);
           if (once) {
             observer.disconnect();
@@ -97,14 +104,15 @@ export default function AnimatedHeading({
         }
       },
       {
-        root: null,
-        rootMargin: '-50% 0px -50% 0px',
-        threshold: 0,
+        threshold: 0.5,
       },
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+    };
   }, [prefersReducedMotion, once]);
 
   const hiddenTransform = useMemo(() => {
@@ -130,16 +138,20 @@ export default function AnimatedHeading({
         animate: isInView ? visibleTransform : hiddenTransform,
         transition: {
           type: 'spring',
-          stiffness: 140,
-          damping: 18,
-          mass: 0.8,
+          stiffness: 160,
+          damping: 20,
+          mass: 0.9,
           delay,
         },
       };
 
+  const setRef = (node: HTMLHeadingElement | null) => {
+    elementRef.current = node;
+  };
+
   return (
     <MotionComponent
-      ref={elementRef as unknown as React.Ref<HTMLHeadingElement>}
+      ref={setRef as unknown as React.Ref<HTMLHeadingElement>}
       {...animateProps}
       className={className}
       {...rest}
