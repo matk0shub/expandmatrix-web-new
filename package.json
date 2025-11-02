@@ -16,7 +16,7 @@
     "dev:clean": "npm run clean && npm run dev",
     "dev:fresh": "npm run clean:full && npm run dev",
     "dev:nocache": "npm run clean:cache && next dev",
-    "prebuild": "npm run clean",
+    "prebuild": "npm run clean && node scripts/check-cache.js",
     "audit:mobile": "node scripts/run-lighthouse.js mobile",
     "audit:tablet": "node scripts/run-lighthouse.js tablet",
     "audit:desktop": "node scripts/run-lighthouse.js desktop",

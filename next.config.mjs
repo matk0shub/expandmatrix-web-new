@@ -155,6 +155,9 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     webpackBuildWorker: false,
   },

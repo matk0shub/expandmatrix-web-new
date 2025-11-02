@@ -1,10 +1,5 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-import nextPlugin from "@next/eslint-plugin-next";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const { FlatCompat } = require('@eslint/eslintrc');
+const nextPlugin = require('@next/eslint-plugin-next');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -41,4 +36,4 @@ const eslintConfig = [
   },
 ];
 
-export default eslintConfig;
+module.exports = eslintConfig;

@@ -50,10 +50,10 @@ const GROUND_FRICTION = 0.84;
 const SURFACE_FRICTION = 0.18;
 
 interface ClientsSectionProps {
-  partners: NormalizedPartner[];
+  partners?: NormalizedPartner[];
 }
 
-export default function ClientsSection({ partners }: ClientsSectionProps) {
+export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
   const t = useTranslations('sections.clients');
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,7 +71,7 @@ export default function ClientsSection({ partners }: ClientsSectionProps) {
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const partnerCount = Math.max(Array.isArray(partners) ? partners.length : 0, 0);
+  const partnerCount = Math.max(partners.length, 0);
   const [layout, setLayout] = useState(() => ({
     ballSize: 160,
     greenRadius: 180,
