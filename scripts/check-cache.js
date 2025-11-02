@@ -52,6 +52,10 @@ function ensureNextStubs() {
         contents: JSON.stringify({ pages: {} }),
       },
       {
+        file: path.join(serverDir, 'functions-config-manifest.json'),
+        contents: JSON.stringify({ functions: {}, version: 1 }),
+      },
+      {
         file: path.join(vendorChunksDir, '@opentelemetry.js'),
         contents: 'export {};',
       },

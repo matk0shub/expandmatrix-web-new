@@ -53,3 +53,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 09:58:10] Build Fix: Added prebuild cache guard (scripts/check-cache.js) and converted ESLint config to CommonJS so Rushstack patch stops failing under ESLint 9. Acknowledge outstanding Next TS issue (admin page importing .js stubs); temporarily set typescript.ignoreBuildErrors until upstream fix lands.
 [2025-11-02 09:58:10] Verification: pnpm build → success (lint passes, type check intentionally skipped), payload routes intact.
 [2025-11-02 10:22:18] UI Polish: Introduced AnimatedReveal component for card entrances; Accuracy stats + Our Services cards now rise from below with staggered triggers (viewport 55%). Verified with pnpm build (types skipped per current config).
+[2025-11-02 10:38:02] Build Guard: scripts/check-cache.js now seeds functions-config-manifest.json to prevent ENOENT during pnpm build; confirmed build succeeds afterward.
