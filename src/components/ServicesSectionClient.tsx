@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 // Card configuration for easy customization
 const CARD_CONFIG = {
@@ -44,6 +45,7 @@ interface ServicesSectionClientProps {
 
 export default function ServicesSectionClient({ copy }: ServicesSectionClientProps) {
   const { title, services } = copy;
+  const prefersReducedMotion = useReducedMotion();
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);

@@ -91,6 +91,28 @@ let preserveIntervalStarted = false;
 let backingUp = false;
 let restoring = false;
 
+class EnsurePagesManifestPlugin {
+  async ensureManifest() {
+    const targetPath = path.join(process.cwd(), '.next', 'server', 'pages-manifest.json');
+    try {
+      await fs.promises.access(targetPath, fs.constants.F_OK);
+    } catch {
+      try {
+        await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
+        await fs.promises.writeFile(targetPath, JSON.stringify({}), 'utf-8');
+      } catch (error) {
+        console.warn('[next.config] Failed to seed pages-manifest.json:', error);
+      }
+    }
+  }
+
+  apply(compiler) {
+    const ensure = this.ensureManifest.bind(this);
+    compiler.hooks.beforeCompile.tapPromise('EnsurePagesManifestPlugin', ensure);
+    compiler.hooks.afterEmit.tapPromise('EnsurePagesManifestPlugin', ensure);
+  }
+}
+
 class PreserveNextServerArtifactsPlugin {
   async syncBackup() {
     if (backingUp || !(await dirExists(serverOutputDir))) {
@@ -161,7 +183,7 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: false,
   },
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     if (dev) {
       config.devtool = false;
       config.cache = {
@@ -178,6 +200,11 @@ const nextConfig = {
         os: false,
       },
     };
+
+    if (isServer) {
+      config.plugins = config.plugins ?? [];
+      config.plugins.push(new EnsurePagesManifestPlugin());
+    }
 
     // PreserveNextServerArtifactsPlugin was intended to cache .next/server outputs between builds,
     // but it causes noisy copy failures and slows down compilation. Admin assets are rebuilt on demand
