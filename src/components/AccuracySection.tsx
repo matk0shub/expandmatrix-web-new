@@ -4,17 +4,12 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
+import AnimatedReveal from './AnimatedReveal';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
 import { ANIMATION_DURATION, ANIMATION_DELAYS } from '@/constants/animations';
-import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
 
 export default function AccuracySection() {
   const t = useTranslations('sections.accuracy');
-  const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
-  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
   // Use GSAP animation hook
   const { ref: sectionRef } = useGSAPAnimation({
@@ -118,16 +113,13 @@ export default function AccuracySection() {
         {/* Bottom Section - 4 Stats in a row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {stats.map((stat, index) => (
-            <MotionDiv
-              key={index}
+            <AnimatedReveal
+              key={stat.label}
               className="stat-item relative group"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: prefersReducedMotion ? 0 : 0.8, 
-                delay: prefersReducedMotion ? 0 : index * 0.1 
-              }}
-              viewport={{ once: true }}
+              direction="up"
+              delay={index * 0.12}
+              distance={220}
+              viewportAmount={0.55}
             >
               {/* Coal Liquid Glass Card */}
               <div className="relative p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[320px] flex flex-col overflow-hidden">
@@ -176,7 +168,7 @@ export default function AccuracySection() {
                   </div>
                 </div>
               </div>
-            </MotionDiv>
+            </AnimatedReveal>
           ))}
         </div>
       </div>

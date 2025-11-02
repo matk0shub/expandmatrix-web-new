@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
+import AnimatedReveal from './AnimatedReveal';
 
 // Card configuration for easy customization
 const CARD_CONFIG = {
@@ -46,9 +44,6 @@ interface ServicesSectionClientProps {
 
 export default function ServicesSectionClient({ copy }: ServicesSectionClientProps) {
   const { title, services } = copy;
-  const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
-  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
@@ -137,20 +132,13 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         {/* Bottom Section - Responsive service cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
           {services.map((service, index) => (
-            <MotionDiv
+            <AnimatedReveal
               key={service.key}
-              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 40 }}
-              whileInView={prefersReducedMotion ? {} : { 
-                opacity: 1, 
-                y: 0
-              }}
-              transition={{
-                duration: prefersReducedMotion ? 0 : CARD_CONFIG.animation.duration,
-                delay: prefersReducedMotion ? 0 : index * CARD_CONFIG.animation.staggerDelay,
-                ease: "easeOut"
-              }}
-              viewport={{ once: true, margin: "-50px" }}
               className="group"
+              direction="up"
+              delay={index * CARD_CONFIG.animation.staggerDelay}
+              distance={200}
+              viewportAmount={0.55}
             >
               {/* Card Container */}
               <div 
@@ -255,7 +243,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                 {/* Subtle overlay on hover */}
                 <div className="pointer-events-none absolute inset-0 rounded-3xl bg-white/0 group-hover:bg-white/[0.02] backdrop-blur-0 group-hover:backdrop-blur-sm transition-all duration-500" />
               </div>
-            </MotionDiv>
+            </AnimatedReveal>
           ))}
         </div>
       </div>
