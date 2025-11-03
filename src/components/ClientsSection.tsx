@@ -63,7 +63,7 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
   const ballStateRef = useRef(new Map<number, BallState>());
   const draggedBallRef = useRef<DragState | null>(null);
   const dimensionsRef = useRef({ width: 0, height: 0 });
-const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 150 });
+const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   const ballSizeRef = useRef(160);
   const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
 
@@ -335,7 +335,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 150 });
     [ballConfigs.length, clampValue]
   );
 
-  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 180, 360));
+  const circleDiameter = Math.round(clampValue(layout.greenRadius * 1.8, 160, 320));
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
   const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 28, 54);
@@ -900,7 +900,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 150 });
       }, 0);
 
       marquee.style.setProperty('--marquee-segment-width', `${longest}px`);
-      const duration = Math.max(longest / 140, 12);
+      const duration = Math.max(longest / 200, 9);
       marquee.style.setProperty('--marquee-duration', `${duration}s`);
     };
 
