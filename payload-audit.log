@@ -61,3 +61,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 11:39:18] UI Polish: Further reduced partners circle footprint and increased marquee speed for smoother perceived motion. `pnpm build` ✅ (types skipped).
 [2025-11-02 11:48:12] UI Polish: Updated card reveals (accuracy, services, team) to skip fade effect while keeping motion timing. `pnpm build` ✅ (types skipped).
 [2025-11-02 12:03:40] Performance: Replaced Framer-based AnimatedReveal with lightweight IntersectionObserver + CSS transitions; throttled resize handling and removed fade in FAQ cards. `pnpm build` ✅ (types skipped).
+[2025-11-02 12:08:22] Build Guard: prestart now seeds Next manifests (check-cache) to avoid missing middleware manifest when starting production server.
