@@ -192,6 +192,7 @@ export default function FAQSection() {
                     delay={index * 0.12}
                     distance={160}
                     viewportAmount={0.55}
+                    fade={false}
                     className="relative"
                     itemScope
                     itemProp="mainEntity"

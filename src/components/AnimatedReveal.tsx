@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState, type HTMLAttributes } from 'react';
-import type { ComponentType } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
 
-import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
-type AnimatedRevealProps<T extends keyof typeof fallbackMotion = 'div'> =
+type AnimatedRevealProps<T extends keyof JSX.IntrinsicElements = 'div'> =
   HTMLAttributes<HTMLElement> & {
     as?: T;
     delay?: number;
@@ -30,7 +27,7 @@ const DISTANCE_BREAKPOINTS: Array<{ minWidth: number; intensity: number }> = [
   { minWidth: 0, intensity: 0.4 },
 ];
 
-export default function AnimatedReveal<T extends keyof typeof fallbackMotion = 'div'>({
+export default function AnimatedReveal<T extends keyof JSX.IntrinsicElements = 'div'>({
   as,
   delay = 0,
   direction = 'up',
@@ -43,18 +40,8 @@ export default function AnimatedReveal<T extends keyof typeof fallbackMotion = '
   ...rest
 }: AnimatedRevealProps<T>) {
   const resolvedTag = as ?? ('div' as T);
-  const framer = useFramerMotion();
   const prefersReducedMotion = useReducedMotion();
-
-  const motionModule = framer?.motion as
-    | Record<string, ComponentType<Record<string, unknown>>>
-    | undefined;
-  const MotionComponent =
-    (motionModule?.[resolvedTag] ??
-      motionModule?.div ??
-      (fallbackMotion[resolvedTag] ?? fallbackMotion.div)) as ComponentType<
-      Record<string, unknown>
-    >;
+  const elementRef = useRef<HTMLElement | null>(null);
 
   const [offset, setOffset] = useState(() => distance);
 
@@ -63,12 +50,29 @@ export default function AnimatedReveal<T extends keyof typeof fallbackMotion = '
       return;
     }
 
-    const width = window.innerWidth;
-    const intensity =
-      DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth)?.intensity ??
-      DISTANCE_BREAKPOINTS[DISTANCE_BREAKPOINTS.length - 1].intensity;
+    let frame: number | undefined;
 
-    setOffset(distance * intensity);
+    const updateOffset = () => {
+      const width = window.innerWidth;
+      const intensity =
+        DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth)?.intensity ??
+        DISTANCE_BREAKPOINTS[DISTANCE_BREAKPOINTS.length - 1].intensity;
+
+      setOffset(distance * intensity);
+    };
+
+    const handleResize = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateOffset);
+    };
+
+    updateOffset();
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [distance, prefersReducedMotion]);
 
   const hiddenTransform = useMemo(() => {
@@ -89,40 +93,81 @@ export default function AnimatedReveal<T extends keyof typeof fallbackMotion = '
     }
   }, [direction, offset, prefersReducedMotion]);
 
-  if (!motionModule || prefersReducedMotion) {
-    const FallbackComponent =
-      (fallbackMotion[resolvedTag] ?? fallbackMotion.div) as ComponentType<Record<string, unknown>>;
+  const baseTransform = hiddenTransform
+    ? `translate3d(${hiddenTransform.x ?? 0}px, ${hiddenTransform.y ?? 0}px, 0)`
+    : 'translate3d(0, 0, 0)';
 
-    return (
-      <FallbackComponent className={className} {...rest}>
-        {children}
-      </FallbackComponent>
+  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setIsVisible(true);
+      return;
+    }
+
+    const node = elementRef.current;
+    if (!node) {
+      return;
+    }
+
+    let currentNode: HTMLElement | null = node;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (once) {
+            observer.disconnect();
+          }
+        } else if (!once) {
+          setIsVisible(false);
+        }
+      },
+      {
+        threshold: clampViewportAmount(viewportAmount),
+      },
     );
-  }
-  const initialState = fade
-    ? { opacity: 0, ...(hiddenTransform ?? {}) }
-    : { ...(hiddenTransform ?? {}) };
 
-  const targetState = fade
-    ? { opacity: 1, x: 0, y: 0 }
-    : { x: 0, y: 0 };
+    observer.observe(currentNode);
+
+    return () => {
+      observer.disconnect();
+      currentNode = null;
+    };
+  }, [once, prefersReducedMotion, viewportAmount]);
+
+  const transition = prefersReducedMotion
+    ? 'none'
+    : `transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) ${delay}s${
+        fade ? `, opacity 0.5s ease ${delay}s` : ''
+      }`;
+
+  const computedStyle: CSSProperties = {
+    transform: isVisible ? 'translate3d(0, 0, 0)' : baseTransform,
+    opacity: fade ? (isVisible ? 1 : 0) : 1,
+    transition,
+    willChange: prefersReducedMotion ? undefined : 'transform',
+  };
+
+  const { style, ...restProps } = rest;
+  const mergedStyle = style
+    ? ({ ...style, ...computedStyle } as CSSProperties)
+    : computedStyle;
+
+  const Element = resolvedTag as keyof JSX.IntrinsicElements;
 
   return (
-    <MotionComponent
-      initial={initialState}
-      whileInView={targetState}
-      viewport={{ once, amount: viewportAmount }}
-      transition={{
-        type: 'spring',
-        stiffness: 160,
-        damping: 22,
-        mass: 0.9,
-        delay,
-      }}
+    <Element
+      ref={elementRef as never}
       className={className}
-      {...rest}
+      style={mergedStyle}
+      {...(restProps as Omit<HTMLAttributes<HTMLElement>, 'style'>)}
     >
       {children}
-    </MotionComponent>
+    </Element>
   );
+}
+
+function clampViewportAmount(amount: number): number {
+  if (Number.isNaN(amount)) return 0.5;
+  return Math.min(Math.max(amount, 0), 1);
 }
