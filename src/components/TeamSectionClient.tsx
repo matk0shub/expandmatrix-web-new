@@ -7,9 +7,8 @@ import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 import type { NormalizedTeamMember } from '@/types/team';
 import ScrambleText from './ScrambleText';
-import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
 import AnimatedHeading from './AnimatedHeading';
+import AnimatedReveal from './AnimatedReveal';
 
 const DEFAULT_ACCENT =
   'linear-gradient(135deg, rgba(0, 215, 107, 0.7), rgba(0, 184, 92, 0.35))';
@@ -34,8 +33,6 @@ interface TeamSectionClientProps {
 
 export default function TeamSectionClient({ members, copy }: TeamSectionClientProps) {
   const { title, empty } = copy;
-  const framer = useFramerMotion();
-  const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
 
   const backgroundStyle = useMemo<CSSProperties>(
     () => ({
@@ -90,12 +87,13 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                 }));
 
               return (
-                <MotionArticle
+                <AnimatedReveal
                   key={member.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1, ease: 'easeOut' }}
-                  viewport={{ once: true }}
+                  as="article"
+                  direction="up"
+                  delay={index * 0.12}
+                  distance={220}
+                  viewportAmount={0.55}
                   className="group relative"
                   itemScope
                   itemType="https://schema.org/Person"
@@ -184,8 +182,8 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                         )}
                       </div>
                     </div>
-                  </div>
-                </MotionArticle>
+                   </div>
+                </AnimatedReveal>
               );
             })}
 

@@ -55,3 +55,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 10:22:18] UI Polish: Introduced AnimatedReveal component for card entrances; Accuracy stats + Our Services cards now rise from below with staggered triggers (viewport 55%). Verified with pnpm build (types skipped per current config).
 [2025-11-02 10:38:02] Build Guard: scripts/check-cache.js now seeds functions-config-manifest.json to prevent ENOENT during pnpm build; confirmed build succeeds afterward.
 [2025-11-02 10:47:40] Bugfix: Restored reduced-motion check in Services cards and added EnsurePagesManifestPlugin to rewrite missing pages manifest during build. pnpm build succeeds (types skipped per config).
+[2025-11-02 11:05:12] UI Polish: Applied AnimatedReveal stagger to Team section cards (bottom-up entrance, viewport 55%). `pnpm build` ✅ (types skipped).
