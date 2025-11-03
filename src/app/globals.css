@@ -47,6 +47,46 @@ body::-webkit-scrollbar {
   font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+.marquee-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 2rem;
+  animation: marquee-slide var(--marquee-duration, 16s) linear infinite;
+  font-size: var(--marquee-font-size, 48px);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  will-change: transform;
+}
+
+.marquee-sequence {
+  display: flex;
+  gap: 2.5rem;
+  white-space: nowrap;
+}
+
+.marquee-sequence span {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+@keyframes marquee-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(var(--marquee-segment-width, 50%) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* Unified heading styles */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

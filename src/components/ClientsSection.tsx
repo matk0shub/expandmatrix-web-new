@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import ScrambleText from './ScrambleText';
 import type { NormalizedPartner } from '@/types/partners';
 
 interface PartnerBallContent {
@@ -57,15 +56,14 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
   const t = useTranslations('sections.clients');
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const textRef1 = useRef<HTMLDivElement>(null);
-  const textRef2 = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
   const animationRef = useRef<number | undefined>(undefined);
   const ballElementsRef = useRef(new Map<number, HTMLDivElement>());
   const ballStateRef = useRef(new Map<number, BallState>());
   const draggedBallRef = useRef<DragState | null>(null);
   const dimensionsRef = useRef({ width: 0, height: 0 });
-  const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 180 });
+const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 150 });
   const ballSizeRef = useRef(160);
   const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
 
@@ -337,13 +335,13 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
     [ballConfigs.length, clampValue]
   );
 
-  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 200, 420));
+  const circleDiameter = Math.round(clampValue(layout.greenRadius * 2, 180, 360));
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
-  const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 30, 60);
+  const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 28, 54);
   const primaryTextSize = unifiedHeadingSize;
-  const secondaryTextSize = unifiedHeadingSize;
   const monochromeFilter = 'none';
+  const marqueeText = t('title');
 
   const baseBallStyle = useMemo<CSSProperties>(
     () => ({
@@ -869,68 +867,49 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
   }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !textRef1.current || !textRef2.current || !sectionRef.current) {
+    if (!marqueeRef.current || prefersReducedMotion) {
       return;
     }
 
-    const textElement1 = textRef1.current;
-    const textElement2 = textRef2.current;
-    const sectionElement = sectionRef.current;
+    const marquee = marqueeRef.current;
+    const sequences = marquee.querySelectorAll<HTMLElement>('[data-marquee-sequence]');
 
-    const updateTransforms = () => {
-      const windowHeight = window.innerHeight;
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const viewportBottom = scrollTop + windowHeight;
-      const delay = windowHeight * 0.08;
+    const computeWidths = () => {
+      sequences.forEach((sequence) => {
+        const items = Array.from(sequence.children) as HTMLElement[];
+        if (items.length === 0) return;
 
-      const sectionTop = sectionElement.offsetTop;
-      const nextSection = document.querySelector<HTMLElement>('#services');
-      const sectionEnd = nextSection ? nextSection.offsetTop : sectionTop + sectionElement.offsetHeight;
+        const loopContent = items.map((item) => item.textContent ?? '').join('');
+        const baseText = loopContent || marqueeText;
 
-      const effectiveBottom = viewportBottom - delay;
-      const span = Math.max(sectionEnd - sectionTop, 1);
+        const buffer = document.createElement('span');
+        buffer.style.visibility = 'hidden';
+        buffer.style.whiteSpace = 'nowrap';
+        buffer.style.position = 'absolute';
+        buffer.textContent = `${baseText} ${baseText}`;
+        marquee.appendChild(buffer);
+        const measuredWidth = buffer.getBoundingClientRect().width;
+        marquee.removeChild(buffer);
 
-      const textWidth = clampValue(circleDiameter * 0.74, circleDiameter * 0.52, circleDiameter);
-      const radius = greenPhysicsRef.current.radius;
-      const baseOffset = radius + textWidth / 2;
-      const travel = baseOffset + textWidth * 0.24;
+        sequence.style.setProperty('--segment-width', `${measuredWidth}px`);
+      });
 
-      if (effectiveBottom <= sectionTop) {
-        textElement1.style.transform = `translateX(${baseOffset}px)`;
-        textElement2.style.transform = `translateX(${-baseOffset}px)`;
-        return;
-      }
+      const longest = Array.from(sequences).reduce((width, seq) => {
+        const segmentWidth = parseFloat(seq.style.getPropertyValue('--segment-width') || '0');
+        return Math.max(width, segmentWidth);
+      }, 0);
 
-      if (effectiveBottom >= sectionEnd) {
-        const finalOffset = baseOffset - travel;
-        textElement1.style.transform = `translateX(${finalOffset}px)`;
-        textElement2.style.transform = `translateX(${-finalOffset}px)`;
-        return;
-      }
-
-      const rawProgress = (effectiveBottom - sectionTop) / span;
-      const eased = 1 - Math.pow(1 - clampValue(rawProgress, 0, 1), 3);
-
-      const offset1 = baseOffset - eased * travel;
-      const offset2 = -baseOffset + eased * travel;
-
-      textElement1.style.transform = `translateX(${offset1}px)`;
-      textElement2.style.transform = `translateX(${offset2}px)`;
+      marquee.style.setProperty('--marquee-segment-width', `${longest}px`);
+      const duration = Math.max(longest / 140, 12);
+      marquee.style.setProperty('--marquee-duration', `${duration}s`);
     };
 
-    updateTransforms();
+    const observer = new ResizeObserver(() => computeWidths());
+    observer.observe(marquee);
+    computeWidths();
 
-    const handleScroll = () => updateTransforms();
-    const handleResize = () => updateTransforms();
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [clampValue, circleDiameter, prefersReducedMotion]);
+    return () => observer.disconnect();
+  }, [prefersReducedMotion, marqueeText]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -1017,7 +996,7 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
 
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="relative rounded-full overflow-hidden shadow-2xl flex items-center justify-center"
+          className="relative rounded-full overflow-hidden shadow-2xl"
           style={{
             width: `${circleDiameter}px`,
             height: `${circleDiameter}px`,
@@ -1028,34 +1007,28 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#00d76b] to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#00d76b] to-transparent z-10" />
+          <div className="absolute inset-0 bg-black/10" />
+          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[#00d76b] to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#00d76b] to-transparent z-10" />
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 flex items-center overflow-hidden">
             <div
-              ref={textRef1}
-              className="text-white font-semibold uppercase font-lato whitespace-nowrap"
-              style={{
-                letterSpacing: '0.12em',
-                transform: 'translateX(0px)',
-                lineHeight: 1.04,
-                fontSize: `${primaryTextSize}px`
-              }}
+              ref={marqueeRef}
+              className="marquee-track"
+              style={{ '--marquee-font-size': `${primaryTextSize}px` } as CSSProperties}
             >
-              <ScrambleText text={t('title')} applyScramble={false} />
-            </div>
-            <div
-              ref={textRef2}
-              className="text-white font-semibold uppercase font-lato whitespace-nowrap"
-              style={{
-                letterSpacing: '0.12em',
-                transform: 'translateX(0px)',
-                lineHeight: 1.04,
-                marginTop: '-0.08em',
-                fontSize: `${secondaryTextSize}px`
-              }}
-            >
-              <ScrambleText text={t('title')} applyScramble={false} />
+              <div className="marquee-sequence" data-marquee-sequence>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+              </div>
+              <div className="marquee-sequence" aria-hidden="true" data-marquee-sequence>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+                <span>{marqueeText}</span>
+              </div>
             </div>
           </div>
         </div>
