@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
-import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -126,7 +125,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
             <AnimatedHeading as="h2" className="heading-main">
-              <ScrambleText text={title} applyScramble={false} />
+              {title}
             </AnimatedHeading>
           </div>
         </div>
@@ -197,7 +196,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                   <div className="flex justify-between items-start mb-8 sm:mb-10 md:mb-12">
                     {/* Number */}
                     <div className="text-xl sm:text-2xl md:text-3xl text-white/90 font-medium font-lato">
-                      <ScrambleText text={service.number} applyScramble={false} />
+                      {service.number}
                     </div>
 
                     {/* Plus Icon */}
@@ -221,7 +220,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                       `}
                     >
                       <h3 className="heading-secondary text-center px-4">
-                        <ScrambleText text={service.title} applyScramble={false} />
+                        {service.title}
                       </h3>
                     </div>
 
@@ -237,7 +236,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                       `}
                     >
                       <p className="text-white/90 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-lato font-medium text-center px-4 sm:px-6">
-                        <ScrambleText text={service.description} applyScramble={false} />
+                    {service.description}
                       </p>
                     </div>
                   </div>

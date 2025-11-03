@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
@@ -74,10 +73,10 @@ export default function AccuracySection() {
               className="heading-main block"
             >
               <div>
-                <ScrambleText text={t('title.line1')} applyScramble={false} />
+                {t('title.line1')}
               </div>
               <div>
-                <ScrambleText text={t('title.line2')} applyScramble={false} />
+                {t('title.line2')}
               </div>
             </AnimatedHeading>
             
@@ -105,7 +104,7 @@ export default function AccuracySection() {
             <p 
               className="text-white/90 text-xl md:text-2xl lg:text-3xl leading-relaxed font-lato text-left" 
             >
-              <ScrambleText text={t('description')} applyScramble={false} />
+              {t('description')}
             </p>
           </div>
         </div>
@@ -149,7 +148,7 @@ export default function AccuracySection() {
                     <div 
                       className="text-sm md:text-base text-white/70 font-medium uppercase tracking-[0.2em] font-lato group-hover:text-white/90 transition-colors duration-500" 
                     >
-                      <ScrambleText text={stat.label} applyScramble={false} />
+                      {stat.label}
                     </div>
                   </div>
                   
@@ -165,7 +164,7 @@ export default function AccuracySection() {
                       textShadow: '0 0 12px rgba(0, 215, 107, 0.12)'
                     }}
                   >
-                    <ScrambleText text={stat.value} applyScramble={false} />
+                    {stat.value}
                   </div>
                 </div>
               </div>

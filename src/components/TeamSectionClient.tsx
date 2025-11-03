@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 import type { NormalizedTeamMember } from '@/types/team';
-import ScrambleText from './ScrambleText';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
 
@@ -63,7 +62,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
             as="h2"
             className="heading-main inline-flex flex-col items-center gap-2 text-center"
           >
-            <ScrambleText text={title} applyScramble={false} cursor={false} trigger="hover" />
+            {title}
           </AnimatedHeading>
           <span
             aria-hidden="true"
