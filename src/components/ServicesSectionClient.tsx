@@ -141,6 +141,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
               delay={index * CARD_CONFIG.animation.staggerDelay}
               distance={200}
               viewportAmount={0.55}
+              fade={false}
             >
               {/* Card Container */}
               <div 

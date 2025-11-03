@@ -59,3 +59,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 11:18:02] UI Polish: Extended AnimatedReveal to FAQ accordion items (upward entry, staggered). `pnpm build` ✅ (types skipped).
 [2025-11-02 11:32:44] UI Polish: Partners marquee now loops continuously inside smaller green circle; removed duplicate headings and scroll-based motion. `pnpm build` ✅ (types skipped).
 [2025-11-02 11:39:18] UI Polish: Further reduced partners circle footprint and increased marquee speed for smoother perceived motion. `pnpm build` ✅ (types skipped).
+[2025-11-02 11:48:12] UI Polish: Updated card reveals (accuracy, services, team) to skip fade effect while keeping motion timing. `pnpm build` ✅ (types skipped).

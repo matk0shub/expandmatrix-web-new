@@ -120,6 +120,7 @@ export default function AccuracySection() {
               delay={index * 0.12}
               distance={220}
               viewportAmount={0.55}
+              fade={false}
             >
               {/* Coal Liquid Glass Card */}
               <div className="relative p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[320px] flex flex-col overflow-hidden">

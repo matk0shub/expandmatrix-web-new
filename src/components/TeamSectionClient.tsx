@@ -94,6 +94,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                   delay={index * 0.12}
                   distance={220}
                   viewportAmount={0.55}
+                  fade={false}
                   className="group relative"
                   itemScope
                   itemType="https://schema.org/Person"

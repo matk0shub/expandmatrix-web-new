@@ -17,6 +17,7 @@ type AnimatedRevealProps<T extends keyof typeof fallbackMotion = 'div'> =
     distance?: number;
     once?: boolean;
     viewportAmount?: number;
+    fade?: boolean;
   };
 
 const DEFAULT_DISTANCE = 200;
@@ -36,6 +37,7 @@ export default function AnimatedReveal<T extends keyof typeof fallbackMotion = '
   distance = DEFAULT_DISTANCE,
   once = true,
   viewportAmount = 0.55,
+  fade = true,
   className,
   children,
   ...rest
@@ -97,11 +99,18 @@ export default function AnimatedReveal<T extends keyof typeof fallbackMotion = '
       </FallbackComponent>
     );
   }
+  const initialState = fade
+    ? { opacity: 0, ...(hiddenTransform ?? {}) }
+    : { ...(hiddenTransform ?? {}) };
+
+  const targetState = fade
+    ? { opacity: 1, x: 0, y: 0 }
+    : { x: 0, y: 0 };
 
   return (
     <MotionComponent
-      initial={{ opacity: 0, ...(hiddenTransform ?? {}) }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      initial={initialState}
+      whileInView={targetState}
       viewport={{ once, amount: viewportAmount }}
       transition={{
         type: 'spring',
