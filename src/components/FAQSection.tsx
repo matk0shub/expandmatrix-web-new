@@ -11,6 +11,7 @@ import { CalCTAButton } from './CalCTAButton';
 import AnimatedHeading from './AnimatedHeading';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
+import AnimatedReveal from './AnimatedReveal';
 
 export default function FAQSection() {
   const t = useTranslations('sections.faq');
@@ -185,15 +186,12 @@ export default function FAQSection() {
                 const answer = locale === 'cs' ? faq.answer.cs : faq.answer.en;
 
                 return (
-                  <MotionDiv
+                  <AnimatedReveal
                     key={faq.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: 0.1 * index,
-                      ease: "easeOut" 
-                    }}
+                    direction="up"
+                    delay={index * 0.12}
+                    distance={160}
+                    viewportAmount={0.55}
                     className="relative"
                     itemScope
                     itemProp="mainEntity"
@@ -274,7 +272,7 @@ export default function FAQSection() {
                         )}
                       </AnimatePresence>
                     </div>
-                  </MotionDiv>
+                  </AnimatedReveal>
                 );
               })}
             </MotionDiv>
