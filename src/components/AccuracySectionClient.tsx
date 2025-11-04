@@ -110,7 +110,7 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-12">
           {stats.map((stat, index) => (
             <AnimatedReveal
               key={`${stat.label}-${index}`}
@@ -121,7 +121,7 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
               viewportAmount={0.55}
               fade={false}
             >
-              <div className="relative p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[320px] flex flex-col overflow-hidden">
+              <div className="relative p-6 sm:p-8 md:p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex flex-col overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
@@ -138,14 +138,14 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="mb-10">
+                  <div className="mb-6 sm:mb-8 md:mb-10">
                     <div className="text-sm md:text-base text-white/70 font-medium uppercase tracking-[0.2em] font-lato group-hover:text-white/90 transition-colors duration-500">
                       {stat.label}
                     </div>
                   </div>
 
                   <div
-                    className="text-6xl md:text-7xl lg:text-8xl font-black text-white mt-auto font-lato tracking-tight group-hover:scale-110 transition-transform duration-700"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mt-auto font-lato tracking-tight group-hover:scale-110 transition-transform duration-700"
                     style={{
                       background:
                         'linear-gradient(135deg, #ffffff 0%, #f8f8f8 25%, #e8e8e8 50%, #d8d8d8 75%, #c8c8c8 100%)',

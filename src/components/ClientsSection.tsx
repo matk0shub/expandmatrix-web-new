@@ -203,12 +203,12 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       };
 
       const mobileConfig = {
-        ballScale: 0.24,
-        ballMin: 54,
-        ballMax: 92,
-        greenScale: 0.43,
-        greenMin: 108,
-        greenMax: 168,
+        ballScale: 0.18,
+        ballMin: 44,
+        ballMax: 80,
+        greenScale: 0.32,
+        greenMin: 90,
+        greenMax: 140,
         topBase: 0.46,
         topSlope: 0.0001,
         topMin: 0.44,
@@ -226,7 +226,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         verticalPaddingBottomScale: 0.2,
         verticalPaddingBottomMin: 86,
         verticalPaddingBottomMax: 170,
-        ballCount: 8,
+        ballCount: 6,
         velocityHorizontalScale: 0.16,
         velocityHorizontalMin: 66,
         velocityHorizontalMax: 134,

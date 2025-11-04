@@ -338,15 +338,17 @@ export default function Hero() {
              initial={{ opacity: 0, y: 30 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.8, delay: 1.4 }}
-             className="flex justify-start md:justify-end items-end pb-8 md:pb-12 px-6 md:px-12 xl:px-0 mt-8 md:mt-12"
-           >
-            <div className="text-left md:text-right max-w-md md:max-w-lg">
-              <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-outfit">
+            className="flex justify-end items-end pb-8 md:pb-12 px-6 md:px-12 xl:px-0 mt-8 md:mt-12"
+          >
+            <div className="text-right max-w-md md:max-w-lg">
+              <p className="text-white/80 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-outfit">
                 <ScrambleText text={t('subtitle')} applyScramble={false} />
               </p>
-              <CalCTAButton>
+              <div className="flex justify-end">
+                <CalCTAButton>
                 <ScrambleText text={t('cta')} applyScramble={false} />
               </CalCTAButton>
+              </div>
             </div>
           </MotionDiv>
         </div>

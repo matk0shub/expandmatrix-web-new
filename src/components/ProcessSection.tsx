@@ -51,14 +51,14 @@ const CARD_CONFIG = {
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[580px]',
-    sm: 'sm:min-h-[600px]',
-    md: 'md:min-h-[620px]',
+    base: 'min-h-[420px]',
+    sm: 'sm:min-h-[520px]',
+    md: 'md:min-h-[600px]',
     lg: 'lg:min-h-[640px]'
   },
   padding: {
-    base: 'p-10',
-    sm: 'sm:p-12',
+    base: 'p-8',
+    sm: 'sm:p-10',
     md: 'md:p-14',
     lg: 'lg:p-16',
     xl: 'xl:p-20'
@@ -206,7 +206,7 @@ export default function ProcessSection() {
       icon: {
         src: '/process-calendar.svg',
         alt: 'Calendar icon symbolizing the kickoff workshop',
-        size: 'clamp(180px, 28vw, 320px)',
+        size: 'clamp(140px, 28vw, 280px)',
         bottom: '-80px',
         right: '-6px',
         rotation: -8
@@ -218,7 +218,7 @@ export default function ProcessSection() {
       icon: {
         src: '/process-project.svg',
         alt: 'Project blueprint icon for scoping and contracts',
-        size: 'clamp(200px, 30vw, 340px)',
+        size: 'clamp(160px, 30vw, 300px)',
         bottom: '-90px',
         right: '-36px',
         rotation: 5
@@ -230,7 +230,7 @@ export default function ProcessSection() {
       icon: {
         src: '/process-lock.svg',
         alt: 'Security lock icon for access hand-off',
-        size: 'clamp(170px, 26vw, 300px)',
+        size: 'clamp(140px, 26vw, 260px)',
         bottom: '-70px',
         right: '-25px',
         rotation: -2
@@ -242,7 +242,7 @@ export default function ProcessSection() {
       icon: {
         src: '/process-done.svg',
         alt: 'Completion checkmark icon for implementation',
-        size: 'clamp(190px, 28vw, 330px)',
+        size: 'clamp(150px, 28vw, 290px)',
         bottom: '-85px',
         right: '-28px',
         rotation: 8
@@ -254,7 +254,7 @@ export default function ProcessSection() {
       icon: {
         src: '/process-gears.svg',
         alt: 'Dual gear icon for optimization cycles',
-        size: 'clamp(210px, 32vw, 360px)',
+        size: 'clamp(170px, 32vw, 320px)',
         bottom: '-100px',
         right: '-40px',
         rotation: 12

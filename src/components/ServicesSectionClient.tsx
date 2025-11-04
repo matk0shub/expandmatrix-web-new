@@ -9,15 +9,15 @@ import { useReducedMotion } from '@/hooks/useReducedMotion';
 // Card configuration for easy customization
 const CARD_CONFIG = {
   height: {
-    base: 'h-[400px]',
-    md: 'md:h-[420px]',
-    lg: 'lg:h-[440px]'
+    base: 'min-h-[260px]',
+    md: 'md:min-h-[320px]',
+    lg: 'lg:min-h-[360px]'
   },
   padding: {
-    base: 'p-8',
-    sm: 'sm:p-10',
-    md: 'md:p-12',
-    lg: 'lg:p-14'
+    base: 'p-6',
+    sm: 'sm:p-8',
+    md: 'md:p-10',
+    lg: 'lg:p-12'
   },
   borderRadius: 'rounded-3xl',
   animation: {
@@ -131,7 +131,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         </div>
 
         {/* Bottom Section - Responsive service cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-10">
           {services.map((service, index) => (
             <AnimatedReveal
               key={service.key}
@@ -193,9 +193,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                   `}
                 >
                   {/* Top row - Number and Plus icon */}
-                  <div className="flex justify-between items-start mb-8 sm:mb-10 md:mb-12">
+                  <div className="flex justify-between items-start mb-6 sm:mb-8 md:mb-10">
                     {/* Number */}
-                    <div className="text-xl sm:text-2xl md:text-3xl text-white/90 font-medium font-lato">
+                    <div className="text-lg sm:text-xl md:text-2xl text-white/90 font-medium font-lato">
                       {service.number}
                     </div>
 
@@ -219,7 +219,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                         ${prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'}
                       `}
                     >
-                      <h3 className="heading-secondary text-center px-4">
+                      <h3 className="heading-secondary text-center px-2 sm:px-4 text-lg sm:text-xl">
                         {service.title}
                       </h3>
                     </div>
@@ -235,7 +235,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                         }
                       `}
                     >
-                      <p className="text-white/90 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-lato font-medium text-center px-4 sm:px-6">
+                      <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center px-4 sm:px-6">
                     {service.description}
                       </p>
                     </div>
