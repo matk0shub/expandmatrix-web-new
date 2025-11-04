@@ -65,3 +65,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 12:29:05] Performance: Simplified hero animations (CSS fade-in + pointer tilt) and limited ScrambleText usage to critical hero heading; removed extra instances across sections.
 [2025-11-02 12:52:04] Cleanup: Removed Lenis SmoothScroll hook from locale layout to reduce JS payload; native scrolling now used.
 [2025-11-04 09:26:55] Performance: Replaced Process section GSAP stacking with IntersectionObserver + CSS transforms; trimmed unused keyframes to improve runtime smoothness on desktop scroll. `pnpm build` ✅ (types skipped per config).
+[2025-11-04 09:34:48] UX: Reinstated GSAP-driven Process stack animation to preserve original overlapping effect after stakeholder review; lazy-import kept to limit bundle impact and `prefers-reduced-motion` still disables the sequence. `pnpm build` ✅ (types skipped per config).
