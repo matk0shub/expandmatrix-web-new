@@ -335,7 +335,12 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     [ballConfigs.length, clampValue]
   );
 
-  const circleDiameter = Math.round(clampValue(layout.greenRadius * 1.8, 160, 320));
+  const computeCircleDiameter = useCallback(
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 160, 320)),
+    [clampValue],
+  );
+
+  const circleDiameter = computeCircleDiameter(layout.greenRadius);
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
   const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 28, 54);
@@ -636,10 +641,13 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     ballSizeRef.current = layoutValues.ballSize;
     dimensionsRef.current = { width, height: effectiveHeight };
 
+    const displayDiameter = computeCircleDiameter(layoutValues.greenRadius);
+    const displayRadius = displayDiameter / 2;
+
     greenPhysicsRef.current = {
       x: width / 2,
       y: effectiveHeight * layoutValues.topRatio,
-      radius: layoutValues.greenRadius
+      radius: displayRadius
     };
 
     physicsConfigRef.current = {
@@ -724,7 +732,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
     ballStateRef.current = newStates;
     renderBalls();
-  }, [ballConfigs, clampValue, computeResponsiveValues, renderBalls]);
+  }, [ballConfigs, clampValue, computeCircleDiameter, computeResponsiveValues, renderBalls]);
 
   const handlePointerPosition = useCallback((event: PointerEvent | ReactPointerEvent<Element>) => {
     if (!containerRef.current) {
