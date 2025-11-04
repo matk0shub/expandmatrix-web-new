@@ -931,7 +931,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black py-24 md:py-32"
+      className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
       style={{ minHeight: sectionMinHeightStyle }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

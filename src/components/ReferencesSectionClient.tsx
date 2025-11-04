@@ -133,7 +133,7 @@ export default function ReferencesSectionClient({ references, copy }: References
         sectionRef.current = el;
         intersectionRef.current = el;
       }}
-      className="relative min-h-screen bg-black text-white rounded-3xl overflow-hidden mx-4 my-8"
+      className="relative min-h-screen bg-black text-white rounded-3xl overflow-hidden mx-4 py-24 md:py-40 lg:py-48"
       id="references"
       itemScope
       itemType="https://schema.org/ItemList"

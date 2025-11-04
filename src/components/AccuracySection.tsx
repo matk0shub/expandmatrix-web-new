@@ -39,7 +39,7 @@ export default function AccuracySection() {
   return (
     <section 
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48 -mt-20"
+      className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
     >
       {/* Background Elements - Clean black background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

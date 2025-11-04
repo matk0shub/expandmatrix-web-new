@@ -53,7 +53,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
   );
 
   return (
-    <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-36 lg:py-40 overflow-hidden">
+    <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-40 lg:py-48 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" style={backgroundStyle} />
 
       <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
