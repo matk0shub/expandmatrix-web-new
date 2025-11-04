@@ -70,3 +70,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-04 09:54:25] UX: Matched partner ball collider radius to the rendered green marquee circle so collisions align with the visible ring; collider now scales from the same diameter calc used for painting. `pnpm build` ✅ (types skipped per config).
 [2025-11-04 15:08:27] Perf: Moved Accuracy/FAQ sections to server components; now ship only lightweight client shells for animations/accordion while data + copy come from server. `pnpm build` ✅ (types skipped per config).
 [2025-11-04 16:03:23] UX: Smoothed Services cards by removing random glow timings, lowering reveal distance, and matching heading motion to reduce scroll jank. `pnpm build` ✅ (types skipped per config).
+[2025-11-04 16:51:18] Audit: Lighthouse mobile/tablet/desktop run – SEO 1.0, Accessibility ~0.94, Best Practices 0.77; mobile LCP ~12s from heavy imagery/JS, see docs/lighthouse/summary.md for details.
