@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { Plus } from 'lucide-react';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
@@ -47,21 +47,24 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
   const prefersReducedMotion = useReducedMotion();
 
   // Generate random animation values only on client side to prevent hydration mismatch
-  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
-  
+  const [animationValues, setAnimationValues] = useState<Array<{ delay: number; duration: string }>>([]);
+
   useEffect(() => {
+    if (prefersReducedMotion) {
+      setAnimationValues(services.map(() => ({ delay: 0, duration: '2s' })));
+      return;
+    }
+
     setAnimationValues(
-      Array.from({ length: 3 }, () => ({
+      services.map(() => ({
         delay: Math.random() * 5,
-        duration: `${2 + Math.random() * 3}s`
-      }))
+        duration: `${2 + Math.random() * 3}s`,
+      })),
     );
-  }, []);
+  }, [prefersReducedMotion, services]);
 
   return (
-    <section 
-      className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
-    >
+    <section className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48">
       {/* Modern Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large vibrant blob - top left */}
@@ -124,7 +127,12 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         {/* Top Section - Title */}
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
-            <AnimatedHeading as="h2" className="heading-main">
+            <AnimatedHeading
+              as="h2"
+              className="heading-main"
+              direction="up"
+              distance={prefersReducedMotion ? 0 : 60}
+            >
               {title}
             </AnimatedHeading>
           </div>
@@ -135,16 +143,17 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
           {services.map((service, index) => (
             <AnimatedReveal
               key={service.key}
-              className="group"
+              className="group services-card"
               direction="up"
               delay={index * CARD_CONFIG.animation.staggerDelay}
-              distance={200}
+              distance={prefersReducedMotion ? 0 : 60}
               viewportAmount={0.55}
               fade={false}
             >
               {/* Card Container */}
               <div 
                 className={`
+                  services-card
                   relative w-full
                   ${CARD_CONFIG.height.base}
                   ${CARD_CONFIG.height.md}
@@ -169,7 +178,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                   style={{
                     '--glow-delay': animationValues[index]?.delay || 0,
                     '--glow-duration': animationValues[index]?.duration || '2s'
-                  } as React.CSSProperties}
+                  } as CSSProperties}
                 />
 
                 {/* Bottom edge accent - zelená lajna jako ve FAQ */}
