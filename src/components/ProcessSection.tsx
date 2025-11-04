@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
@@ -9,34 +9,6 @@ import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 import AnimatedHeading from './AnimatedHeading';
-
-type GsapCore = typeof import('gsap').gsap;
-type ScrollTriggerCore = typeof import('gsap/ScrollTrigger').ScrollTrigger;
-
-let gsapInstance: GsapCore | undefined;
-let scrollTriggerInstance: ScrollTriggerCore | undefined;
-let gsapModulesLoaded = false;
-
-async function loadGSAP(): Promise<{
-  gsap: GsapCore | undefined;
-  ScrollTrigger: ScrollTriggerCore | undefined;
-}> {
-  if (!gsapModulesLoaded) {
-    const gsapModule = await import('gsap');
-    const scrollTriggerModule = await import('gsap/ScrollTrigger');
-
-    gsapInstance = gsapModule.gsap;
-    scrollTriggerInstance = scrollTriggerModule.ScrollTrigger;
-
-    if (gsapInstance && scrollTriggerInstance) {
-      gsapInstance.registerPlugin(scrollTriggerInstance);
-    }
-
-    gsapModulesLoaded = true;
-  }
-
-  return { gsap: gsapInstance, ScrollTrigger: scrollTriggerInstance };
-}
 
 // ============================================================================
 // CONFIGURATION - FUTURISTIC DESIGN
@@ -117,12 +89,15 @@ export default function ProcessSection() {
   const framer = useFramerMotion();
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
 
   // Generate random animation values only on client side to prevent hydration mismatch
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
   const [stackingEnabled, setStackingEnabled] = useState(false);
-  const [shouldInitGsap, setShouldInitGsap] = useState(false);
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const highestVisibleIndex = useMemo(() => {
+    if (visibleCards.size === 0) return null;
+    return Math.max(...visibleCards);
+  }, [visibleCards]);
   
   useEffect(() => {
     setAnimationValues(
@@ -167,37 +142,6 @@ export default function ProcessSection() {
       }
     };
   }, [prefersReducedMotion]);
-
-  useEffect(() => {
-    if (!stackingEnabled) {
-      setShouldInitGsap(false);
-      return;
-    }
-
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const target = sectionRef.current;
-    if (!target) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const isVisible = entries.some((entry) => entry.isIntersecting);
-        if (isVisible) {
-          setShouldInitGsap(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px 0px' },
-    );
-
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, [stackingEnabled]);
 
   const steps = [
     {
@@ -263,95 +207,52 @@ export default function ProcessSection() {
   ] as const;
 
   // ============================================================================
-  // GSAP SCROLL TRIGGER - STACKING CARDS EFFECT
+  // IntersectionObserver-driven stacking effect
   // ============================================================================
 
   useEffect(() => {
-    const container = cardsContainerRef.current;
-
-    if (!stackingEnabled || !shouldInitGsap || !container) {
+    if (!stackingEnabled || prefersReducedMotion) {
+      setVisibleCards(new Set());
       return;
     }
 
-    // Lazy load GSAP to prevent blocking webpack compilation
-    loadGSAP().then(({ gsap: gsapCore, ScrollTrigger: scrollTrigger }) => {
-      if (!gsapCore || !scrollTrigger || !container) return;
+    const container = cardsContainerRef.current;
+    if (!container) {
+      return;
+    }
 
-      const ctx = gsapCore.context(() => {
-        const cardWrappers = gsapCore.utils.toArray<HTMLElement>(
-          container.querySelectorAll('.process-card-wrapper'),
-        );
+    const wrappers = Array.from(
+      container.querySelectorAll<HTMLElement>('.process-card-wrapper'),
+    );
+    if (wrappers.length === 0) {
+      return;
+    }
 
-        if (cardWrappers.length === 0) return;
-
-        const cards = cardWrappers.map((wrapper) =>
-          wrapper.querySelector<HTMLElement>('.process-card'),
-        );
-
-        const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
-        if (existingCards.length === 0) return;
-
-        existingCards.forEach((card, idx) => {
-          gsapCore.set(card, {
-            opacity: 1,
-            yPercent: 0,
-            rotation: cardRotations[idx] ?? 0,
-            x: cardOffsets[idx] ?? 0,
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setVisibleCards((prev) => {
+          const next = new Set(prev);
+          entries.forEach((entry) => {
+            const indexAttr = entry.target.getAttribute('data-index');
+            if (indexAttr == null) return;
+            const cardIndex = Number(indexAttr);
+            if (Number.isNaN(cardIndex)) return;
+            if (entry.isIntersecting) {
+              next.add(cardIndex);
+            } else {
+              next.delete(cardIndex);
+            }
           });
+          return new Set(next);
         });
+      },
+      { threshold: 0.6 },
+    );
 
-        const lastCardTrigger = scrollTrigger.create({
-          trigger: cardWrappers[cardWrappers.length - 1],
-          start: 'bottom bottom',
-        });
+    wrappers.forEach((wrapper) => observer.observe(wrapper));
 
-        cardWrappers.forEach((wrapper, index) => {
-          const card = cards[index];
-          if (!card) return;
-
-          scrollTrigger.create({
-            id: `process-card-${index}`,
-            trigger: wrapper,
-            start: 'center center',
-            end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
-            pin: true,
-            pinSpacing: false,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            toggleActions: 'restart none none reverse',
-            onEnter: () => {
-              gsapCore.to(card, {
-                yPercent: 0,
-                rotation: cardRotations[index],
-                x: cardOffsets[index],
-                duration: CARD_CONFIG.animation.duration,
-                ease: CARD_CONFIG.animation.ease,
-                overwrite: 'auto',
-              });
-            },
-            onEnterBack: () => {
-              gsapCore.to(card, {
-                yPercent: 0,
-                rotation: cardRotations[index],
-                x: cardOffsets[index],
-                duration: CARD_CONFIG.animation.duration,
-                ease: CARD_CONFIG.animation.ease,
-                overwrite: 'auto',
-              });
-            },
-          });
-        });
-
-        scrollTrigger.refresh();
-      }, container);
-
-      return () => {
-        ctx.revert();
-        const cards = container.querySelectorAll<HTMLElement>('.process-card');
-        gsapCore.set(cards, { clearProps: 'transform,rotation,x,y' });
-      };
-    });
-  }, [stackingEnabled, shouldInitGsap]);
+    return () => observer.disconnect();
+  }, [stackingEnabled, prefersReducedMotion]);
 
   // ============================================================================
   // RENDER
@@ -359,7 +260,6 @@ export default function ProcessSection() {
 
   return (
     <section
-      ref={sectionRef}
       className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
       id="process"
     >
@@ -422,11 +322,13 @@ export default function ProcessSection() {
           {steps.map((step, index) => (
             <section
               key={step.key}
+              data-index={index}
               className={`process-card-wrapper ${
                 stackingEnabled
-                  ? 'flex min-h-screen items-center justify-center'
+                  ? 'process-card-wrapper--stacked'
                   : 'relative py-8 sm:py-12'
               }`}
+              style={stackingEnabled ? ({ '--card-index': index } as CSSProperties) : undefined}
             >
               {/* Futuristic Card Container */}
               <div
@@ -454,7 +356,21 @@ export default function ProcessSection() {
                   ${prefersReducedMotion ? '' : 'hover:rotate-0'}
                   relative
                   overflow-hidden
+                  ${stackingEnabled ? 'process-card--stacked' : ''}
+                  ${
+                    stackingEnabled && highestVisibleIndex !== null && index <= highestVisibleIndex
+                      ? 'process-card--active'
+                      : ''
+                  }
                 `}
+                style={
+                  stackingEnabled
+                    ? ({
+                        '--card-rotation': cardRotations[index] ?? '0deg',
+                        '--card-offset-x': cardOffsets[index] ?? '0px',
+                      } as CSSProperties)
+                    : undefined
+                }
               >
                 {/* Enhanced Glass Effect Layers */}
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
@@ -468,7 +384,7 @@ export default function ProcessSection() {
                   style={{
                     '--glow-delay': animationValues[index]?.delay || 0,
                     '--glow-duration': animationValues[index]?.duration || '2s'
-                  } as React.CSSProperties}
+                  } as CSSProperties}
                 />
 
                 {/* Bottom edge accent - zelená lajna jako ve FAQ */}
@@ -594,22 +510,40 @@ export default function ProcessSection() {
         </div>
       </section>
 
-      {/* Scan Line Animation Keyframes */}
       <style jsx>{`
-        @keyframes scanLine {
-          0% {
-            transform: translateY(-100%);
-            opacity: 0;
+        :global(.process-card-wrapper--stacked) {
+          position: sticky;
+          top: clamp(5rem, 14vh, 9rem);
+          min-height: 120vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        :global(.process-card-wrapper--stacked + .process-card-wrapper--stacked) {
+          margin-top: -70vh;
+        }
+
+        :global(.process-card--stacked) {
+          transform: translate3d(var(--card-offset-x, 0), 0, 0) rotate(var(--card-rotation, 0deg));
+          transition: transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        :global(.process-card--stacked.process-card--active) {
+          transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+
+        @media (max-width: 1023px) {
+          :global(.process-card-wrapper--stacked) {
+            position: static;
+            min-height: auto;
+            margin-top: 0;
           }
-          10% {
-            opacity: 1;
+          :global(.process-card-wrapper--stacked + .process-card-wrapper--stacked) {
+            margin-top: 0;
           }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(200vh);
-            opacity: 0;
+          :global(.process-card--stacked) {
+            transform: none;
           }
         }
       `}</style>
