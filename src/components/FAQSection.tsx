@@ -52,9 +52,7 @@ export default async function FAQSection({ locale }: FAQSectionProps) {
     titleLine2: t('title.line2'),
     ctaOverline: t('cta.overline'),
     ctaButton: t('cta.button'),
-    emptyState: t('empty', {
-      default: 'FAQ content will appear here soon.',
-    }),
+    emptyState: t.has('empty') ? t('empty') : 'FAQ content will appear here soon.',
   };
 
   return (
