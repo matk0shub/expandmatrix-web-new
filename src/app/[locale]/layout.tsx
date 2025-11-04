@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
-import SmoothScroll from '@/components/SmoothScroll';
 import '@/payload/prewarm';
 import { lato } from '../fonts';
 import "../globals.css";
@@ -114,7 +113,6 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <SmoothScroll />
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

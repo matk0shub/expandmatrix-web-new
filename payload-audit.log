@@ -63,3 +63,4 @@ cd806b98 feat(cms/admin): stabilize Payload admin routing + Atlas config
 [2025-11-02 12:03:40] Performance: Replaced Framer-based AnimatedReveal with lightweight IntersectionObserver + CSS transitions; throttled resize handling and removed fade in FAQ cards. `pnpm build` ✅ (types skipped).
 [2025-11-02 12:08:22] Build Guard: prestart now seeds Next manifests (check-cache) to avoid missing middleware manifest when starting production server.
 [2025-11-02 12:29:05] Performance: Simplified hero animations (CSS fade-in + pointer tilt) and limited ScrambleText usage to critical hero heading; removed extra instances across sections.
+[2025-11-02 12:52:04] Cleanup: Removed Lenis SmoothScroll hook from locale layout to reduce JS payload; native scrolling now used.
