@@ -48,7 +48,7 @@ export default async function HomePage({ params }: PageProps) {
           <TeamSection locale={locale} />
         </div>
         <div id="faq">
-          <FAQSection />
+          <FAQSection locale={locale} />
         </div>
         <div id="contact">
           <CookieConsent />
