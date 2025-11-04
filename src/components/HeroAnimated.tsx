@@ -294,41 +294,29 @@ export default function Hero() {
                  aria-label={`${t('heading.line1')} ${t('heading.line2a')} ${t('heading.line2b')} ${t('heading.line3')} ${t('heading.line4')}`}
                  delay={0.2}
                >
-                 {/* First line - WE CREATE / VYVÍJÍME - right-aligned */}
-                 <span className="hero-heading-line-first" data-line="1">
-                   <ScrambleText 
-                     text={t('heading.line1')}
-                     applyScramble={true}
-                     className="block"
-                   />
-                 </span>
-                 
-                 {/* Second line - AI AGENTS THAT / AI AGENTY KTEŘÍ - left-aligned */}
-                 <span className="hero-heading-line-second" data-line="2">
-                   <ScrambleText 
-                     text={`${t('heading.line2a')} ${t('heading.line2b')}`}
-                     applyScramble={true}
-                     className="block"
-                   />
-                 </span>
-                 
-                 {/* Third line - GO BEYOND / POSOUVAJÍ - left-aligned */}
-                 <span className="hero-heading-line-rest" data-line="3">
-                   <ScrambleText 
-                     text={t('heading.line3')}
-                     applyScramble={true}
-                     className="block"
-                   />
-                 </span>
-                 
-                 {/* Fourth line - LIMITS / MOŽNOSTI - left-aligned */}
-                 <span className="hero-heading-line-rest" data-line="4">
-                   <ScrambleText 
-                     text={t('heading.line4')}
-                     applyScramble={true}
-                     className="block"
-                   />
-                 </span>
+                {/* First line - WE CREATE / VYVÍJÍME - right-aligned */}
+                <span className="hero-heading-line-first" data-line="1">
+                  <ScrambleText 
+                    text={t('heading.line1')}
+                    applyScramble={true}
+                    className="block"
+                  />
+                </span>
+                
+                {/* Second line - AI AGENTS THAT / AI AGENTY KTEŘÍ - left-aligned */}
+                <span className="hero-heading-line-second" data-line="2">
+                  {`${t('heading.line2a')} ${t('heading.line2b')}`}
+                </span>
+                
+                {/* Third line - GO BEYOND / POSOUVAJÍ - left-aligned */}
+                <span className="hero-heading-line-rest" data-line="3">
+                  {t('heading.line3')}
+                </span>
+                
+                {/* Fourth line - LIMITS / MOŽNOSTI - left-aligned */}
+                <span className="hero-heading-line-rest" data-line="4">
+                  {t('heading.line4')}
+                </span>
               </AnimatedHeading>
             </div>
            </div>
@@ -342,11 +330,9 @@ export default function Hero() {
            >
             <div className="text-left md:text-right max-w-md md:max-w-lg">
               <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-outfit">
-                <ScrambleText text={t('subtitle')} applyScramble={false} />
+                {t('subtitle')}
               </p>
-              <CalCTAButton>
-                <ScrambleText text={t('cta')} applyScramble={false} />
-              </CalCTAButton>
+              <CalCTAButton>{t('cta')}</CalCTAButton>
             </div>
           </MotionDiv>
         </div>
@@ -454,192 +440,15 @@ export default function Hero() {
           </div>
         )}
 
-            {/* Advanced Matrix Rain Effect */}
-        {isClient && [...Array(25)].map((_, i) => {
-              // Use deterministic values based on index to prevent hydration mismatch
-              const left = (i * 7.3) % 100;
-              const top = (i * 11.7) % 100;
-              const duration = 4 + (i % 3);
-              const delay = (i % 6);
-              const charCode = 0x30A0 + (i % 96);
-              
-              return (
-                <MotionDiv
-                  key={`matrix-${i}`}
-                  className="absolute text-[#00d76b] font-mono text-xs"
-                  style={{
-                    left: `${left}%`,
-                    top: `${top}%`,
-                  }}
-                  animate={{
-                    y: [0, 1000],
-                    opacity: [0, 0.8, 0],
-                    scale: [0.8, 1.2, 0.8],
-                  }}
-                  transition={{
-                    duration: duration,
-                    repeat: Infinity,
-                    delay: delay,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {String.fromCharCode(charCode)}
-                </MotionDiv>
-              );
-            })}
-
-        {/* Neural Network Connections */}
-        {isClient && [...Array(12)].map((_, i) => {
-          // Use deterministic values based on index to prevent hydration mismatch
-          const left = (i * 13.7) % 100;
-          const top = (i * 19.3) % 100;
-          const duration = 3 + (i % 2);
-          const delay = (i % 4);
-          
-          return (
-            <MotionDiv
-              key={`neural-${i}`}
-              className="absolute"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                width: '2px',
-                height: '2px',
-                backgroundColor: '#00d76b',
-              }}
-              animate={{
-                scale: [0, 1, 0],
-                opacity: [0, 0.6, 0],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: duration,
-                repeat: Infinity,
-                delay: delay,
-                ease: "easeInOut"
-              }}
-            />
-          );
-        })}
-
-        {/* Advanced Digital Grid Lines */}
-        {isClient && [...Array(8)].map((_, i) => (
-          <MotionDiv
-            key={`grid-${i}`}
-            className="absolute border border-[#00d76b]/30"
-        style={{
-              left: `${(i * 6.67)}%`,
-              top: 0,
-              height: '100%',
-              width: '1px',
-            }}
-            animate={{
-              opacity: [0, 0.4, 0],
-              scaleY: [0.8, 1, 0.8],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              delay: i * 0.15,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-
-        {/* Holographic Scan Lines */}
-        {isClient && [...Array(4)].map((_, i) => (
-          <MotionDiv
-            key={`scan-${i}`}
-            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#00d76b]/40 to-transparent"
-            style={{
-              top: `${(i * 12.5)}%`,
-            }}
-            animate={{
-              opacity: [0, 0.6, 0],
-              scaleX: [0, 1, 0],
-            }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              delay: i * 0.3,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-
-            {/* Advanced Floating Code Particles */}
-            {isClient && [...Array(8)].map((_, i) => {
-              // Use deterministic values based on index to prevent hydration mismatch
-              const left = (i * 23.7) % 100;
-              const top = (i * 31.3) % 100;
-              const xOffset = (i * 7) % 80 - 40;
-              const yOffset = (i * 11) % 80 - 40;
-              const duration = 8 + (i % 4);
-              const delay = (i % 5);
-              const codeIndex = i % 6;
-              const codes = ['01', '10', '11', '00', 'AI', 'ML'];
-              
-              return (
-                <MotionDiv
-                  key={`code-${i}`}
-                  className="absolute text-[#00d76b]/70 font-mono text-xs"
-                  style={{
-                    left: `${left}%`,
-                    top: `${top}%`,
-                  }}
-                  animate={{
-                    x: [0, xOffset],
-                    y: [0, yOffset],
-                    opacity: [0, 0.9, 0],
-                    scale: [0, 1.2, 0],
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: duration,
-                    repeat: Infinity,
-                    delay: delay,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {codes[codeIndex]}
-                </MotionDiv>
-              );
-            })}
-
-        {/* Quantum Dots */}
-        {isClient && [...Array(20)].map((_, i) => {
-          // Use deterministic values based on index to prevent hydration mismatch
-          const left = (i * 17.3) % 100;
-          const top = (i * 29.7) % 100;
-          const xOffset = (i * 13) % 60 - 30;
-          const yOffset = (i * 19) % 60 - 30;
-          const duration = 4 + (i % 3);
-          const delay = (i % 4);
-          
-          return (
-            <MotionDiv
-              key={`quantum-${i}`}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                backgroundColor: '#00d76b',
-                left: `${left}%`,
-                top: `${top}%`,
-              }}
-              animate={{
-                scale: [0, 1.5, 0],
-                opacity: [0, 0.8, 0],
-                x: [0, xOffset],
-                y: [0, yOffset],
-              }}
-              transition={{
-                duration: duration,
-                repeat: Infinity,
-                delay: delay,
-                ease: "easeInOut"
-              }}
-            />
-          );
-        })}
+        {!prefersReducedMotion && isClient && (
+          <div className="hero-energy-layer">
+            <div className="hero-matrix-overlay" />
+            <div className="hero-energy hero-energy-1" />
+            <div className="hero-energy hero-energy-2" />
+            <div className="hero-energy hero-energy-3" />
+            <div className="hero-grid-overlay" />
+          </div>
+        )}
 
         {/* Advanced Gradient overlays with green theme */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{ background: 'linear-gradient(to bottom left, rgba(0, 215, 107, 0.15), transparent)' }} />

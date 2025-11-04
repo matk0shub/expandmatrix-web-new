@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocale, useTranslations } from 'next-intl';
 import { Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
@@ -17,7 +16,6 @@ export default function FooterNewsletter() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const framer = useFramerMotion();
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
@@ -26,101 +24,12 @@ export default function FooterNewsletter() {
   const MotionSpan = framer?.motion.span ?? fallbackMotion.span;
   const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset, setError, clearErrors } = useForm<FormValues>({
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting }, reset, setError, clearErrors } = useForm<FormValues>({
     defaultValues: { email: '', consent: false },
   });
+  const emailValue = watch('email');
+  const emailRegister = register('email');
 
-
-  // Animated input underline effect
-  useEffect(() => {
-    const input = inputRef.current;
-    if (!input || prefersReducedMotion) return;
-
-    const underline = input.parentElement?.querySelector('.input-underline') as HTMLElement | null;
-    if (!underline) return;
-
-    let teardown: (() => void) | undefined;
-    let isCancelled = false;
-
-    (async () => {
-      const { gsap } = await import('gsap');
-      if (isCancelled) {
-        return;
-      }
-
-      const updateUnderline = () => {
-        const scaleX = input.value.length > 0 ? 1 : 0;
-        gsap.to(underline, { scaleX, duration: 0.3, ease: 'power2.out' });
-      };
-
-      const handleFocus = () => {
-        gsap.to(underline, { scaleX: 1, duration: 0.3, ease: 'power2.out' });
-      };
-
-      input.addEventListener('input', updateUnderline);
-      input.addEventListener('focus', handleFocus);
-      input.addEventListener('blur', updateUnderline);
-
-      // Run once to reflect initial value
-      updateUnderline();
-
-      teardown = () => {
-        input.removeEventListener('input', updateUnderline);
-        input.removeEventListener('focus', handleFocus);
-        input.removeEventListener('blur', updateUnderline);
-      };
-    })();
-
-    return () => {
-      isCancelled = true;
-      teardown?.();
-    };
-  }, [prefersReducedMotion]);
-
-  // Button glow effect
-  useEffect(() => {
-    const button = buttonRef.current;
-    if (!button || prefersReducedMotion) return;
-
-    let teardown: (() => void) | undefined;
-    let isCancelled = false;
-
-    (async () => {
-      const { gsap } = await import('gsap');
-      if (isCancelled) {
-        return;
-      }
-
-      const handleMouseEnter = () => {
-        gsap.to(button, {
-          boxShadow: '0 0 20px rgba(0, 215, 107, 0.4)',
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(button, {
-          boxShadow: '0 0 0px rgba(0, 215, 107, 0)',
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-      };
-
-      button.addEventListener('mouseenter', handleMouseEnter);
-      button.addEventListener('mouseleave', handleMouseLeave);
-
-      teardown = () => {
-        button.removeEventListener('mouseenter', handleMouseEnter);
-        button.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    })();
-
-    return () => {
-      isCancelled = true;
-      teardown?.();
-    };
-  }, [prefersReducedMotion]);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -165,15 +74,8 @@ export default function FooterNewsletter() {
     <section aria-labelledby="newsletter-heading" className="w-full max-w-md">
       {/* Animated header with scramble effect */}
       <MotionDiv className="footer-newsletter-item">
-        <h2 id="newsletter-heading" className="text-white font-semibold text-base tracking-wide mb-2">
-          <ScrambleText
-            text={t('title')}
-            className="font-lato"
-            applyScramble={false}
-            trigger="mount"
-            speed={0.8}
-            range={[65, 125]}
-          />
+        <h2 id="newsletter-heading" className="text-white font-semibold text-base tracking-wide mb-2 font-lato">
+          {t('title')}
         </h2>
         <p className="text-white/80 text-sm mb-6 font-lato">{t('helper')}</p>
       </MotionDiv>
@@ -187,7 +89,7 @@ export default function FooterNewsletter() {
       >
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4" aria-live="polite">
           {/* Email input with animated underline */}
-          <div className="relative">
+          <div className="relative" data-filled={Boolean(emailValue)}>
             <label htmlFor="newsletter-email" className="sr-only">{t('emailLabel')}</label>
             <div className="relative">
               <input
@@ -196,18 +98,18 @@ export default function FooterNewsletter() {
                 inputMode="email"
                 autoComplete="email"
                 placeholder={t('emailPlaceholder')}
-                {...register('email')}
-                ref={(e) => {
-                  inputRef.current = e;
-                  register('email').ref(e);
+                {...emailRegister}
+                ref={(element) => {
+                  inputRef.current = element;
+                  emailRegister.ref(element);
                 }}
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'newsletter-email-error' : undefined}
-                className="w-full h-12 px-4 pl-12 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:border-[#00d76b]/50 focus:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+                className="newsletter-input peer w-full h-12 px-4 pl-12 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:border-[#00d76b]/50 focus:bg-white/10 transition-all duration-300 backdrop-blur-sm"
               />
               <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" />
               {/* Animated underline */}
-              <div className="input-underline absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#00d76b] to-[#00b85c] scale-x-0 origin-left" />
+              <span className="newsletter-underline" />
             </div>
             {errors.email && (
               <MotionP 
@@ -225,15 +127,14 @@ export default function FooterNewsletter() {
 
           {/* Premium CTA button */}
           <MotionButton
-            ref={buttonRef}
             type="submit"
             disabled={isSubmitting}
-            className="group relative w-full px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white text-sm md:text-base font-semibold disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-[#00d76b]/40 transition-all duration-300 overflow-hidden hover:from-[#00e673] hover:to-[#00d76b]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="newsletter-button group relative w-full px-6 py-3.5 md:px-8 md:py-4 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] text-white text-sm md:text-base font-semibold disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-[#00d76b]/40 overflow-hidden"
+            whileHover={{ scale: prefersReducedMotion ? 1 : 1.01 }}
+            whileTap={{ scale: prefersReducedMotion ? 1 : 0.99 }}
           >
             {/* Animated background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00e673] to-[#00d76b] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="newsletter-button-glow absolute inset-0" />
             
             {/* Button content */}
             <div className="relative z-10 flex items-center justify-center gap-2">

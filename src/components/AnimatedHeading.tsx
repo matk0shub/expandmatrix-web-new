@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState, type HTMLAttributes } from 'react';
-import type { ComponentType } from 'react';
-
-import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { useEffect, useMemo, useRef, useState, type HTMLAttributes } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
+
+const DEFAULT_DISTANCE = 200;
+
+const DISTANCE_BREAKPOINTS: Array<{ minWidth: number; intensity: number }> = [
+  { minWidth: 1440, intensity: 1 },
+  { minWidth: 1024, intensity: 0.8 },
+  { minWidth: 768, intensity: 0.6 },
+  { minWidth: 0, intensity: 0.45 },
+];
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -17,14 +22,7 @@ type AnimatedHeadingProps = HTMLAttributes<HTMLHeadingElement> & {
   once?: boolean;
 };
 
-const DEFAULT_DISTANCE = 200;
-
-const DISTANCE_BREAKPOINTS: Array<{ minWidth: number; intensity: number }> = [
-  { minWidth: 1440, intensity: 1 },
-  { minWidth: 1024, intensity: 0.8 },
-  { minWidth: 768, intensity: 0.6 },
-  { minWidth: 0, intensity: 0.45 },
-];
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 export default function AnimatedHeading({
   as = 'h2',
@@ -36,30 +34,39 @@ export default function AnimatedHeading({
   children,
   ...rest
 }: AnimatedHeadingProps) {
-  const framer = useFramerMotion();
   const prefersReducedMotion = useReducedMotion();
-  // Resolve target component (Framer motion element or fallback heading)
-  const motionModule = framer?.motion as Record<string, ComponentType<Record<string, unknown>>> | undefined;
-  const MotionComponent =
-    (motionModule?.[as] ??
-      motionModule?.h2 ??
-      motionModule?.div ??
-      (fallbackMotion[as] ?? fallbackMotion.h2)) as ComponentType<Record<string, unknown>>;
-
-  // Calculate offset dynamically on mount; we avoid resize listeners to keep runtime overhead minimal.
+  const elementRef = useRef<HTMLElement | null>(null);
   const [offset, setOffset] = useState(() => distance);
+  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
 
   useEffect(() => {
     if (prefersReducedMotion || typeof window === 'undefined') {
       return;
     }
 
-    const width = window.innerWidth;
-    const intensity =
-      DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth)?.intensity ??
-      DISTANCE_BREAKPOINTS[DISTANCE_BREAKPOINTS.length - 1].intensity;
+    let frame: number | undefined;
 
-    setOffset(distance * intensity);
+    const updateOffset = () => {
+      const width = window.innerWidth;
+      const intensity =
+        DISTANCE_BREAKPOINTS.find(({ minWidth }) => width >= minWidth)?.intensity ??
+        DISTANCE_BREAKPOINTS[DISTANCE_BREAKPOINTS.length - 1].intensity;
+
+      setOffset(distance * intensity);
+    };
+
+    const handleResize = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateOffset);
+    };
+
+    updateOffset();
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [distance, prefersReducedMotion]);
 
   const hiddenTransform = useMemo(() => {
@@ -80,36 +87,58 @@ export default function AnimatedHeading({
     }
   }, [direction, offset, prefersReducedMotion]);
 
-  const animationProps =
-    prefersReducedMotion || !motionModule
-      ? {}
-      : {
-          initial: hiddenTransform,
-          whileInView: { x: 0, y: 0 },
-          viewport: { once, amount: 0.5 },
-          transition: {
-            type: 'spring',
-            stiffness: 160,
-            damping: 22,
-            mass: 0.9,
-            delay,
-          },
-        };
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setIsVisible(true);
+      return;
+    }
 
-  // For non-Framer fallback, ensure we don't pass motion-specific props
-  if (!motionModule || prefersReducedMotion) {
-    const FallbackComponent = fallbackMotion[as] ?? fallbackMotion.h2;
+    const element = elementRef.current;
+    if (!element) return;
 
-    return (
-      <FallbackComponent className={className} {...rest}>
-        {children}
-      </FallbackComponent>
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (once) {
+            observer.disconnect();
+          }
+        } else if (!once) {
+          setIsVisible(false);
+        }
+      },
+      { threshold: clamp(0.5, 0, 1) },
     );
-  }
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [once, prefersReducedMotion]);
+
+  const transform = hiddenTransform
+    ? `translate3d(${hiddenTransform.x ?? 0}px, ${hiddenTransform.y ?? 0}px, 0)`
+    : undefined;
+
+  const targetTransform = 'translate3d(0, 0, 0)';
+
+  const transition = prefersReducedMotion
+    ? 'none'
+    : `transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) ${delay}s`;
+
+  const Element = as;
 
   return (
-    <MotionComponent {...animationProps} className={className} {...rest}>
+    <Element
+      ref={elementRef as never}
+      className={className}
+      style={{
+        transform: isVisible ? targetTransform : transform,
+        transition,
+        willChange: prefersReducedMotion ? undefined : 'transform',
+      }}
+      {...rest}
+    >
       {children}
-    </MotionComponent>
+    </Element>
   );
 }
