@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import LocaleSwitcher from './LocaleSwitcher';
@@ -13,12 +13,13 @@ import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 import AnimatedHeading from './AnimatedHeading';
 
+type GSAPTimeline = gsap.core.Timeline;
+
 export default function Hero() {
   const t = useTranslations('hero');
   const nav = useTranslations('navigation');
   const heroRef = useRef<HTMLDivElement>(null);
-  const headerLogoRef = useRef<HTMLDivElement>(null);
-  const heroLogoRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isClient = useClient();
   const prefersReducedMotion = useReducedMotion();
@@ -31,98 +32,79 @@ export default function Hero() {
 
 
   useEffect(() => {
-    if (!heroRef.current || prefersReducedMotion) {
+    if (!heroRef.current || !isClient || prefersReducedMotion) {
       return;
     }
 
-    const node = heroRef.current;
-    node.classList.add('hero-animated');
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          node.classList.add('is-visible');
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(node);
-
-    return () => observer.disconnect();
-  }, [prefersReducedMotion]);
-
-  const supportsHover = useMemo(() => {
-    if (!isClient || typeof window === 'undefined') return false;
-    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  }, [isClient]);
-
-  useEffect(() => {
-    if (!heroLogoRef.current || !heroRef.current || prefersReducedMotion || !supportsHover) {
-      return;
-    }
-
-    const logoElement = heroLogoRef.current;
-    const heroElement = heroRef.current;
-
+    let isMounted = true;
+    let handleMouseMove: ((event: MouseEvent) => void) | null = null;
     let rafId: number | null = null;
-    let pointerX = window.innerWidth / 2;
-    let pointerY = window.innerHeight / 2;
-    let visible = true;
+    let pending: MouseEvent | null = null;
+    let active = true;
+    let io: IntersectionObserver | null = null;
+    let timeline: GSAPTimeline | null = null;
 
-    const applyTilt = () => {
-      rafId = null;
-      if (!visible) {
-        logoElement.style.transform = '';
+    (async () => {
+      const { gsap } = await import('gsap');
+      if (!isMounted || !heroRef.current) {
         return;
       }
-      const { innerWidth, innerHeight } = window;
-      const rotateY = ((pointerX / innerWidth) - 0.5) * 14;
-      const rotateX = ((pointerY / innerHeight) - 0.5) * -14;
-      logoElement.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
-    };
 
-    const queueTilt = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(applyTilt);
-    };
+      timeline = gsap.timeline();
+      timeline.fromTo(
+        heroRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }
+      );
 
-    const handlePointerMove = (event: PointerEvent) => {
-      if (!visible) return;
-      pointerX = event.clientX;
-      pointerY = event.clientY;
-      queueTilt();
-    };
-
-    const handlePointerLeave = () => {
-      pointerX = window.innerWidth / 2;
-      pointerY = window.innerHeight / 2;
-      queueTilt();
-    };
-
-    const visibilityObserver = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        if (!visible) {
-          logoElement.style.transform = '';
+      const update = () => {
+        if (!active || !logoRef.current || !pending) {
+          rafId = null;
+          return;
         }
-      },
-      { threshold: 0.05 },
-    );
+        const { clientX, clientY } = pending;
+        const { innerWidth, innerHeight } = window;
+        const xPos = (clientX / innerWidth - 0.5) * 10;
+        const yPos = (clientY / innerHeight - 0.5) * 10;
+        gsap.to(logoRef.current, {
+          rotateY: xPos,
+          rotateX: -yPos,
+          duration: 0.3,
+          ease: 'power2.out',
+          overwrite: true,
+        });
+        rafId = requestAnimationFrame(update);
+      };
 
-    visibilityObserver.observe(heroElement);
-    window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    window.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+      handleMouseMove = (event: MouseEvent) => {
+        pending = event;
+        if (rafId == null) {
+          rafId = requestAnimationFrame(update);
+        }
+      };
+
+      io = new IntersectionObserver((entries) => {
+        active = entries.some((e) => e.isIntersecting);
+        if (!active && rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      }, { threshold: 0.05 });
+      if (heroRef.current) io.observe(heroRef.current);
+
+      window.addEventListener('mousemove', handleMouseMove);
+    })();
 
     return () => {
+      isMounted = false;
+      if (handleMouseMove) {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
+      timeline?.kill();
       if (rafId) cancelAnimationFrame(rafId);
-      visibilityObserver.disconnect();
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerleave', handlePointerLeave);
-      logoElement.style.transform = '';
+      io?.disconnect();
     };
-  }, [prefersReducedMotion, supportsHover]);
+  }, [isClient, prefersReducedMotion]);
 
   const scrollToSection = (sectionId: string) => {
     if (typeof document !== 'undefined') {
@@ -135,9 +117,9 @@ export default function Hero() {
   };
 
   return (
-    <section
+    <section 
       ref={heroRef}
-      className="hero-animated relative min-h-screen w-full overflow-hidden bg-black"
+      className="relative min-h-screen w-full overflow-hidden bg-black"
       style={{
         boxShadow: '0 -50px 100px rgba(0, 0, 0, 0.8), 0 -20px 50px rgba(0, 0, 0, 0.6)'
       }}
@@ -155,7 +137,7 @@ export default function Hero() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="flex items-center gap-3 shrink-0"
               >
-               <div ref={headerLogoRef} className="w-8 h-8 flex items-center justify-center group">
+               <div className="w-8 h-8 flex items-center justify-center group">
                  <svg 
                    viewBox="0 0 1041.587182 1000"
                    className="w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-lg"
@@ -173,11 +155,11 @@ export default function Hero() {
                    />
                  </svg>
                </div>
-                   <span
-                     className="text-white font-bold text-sm sm:text-base lg:text-lg whitespace-nowrap font-lato"
+                   <span 
+                     className="text-white font-bold text-sm sm:text-base lg:text-lg whitespace-nowrap font-lato" 
                    >
-                     EXPAND MATRIX
-                   </span>
+                      <ScrambleText text="EXPAND MATRIX" applyScramble={false} />
+                    </span>
               </MotionDiv>
 
               {/* Desktop Navigation */}
@@ -191,31 +173,31 @@ export default function Hero() {
                     onClick={() => scrollToSection('about')}
                     className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
                   >
-                    {nav('about')}
+                    <ScrambleText text={nav('about')} applyScramble={false} />
                   </button>
                 <button 
                   onClick={() => scrollToSection('services')}
                     className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
                 >
-                  {nav('services')}
+                  <ScrambleText text={nav('services')} applyScramble={false} />
                 </button>
                 <button 
                   onClick={() => scrollToSection('references')}
                     className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
                 >
-                  {nav('references')}
+                  <ScrambleText text={nav('references')} applyScramble={false} />
                 </button>
                 <button 
                   onClick={() => scrollToSection('faq')}
                     className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
                 >
-                  {nav('faq')}
+                  <ScrambleText text={nav('faq')} applyScramble={false} />
                 </button>
                 <button 
                   onClick={() => scrollToSection('contact')}
                     className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
                 >
-                  {nav('contact')}
+                  <ScrambleText text={nav('contact')} applyScramble={false} />
                 </button>
                 <LocaleSwitcher />
               </MotionNav>
@@ -357,7 +339,7 @@ export default function Hero() {
         {/* 3D Rotating Logo - Center */}
         {isClient && (
            <div 
-             ref={heroLogoRef}
+             ref={logoRef}
              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
              style={{
                perspective: '1200px',
