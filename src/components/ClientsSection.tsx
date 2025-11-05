@@ -337,8 +337,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   );
 
   const computeCircleDiameter = useCallback(
-    // Overall slightly smaller circle: reduce multiplier and clamp upper bound
-    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.2, 60, 260)),
+    // Make the visible green circle ~2x larger than previous setting
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 2.4, 90, 380)),
     [clampValue],
   );
 
