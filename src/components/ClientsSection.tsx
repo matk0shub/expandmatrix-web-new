@@ -206,9 +206,9 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         ballScale: 0.16,
         ballMin: 38,
         ballMax: 68,
-        greenScale: 0.24,
-        greenMin: 70,
-        greenMax: 110,
+        greenScale: 0.16,
+        greenMin: 56,
+        greenMax: 92,
         topBase: 0.46,
         topSlope: 0.0001,
         topMin: 0.44,
@@ -336,8 +336,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   );
 
   const computeCircleDiameter = useCallback(
-    // Allow a smaller mobile circle by lowering the minimum clamp
-    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 110, 320)),
+    // Allow a smaller mobile circle by lowering the minimum clamp further
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 80, 320)),
     [clampValue],
   );
 
