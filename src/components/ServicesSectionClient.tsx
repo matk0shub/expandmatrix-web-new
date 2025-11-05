@@ -167,43 +167,39 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                     text-center
                   `}
                 >
-                  <div className="absolute top-6 left-6 text-lg sm:text-xl md:text-2xl text-white/70 font-medium font-lato">
+                  <div className="absolute top-6 left-6 z-30 text-lg sm:text-xl md:text-2xl text-white/70 font-medium font-lato">
                     {service.number}
                   </div>
-                  <div className="absolute top-6 right-6">
+                  <div className="absolute top-6 right-6 z-30">
                     <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center transition-all duration-300 group-hover:bg-green-400 group-hover:scale-110">
                       <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:rotate-90" />
                     </div>
                     <div className="absolute inset-0 rounded-full bg-green-500/50 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
+                </div>
 
-                  <div className="relative w-full flex-1 flex items-center justify-center">
-                    <div 
-                      className={`
-                        absolute inset-0 flex items-center justify-center
-                        transition-opacity duration-500
-                        ${prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'}
-                      `}
-                    >
-                      <h3 className="heading-secondary text-center px-4 text-lg sm:text-xl md:text-2xl">
-                        {service.title}
-                      </h3>
-                    </div>
-
-                    <div 
-                      className={`
-                        absolute inset-0 flex items-center justify-center
-                        transition-all duration-500
-                        ${prefersReducedMotion 
-                          ? 'opacity-0 group-hover:opacity-100' 
-                          : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'}
-                      `}
-                    >
-                      <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center px-4 sm:px-6">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
+                {/* Centered overlays bound to the whole card area */}
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                  <h3
+                    className={`heading-secondary m-0 text-center px-4 text-lg sm:text-xl md:text-2xl transition-opacity duration-500 ${
+                      prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'
+                    }`}
+                    aria-hidden
+                  >
+                    {service.title}
+                  </h3>
+                </div>
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                  <p
+                    className={`m-0 text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center px-4 sm:px-6 transition-all duration-500 ${
+                      prefersReducedMotion
+                        ? 'opacity-0 group-hover:opacity-100'
+                        : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'
+                    }`}
+                    aria-hidden
+                  >
+                    {service.description}
+                  </p>
                 </div>
 
                 <div className="pointer-events-none absolute inset-0 rounded-3xl bg-white/0 group-hover:bg-white/[0.02] backdrop-blur-0 group-hover:backdrop-blur-sm transition-all duration-500" />
