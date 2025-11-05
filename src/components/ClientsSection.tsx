@@ -238,7 +238,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       let config = baseConfig;
 
-      if (width <= 480) {
+      // Treat wider small devices as mobile to shrink the circle more aggressively
+      if (width <= 600) {
         config = mobileConfig;
       } else if (width <= 834) {
         config = tabletConfig;
@@ -336,8 +337,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   );
 
   const computeCircleDiameter = useCallback(
-    // Allow a smaller mobile circle by lowering the minimum clamp further
-    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 80, 320)),
+    // Overall slightly smaller circle: reduce multiplier and clamp upper bound
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.2, 60, 260)),
     [clampValue],
   );
 
