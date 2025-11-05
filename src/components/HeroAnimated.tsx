@@ -147,7 +147,7 @@ export default function Hero() {
         {/* Header with Logo and Navigation */}
         <header className="absolute top-0 left-0 right-0 z-50">
           <div className="w-full max-w-[1780px] mx-auto py-16 md:py-20 px-0">
-            <div className="flex items-center justify-between px-6 md:px-12 xl:px-0">
+            <div className="flex items-center justify-between px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
               {/* Logo */}
               <MotionDiv
                 initial={{ opacity: 0, x: -30 }}
@@ -284,7 +284,7 @@ export default function Hero() {
             <div className="relative z-10 min-h-screen flex flex-col justify-between py-15 md:py-19 px-0">
            {/* Top Section - Modern Heading Layout */}
            <div
-             className="pt-16 md:pt-20 px-6 md:px-12 xl:px-0 relative z-50"
+            className="pt-16 md:pt-20 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 relative z-50"
            >
              {/* Grid-based heading layout with ghost sizer for perfect alignment */}
              <div className="hero-heading-container">
@@ -338,7 +338,7 @@ export default function Hero() {
              initial={{ opacity: 0, y: 30 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.8, delay: 1.4 }}
-            className="flex justify-end items-end pb-8 md:pb-12 px-6 md:px-12 xl:px-0 mt-8 md:mt-12"
+            className="flex justify-end items-end pb-8 md:pb-12 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 mt-8 md:mt-12"
           >
             <div className="text-right max-w-md md:max-w-lg">
               <p className="text-white/80 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-outfit">

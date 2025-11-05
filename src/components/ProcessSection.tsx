@@ -357,7 +357,7 @@ export default function ProcessSection() {
       {/* Content Container */}
       <div className="relative z-10">
         {/* Header Section */}
-        <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
+        <div className="w-full max-w-[1780px] mx-auto relative px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
           <div className="pointer-events-none absolute inset-x-[-8%] -top-20 h-[320px] flex justify-center">
             <div className="h-full w-full max-w-4xl rounded-full bg-[radial-gradient(circle,rgba(0,215,107,0.55)_0%,rgba(0,215,107,0.14)_50%,transparent_80%)] blur-3xl opacity-65" />
           </div>

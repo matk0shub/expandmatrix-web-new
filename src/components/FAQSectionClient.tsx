@@ -134,7 +134,7 @@ export default function FAQSectionClient({ locale, faqs, copy }: FAQSectionClien
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.55),transparent_30%,transparent_70%,rgba(0,0,0,0.55))]" />
       </div>
 
-      <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 relative z-10">
+      <div className="w-full max-w-[1780px] mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
           <div className="flex flex-col min-h-[260px] md:min-h-[380px] py-2 md:py-4">
             <div className="flex flex-1 flex-col justify-start gap-6 md:gap-8 lg:gap-10">

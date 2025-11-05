@@ -103,7 +103,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-green-400 rounded-full opacity-50 animate-ping shadow-lg shadow-green-400" />
       </div>
 
-      <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
+      <div className="w-full max-w-[1780px] mx-auto relative px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
             <AnimatedHeading as="h2" className="heading-main">

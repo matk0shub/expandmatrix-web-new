@@ -14,7 +14,7 @@ export default function Footer() {
       className="bg-[var(--brand-bg)] text-[15px] text-[var(--brand-fg)] antialiased md:text-base [--brand-accent:#00d76b] [--brand-bg:#040404] [--brand-fg:#f7f9fb] [--container-max:1780px] [--gap-x:24px] [--gap-y:28px]"
       aria-labelledby="site-footer-heading"
     >
-      <div className="mx-auto flex w-full max-w-[var(--container-max)] flex-col gap-10 px-6 py-12 md:gap-12 md:px-12 md:py-16 xl:px-0">
+      <div className="mx-auto flex w-full max-w-[var(--container-max)] flex-col gap-10 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 py-12 md:gap-12 md:py-16">
         <h2 id="site-footer-heading" className="sr-only">
           Footer
         </h2>
