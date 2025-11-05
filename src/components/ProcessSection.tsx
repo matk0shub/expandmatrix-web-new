@@ -51,20 +51,20 @@ const CARD_CONFIG = {
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[420px]',
-    sm: 'sm:min-h-[520px]',
-    md: 'md:min-h-[600px]',
-    lg: 'lg:min-h-[640px]'
+    base: 'min-h-[320px]',
+    sm: 'sm:min-h-[400px]',
+    md: 'md:min-h-[520px]',
+    lg: 'lg:min-h-[600px]'
   },
   padding: {
-    base: 'p-8',
-    sm: 'sm:p-10',
-    md: 'md:p-14',
-    lg: 'lg:p-16',
-    xl: 'xl:p-20'
+    base: 'p-6',
+    sm: 'sm:p-8',
+    md: 'md:p-12',
+    lg: 'lg:p-14',
+    xl: 'xl:p-16'
   },
   borderRadius: 'rounded-3xl', // Standard border-radius
-  maxWidth: 'max-w-[92vw] lg:max-w-none',
+  maxWidth: 'max-w-[86vw] lg:max-w-none',
   typography: {
     number: {
       size: 'text-base sm:text-lg md:text-xl lg:text-2xl',
@@ -123,6 +123,7 @@ export default function ProcessSection() {
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
   const [stackingEnabled, setStackingEnabled] = useState(false);
   const [shouldInitGsap, setShouldInitGsap] = useState(false);
+  const [isSmall, setIsSmall] = useState(false);
   
   useEffect(() => {
     setAnimationValues(
@@ -134,39 +135,24 @@ export default function ProcessSection() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia('(min-width: 1024px)');
-
-    const updateStacking = (matches: boolean) => {
-      setStackingEnabled((current) => {
-        const next = matches && !prefersReducedMotion;
-        return current === next ? current : next;
-      });
-    };
-
-    updateStacking(mediaQuery.matches);
-
-    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
-      updateStacking(event.matches);
-    };
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', handleChange);
-    } else if (typeof mediaQuery.addListener === 'function') {
-      mediaQuery.addListener(handleChange);
-    }
-
-    return () => {
-      if (typeof mediaQuery.removeEventListener === 'function') {
-        mediaQuery.removeEventListener('change', handleChange);
-      } else if (typeof mediaQuery.removeListener === 'function') {
-        mediaQuery.removeListener(handleChange);
-      }
-    };
+    // Enable stacking across all breakpoints unless user prefers reduced motion
+    setStackingEnabled(!prefersReducedMotion);
   }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 640px)');
+    const update = () => setIsSmall(mq.matches);
+    update();
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', update);
+      return () => mq.removeEventListener('change', update);
+    }
+    if (typeof mq.addListener === 'function') {
+      mq.addListener(update);
+      return () => mq.removeListener(update);
+    }
+  }, []);
 
   useEffect(() => {
     if (!stackingEnabled) {
@@ -208,6 +194,7 @@ export default function ProcessSection() {
         alt: 'Calendar icon symbolizing the kickoff workshop',
         size: 'clamp(140px, 28vw, 280px)',
         bottom: '-80px',
+        bottomMobile: '-48px',
         right: '-6px',
         rotation: -8
       }
@@ -220,6 +207,7 @@ export default function ProcessSection() {
         alt: 'Project blueprint icon for scoping and contracts',
         size: 'clamp(160px, 30vw, 300px)',
         bottom: '-90px',
+        bottomMobile: '-54px',
         right: '-36px',
         rotation: 5
       }
@@ -232,6 +220,7 @@ export default function ProcessSection() {
         alt: 'Security lock icon for access hand-off',
         size: 'clamp(140px, 26vw, 260px)',
         bottom: '-70px',
+        bottomMobile: '-42px',
         right: '-25px',
         rotation: -2
       }
@@ -244,6 +233,7 @@ export default function ProcessSection() {
         alt: 'Completion checkmark icon for implementation',
         size: 'clamp(150px, 28vw, 290px)',
         bottom: '-85px',
+        bottomMobile: '-50px',
         right: '-28px',
         rotation: 8
       }
@@ -256,6 +246,7 @@ export default function ProcessSection() {
         alt: 'Dual gear icon for optimization cycles',
         size: 'clamp(170px, 32vw, 320px)',
         bottom: '-100px',
+        bottomMobile: '-60px',
         right: '-40px',
         rotation: 12
       }
@@ -480,7 +471,7 @@ export default function ProcessSection() {
                   style={{
                     width: step.icon.size,
                     height: step.icon.size,
-                    bottom: step.icon.bottom,
+                    bottom: (isSmall && 'bottomMobile' in step.icon ? step.icon.bottomMobile : step.icon.bottom) as string,
                     right: step.icon.right
                   }}
                   initial={{ rotate: step.icon.rotation }}

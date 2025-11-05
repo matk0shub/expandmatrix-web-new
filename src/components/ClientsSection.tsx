@@ -203,20 +203,20 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       };
 
       const mobileConfig = {
-        ballScale: 0.18,
-        ballMin: 44,
-        ballMax: 80,
-        greenScale: 0.32,
-        greenMin: 90,
-        greenMax: 140,
+        ballScale: 0.16,
+        ballMin: 38,
+        ballMax: 68,
+        greenScale: 0.18,
+        greenMin: 64,
+        greenMax: 104,
         topBase: 0.46,
         topSlope: 0.0001,
         topMin: 0.44,
         topMax: 0.54,
-        sectionMultiplier: 1.26,
-        viewportMultiplier: 0.78,
-        sectionMin: 500,
-        sectionMax: 720,
+        sectionMultiplier: 1.18,
+        viewportMultiplier: 0.72,
+        sectionMin: 460,
+        sectionMax: 680,
         horizontalPaddingScale: 0.08,
         horizontalPaddingMin: 20,
         horizontalPaddingMax: 70,
@@ -238,7 +238,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       let config = baseConfig;
 
-      if (width <= 480) {
+      // Treat wider small devices as mobile to shrink the circle more aggressively
+      if (width <= 600) {
         config = mobileConfig;
       } else if (width <= 834) {
         config = tabletConfig;
@@ -336,14 +337,15 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   );
 
   const computeCircleDiameter = useCallback(
-    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 160, 320)),
+    // Make the visible green circle ~2x larger than previous setting
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 2.4, 90, 380)),
     [clampValue],
   );
 
   const circleDiameter = computeCircleDiameter(layout.greenRadius);
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
   const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
-  const unifiedHeadingSize = clampValue(layout.greenRadius * 0.36, 28, 54);
+  const unifiedHeadingSize = clampValue(layout.greenRadius * 0.30, 20, 42);
   const primaryTextSize = unifiedHeadingSize;
   const monochromeFilter = 'none';
   const marqueeText = t('title');
