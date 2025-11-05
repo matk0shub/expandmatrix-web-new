@@ -70,7 +70,15 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const partnerCount = Math.max(partners.length, 0);
-  const [layout, setLayout] = useState(() => ({
+  type LayoutState = {
+    ballSize: number;
+    greenRadius: number;
+    topRatio: number;
+    sectionMinHeight: number;
+    ballCount: number;
+  };
+
+  const [layout, setLayout] = useState<LayoutState>(() => ({
     ballSize: 160,
     greenRadius: 180,
     topRatio: 0.45,
@@ -98,8 +106,15 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     }));
   }, [partners]);
 
+  type ResponsiveConfig = {
+    layout: LayoutState;
+    padding: { horizontal: number; top: number; bottom: number; height: number };
+    velocity: { horizontal: number; vertical: number };
+    maxVelocity: { x: number; y: number };
+  };
+
   const computeResponsiveValues = useCallback(
-    (width: number, height: number) => {
+    (width: number, height: number): ResponsiveConfig => {
       const baseConfig = {
         ballScale: 0.2,
         ballMin: 80,
@@ -378,8 +393,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
   const renderBalls = useCallback(() => {
     const states = ballStateRef.current;
-    states.forEach((ball, id) => {
-      const element = ballElementsRef.current.get(id);
+    states.forEach((ball: BallState, id: number) => {
+      const element: HTMLDivElement | undefined = ballElementsRef.current.get(id);
       if (!element) {
         return;
       }
@@ -530,9 +545,9 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     }
 
     const { maxVx, maxVy } = physicsConfigRef.current;
-    const balls = Array.from(ballStateRef.current.values());
+    const balls: BallState[] = Array.from(ballStateRef.current.values());
 
-    balls.forEach((ball) => {
+    balls.forEach((ball: BallState) => {
       if (ball.isDragging) {
         return;
       }
@@ -576,9 +591,9 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       }
     }
 
-    balls.forEach(resolveGreenCollision);
+    balls.forEach((b: BallState) => resolveGreenCollision(b));
 
-    balls.forEach((ball) => {
+    balls.forEach((ball: BallState) => {
       if (!ball.isDragging) {
         ball.angle += ball.angularVelocity * dt;
         ball.angularVelocity *= 0.985;
@@ -657,7 +672,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       maxVy: maxVelocity.y
     };
 
-    setLayout((previous) => {
+    setLayout((previous: LayoutState) => {
       if (
         previous.ballSize === layoutValues.ballSize &&
         previous.greenRadius === layoutValues.greenRadius &&
@@ -885,7 +900,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     const sequences = marquee.querySelectorAll<HTMLElement>('[data-marquee-sequence]');
 
     const computeWidths = () => {
-      sequences.forEach((sequence) => {
+      sequences.forEach((sequence: HTMLElement) => {
         const items = Array.from(sequence.children) as HTMLElement[];
         if (items.length === 0) return;
 
@@ -904,7 +919,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         sequence.style.setProperty('--segment-width', `${measuredWidth}px`);
       });
 
-      const longest = Array.from(sequences).reduce((width, seq) => {
+      const longest = Array.from(sequences).reduce<number>((width: number, seq: HTMLElement) => {
         const segmentWidth = parseFloat(seq.style.getPropertyValue('--segment-width') || '0');
         return Math.max(width, segmentWidth);
       }, 0);
