@@ -1,8 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import AccuracySectionClient from './AccuracySectionClient';
 
-export default async function AccuracySection() {
-  const t = await getTranslations({ namespace: 'sections.accuracy' });
+interface AccuracySectionProps {
+  locale: string;
+}
+
+export default async function AccuracySection({ locale }: AccuracySectionProps) {
+  const t = await getTranslations({ locale, namespace: 'sections.accuracy' });
 
   const stats = [
     { value: '35+', label: t('stats.clients') },

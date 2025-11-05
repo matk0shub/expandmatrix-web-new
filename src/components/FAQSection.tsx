@@ -30,7 +30,7 @@ const normalizeFaqs = (docs: FAQDocument[]): FAQ[] =>
 export const revalidate = 60;
 
 export default async function FAQSection({ locale }: FAQSectionProps) {
-  const t = await getTranslations({ namespace: 'sections.faq' });
+  const t = await getTranslations({ locale, namespace: 'sections.faq' });
   const payload = await getPayloadClient();
 
   const response = await payload.find({
