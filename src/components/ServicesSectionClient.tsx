@@ -179,9 +179,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                 </div>
 
                 {/* Centered overlays bound to the whole card area */}
-                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <h3
-                    className={`heading-secondary m-0 text-center px-4 text-lg sm:text-xl md:text-2xl transition-opacity duration-500 ${
+                    className={`heading-secondary m-0 max-w-[90%] text-center text-lg sm:text-xl md:text-2xl leading-tight sm:leading-snug md:leading-snug transition-opacity duration-500 ${
                       prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'
                     }`}
                     aria-hidden
@@ -189,9 +189,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                     {service.title}
                   </h3>
                 </div>
-                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <p
-                    className={`m-0 text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center px-4 sm:px-6 transition-all duration-500 ${
+                    className={`m-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500 ${
                       prefersReducedMotion
                         ? 'opacity-0 group-hover:opacity-100'
                         : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'
