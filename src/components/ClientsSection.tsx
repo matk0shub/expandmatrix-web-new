@@ -336,7 +336,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   );
 
   const computeCircleDiameter = useCallback(
-    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 160, 320)),
+    // Allow a smaller mobile circle by lowering the minimum clamp
+    (baseRadius: number) => Math.round(clampValue(baseRadius * 1.8, 110, 320)),
     [clampValue],
   );
 
