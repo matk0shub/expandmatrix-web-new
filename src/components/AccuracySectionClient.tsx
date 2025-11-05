@@ -78,7 +78,7 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
         />
       </div>
 
-      <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
+      <div className="w-full max-w-[1780px] mx-auto relative px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
             <AnimatedHeading as="h2" className="heading-main block">

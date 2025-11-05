@@ -56,7 +56,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
     <section className="relative isolate w-full bg-gradient-to-b from-black via-[#041109] to-black py-24 md:py-40 lg:py-48 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" style={backgroundStyle} />
 
-      <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0">
+      <div className="relative z-10 w-full max-w-[1780px] mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
         <div className="relative mx-auto max-w-3xl text-center">
           <AnimatedHeading
             as="h2"

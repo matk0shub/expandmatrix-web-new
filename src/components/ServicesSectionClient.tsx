@@ -103,7 +103,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-green-400 rounded-full opacity-50 animate-ping shadow-lg shadow-green-400" />
       </div>
 
-      <div className="w-full max-w-[1780px] mx-auto relative px-6 md:px-12 xl:px-0">
+      <div className="w-full max-w-[1780px] mx-auto relative px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
         <div className="mb-20 lg:mb-32">
           <div className="relative inline-block mb-8">
             <AnimatedHeading as="h2" className="heading-main">
@@ -179,9 +179,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                 </div>
 
                 {/* Centered overlays bound to the whole card area */}
-                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <h3
-                    className={`heading-secondary m-0 text-center px-4 text-lg sm:text-xl md:text-2xl transition-opacity duration-500 ${
+                    className={`heading-secondary m-0 max-w-[90%] text-center text-lg sm:text-xl md:text-2xl leading-tight sm:leading-snug md:leading-snug transition-opacity duration-500 ${
                       prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'
                     }`}
                     aria-hidden
@@ -189,9 +189,9 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                     {service.title}
                   </h3>
                 </div>
-                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full">
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <p
-                    className={`m-0 text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center px-4 sm:px-6 transition-all duration-500 ${
+                    className={`m-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500 ${
                       prefersReducedMotion
                         ? 'opacity-0 group-hover:opacity-100'
                         : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'

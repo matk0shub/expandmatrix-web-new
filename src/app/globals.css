@@ -153,6 +153,28 @@ h6 {
   background-clip: text;
 }
 
+.heading-main,
+.heading-secondary,
+.heading-tertiary,
+.hero-heading,
+.hero-heading-line-first,
+.hero-heading-line-second {
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+
+@supports (text-wrap: balance) {
+  .heading-main,
+  .heading-secondary,
+  .heading-tertiary,
+  .hero-heading,
+  .hero-heading-line-first,
+  .hero-heading-line-second {
+    text-wrap: balance;
+  }
+}
+
 .heading-main:hover {
   text-shadow: 0 0 30px rgba(0, 215, 107, 0.2);
   transform: translateY(-2px);
