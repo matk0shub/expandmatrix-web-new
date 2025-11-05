@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "types": ["node", "react", "react-dom"],
+    "typeRoots": ["node_modules/@types"],
+    "noEmit": true
+  }
+}
+
