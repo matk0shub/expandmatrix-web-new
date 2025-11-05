@@ -32,7 +32,7 @@ export default async function HomePage({ params }: PageProps) {
       <main className="min-h-screen">
         <Hero />
         <div id="about">
-          <AccuracySection />
+          <AccuracySection locale={locale} />
         </div>
         <ClientsSection partners={safePartners} />
         <div id="services">
