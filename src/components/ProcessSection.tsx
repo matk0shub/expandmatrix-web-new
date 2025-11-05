@@ -51,17 +51,17 @@ const CARD_CONFIG = {
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[420px]',
-    sm: 'sm:min-h-[520px]',
-    md: 'md:min-h-[600px]',
-    lg: 'lg:min-h-[640px]'
+    base: 'min-h-[320px]',
+    sm: 'sm:min-h-[400px]',
+    md: 'md:min-h-[520px]',
+    lg: 'lg:min-h-[600px]'
   },
   padding: {
-    base: 'p-8',
-    sm: 'sm:p-10',
-    md: 'md:p-14',
-    lg: 'lg:p-16',
-    xl: 'xl:p-20'
+    base: 'p-6',
+    sm: 'sm:p-8',
+    md: 'md:p-12',
+    lg: 'lg:p-14',
+    xl: 'xl:p-16'
   },
   borderRadius: 'rounded-3xl', // Standard border-radius
   maxWidth: 'max-w-[92vw] lg:max-w-none',
@@ -134,38 +134,8 @@ export default function ProcessSection() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia('(min-width: 1024px)');
-
-    const updateStacking = (matches: boolean) => {
-      setStackingEnabled((current) => {
-        const next = matches && !prefersReducedMotion;
-        return current === next ? current : next;
-      });
-    };
-
-    updateStacking(mediaQuery.matches);
-
-    const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
-      updateStacking(event.matches);
-    };
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', handleChange);
-    } else if (typeof mediaQuery.addListener === 'function') {
-      mediaQuery.addListener(handleChange);
-    }
-
-    return () => {
-      if (typeof mediaQuery.removeEventListener === 'function') {
-        mediaQuery.removeEventListener('change', handleChange);
-      } else if (typeof mediaQuery.removeListener === 'function') {
-        mediaQuery.removeListener(handleChange);
-      }
-    };
+    // Enable stacking across all breakpoints unless user prefers reduced motion
+    setStackingEnabled(!prefersReducedMotion);
   }, [prefersReducedMotion]);
 
   useEffect(() => {
