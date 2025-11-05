@@ -136,8 +136,8 @@ export default function FAQSectionClient({ locale, faqs, copy }: FAQSectionClien
 
       <div className="w-full max-w-[1780px] mx-auto px-6 md:px-12 xl:px-0 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
-          <div className="flex flex-col min-h-[420px] py-4">
-            <div className="flex flex-1 flex-col justify-between gap-10">
+          <div className="flex flex-col min-h-[260px] md:min-h-[380px] py-2 md:py-4">
+            <div className="flex flex-1 flex-col justify-start gap-6 md:gap-8 lg:gap-10">
               <AnimatedHeading as="h2" className="heading-main">
                 <div>{copy.titleLine1}</div>
                 <div>{copy.titleLine2}</div>
@@ -147,10 +147,10 @@ export default function FAQSectionClient({ locale, faqs, copy }: FAQSectionClien
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-                className="flex justify-start items-end"
+                className="flex justify-start items-end mt-2"
               >
                 <div className="text-left max-w-md">
-                  <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-6 font-lato">
+                  <p className="text-white/80 text-base md:text-lg lg:text-xl leading-relaxed mb-4 md:mb-5 font-lato">
                     {copy.ctaOverline}
                   </p>
                   <CalCTAButton>{copy.ctaButton}</CalCTAButton>
