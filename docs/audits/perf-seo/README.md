@@ -43,6 +43,10 @@ Full notes live in [`2025-11-06.md`](./2025-11-06.md).
 3. **Bundle diet & code splitting**
    - Inspect `_next/static/chunks/6544…js` with `ANALYZE=true pnpm build`.
    - Dynamic import heavy visual effects and optional components.
+   - Plans considered (Nov 06):
+     1. **Deferred Framer loader (chosen)** – use `requestIdleCallback`/interaction listeners before importing `framer-motion`; fallback renders without animation until bundle is ready.
+     2. Split hero/process into CSS-only variants – larger rewrite; deferred for now.
+     3. Route-level dynamic imports for animation-heavy sections – viable later if additional wins needed.
 
 4. **Caching & headers**
    - Ensure static assets and third-party proxies serve `Cache-Control: public, max-age=31536000, immutable`.
