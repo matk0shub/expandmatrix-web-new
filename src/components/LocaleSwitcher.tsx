@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next-intl/client';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function LocaleSwitcher() {
   const locale = useLocale();
@@ -9,8 +9,14 @@ export default function LocaleSwitcher() {
   const pathname = usePathname();
 
   const switchLocale = (newLocale: string) => {
-    const targetPath = pathname ?? '/';
-    router.push(targetPath, { locale: newLocale });
+    const currentPath = pathname ?? '/';
+    const normalizedPath = currentPath.replace(/^\/(cs|en)/, '');
+    const targetPath = `/${newLocale}${normalizedPath}` || `/${newLocale}`;
+
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+
+    router.push(targetPath);
+    router.refresh();
   };
 
   return (
