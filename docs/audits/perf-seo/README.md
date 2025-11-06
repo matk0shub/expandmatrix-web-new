@@ -51,6 +51,10 @@ Full notes live in [`2025-11-06.md`](./2025-11-06.md).
 4. **Caching & headers**
    - Ensure static assets and third-party proxies serve `Cache-Control: public, max-age=31536000, immutable`.
    - Review edge/CDN config so HTML can be cached per-locale if feasible.
+   - Plans considered (Nov 06):
+     1. **next.config headers() (chosen)** – set long-lived caching for `_next/static`, `_next/image`, font and media assets; add short-lived, SWR caching for `/en` & `/cs` HTML with proper `Vary`.
+     2. Middleware-driven cache policy – more flexible but higher complexity/latency, postponed.
+     3. CDN-only configuration – requires ops access; documenting as alternative if hosting changes.
 
 5. **Redirect strategy**
    - Serve locale content directly (e.g., detect preferred locale server-side) to eliminate `/ → /en` hops.
