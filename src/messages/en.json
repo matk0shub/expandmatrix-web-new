@@ -306,7 +306,9 @@
     "services": "SERVICES",
     "references": "REFERENCES",
     "faq": "FAQ",
-    "contact": "CONTACT"
+    "contact": "CONTACT",
+    "menuToggleOpen": "Open navigation menu",
+    "menuToggleClose": "Close navigation menu"
   },
   "footer": {
     "nav": "Footer primary navigation",

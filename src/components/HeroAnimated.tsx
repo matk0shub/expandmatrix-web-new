@@ -227,6 +227,10 @@ export default function Hero() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="lg:hidden text-white p-2"
+                type="button"
+                aria-label={isMenuOpen ? nav('menuToggleClose') : nav('menuToggleOpen')}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </MotionButton>
@@ -239,6 +243,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg"
+                id="mobile-nav"
               >
                 <nav className="flex flex-col p-6 space-y-4">
                   <button 
