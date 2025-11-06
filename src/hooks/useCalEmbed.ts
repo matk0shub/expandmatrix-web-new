@@ -24,6 +24,7 @@ type CalApiFn = {
 type UseCalEmbedOptions = {
   autoPrime?: boolean;
   autoPrimeDelay?: number;
+  resourceHintsOnly?: boolean;
 };
 
 let calClientPromise: Promise<CalApiFn> | null = null;
@@ -115,6 +116,18 @@ const ensureResourceHints = () => {
   preconnect.href = CAL_ORIGIN;
   preconnect.crossOrigin = "anonymous";
   head.appendChild(preconnect);
+};
+
+const shouldDeferHeavyWork = () => {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+
+  const connection = (navigator as Navigator & {
+    connection?: { saveData?: boolean };
+  }).connection;
+
+  return Boolean(connection?.saveData);
 };
 
 const ensureCalClient = async () => {
@@ -211,7 +224,11 @@ const scheduleIdle = (callback: () => void, timeout = 2000) => {
 };
 
 export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
-  const { autoPrime = false, autoPrimeDelay = 1200 } = options;
+  const {
+    autoPrime = false,
+    autoPrimeDelay = 6000,
+    resourceHintsOnly = false,
+  } = options;
   const [status, setStatus] = useState<CalStatus>("idle");
   const mountedRef = useRef(true);
   const primingRef = useRef(false);
@@ -220,6 +237,10 @@ export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
     return () => {
       mountedRef.current = false;
     };
+  }, []);
+
+  useEffect(() => {
+    ensureResourceHints();
   }, []);
 
   const setSafeStatus = useCallback(
@@ -238,7 +259,7 @@ export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
   );
 
   const primeCal = useCallback(async () => {
-    if (primingRef.current || status === "ready") {
+    if (resourceHintsOnly || shouldDeferHeavyWork() || primingRef.current || status === "ready") {
       return;
     }
 
@@ -257,14 +278,16 @@ export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
     } finally {
       primingRef.current = false;
     }
-  }, [setSafeStatus, status]);
+  }, [resourceHintsOnly, setSafeStatus, status]);
 
   const openCal = useCallback(async () => {
     setSafeStatus("opening");
 
     try {
       ensureResourceHints();
-      await preloadCalModal();
+      if (!hasPrimedModal) {
+        await preloadCalModal();
+      }
       await openCalModal();
       setSafeStatus("ready");
     } catch (error) {
@@ -274,7 +297,7 @@ export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
   }, [setSafeStatus]);
 
   useEffect(() => {
-    if (!autoPrime) {
+    if (!autoPrime || resourceHintsOnly || shouldDeferHeavyWork()) {
       return;
     }
 
@@ -285,7 +308,7 @@ export const useCalEmbed = (options: UseCalEmbedOptions = {}) => {
     }, autoPrimeDelay);
 
     return cancelIdle;
-  }, [autoPrime, autoPrimeDelay, primeCal]);
+  }, [autoPrime, autoPrimeDelay, primeCal, resourceHintsOnly]);
 
   const api = useMemo(
     () => ({
