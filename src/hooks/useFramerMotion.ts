@@ -26,7 +26,7 @@ type InteractionWindow = Window & {
 
 const IDLE_TIMEOUT = 2500;
 
-export function useFramerMotion(strategy: LoadStrategy = 'idle') {
+export function useFramerMotion(strategy: LoadStrategy = 'instant') {
   const [module, setModule] = useState<MotionModule | null>(null);
   const startedRef = useRef(false);
 
