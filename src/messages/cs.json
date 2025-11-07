@@ -239,10 +239,40 @@
               "label": "Rychlost ověření klienta",
               "value": "↓ z 48 h na 6 min"
             },
-            {
-              "label": "Dostupnost služeb díky AI ops",
-              "value": "99,98 %"
-            }
+        {
+          "label": "Dostupnost služeb díky AI ops",
+          "value": "99,98 %"
+        }
+      ]
+    },
+        "acTomes": {
+          "subtitle": "Servis klimatizací a prediktivní údržba",
+          "metrics": [
+            { "label": "Preventivních zásahů řízených AI", "value": "320 / měsíc" },
+            { "label": "Ušetřený čas plánování techniků", "value": "68 %" },
+            { "label": "Pokles pohotovostních výjezdů", "value": "-42 %" },
+            { "label": "Rychlost tvorby cenové nabídky", "value": "15 minut" },
+            { "label": "Spokojenost zákazníků", "value": "4,9 / 5" }
+          ]
+        },
+        "novaClinic": {
+          "subtitle": "Síť estetických a stomatologických klinik",
+          "metrics": [
+            { "label": "Dotazů vyřešených AI recepcí", "value": "4 500 / měsíc" },
+            { "label": "Automatizace objednání konzultací", "value": "92 %" },
+            { "label": "Tvorba léčebného plánu", "value": "18 min → 3 min" },
+            { "label": "Nárůst cross-sellu", "value": "+36 %" },
+            { "label": "Čas ušetřený lékařům na administrativě", "value": "55 h / týden" }
+          ]
+        },
+        "expandoLogistics": {
+          "subtitle": "Mid-mile logistika a skladové operace",
+          "metrics": [
+            { "label": "Nakládek plánovaných AI dispečerem", "value": "1 240 / týden" },
+            { "label": "Optimalizace spotřeby paliva", "value": "-18 %" },
+            { "label": "Zkrácení prostojů na rampě", "value": "-41 %" },
+            { "label": "Automatizace onboardingů dopravců", "value": "80 %" },
+            { "label": "Včasné doručení", "value": "99,2 %" }
           ]
         }
       }

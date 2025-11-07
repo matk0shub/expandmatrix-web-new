@@ -199,7 +199,7 @@ export default function ReferencesSectionClient({ references, copy }: References
       </div>
 
       {/* Spacer for scroll height - only when pinned */}
-      {isPinned && <div style={{ height: `${featuredReferences.length * 100}vh` }} />}
+      {isPinned && <div style={{ height: `${orderedReferences.length * 100}vh` }} />}
     </section>
   );
 }

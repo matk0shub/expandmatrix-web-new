@@ -239,13 +239,43 @@
               "label": "Customer verification speed",
               "value": "↓ from 48h to 6m"
             },
-            {
-              "label": "Service uptime with AI ops",
-              "value": "99.98%"
-            }
-          ]
-        }
+      {
+        "label": "Service uptime with AI ops",
+        "value": "99.98%"
       }
+    ]
+  },
+  "acTomes": {
+    "subtitle": "HVAC Servicing & Predictive Maintenance",
+    "metrics": [
+      { "label": "Preventive jobs dispatched by AI", "value": "320 / month" },
+      { "label": "Technician routing time saved", "value": "68%" },
+      { "label": "Emergency callouts reduced", "value": "-42%" },
+      { "label": "Quote turnaround time", "value": "15 min" },
+      { "label": "Customer satisfaction", "value": "4.9 / 5" }
+    ]
+  },
+  "novaClinic": {
+    "subtitle": "Aesthetic & Dental Care Network",
+    "metrics": [
+      { "label": "AI-handled patient inquiries", "value": "4,500 / month" },
+      { "label": "Consult scheduling automation", "value": "92%" },
+      { "label": "Treatment plan generation", "value": "18 mins → 3 mins" },
+      { "label": "Cross-sell conversion lift", "value": "+36%" },
+      { "label": "Clinician admin time saved", "value": "55 hrs / week" }
+    ]
+  },
+  "expandoLogistics": {
+    "subtitle": "Mid-mile Logistics & Warehousing",
+    "metrics": [
+      { "label": "Loads planned by AI dispatchers", "value": "1,240 / week" },
+      { "label": "Fuel spend optimization", "value": "-18%" },
+      { "label": "Dock idle time reduction", "value": "-41%" },
+      { "label": "Carrier onboarding automation", "value": "80%" },
+      { "label": "On-time deliveries", "value": "99.2%" }
+    ]
+  }
+}
     },
     "team": {
       "eyebrow": "meet our",

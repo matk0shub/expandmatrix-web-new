@@ -153,6 +153,66 @@ const baseReferences = [
     order: 6,
     placeholderColor: '#22d3ee',
   },
+  {
+    translationKey: 'acTomes',
+    slug: 'ac-tomes',
+    name: {
+      en: 'AC Tomes',
+      cs: 'AC Tomes',
+    },
+    instagramUrl: 'https://instagram.com/actomes',
+    websiteUrl: 'https://actomes.cz',
+    image: {
+      url: 'https://images.unsplash.com/photo-1458891216473-4f26bb4eb40e?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'ac-tomes.jpg',
+      alt: {
+        en: 'HVAC technicians at work',
+        cs: 'Technici HVAC',
+      },
+    },
+    order: 7,
+    placeholderColor: '#34d399',
+  },
+  {
+    translationKey: 'novaClinic',
+    slug: 'nova-clinic',
+    name: {
+      en: 'Nova Clinic',
+      cs: 'Nova Clinic',
+    },
+    instagramUrl: 'https://instagram.com/novaclinic',
+    websiteUrl: 'https://novaclinic.eu',
+    image: {
+      url: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'nova-clinic.jpg',
+      alt: {
+        en: 'Clinic interior',
+        cs: 'Interiér kliniky',
+      },
+    },
+    order: 8,
+    placeholderColor: '#fb7185',
+  },
+  {
+    translationKey: 'expandoLogistics',
+    slug: 'expando-logistics',
+    name: {
+      en: 'Expando Logistics',
+      cs: 'Expando Logistics',
+    },
+    instagramUrl: 'https://instagram.com/expandologistics',
+    websiteUrl: 'https://expando-logistics.com',
+    image: {
+      url: 'https://images.unsplash.com/photo-1529074963764-98f45c47344b?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'expando-logistics.jpg',
+      alt: {
+        en: 'Logistics hub',
+        cs: 'Logistický hub',
+      },
+    },
+    order: 9,
+    placeholderColor: '#10b981',
+  },
 ]
 
 const loadMessages = (locale) => {
