@@ -21,16 +21,16 @@ export default function ReferenceBackground({
   const imageUrl = reference.image?.url ?? '';
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {/* Background image */}
+    <div className="absolute inset-0 overflow-hidden rounded-[40px]">
       <MotionDiv
+        key={reference.id}
         className="absolute inset-0 w-full h-full"
-        initial={{ opacity: 0, scale: 1.1 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ 
-          duration: prefersReducedMotion ? 0 : 0.8,
-          ease: 'easeInOut' 
+        initial={{ x: prefersReducedMotion ? 0 : '15%', opacity: prefersReducedMotion ? 1 : 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: prefersReducedMotion ? 0 : '-15%', opacity: prefersReducedMotion ? 1 : 0 }}
+        transition={{
+          duration: prefersReducedMotion ? 0 : 0.65,
+          ease: 'easeInOut',
         }}
       >
         {imageUrl ? (
@@ -47,43 +47,12 @@ export default function ReferenceBackground({
         )}
       </MotionDiv>
 
-      {/* Enhanced gradient overlay for better text legibility */}
-      <MotionDiv
-        className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ 
-          duration: prefersReducedMotion ? 0 : 0.6,
-          delay: prefersReducedMotion ? 0 : 0.2 
-        }}
-      />
-      {/* Remove heavy mobile-only darkening */}
-      
-      {/* Additional subtle overlay for extra contrast */}
-      <MotionDiv
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ 
-          duration: prefersReducedMotion ? 0 : 0.8,
-          delay: prefersReducedMotion ? 0 : 0.4 
-        }}
-      />
-
-      {/* Fallback gradient for missing images */}
-      {/* Subtle pattern overlay */}
-      <MotionDiv
-        className="absolute inset-0 opacity-10"
+      <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
+      <div
+        className="absolute inset-0 rounded-[40px] opacity-10"
         style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px)`,
           backgroundSize: '20px 20px',
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.1 }}
-        transition={{ 
-          duration: prefersReducedMotion ? 0 : 1,
-          delay: prefersReducedMotion ? 0 : 0.5 
         }}
       />
     </div>

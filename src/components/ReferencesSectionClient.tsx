@@ -147,7 +147,7 @@ export default function ReferencesSectionClient({ references, copy }: References
         sectionRef.current = el;
         intersectionRef.current = el;
       }}
-      className="relative min-h-screen bg-black text-white rounded-3xl overflow-hidden mx-4 py-24 md:py-40 lg:py-48"
+      className="relative min-h-screen bg-black text-white rounded-3xl mx-4 py-24 md:py-40 lg:py-48"
       id="references"
       itemScope
       itemType="https://schema.org/ItemList"
@@ -155,19 +155,24 @@ export default function ReferencesSectionClient({ references, copy }: References
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
       {/* Full-width background images */}
-      <div className={`${isPinned ? 'fixed inset-0 z-10' : 'relative'} h-screen`}>
-        <AnimatePresence mode="wait">
-          {activeReference && (
-            <ReferenceBackground
-              key={activeReference.id}
-              reference={activeReference}
-              prefersReducedMotion={prefersReducedMotion}
-            />
-          )}
-        </AnimatePresence>
+      <div
+        className={`${
+          isPinned ? 'fixed inset-0 z-10 flex items-center justify-center' : 'relative flex justify-center'
+        }`}
+      >
+        <div className="relative w-[min(1600px,90vw)] h-[min(900px,90vh)] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+          <AnimatePresence mode="wait">
+            {activeReference && (
+              <ReferenceBackground
+                key={activeReference.id}
+                reference={activeReference}
+                prefersReducedMotion={prefersReducedMotion}
+              />
+            )}
+          </AnimatePresence>
 
-        {/* Content overlay with max-width constraint */}
-        <div className="absolute inset-0 flex flex-col lg:flex-row max-w-[1780px] mx-auto">
+          {/* Content overlay with max-width constraint */}
+          <div className="absolute inset-0 flex flex-col lg:flex-row max-w-full px-4 sm:px-8 lg:px-12">
           {/* Left side - Reference list */}
           <div className="w-full lg:w-1/2 flex flex-col justify-start lg:justify-center px-4 sm:px-8 lg:px-16 py-8 lg:py-0 relative z-10 min-h-0">
             <div className="max-w-md w-full flex flex-col min-h-0">
@@ -211,6 +216,7 @@ export default function ReferencesSectionClient({ references, copy }: References
               )}
             </AnimatePresence>
           </div>
+        </div>
         </div>
       </div>
 
