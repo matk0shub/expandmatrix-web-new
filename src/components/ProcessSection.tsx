@@ -243,10 +243,10 @@ export default function ProcessSection() {
 
     // Lazy load the GSAP-enhanced stacking effect only after intersection
     (async () => {
-      const module: ProcessStackingModule = await import('./processStackingEffect');
+      const stackingModule: ProcessStackingModule = await import('./processStackingEffect');
       if (cancelled || !container) return;
 
-      cleanup = await module.initProcessStackingEffect({
+      cleanup = await stackingModule.initProcessStackingEffect({
         container,
         cardRotations,
         cardOffsets,
