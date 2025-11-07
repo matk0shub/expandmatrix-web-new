@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, type CSSProperties } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { FallbackAnimatePresence } from '@/utils/motionFallback';
@@ -83,63 +83,89 @@ export default function ReferencesSectionClient({ references, copy }: References
     return null;
   }
 
+  const referencesPadding = 'clamp(24px, 4vw, 96px)';
+  const sectionStyle = {
+    '--references-padding': referencesPadding,
+  } as CSSProperties;
+
+  const backgroundInsetStyle = {
+    inset: 'var(--references-padding)',
+  } as CSSProperties;
+
+  const contentPaddingStyle = {
+    paddingInline: 'var(--references-padding)',
+  } as CSSProperties;
+
   return (
     <section
-      className="relative mx-4 min-h-screen overflow-hidden rounded-[48px] bg-black text-white py-24 md:py-40 lg:py-48"
+      className="relative my-24 text-white"
       id="references"
       itemScope
       itemType="https://schema.org/ItemList"
+      style={sectionStyle}
     >
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="pointer-events-none absolute inset-[clamp(8px,2vw,32px)] rounded-[40px] overflow-hidden">
-        <AnimatePresence mode="wait" initial={false}>
-          {activeReference && (
-            <ReferenceBackground
-              key={activeReference.id}
-              reference={activeReference}
-              prefersReducedMotion={prefersReducedMotion}
-              animateOnChange={hasInteracted}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="relative z-10 mx-auto w-full max-w-[1780px] px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-        <div className="flex flex-col gap-12 rounded-[32px] px-6 py-10 sm:px-10 sm:py-12 lg:flex-row lg:items-center lg:gap-16">
-          <div className="w-full lg:w-1/2">
-            <p className="text-sm font-medium uppercase tracking-wider text-gray-300">
-              {copy.overline}
-            </p>
-            <div className="mt-8">
-              <ReferenceList
-                references={orderedReferences}
-                activeIndex={activeIndex}
-                onSelect={handleSelect}
+      <div className="relative min-h-screen overflow-hidden rounded-[48px] bg-black">
+        <div
+          className="pointer-events-none absolute overflow-hidden rounded-[40px]"
+          style={backgroundInsetStyle}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            {activeReference && (
+              <ReferenceBackground
+                key={activeReference.id}
+                reference={activeReference}
                 prefersReducedMotion={prefersReducedMotion}
-                copy={{
-                  selectReference: copy.selectReference,
-                  instagram: copy.instagram,
-                  instagramAria: copy.instagramAria,
-                  website: copy.website,
-                  websiteAria: copy.websiteAria,
-                }}
+                animateOnChange={hasInteracted}
               />
-            </div>
-          </div>
+            )}
+          </AnimatePresence>
+        </div>
 
-          <div className="w-full lg:w-1/2">
-            <AnimatePresence mode="wait">
-              {activeReference && (
-                <ReferenceStatsCard
-                  key={`stats-${activeReference.id}`}
-                  metrics={activeReference.metrics}
-                  prefersReducedMotion={prefersReducedMotion}
-                  heading={copy.impactHeading}
-                />
-              )}
-            </AnimatePresence>
+        <div
+          className="relative z-10 flex h-full items-start py-24 md:py-40 lg:py-48"
+          style={contentPaddingStyle}
+        >
+          <div className="mx-auto w-full max-w-[1780px]">
+            <div className="flex flex-col gap-12 rounded-[32px] px-6 py-10 sm:px-10 sm:py-12 lg:flex-row lg:items-start lg:gap-16">
+              <div className="w-full lg:w-1/2">
+                <p className="text-sm font-medium uppercase tracking-wider text-gray-300">
+                  {copy.overline}
+                </p>
+                <div className="mt-8">
+                  <ReferenceList
+                    references={orderedReferences}
+                    activeIndex={activeIndex}
+                    onSelect={handleSelect}
+                    prefersReducedMotion={prefersReducedMotion}
+                    copy={{
+                      selectReference: copy.selectReference,
+                      instagram: copy.instagram,
+                      instagramAria: copy.instagramAria,
+                      website: copy.website,
+                      websiteAria: copy.websiteAria,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="w-full lg:w-1/2">
+                <div className="flex justify-center lg:justify-end">
+                  <AnimatePresence mode="wait">
+                    {activeReference && (
+                      <ReferenceStatsCard
+                        key={`stats-${activeReference.id}`}
+                        metrics={activeReference.metrics}
+                        prefersReducedMotion={prefersReducedMotion}
+                        heading={copy.impactHeading}
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

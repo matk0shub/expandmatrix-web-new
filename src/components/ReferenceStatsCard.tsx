@@ -26,16 +26,16 @@ export default function ReferenceStatsCard({
 
   return (
     <MotionDiv
-      className="absolute bottom-8 left-4 right-4 lg:top-1/2 lg:right-8 lg:left-auto lg:bottom-auto lg:transform lg:-translate-y-1/2 z-20"
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      className="relative z-10 w-full max-w-[540px]"
+      initial={{ opacity: 0, y: 20, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      exit={{ opacity: 0, y: -20, scale: 0.98 }}
       transition={{
         duration: prefersReducedMotion ? 0 : 0.5,
-        ease: 'easeOut'
+        ease: 'easeOut',
       }}
     >
-      <div className="relative backdrop-blur-xl bg-white/15 border border-white/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 min-w-0 w-full lg:min-w-[400px] lg:max-w-[600px] shadow-2xl">
+      <div className="relative w-full min-w-0 rounded-2xl border border-white/30 bg-white/15 p-6 shadow-2xl backdrop-blur-xl lg:rounded-3xl lg:p-8">
         <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
           {heading}
         </div>
