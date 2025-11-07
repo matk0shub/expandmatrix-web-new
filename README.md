@@ -48,7 +48,7 @@ This repository contains the public-facing Expand Matrix website built with Next
    ```bash
    cp .env.example .env
    ```
-   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.). If you also need a production-only variant (e.g., `.env.production`), derive it from the same template outside Git.
+   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.). Keep `NEXT_PUBLIC_PAYLOAD_SERVER_URL` / `PAYLOAD_PUBLIC_SERVER_URL` on `http://localhost:3000` for local work; in production point both to the public URL where Payload is reachable (e.g., `https://cms.expandmatrix.com`). If you also need a production-only variant (e.g., `.env.production`), derive it from the same template outside Git.
 3. **Install dependencies**
    ```bash
    pnpm install
