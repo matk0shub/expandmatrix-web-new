@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
@@ -35,14 +35,25 @@ export default function ReferencesSectionClient({ references, copy }: References
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const boundsRef = useRef({ start: 0, end: 0 });
+  const boundsRef = useRef({ start: 0, height: 0 });
+  const scrollRafRef = useRef<number | null>(null);
+  const orderedLengthRef = useRef(0);
   const { ref: intersectionRef } = useIntersectionObserver({
     threshold: 0.5,
     triggerOnce: false,
   });
 
   // Sort references
-  const orderedReferences = references.slice().sort((a, b) => a.order - b.order);
+  const orderedReferences = useMemo(
+    () => references.slice().sort((a, b) => a.order - b.order),
+    [references],
+  );
+
+  orderedLengthRef.current = orderedReferences.length;
+
+  useEffect(() => {
+    setActiveIndex((prev) => Math.min(prev, Math.max(orderedReferences.length - 1, 0)));
+  }, [orderedReferences.length]);
 
   const activeReference = orderedReferences[activeIndex];
 
@@ -71,37 +82,25 @@ export default function ReferencesSectionClient({ references, copy }: References
     }
   }, [isPinned, orderedReferences.length]);
 
-  // Handle scroll-based pinning
+  // Measure section bounds whenever size changes
   useEffect(() => {
     const measure = () => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const start = window.scrollY + rect.top;
-      boundsRef.current = {
-        start,
-        end: start + rect.height,
-      };
+      boundsRef.current = { start, height: rect.height };
     };
 
     measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [orderedReferences.length]);
+    const observer = new ResizeObserver(measure);
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const { start, end } = boundsRef.current;
-      const scroll = window.scrollY;
-      const pinStart = start;
-      const pinEnd = Math.max(start, end - window.innerHeight);
-      const shouldPin = scroll >= pinStart && scroll < pinEnd;
-      setIsPinned(shouldPin);
+    return () => {
+      observer.disconnect();
     };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [orderedReferences.length]);
 
   // Handle keyboard events
   useEffect(() => {
@@ -111,31 +110,62 @@ export default function ReferencesSectionClient({ references, copy }: References
     }
   }, [isPinned, handleKeyDown]);
 
-  // Handle scroll-based reference switching
+  // Handle scroll-based pinning & reference switching
   useEffect(() => {
-    if (!isPinned || !sectionRef.current) return;
-
-    const sectionElement = sectionRef.current;
-    const sectionTop = sectionElement.offsetTop;
-    const sectionHeight = sectionElement.offsetHeight;
-    const totalScrollHeight = sectionHeight * orderedReferences.length;
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const relativeScroll = scrollY - sectionTop;
-      
-      // Calculate progress through the pinned section
-      const scrollProgress = Math.max(0, Math.min(1, relativeScroll / totalScrollHeight));
-      const newIndex = Math.floor(scrollProgress * orderedReferences.length);
-      
-      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < orderedReferences.length) {
-        setActiveIndex(newIndex);
+    const updateFromScroll = () => {
+      const { start, height } = boundsRef.current;
+      if (!height) {
+        setIsPinned(false);
+        return;
       }
+
+      const scrollY = window.scrollY;
+      const winH = window.innerHeight;
+      const end = start + height;
+      const pinStart = start;
+      const pinEnd = Math.max(start, end - winH);
+      const shouldPin = scrollY >= pinStart && scrollY < pinEnd;
+      setIsPinned(shouldPin);
+
+      if (!shouldPin) {
+        return;
+      }
+
+      const totalPinnedDistance = height * orderedLengthRef.current;
+      if (totalPinnedDistance <= 0) return;
+
+      const relativeScroll = scrollY - start;
+      const progress = Math.max(
+        0,
+        Math.min(1, relativeScroll / totalPinnedDistance),
+      );
+      const newIndex = Math.min(
+        orderedLengthRef.current - 1,
+        Math.floor(progress * orderedLengthRef.current),
+      );
+
+      setActiveIndex((prev) => (prev === newIndex ? prev : newIndex));
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isPinned, activeIndex, orderedReferences.length]);
+    const onScroll = () => {
+      if (scrollRafRef.current !== null) return;
+      scrollRafRef.current = window.requestAnimationFrame(() => {
+        scrollRafRef.current = null;
+        updateFromScroll();
+      });
+    };
+
+    updateFromScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (scrollRafRef.current !== null) {
+        window.cancelAnimationFrame(scrollRafRef.current);
+        scrollRafRef.current = null;
+      }
+    };
+  }, []);
 
   if (!orderedReferences.length) {
     return null;
