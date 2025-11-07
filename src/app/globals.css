@@ -248,6 +248,29 @@ h6 {
   font-feature-settings: "kern" 1, "liga" 1;
 }
 
+.heading-reveal {
+  opacity: 0;
+  transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 40px), 0);
+  transition:
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.heading-reveal--visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heading-reveal,
+  .heading-reveal--visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Lines 3 and 4 - left-aligned */
 .hero-heading-line-rest {
   text-align: left;
