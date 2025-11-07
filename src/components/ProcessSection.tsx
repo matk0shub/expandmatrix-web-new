@@ -10,33 +10,7 @@ import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 import AnimatedHeading from './AnimatedHeading';
 
-type GsapCore = typeof import('gsap').gsap;
-type ScrollTriggerCore = typeof import('gsap/ScrollTrigger').ScrollTrigger;
-
-let gsapInstance: GsapCore | undefined;
-let scrollTriggerInstance: ScrollTriggerCore | undefined;
-let gsapModulesLoaded = false;
-
-async function loadGSAP(): Promise<{
-  gsap: GsapCore | undefined;
-  ScrollTrigger: ScrollTriggerCore | undefined;
-}> {
-  if (!gsapModulesLoaded) {
-    const gsapModule = await import('gsap');
-    const scrollTriggerModule = await import('gsap/ScrollTrigger');
-
-    gsapInstance = gsapModule.gsap;
-    scrollTriggerInstance = scrollTriggerModule.ScrollTrigger;
-
-    if (gsapInstance && scrollTriggerInstance) {
-      gsapInstance.registerPlugin(scrollTriggerInstance);
-    }
-
-    gsapModulesLoaded = true;
-  }
-
-  return { gsap: gsapInstance, ScrollTrigger: scrollTriggerInstance };
-}
+type ProcessStackingModule = typeof import('./processStackingEffect');
 
 // ============================================================================
 // CONFIGURATION - FUTURISTIC DESIGN
@@ -264,84 +238,26 @@ export default function ProcessSection() {
       return;
     }
 
-    // Lazy load GSAP to prevent blocking webpack compilation
-    loadGSAP().then(({ gsap: gsapCore, ScrollTrigger: scrollTrigger }) => {
-      if (!gsapCore || !scrollTrigger || !container) return;
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
 
-      const ctx = gsapCore.context(() => {
-        const cardWrappers = gsapCore.utils.toArray<HTMLElement>(
-          container.querySelectorAll('.process-card-wrapper'),
-        );
+    // Lazy load the GSAP-enhanced stacking effect only after intersection
+    (async () => {
+      const module: ProcessStackingModule = await import('./processStackingEffect');
+      if (cancelled || !container) return;
 
-        if (cardWrappers.length === 0) return;
+      cleanup = await module.initProcessStackingEffect({
+        container,
+        cardRotations,
+        cardOffsets,
+        animation: CARD_CONFIG.animation,
+      });
+    })();
 
-        const cards = cardWrappers.map((wrapper) =>
-          wrapper.querySelector<HTMLElement>('.process-card'),
-        );
-
-        const existingCards = cards.filter((card): card is HTMLElement => Boolean(card));
-        if (existingCards.length === 0) return;
-
-        existingCards.forEach((card, idx) => {
-          gsapCore.set(card, {
-            opacity: 1,
-            yPercent: 0,
-            rotation: cardRotations[idx] ?? 0,
-            x: cardOffsets[idx] ?? 0,
-          });
-        });
-
-        const lastCardTrigger = scrollTrigger.create({
-          trigger: cardWrappers[cardWrappers.length - 1],
-          start: 'bottom bottom',
-        });
-
-        cardWrappers.forEach((wrapper, index) => {
-          const card = cards[index];
-          if (!card) return;
-
-          scrollTrigger.create({
-            id: `process-card-${index}`,
-            trigger: wrapper,
-            start: 'center center',
-            end: () => (lastCardTrigger.start || 0) + CARD_CONFIG.animation.stickDistance,
-            pin: true,
-            pinSpacing: false,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            toggleActions: 'restart none none reverse',
-            onEnter: () => {
-              gsapCore.to(card, {
-                yPercent: 0,
-                rotation: cardRotations[index],
-                x: cardOffsets[index],
-                duration: CARD_CONFIG.animation.duration,
-                ease: CARD_CONFIG.animation.ease,
-                overwrite: 'auto',
-              });
-            },
-            onEnterBack: () => {
-              gsapCore.to(card, {
-                yPercent: 0,
-                rotation: cardRotations[index],
-                x: cardOffsets[index],
-                duration: CARD_CONFIG.animation.duration,
-                ease: CARD_CONFIG.animation.ease,
-                overwrite: 'auto',
-              });
-            },
-          });
-        });
-
-        scrollTrigger.refresh();
-      }, container);
-
-      return () => {
-        ctx.revert();
-        const cards = container.querySelectorAll<HTMLElement>('.process-card');
-        gsapCore.set(cards, { clearProps: 'transform,rotation,x,y' });
-      };
-    });
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
   }, [stackingEnabled, shouldInitGsap]);
 
   // ============================================================================
