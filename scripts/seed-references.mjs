@@ -336,6 +336,14 @@ async function upsertReference(reference) {
     websiteUrl,
     order,
     metrics,
+    name: {
+      en: name.en,
+      cs: name.cs ?? name.en,
+    },
+    subtitle: {
+      en: enSample.subtitle ?? '',
+      cs: csSample.subtitle ?? enSample.subtitle ?? '',
+    },
     ...(imageId ? { image: imageId } : {}),
   }
 
@@ -350,55 +358,32 @@ async function upsertReference(reference) {
     locale: 'all',
   })
 
-  let targetId
-
   if (existing.totalDocs > 0) {
     const existingDoc = existing.docs[0]
-    targetId = existingDoc.id ?? existingDoc._id
-
-    const englishPayload = {
-      ...baseData,
-      name: name.en,
-      subtitle: enSample.subtitle ?? '',
-    }
+    const targetId = existingDoc.id ?? existingDoc._id
 
     await payload.update({
       collection: 'references',
       id: targetId,
-      data: englishPayload,
-      locale: 'en',
+      data: baseData,
     })
-  } else {
-    const englishPayload = {
-      ...baseData,
-      name: name.en,
-      subtitle: enSample.subtitle ?? '',
+
+    return {
+      id: targetId,
+      slug,
+      action: 'updated',
     }
-
-    const created = await payload.create({
-      collection: 'references',
-      data: englishPayload,
-      locale: 'en',
-    })
-
-    targetId = created.id ?? created._id
   }
 
-  await payload.update({
+  const created = await payload.create({
     collection: 'references',
-    id: targetId,
-    data: {
-      ...baseData,
-      name: name.cs ?? name.en,
-      subtitle: csSample.subtitle ?? enSample.subtitle ?? '',
-    },
-    locale: 'cs',
+    data: baseData,
   })
 
   return {
-    id: targetId,
+    id: created.id ?? created._id,
     slug,
-    action: existing.totalDocs > 0 ? 'updated' : 'created',
+    action: 'created',
   }
 }
 

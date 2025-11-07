@@ -284,7 +284,10 @@ export interface Partner {
  */
 export interface Reference {
   id: string;
-  name: string;
+  name: {
+    en: string;
+    cs: string;
+  };
   /**
    * URL-friendly version of the name (e.g., "tech-startup")
    */
@@ -292,7 +295,10 @@ export interface Reference {
   /**
    * Short description (e.g., "Tenisky / Streetwear Store")
    */
-  subtitle?: string | null;
+  subtitle?: {
+    en?: string | null;
+    cs?: string | null;
+  } | null;
   /**
    * Instagram profile URL (optional)
    */
@@ -554,9 +560,19 @@ export interface PartnersSelect<T extends boolean = true> {
  * via the `definition` "references_select".
  */
 export interface ReferencesSelect<T extends boolean = true> {
-  name?: T;
+  name?:
+    | T
+    | {
+        en?: T;
+        cs?: T;
+      };
   slug?: T;
-  subtitle?: T;
+  subtitle?:
+    | T
+    | {
+        en?: T;
+        cs?: T;
+      };
   instagramUrl?: T;
   websiteUrl?: T;
   image?: T;

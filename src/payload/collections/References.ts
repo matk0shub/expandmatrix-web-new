@@ -18,19 +18,45 @@ const validateLocalizedField = (fieldLabel: string) => (value: unknown) => {
     : true
 }
 
+const dualLocaleTextField = ({
+  name,
+  label,
+  description,
+  required = false,
+}: {
+  name: string
+  label: string
+  description?: string
+  required?: boolean
+}) => ({
+  name,
+  type: 'group',
+  validate: validateLocalizedField(label),
+  admin: {
+    description,
+    layout: 'horizontal',
+  },
+  fields: REQUIRED_LOCALES.map((locale) => ({
+    name: locale,
+    label: `${label} (${locale.toUpperCase()})`,
+    type: 'text',
+    required,
+  })),
+})
+
 export const References: CollectionConfig = {
   slug: 'references',
   admin: {
-    useAsTitle: 'name',
-    defaultColumns: ['name', 'subtitle', 'order'],
+    useAsTitle: 'slug',
+    defaultColumns: ['slug', 'order'],
   },
   fields: [
-    {
+    dualLocaleTextField({
       name: 'name',
-      type: 'text',
+      label: 'Project title',
+      description: 'Název reference v EN i CS',
       required: true,
-      localized: true,
-    },
+    }),
     {
       name: 'slug',
       type: 'text',
@@ -40,14 +66,11 @@ export const References: CollectionConfig = {
         description: 'URL-friendly version of the name (e.g., "tech-startup")',
       },
     },
-    {
+    dualLocaleTextField({
       name: 'subtitle',
-      type: 'text',
-      localized: true,
-      admin: {
-        description: 'Short description (e.g., "Tenisky / Streetwear Store")',
-      },
-    },
+      label: 'Subtitle',
+      description: 'Krátký popis (např. "AI implementace ve fintech")',
+    }),
     {
       name: 'instagramUrl',
       type: 'text',
