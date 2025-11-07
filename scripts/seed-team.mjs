@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
-const possibleEnvFiles = ['.env.local', '.env'];
+const possibleEnvFiles = ['.env'];
 for (const envFile of possibleEnvFiles) {
   const envPath = path.join(projectRoot, envFile);
   if (fs.existsSync(envPath)) {

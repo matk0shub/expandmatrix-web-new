@@ -13,7 +13,7 @@ if (!fs.existsSync(mediaDir)) {
 }
 
 const loadEnv = () => {
-  const candidates = ['.env.local', '.env']
+  const candidates = ['.env']
   for (const candidate of candidates) {
     const envPath = path.join(projectRoot, candidate)
     if (fs.existsSync(envPath)) {

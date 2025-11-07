@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '..')
 
 const loadEnv = () => {
-  const candidates = ['.env.local', '.env']
+  const candidates = ['.env']
   for (const candidate of candidates) {
     const envPath = path.join(projectRoot, candidate)
     if (fs.existsSync(envPath)) {

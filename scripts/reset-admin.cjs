@@ -4,7 +4,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
-const envFiles = ['.env.local', '.env'];
+const envFiles = ['.env'];
 
 for (const envFile of envFiles) {
   const fullPath = path.resolve(process.cwd(), envFile);

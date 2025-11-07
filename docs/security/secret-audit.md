@@ -12,15 +12,15 @@ Date: 2025-11-06
 
 ## Recommended workflow
 
-1. Copy `.env.example` → `.env` for local development or `.env.local` if you need overrides.
+1. Copy `.env.example` → `.env` for local development (and derive `.env.production` or other variants outside Git if needed).
 2. Never commit the filled env files; Git already ignores them.
-3. For production deployments copy `env.production.example` and set the real credentials in a secure secrets manager.
+3. For production deployments copy `.env.example` into your secrets manager or `/opt/.../.env.production` and set the real credentials there.
 4. Rotate credentials immediately if a real secret is ever committed and force-push history only after revocation.
 
 ## Commands executed
 
 ```
 git ls-files | rg "\.env"
-git check-ignore -v .env .env.local
+git check-ignore -v .env
 rg -n "PAYLOAD_SECRET" -g"*"
 ```

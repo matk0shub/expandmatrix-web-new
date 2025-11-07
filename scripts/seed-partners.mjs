@@ -12,7 +12,7 @@ if (!fs.existsSync(mediaDir)) {
   fs.mkdirSync(mediaDir, { recursive: true })
 }
 
-const envCandidates = ['.env.local', '.env']
+const envCandidates = ['.env']
 for (const candidate of envCandidates) {
   const envPath = path.join(projectRoot, candidate)
   if (fs.existsSync(envPath)) {

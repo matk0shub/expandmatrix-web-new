@@ -32,9 +32,9 @@ This repository contains the public-facing Expand Matrix website built with Next
 - Node.js **20.9+** (aligns with Next.js 15 recommendation)
 - **pnpm 9+** (preferred package manager for this repo)
 - MongoDB connection string (Atlas or self-hosted replica set)
-- `.env.local` / `.env` populated with secrets provided out of band
+- `.env` populated with secrets provided out of band
 
-> You’ll receive the filled `.env` file from the maintainer via PM. Never commit it — copy the values into your local `.env.local`.
+> You’ll receive the filled `.env` file from the maintainer via PM. Never commit it — copy the values into your local `.env`.
 
 ### Local setup checklist
 
@@ -44,12 +44,11 @@ This repository contains the public-facing Expand Matrix website built with Next
    cd expandmatrix-web-new
    git checkout main
    ```
-2. **Create environment files**
+2. **Create environment file**
    ```bash
-   cp .env.example .env.local
-   cp env.production.example .env
+   cp .env.example .env
    ```
-   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.).
+   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.). If you also need a production-only variant (e.g., `.env.production`), derive it from the same template outside Git.
 3. **Install dependencies**
    ```bash
    pnpm install
@@ -95,9 +94,9 @@ All three commands should pass before merging or deploying. When Chrome is unava
 
 Payload powers team members, references, FAQs, footer links, subscribers and global settings.
 
-> Use `env.production.example` as a template when preparing production `.env` files. Never commit secrets – copy it outside of Git and fill in real credentials there.
+> Use `.env.example` as the template when preparing both local and production env files. Never commit secrets – copy it outside of Git and fill in real credentials there.
 
-1. **Environment variables** (create `.env.local` / `.env`):
+1. **Environment variables** (create `.env`):
    ```bash
    PAYLOAD_SECRET=replace-with-long-random-string
    DATABASE_URI="mongodb+srv://username:password@cluster-hostname/expandmatrix?retryWrites=true&w=majority"

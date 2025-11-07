@@ -12,7 +12,7 @@ Ensure the following variables are present before the app boots:
 - `PAYLOAD_PUBLIC_SERVER_URL`
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_NAME`
 
-Sample production values live in `env.production.example`. Development defaults belong in `.env.local` (not committed).
+Sample values live in `.env.example`. Copy it to `.env` for local work and to `/opt/…/.env.production` (or your secrets manager) for production deployments.
 
 ## 2. Payload Configuration
 
