@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
+import { FallbackAnimatePresence } from '@/utils/motionFallback';
 import ReferenceList from './ReferenceList';
 import ReferenceBackground from './ReferenceBackground';
 import ReferenceStatsCard from './ReferenceStatsCard';
@@ -28,7 +28,6 @@ interface ReferencesSectionClientProps {
 
 export default function ReferencesSectionClient({ references, copy }: ReferencesSectionClientProps) {
   const framer = useFramerMotion('idle');
-  const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const prefersReducedMotion = useReducedMotion();
   const orderedReferences = useMemo(
@@ -86,7 +85,7 @@ export default function ReferencesSectionClient({ references, copy }: References
 
   return (
     <section
-      className="relative min-h-screen bg-black text-white rounded-3xl overflow-hidden mx-4 py-24 md:py-40 lg:py-48"
+      className="relative mx-4 min-h-screen overflow-hidden rounded-[48px] bg-black text-white py-24 md:py-40 lg:py-48"
       id="references"
       itemScope
       itemType="https://schema.org/ItemList"
@@ -94,61 +93,53 @@ export default function ReferencesSectionClient({ references, copy }: References
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative w-full mx-auto max-w-[1780px] px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-        <div className="relative w-full h-full rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)] min-h-[420px]">
-          <AnimatePresence mode="wait" initial={false}>
-            {activeReference && (
-              <ReferenceBackground
-                key={activeReference.id}
-                reference={activeReference}
+      <div className="pointer-events-none absolute inset-[clamp(8px,2vw,32px)] rounded-[40px] overflow-hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          {activeReference && (
+            <ReferenceBackground
+              key={activeReference.id}
+              reference={activeReference}
+              prefersReducedMotion={prefersReducedMotion}
+              animateOnChange={hasInteracted}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-[1780px] px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+        <div className="flex flex-col gap-12 rounded-[32px] px-6 py-10 sm:px-10 sm:py-12 lg:flex-row lg:items-center lg:gap-16">
+          <div className="w-full lg:w-1/2">
+            <p className="text-sm font-medium uppercase tracking-wider text-gray-300">
+              {copy.overline}
+            </p>
+            <div className="mt-8">
+              <ReferenceList
+                references={orderedReferences}
+                activeIndex={activeIndex}
+                onSelect={handleSelect}
                 prefersReducedMotion={prefersReducedMotion}
-                animateOnChange={hasInteracted}
+                copy={{
+                  selectReference: copy.selectReference,
+                  instagram: copy.instagram,
+                  instagramAria: copy.instagramAria,
+                  website: copy.website,
+                  websiteAria: copy.websiteAria,
+                }}
               />
-            )}
-          </AnimatePresence>
-
-          <div className="absolute inset-0 flex flex-col lg:flex-row max-w-full px-4 sm:px-8 lg:px-12">
-            <div className="w-full lg:w-1/2 flex flex-col justify-start lg:justify-center px-4 sm:px-8 lg:px-16 py-8 lg:py-0 relative z-10 min-h-0">
-              <div className="max-w-md w-full flex flex-col min-h-0">
-                <MotionDiv
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
-                  className="text-sm font-medium text-gray-300 uppercase tracking-wider mb-6 lg:mb-8 flex-shrink-0"
-                >
-                  {copy.overline}
-                </MotionDiv>
-
-                <div className="flex-1 min-h-0 overflow-hidden">
-                  <ReferenceList
-                    references={orderedReferences}
-                    activeIndex={activeIndex}
-                    onSelect={handleSelect}
-                    prefersReducedMotion={prefersReducedMotion}
-                    copy={{
-                      selectReference: copy.selectReference,
-                      instagram: copy.instagram,
-                      instagramAria: copy.instagramAria,
-                      website: copy.website,
-                      websiteAria: copy.websiteAria,
-                    }}
-                  />
-                </div>
-              </div>
             </div>
+          </div>
 
-            <div className="w-full lg:w-1/2 relative mt-auto lg:mt-0">
-              <AnimatePresence mode="wait">
-                {activeReference && (
-                  <ReferenceStatsCard
-                    key={`stats-${activeReference.id}`}
-                    metrics={activeReference.metrics}
-                    prefersReducedMotion={prefersReducedMotion}
-                    heading={copy.impactHeading}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
+          <div className="w-full lg:w-1/2">
+            <AnimatePresence mode="wait">
+              {activeReference && (
+                <ReferenceStatsCard
+                  key={`stats-${activeReference.id}`}
+                  metrics={activeReference.metrics}
+                  prefersReducedMotion={prefersReducedMotion}
+                  heading={copy.impactHeading}
+                />
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
