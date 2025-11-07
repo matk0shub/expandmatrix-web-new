@@ -40,12 +40,10 @@ export default function ReferencesSectionClient({ references, copy }: References
     triggerOnce: false,
   });
 
-  // Filter and sort references
-  const featuredReferences = references
-    .filter(ref => ref.isFeatured)
-    .sort((a, b) => a.order - b.order);
+  // Sort references
+  const orderedReferences = references.slice().sort((a, b) => a.order - b.order);
 
-  const activeReference = featuredReferences[activeIndex];
+  const activeReference = orderedReferences[activeIndex];
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -55,13 +53,13 @@ export default function ReferencesSectionClient({ references, copy }: References
       case 'ArrowUp':
         event.preventDefault();
         setActiveIndex(prev => 
-          prev > 0 ? prev - 1 : featuredReferences.length - 1
+          prev > 0 ? prev - 1 : orderedReferences.length - 1
         );
         break;
       case 'ArrowDown':
         event.preventDefault();
         setActiveIndex(prev => 
-          prev < featuredReferences.length - 1 ? prev + 1 : 0
+          prev < orderedReferences.length - 1 ? prev + 1 : 0
         );
         break;
       case 'Enter':
@@ -70,7 +68,7 @@ export default function ReferencesSectionClient({ references, copy }: References
         // Could trigger additional action if needed
         break;
     }
-  }, [isPinned, featuredReferences.length]);
+  }, [isPinned, orderedReferences.length]);
 
   // Handle scroll-based pinning
   useEffect(() => {
@@ -104,7 +102,7 @@ export default function ReferencesSectionClient({ references, copy }: References
     const sectionElement = sectionRef.current;
     const sectionTop = sectionElement.offsetTop;
     const sectionHeight = sectionElement.offsetHeight;
-    const totalScrollHeight = sectionHeight * featuredReferences.length;
+    const totalScrollHeight = sectionHeight * orderedReferences.length;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -112,18 +110,18 @@ export default function ReferencesSectionClient({ references, copy }: References
       
       // Calculate progress through the pinned section
       const scrollProgress = Math.max(0, Math.min(1, relativeScroll / totalScrollHeight));
-      const newIndex = Math.floor(scrollProgress * featuredReferences.length);
+      const newIndex = Math.floor(scrollProgress * orderedReferences.length);
       
-      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < featuredReferences.length) {
+      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < orderedReferences.length) {
         setActiveIndex(newIndex);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isPinned, activeIndex, featuredReferences.length]);
+  }, [isPinned, activeIndex, orderedReferences.length]);
 
-  if (!featuredReferences.length) {
+  if (!orderedReferences.length) {
     return null;
   }
 
@@ -168,7 +166,7 @@ export default function ReferencesSectionClient({ references, copy }: References
               
               <div className="flex-1 min-h-0 overflow-hidden">
                 <ReferenceList
-                  references={featuredReferences}
+                  references={orderedReferences}
                   activeIndex={activeIndex}
                   onSelect={setActiveIndex}
                   prefersReducedMotion={prefersReducedMotion}

@@ -325,10 +325,6 @@ export interface Reference {
    * Sort order for the references list (lower numbers appear first)
    */
   order: number;
-  /**
-   * Show this reference in the references section
-   */
-  isFeatured?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -572,7 +568,6 @@ export interface ReferencesSelect<T extends boolean = true> {
         id?: T;
       };
   order?: T;
-  isFeatured?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -11,7 +11,6 @@ export default async function ReferencesSection({ locale }: ReferencesSectionPro
   const t = await getTranslations({ locale, namespace: 'sections.references' });
   const { references } = await getReferences({
     locale,
-    featuredOnly: true,
   });
 
   const copy = {

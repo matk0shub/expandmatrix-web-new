@@ -1,10 +1,36 @@
 import type { CollectionConfig } from 'payload'
 
+const REQUIRED_LOCALES = ['en', 'cs'] as const
+
+const validateLocalizedField = (fieldLabel: string) => (value: unknown) => {
+  if (!value) {
+    return `${fieldLabel} musí mít překlady EN i CS`
+  }
+
+  if (typeof value === 'string') {
+    return `${fieldLabel} musí mít překlady EN i CS`
+  }
+
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>
+    const missing = REQUIRED_LOCALES.filter((locale) => {
+      const localized = record[locale]
+      return typeof localized !== 'string' || localized.trim().length === 0
+    })
+
+    return missing.length > 0
+      ? `${fieldLabel}: doplň ${missing.join(' a ')} překlad`
+      : true
+  }
+
+  return `${fieldLabel} musí mít překlady EN i CS`
+}
+
 export const References: CollectionConfig = {
   slug: 'references',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'subtitle', 'order', 'isFeatured'],
+    defaultColumns: ['name', 'subtitle', 'order'],
   },
   fields: [
     {
@@ -63,6 +89,7 @@ export const References: CollectionConfig = {
           type: 'text',
           required: true,
           localized: true,
+          validate: validateLocalizedField('Label'),
           admin: {
             description: 'Metric label (e.g., "Orders", "Leads", "Revenue")',
           },
@@ -72,6 +99,7 @@ export const References: CollectionConfig = {
           type: 'text',
           required: true,
           localized: true,
+          validate: validateLocalizedField('Value'),
           admin: {
             description: 'Metric value (e.g., "887 655 CZK", "9.2 %")',
           },
@@ -88,14 +116,6 @@ export const References: CollectionConfig = {
       defaultValue: 0,
       admin: {
         description: 'Sort order for the references list (lower numbers appear first)',
-      },
-    },
-    {
-      name: 'isFeatured',
-      type: 'checkbox',
-      defaultValue: true,
-      admin: {
-        description: 'Show this reference in the references section',
       },
     },
   ],

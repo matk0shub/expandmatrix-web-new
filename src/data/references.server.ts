@@ -14,7 +14,6 @@ interface PayloadReference {
   image?: Record<string, unknown> | string | null;
   metrics?: Array<Record<string, unknown>>;
   order?: number | null;
-  isFeatured?: boolean | null;
 }
 
 const ensureString = (value: unknown, preferredLocale?: string): string => {
@@ -146,7 +145,6 @@ const normalizeReferences = (docs: PayloadReference[], locale: string): Referenc
       image,
       metrics,
       order: typeof doc.order === 'number' ? doc.order : Number(doc.order ?? 0),
-      isFeatured: Boolean(doc.isFeatured ?? true),
     });
   });
 
@@ -158,7 +156,6 @@ const resolveLocale = (locale: string): 'en' | 'cs' =>
 
 interface GetReferencesOptions {
   locale: string;
-  featuredOnly?: boolean;
 }
 
 export interface ReferencesResult {
@@ -166,32 +163,20 @@ export interface ReferencesResult {
 }
 
 const getReferencesCached = unstable_cache(
-  async (locale: string, featuredKey: string): Promise<ReferencesResult> => {
-    const featuredOnly = featuredKey === '1';
+  async (locale: string): Promise<ReferencesResult> => {
     const payload = await getPayloadClient();
     const resolvedLocale = resolveLocale(locale);
-    const payloadLocale = 'all' as const;
 
     const result = await payload.find({
       collection: 'references',
       depth: 2,
       sort: 'order',
       limit: 100,
-      locale: payloadLocale,
-      where: featuredOnly
-        ? {
-            isFeatured: {
-              equals: true,
-            },
-          }
-        : undefined,
+      locale: 'all',
     });
 
     const docs = Array.isArray(result.docs) ? (result.docs as PayloadReference[]) : [];
-    const references = normalizeReferences(docs, resolvedLocale).map((reference) => ({
-      ...reference,
-      isFeatured: featuredOnly ? reference.isFeatured : reference.isFeatured,
-    }));
+    const references = normalizeReferences(docs, resolvedLocale);
 
     if (!references.length) {
       console.warn('[references] No references were returned from Payload CMS.');
@@ -203,6 +188,5 @@ const getReferencesCached = unstable_cache(
   { revalidate: 60, tags: ['references'] },
 );
 
-export const getReferences = async (
-  { locale, featuredOnly = true }: GetReferencesOptions
-): Promise<ReferencesResult> => getReferencesCached(locale, featuredOnly ? '1' : '0');
+export const getReferences = async ({ locale }: GetReferencesOptions): Promise<ReferencesResult> =>
+  getReferencesCached(locale);

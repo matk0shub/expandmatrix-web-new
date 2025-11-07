@@ -51,7 +51,6 @@ const baseReferences = [
       },
     },
     order: 1,
-    isFeatured: true,
     placeholderColor: '#38bdf8',
   },
   {
@@ -72,7 +71,6 @@ const baseReferences = [
       },
     },
     order: 2,
-    isFeatured: true,
     placeholderColor: '#f472b6',
   },
   {
@@ -93,7 +91,6 @@ const baseReferences = [
       },
     },
     order: 3,
-    isFeatured: true,
     placeholderColor: '#f97316',
   },
   {
@@ -114,7 +111,6 @@ const baseReferences = [
       },
     },
     order: 4,
-    isFeatured: true,
     placeholderColor: '#34d399',
   },
   {
@@ -135,7 +131,6 @@ const baseReferences = [
       },
     },
     order: 5,
-    isFeatured: true,
     placeholderColor: '#a855f7',
   },
   {
@@ -156,7 +151,6 @@ const baseReferences = [
       },
     },
     order: 6,
-    isFeatured: true,
     placeholderColor: '#22d3ee',
   },
 ]
@@ -330,7 +324,7 @@ const extractMetricIds = (metrics) =>
     : []
 
 async function upsertReference(reference) {
-  const { translationKey, slug, name, instagramUrl, websiteUrl, order, isFeatured } = reference
+  const { translationKey, slug, name, instagramUrl, websiteUrl, order } = reference
 
   const enSample = resolveSample(enMessages, translationKey)
   const csSample = resolveSample(csMessages, translationKey)
@@ -345,7 +339,6 @@ async function upsertReference(reference) {
     instagramUrl,
     websiteUrl,
     order,
-    isFeatured,
     ...(imageId ? { image: imageId } : {}),
   }
 
