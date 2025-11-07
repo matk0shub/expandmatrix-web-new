@@ -94,8 +94,8 @@ export default function ReferencesSectionClient({ references, copy }: References
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative flex justify-center">
-        <div className="relative w-[90vw] h-[90vh] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+      <div className="relative w-full mx-auto max-w-[1780px] px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+        <div className="relative w-full rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)] aspect-[16/9] min-h-[420px]">
           <AnimatePresence mode="wait" initial={false}>
             {activeReference && (
               <ReferenceBackground
