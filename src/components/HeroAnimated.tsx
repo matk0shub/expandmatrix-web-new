@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Head from 'next/head';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
@@ -135,7 +136,11 @@ export default function Hero() {
   };
 
   return (
-    <section
+    <>
+      <Head>
+        <link rel="preload" as="image" href="/logo.svg" fetchpriority="high" />
+      </Head>
+      <section
       ref={heroRef}
       className="hero-animated relative min-h-screen w-full overflow-hidden bg-black"
       style={{
@@ -360,7 +365,7 @@ export default function Hero() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ willChange: 'opacity' }}>
         {/* 3D Rotating Logo - Center */}
         {isClient && (
            <div 
@@ -452,6 +457,7 @@ export default function Hero() {
                       zIndex: 2,
                       transform: 'scale(1.05)',
                       filter: 'blur(8px)',
+                      willChange: 'opacity',
                     }}
                   />
                 </div>
@@ -684,5 +690,6 @@ export default function Hero() {
       {/* Smooth transition gradient to next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
     </section>
+    </>
   );
 }
