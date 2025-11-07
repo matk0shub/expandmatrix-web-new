@@ -51,7 +51,6 @@ const baseReferences = [
       },
     },
     order: 1,
-    isFeatured: true,
     placeholderColor: '#38bdf8',
   },
   {
@@ -72,7 +71,6 @@ const baseReferences = [
       },
     },
     order: 2,
-    isFeatured: true,
     placeholderColor: '#f472b6',
   },
   {
@@ -93,7 +91,6 @@ const baseReferences = [
       },
     },
     order: 3,
-    isFeatured: true,
     placeholderColor: '#f97316',
   },
   {
@@ -114,7 +111,6 @@ const baseReferences = [
       },
     },
     order: 4,
-    isFeatured: true,
     placeholderColor: '#34d399',
   },
   {
@@ -135,7 +131,6 @@ const baseReferences = [
       },
     },
     order: 5,
-    isFeatured: true,
     placeholderColor: '#a855f7',
   },
   {
@@ -156,8 +151,67 @@ const baseReferences = [
       },
     },
     order: 6,
-    isFeatured: true,
     placeholderColor: '#22d3ee',
+  },
+  {
+    translationKey: 'acTomes',
+    slug: 'ac-tomes',
+    name: {
+      en: 'AC Tomes',
+      cs: 'AC Tomes',
+    },
+    instagramUrl: 'https://instagram.com/actomes',
+    websiteUrl: 'https://actomes.cz',
+    image: {
+      url: 'https://images.unsplash.com/photo-1458891216473-4f26bb4eb40e?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'ac-tomes.jpg',
+      alt: {
+        en: 'HVAC technicians at work',
+        cs: 'Technici HVAC',
+      },
+    },
+    order: 7,
+    placeholderColor: '#34d399',
+  },
+  {
+    translationKey: 'novaClinic',
+    slug: 'nova-clinic',
+    name: {
+      en: 'Nova Clinic',
+      cs: 'Nova Clinic',
+    },
+    instagramUrl: 'https://instagram.com/novaclinic',
+    websiteUrl: 'https://novaclinic.eu',
+    image: {
+      url: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'nova-clinic.jpg',
+      alt: {
+        en: 'Clinic interior',
+        cs: 'Interiér kliniky',
+      },
+    },
+    order: 8,
+    placeholderColor: '#fb7185',
+  },
+  {
+    translationKey: 'expandoLogistics',
+    slug: 'expando-logistics',
+    name: {
+      en: 'Expando Logistics',
+      cs: 'Expando Logistics',
+    },
+    instagramUrl: 'https://instagram.com/expandologistics',
+    websiteUrl: 'https://expando-logistics.com',
+    image: {
+      url: 'https://images.unsplash.com/photo-1529074963764-98f45c47344b?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'expando-logistics.jpg',
+      alt: {
+        en: 'Logistics hub',
+        cs: 'Logistický hub',
+      },
+    },
+    order: 9,
+    placeholderColor: '#10b981',
   },
 ]
 
@@ -309,34 +363,30 @@ const ensureMediaAsset = async (reference) => {
   return created.id ?? created._id
 }
 
-const normalizeMetricsForLocale = (metrics, ids = []) =>
-  metrics.map((metric, index) => {
-    const payloadMetric = {
-      label: metric.label,
-      value: metric.value,
+const buildDualLocaleMetrics = (enMetrics, csMetrics) =>
+  enMetrics.map((metric, index) => {
+    const csMetric = csMetrics[index] ?? {}
+    return {
+      label: {
+        en: metric.label,
+        cs: csMetric.label || metric.label,
+      },
+      value: {
+        en: metric.value,
+        cs: csMetric.value || metric.value,
+      },
     }
-
-    const existingId = ids[index]
-    if (existingId) {
-      payloadMetric.id = existingId
-    }
-
-    return payloadMetric
   })
 
-const extractMetricIds = (metrics) =>
-  Array.isArray(metrics)
-    ? metrics.map((metric) => metric?.id ?? metric?._id ?? null)
-    : []
-
 async function upsertReference(reference) {
-  const { translationKey, slug, name, instagramUrl, websiteUrl, order, isFeatured } = reference
+  const { translationKey, slug, name, instagramUrl, websiteUrl, order } = reference
 
   const enSample = resolveSample(enMessages, translationKey)
   const csSample = resolveSample(csMessages, translationKey)
 
   const enMetrics = resolveMetrics(enSample.metrics)
   const csMetrics = resolveMetrics(csSample.metrics)
+  const metrics = buildDualLocaleMetrics(enMetrics, csMetrics)
 
   const imageId = await ensureMediaAsset(reference)
 
@@ -345,7 +395,15 @@ async function upsertReference(reference) {
     instagramUrl,
     websiteUrl,
     order,
-    isFeatured,
+    metrics,
+    name: {
+      en: name.en,
+      cs: name.cs ?? name.en,
+    },
+    subtitle: {
+      en: enSample.subtitle ?? '',
+      cs: csSample.subtitle ?? enSample.subtitle ?? '',
+    },
     ...(imageId ? { image: imageId } : {}),
   }
 
@@ -360,69 +418,32 @@ async function upsertReference(reference) {
     locale: 'all',
   })
 
-  let targetId
-  let metricIds = []
-
   if (existing.totalDocs > 0) {
     const existingDoc = existing.docs[0]
-    targetId = existingDoc.id ?? existingDoc._id
-    metricIds = extractMetricIds(existingDoc.metrics)
-
-    const englishPayload = {
-      ...baseData,
-      name: name.en,
-      subtitle: enSample.subtitle ?? '',
-      metrics: normalizeMetricsForLocale(enMetrics, metricIds),
-    }
+    const targetId = existingDoc.id ?? existingDoc._id
 
     await payload.update({
       collection: 'references',
       id: targetId,
-      data: englishPayload,
-      locale: 'en',
+      data: baseData,
     })
-  } else {
-    const englishPayload = {
-      ...baseData,
-      name: name.en,
-      subtitle: enSample.subtitle ?? '',
-      metrics: normalizeMetricsForLocale(enMetrics),
+
+    return {
+      id: targetId,
+      slug,
+      action: 'updated',
     }
-
-    const created = await payload.create({
-      collection: 'references',
-      data: englishPayload,
-      locale: 'en',
-    })
-
-    targetId = created.id ?? created._id
-    metricIds = extractMetricIds(created.metrics)
   }
 
-  const localizedMetrics = normalizeMetricsForLocale(
-    csMetrics.map((metric, index) => ({
-      label: metric.label || enMetrics[index]?.label || '',
-      value: metric.value || enMetrics[index]?.value || '',
-    })),
-    metricIds,
-  )
-
-  await payload.update({
+  const created = await payload.create({
     collection: 'references',
-    id: targetId,
-    data: {
-      ...baseData,
-      name: name.cs ?? name.en,
-      subtitle: csSample.subtitle ?? enSample.subtitle ?? '',
-      metrics: localizedMetrics,
-    },
-    locale: 'cs',
+    data: baseData,
   })
 
   return {
-    id: targetId,
+    id: created.id ?? created._id,
     slug,
-    action: existing.totalDocs > 0 ? 'updated' : 'created',
+    action: 'created',
   }
 }
 

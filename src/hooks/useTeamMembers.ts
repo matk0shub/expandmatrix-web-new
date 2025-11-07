@@ -30,7 +30,7 @@ export function useTeamMembers({ locale, featuredOnly = false }: UseTeamMembersO
           params.set('featuredOnly', 'true');
         }
 
-        const response = await fetch(`/api/team?${params.toString()}`, {
+        const response = await fetch(`/api/public/team?${params.toString()}`, {
           signal: controller.signal,
         });
 

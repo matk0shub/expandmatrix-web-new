@@ -284,7 +284,10 @@ export interface Partner {
  */
 export interface Reference {
   id: string;
-  name: string;
+  name: {
+    en: string;
+    cs: string;
+  };
   /**
    * URL-friendly version of the name (e.g., "tech-startup")
    */
@@ -292,7 +295,10 @@ export interface Reference {
   /**
    * Short description (e.g., "Tenisky / Streetwear Store")
    */
-  subtitle?: string | null;
+  subtitle?: {
+    en?: string | null;
+    cs?: string | null;
+  } | null;
   /**
    * Instagram profile URL (optional)
    */
@@ -310,14 +316,14 @@ export interface Reference {
    */
   metrics?:
     | {
-        /**
-         * Metric label (e.g., "Orders", "Leads", "Revenue")
-         */
-        label: string;
-        /**
-         * Metric value (e.g., "887 655 CZK", "9.2 %")
-         */
-        value: string;
+        label: {
+          en?: string | null;
+          cs?: string | null;
+        };
+        value: {
+          en?: string | null;
+          cs?: string | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -325,10 +331,6 @@ export interface Reference {
    * Sort order for the references list (lower numbers appear first)
    */
   order: number;
-  /**
-   * Show this reference in the references section
-   */
-  isFeatured?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -558,21 +560,40 @@ export interface PartnersSelect<T extends boolean = true> {
  * via the `definition` "references_select".
  */
 export interface ReferencesSelect<T extends boolean = true> {
-  name?: T;
+  name?:
+    | T
+    | {
+        en?: T;
+        cs?: T;
+      };
   slug?: T;
-  subtitle?: T;
+  subtitle?:
+    | T
+    | {
+        en?: T;
+        cs?: T;
+      };
   instagramUrl?: T;
   websiteUrl?: T;
   image?: T;
   metrics?:
     | T
     | {
-        label?: T;
-        value?: T;
+        label?:
+          | T
+          | {
+              en?: T;
+              cs?: T;
+            };
+        value?:
+          | T
+          | {
+              en?: T;
+              cs?: T;
+            };
         id?: T;
       };
   order?: T;
-  isFeatured?: T;
   updatedAt?: T;
   createdAt?: T;
 }

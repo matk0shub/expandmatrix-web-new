@@ -32,7 +32,6 @@ export default function ReferenceList({
 }: ReferenceListProps) {
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
-  const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const formatLabel = useCallback(
@@ -152,45 +151,33 @@ export default function ReferenceList({
               {isActive && (
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
                   {reference.instagramUrl && (
-                    <MotionAnchor
+                    <a
                       href={reference.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.3,
-                        delay: prefersReducedMotion ? 0 : 0.2
-                      }}
-                      whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+                      className={`flex items-center gap-2 bg-blue-600 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black ${
+                        prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
+                      }`}
                       aria-label={formatLabel(copy.instagramAria, reference.name)}
                     >
                       <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.instagram}</span>
-                    </MotionAnchor>
+                    </a>
                   )}
 
                   {reference.websiteUrl && (
-                    <MotionAnchor
+                    <a
                       href={reference.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.3,
-                        delay: prefersReducedMotion ? 0 : 0.25
-                      }}
-                      whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                      whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+                      className={`flex items-center gap-2 bg-white/15 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black ${
+                        prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
+                      }`}
                       aria-label={formatLabel(copy.websiteAria, reference.name)}
                     >
                       <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="whitespace-nowrap">{copy.website}</span>
-                    </MotionAnchor>
+                    </a>
                   )}
                 </div>
               )}

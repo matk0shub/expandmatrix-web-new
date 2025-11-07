@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
 
@@ -21,19 +20,10 @@ const resolveLocale = (raw: string | null): 'en' | 'cs' | undefined => {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const localeParam = searchParams.get('locale');
-  const featuredOnly = searchParams.get('featuredOnly') === 'true';
   const payloadLocale = resolveLocale(localeParam) ?? 'all';
 
   try {
     const payload = await getPayloadClient();
-
-    const where: Where | undefined = featuredOnly
-      ? {
-          isFeatured: {
-            equals: true,
-          },
-        }
-      : undefined;
 
     const result = await payload.find({
       collection: 'references',
@@ -41,7 +31,6 @@ export async function GET(request: Request) {
       sort: 'order',
       limit: 100,
       locale: payloadLocale,
-      where,
     });
 
     return NextResponse.json(result);

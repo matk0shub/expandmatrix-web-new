@@ -30,7 +30,7 @@ export function useFAQs({ locale, featuredOnly = false }: UseFAQsOptions) {
           params.set('featuredOnly', 'true');
         }
 
-        const response = await fetch(`/api/faqs?${params.toString()}`, {
+        const response = await fetch(`/api/public/faqs?${params.toString()}`, {
           signal: controller.signal,
         });
 

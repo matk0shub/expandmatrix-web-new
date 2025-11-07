@@ -28,7 +28,7 @@ Sample values live in `.env.example`. Copy it to `.env` for local work and to `/
 ## 4. Application Data Fetching
 
 - Server loaders (`src/data/partners.server.ts`, `src/data/teamMembers.server.ts`, `src/data/references.server.ts`) rely solely on live Payload queries. Empty results log a warning but no longer render embedded sample data.
-- API routes (`src/app/api/faqs`, `src/app/api/team`, `src/app/api/references`) surface Payload errors as HTTP `503` responses instead of returning static JSON.
+- API routes (`src/app/api/public/faqs`, `src/app/api/public/team`, `src/app/api/public/references`) surface Payload errors as HTTP `503` responses instead of returning static JSON.
 - Client hooks (`src/hooks/useTeamMembers.ts`, `src/hooks/useFAQs.ts`) no longer substitute sample content on failure; they expose error state for the UI.
 
 ## 5. Build & Lint
