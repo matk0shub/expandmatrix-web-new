@@ -27,17 +27,52 @@ This repository contains the public-facing Expand Matrix website built with Next
 
 ## Getting Started
 
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-2. **Run the dev server**
-   ```bash
-   npm run dev
-   ```
-3. Visit [http://localhost:3000](http://localhost:3000) — the site auto-detects locales at `/en` and `/cs`.
+### Requirements
 
-> ℹ️ Tailwind’s Oxide engine is disabled in CI for determinism. When installing in CI, use `TAILWIND_DISABLE_OXIDE=1 npm ci --omit=optional`.
+- Node.js **20.9+** (aligns with Next.js 15 recommendation)
+- **pnpm 9+** (preferred package manager for this repo)
+- MongoDB connection string (Atlas or self-hosted replica set)
+- `.env.local` / `.env` populated with secrets provided out of band
+
+> You’ll receive the filled `.env` file from the maintainer via PM. Never commit it — copy the values into your local `.env.local`.
+
+### Local setup checklist
+
+1. **Clone & switch to main**
+   ```bash
+   git clone https://github.com/matk0shub/expandmatrix-web-new.git
+   cd expandmatrix-web-new
+   git checkout main
+   ```
+2. **Create environment files**
+   ```bash
+   cp .env.example .env.local
+   cp env.production.example .env
+   ```
+   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.).
+3. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+4. **Seed baseline content (optional)**
+   ```bash
+   pnpm seed:faqs
+   pnpm seed:team
+   ```
+5. **Run the dev server**
+   ```bash
+   pnpm dev
+   ```
+6. Visit [http://localhost:3000](http://localhost:3000). Locales are served at `/en` and `/cs`.
+
+### Production build locally
+
+```
+pnpm build
+pnpm start
+```
+
+> ℹ️ Tailwind’s Oxide engine is disabled in CI for determinism. When installing in CI, use `TAILWIND_DISABLE_OXIDE=1 pnpm install --frozen-lockfile --filter !optional`.
 
 ## Quality Gates
 
