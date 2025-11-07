@@ -1,11 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState, type HTMLAttributes } from 'react';
-import type { ComponentType } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
 
-import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { fallbackMotion } from '@/utils/motionFallback';
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
@@ -36,21 +33,15 @@ export default function AnimatedHeading({
   children,
   ...rest
 }: AnimatedHeadingProps) {
-  const framer = useFramerMotion('idle');
   const prefersReducedMotion = useReducedMotion();
-  // Resolve target component (Framer motion element or fallback heading)
-  const motionModule = framer?.motion as Record<string, ComponentType<Record<string, unknown>>> | undefined;
-  const MotionComponent =
-    (motionModule?.[as] ??
-      motionModule?.h2 ??
-      motionModule?.div ??
-      (fallbackMotion[as] ?? fallbackMotion.h2)) as ComponentType<Record<string, unknown>>;
-
-  // Calculate offset dynamically on mount; we avoid resize listeners to keep runtime overhead minimal.
+  const Component = as as keyof JSX.IntrinsicElements;
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [offset, setOffset] = useState(() => distance);
+  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
 
   useEffect(() => {
     if (prefersReducedMotion || typeof window === 'undefined') {
+      setIsVisible(true);
       return;
     }
 
@@ -62,11 +53,37 @@ export default function AnimatedHeading({
     setOffset(distance * intensity);
   }, [distance, prefersReducedMotion]);
 
-  const hiddenTransform = useMemo(() => {
-    if (prefersReducedMotion) {
-      return undefined;
+  useEffect(() => {
+    if (prefersReducedMotion || typeof window === 'undefined' || !headingRef.current) {
+      setIsVisible(true);
+      return;
     }
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            if (once) {
+              observer.disconnect();
+            }
+          } else if (!once) {
+            setIsVisible(false);
+          }
+        });
+      },
+      { threshold: 0.45 }
+    );
+
+    observer.observe(headingRef.current);
+
+    return () => observer.disconnect();
+  }, [once, prefersReducedMotion]);
+
+  const hiddenTransform = useMemo(() => {
+    if (prefersReducedMotion) {
+      return { x: 0, y: 0 };
+    }
     switch (direction) {
       case 'left':
         return { x: -offset, y: 0 };
@@ -80,36 +97,21 @@ export default function AnimatedHeading({
     }
   }, [direction, offset, prefersReducedMotion]);
 
-  const animationProps =
-    prefersReducedMotion || !motionModule
-      ? {}
-      : {
-          initial: hiddenTransform,
-          whileInView: { x: 0, y: 0 },
-          viewport: { once, amount: 0.5 },
-          transition: {
-            type: 'spring',
-            stiffness: 160,
-            damping: 22,
-            mass: 0.9,
-            delay,
-          },
-        };
+  const style: CSSProperties = {
+    ...(rest.style || {}),
+    '--reveal-x': `${hiddenTransform.x}px`,
+    '--reveal-y': `${hiddenTransform.y}px`,
+    transitionDelay: `${delay}s`,
+  } as CSSProperties;
 
-  // For non-Framer fallback, ensure we don't pass motion-specific props
-  if (!motionModule || prefersReducedMotion) {
-    const FallbackComponent = fallbackMotion[as] ?? fallbackMotion.h2;
-
-    return (
-      <FallbackComponent className={className} {...rest}>
-        {children}
-      </FallbackComponent>
-    );
+  const classes = [className, 'heading-reveal'];
+  if (isVisible || prefersReducedMotion) {
+    classes.push('heading-reveal--visible');
   }
 
   return (
-    <MotionComponent {...animationProps} className={className} {...rest}>
+    <Component ref={headingRef} className={classes.filter(Boolean).join(' ')} style={style} {...rest}>
       {children}
-    </MotionComponent>
+    </Component>
   );
 }
