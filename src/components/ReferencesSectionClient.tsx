@@ -160,7 +160,7 @@ export default function ReferencesSectionClient({ references, copy }: References
           isPinned ? 'fixed inset-0 z-10 flex items-center justify-center' : 'relative flex justify-center'
         }`}
       >
-        <div className="relative w-[min(1600px,90vw)] h-[min(900px,90vh)] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+        <div className="relative w-[90vw] h-[90vh] max-w-[1600px] max-h-[900px] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
           <AnimatePresence mode="wait">
             {activeReference && (
               <ReferenceBackground
