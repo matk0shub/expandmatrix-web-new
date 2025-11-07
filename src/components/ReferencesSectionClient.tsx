@@ -36,6 +36,7 @@ export default function ReferencesSectionClient({ references, copy }: References
     [references],
   );
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     setActiveIndex((prev) => Math.min(prev, Math.max(orderedReferences.length - 1, 0)));
@@ -50,10 +51,12 @@ export default function ReferencesSectionClient({ references, copy }: References
       switch (event.key) {
         case 'ArrowUp':
           event.preventDefault();
+          setHasInteracted(true);
           setActiveIndex((prev) => (prev > 0 ? prev - 1 : orderedReferences.length - 1));
           break;
         case 'ArrowDown':
           event.preventDefault();
+          setHasInteracted(true);
           setActiveIndex((prev) => (prev < orderedReferences.length - 1 ? prev + 1 : 0));
           break;
         default:
@@ -67,6 +70,15 @@ export default function ReferencesSectionClient({ references, copy }: References
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  const handleSelect = useCallback(
+    (index: number) => {
+      if (index === activeIndex) return;
+      setHasInteracted(true);
+      setActiveIndex(index);
+    },
+    [activeIndex],
+  );
 
   if (!orderedReferences.length) {
     return null;
@@ -83,13 +95,14 @@ export default function ReferencesSectionClient({ references, copy }: References
       <meta itemProp="description" content={copy.metaDescription} />
 
       <div className="relative flex justify-center">
-        <div className="relative w-[min(90vw,1600px)] h-[min(90vh,900px)] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
-          <AnimatePresence mode="wait">
+        <div className="relative w-[min(95vw,1800px)] h-[min(95vh,1000px)] rounded-[40px] overflow-hidden bg-black/60 border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+          <AnimatePresence mode="wait" initial={false}>
             {activeReference && (
               <ReferenceBackground
                 key={activeReference.id}
                 reference={activeReference}
                 prefersReducedMotion={prefersReducedMotion}
+                animateOnChange={hasInteracted}
               />
             )}
           </AnimatePresence>
@@ -110,7 +123,7 @@ export default function ReferencesSectionClient({ references, copy }: References
                   <ReferenceList
                     references={orderedReferences}
                     activeIndex={activeIndex}
-                    onSelect={setActiveIndex}
+                    onSelect={handleSelect}
                     prefersReducedMotion={prefersReducedMotion}
                     copy={{
                       selectReference: copy.selectReference,
