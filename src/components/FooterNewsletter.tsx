@@ -19,7 +19,7 @@ export default function FooterNewsletter() {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const MotionButton = framer?.motion.button ?? fallbackMotion.button;
   const MotionP = framer?.motion.p ?? fallbackMotion.p;

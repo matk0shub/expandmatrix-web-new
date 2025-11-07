@@ -17,7 +17,7 @@ export default function ReferenceStatsCard({
   prefersReducedMotion,
   heading,
 }: ReferenceStatsCardProps) {
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const MotionTr = framer?.motion.tr ?? fallbackMotion.tr;
   const MotionTd = framer?.motion.td ?? fallbackMotion.td;

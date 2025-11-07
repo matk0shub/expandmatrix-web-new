@@ -17,7 +17,7 @@ type Props = {
 export default function FooterBrand({ instagramUrl, linkedinUrl, twitterUrl }: Props) {
   const t = useTranslations('footer');
   const locale = useLocale();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
 

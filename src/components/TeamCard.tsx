@@ -12,7 +12,7 @@ interface TeamCardProps {
 
 export default function TeamCard({ member }: TeamCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionArticle = framer?.motion.article ?? fallbackMotion.article;
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
