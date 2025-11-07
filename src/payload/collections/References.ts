@@ -83,6 +83,7 @@ export const References: CollectionConfig = {
       name: 'metrics',
       type: 'array',
       minRows: 1,
+      localized: true,
       fields: [
         {
           name: 'label',
