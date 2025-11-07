@@ -15,7 +15,7 @@ export default function ReferenceBackground({
   reference,
   prefersReducedMotion,
 }: ReferenceBackgroundProps) {
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
   const imageUrl = reference.image?.url ?? '';

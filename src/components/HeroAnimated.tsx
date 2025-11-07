@@ -22,7 +22,7 @@ export default function Hero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isClient = useClient();
   const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('instant');
   const motion = framer?.motion ?? fallbackMotion;
   const MotionDiv = motion.div;
   const MotionNav = motion.nav;

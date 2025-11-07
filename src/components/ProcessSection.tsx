@@ -114,7 +114,7 @@ const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);

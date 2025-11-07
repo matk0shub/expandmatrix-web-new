@@ -11,7 +11,7 @@ export default function FooterBottomBar() {
   const t = useTranslations('footer');
   const locale = useLocale();
   const year = new Date().getFullYear();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
 
   return (
@@ -88,4 +88,3 @@ export default function FooterBottomBar() {
     </MotionDiv>
   );
 }
-

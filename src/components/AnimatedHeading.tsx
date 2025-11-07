@@ -36,7 +36,7 @@ export default function AnimatedHeading({
   children,
   ...rest
 }: AnimatedHeadingProps) {
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const prefersReducedMotion = useReducedMotion();
   // Resolve target component (Framer motion element or fallback heading)
   const motionModule = framer?.motion as Record<string, ComponentType<Record<string, unknown>>> | undefined;

@@ -30,7 +30,7 @@ export default function ReferenceList({
   prefersReducedMotion,
   copy,
 }: ReferenceListProps) {
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const MotionAnchor = framer?.motion.a ?? fallbackMotion.a;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);

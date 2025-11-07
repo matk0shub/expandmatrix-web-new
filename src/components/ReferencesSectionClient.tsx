@@ -28,7 +28,7 @@ interface ReferencesSectionClientProps {
 }
 
 export default function ReferencesSectionClient({ references, copy }: ReferencesSectionClientProps) {
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const prefersReducedMotion = useReducedMotion();

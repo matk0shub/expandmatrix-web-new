@@ -29,7 +29,7 @@ const resolveLocalized = (value: { cs: string; en: string }, locale: string) =>
 
 export default function FAQSectionClient({ locale, faqs, copy }: FAQSectionClientProps) {
   const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
 
