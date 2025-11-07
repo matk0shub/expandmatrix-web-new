@@ -310,14 +310,14 @@ export interface Reference {
    */
   metrics?:
     | {
-        /**
-         * Metric label (e.g., "Orders", "Leads", "Revenue")
-         */
-        label: string;
-        /**
-         * Metric value (e.g., "887 655 CZK", "9.2 %")
-         */
-        value: string;
+        label: {
+          en?: string | null;
+          cs?: string | null;
+        };
+        value: {
+          en?: string | null;
+          cs?: string | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -563,8 +563,18 @@ export interface ReferencesSelect<T extends boolean = true> {
   metrics?:
     | T
     | {
-        label?: T;
-        value?: T;
+        label?:
+          | T
+          | {
+              en?: T;
+              cs?: T;
+            };
+        value?:
+          | T
+          | {
+              en?: T;
+              cs?: T;
+            };
         id?: T;
       };
   order?: T;

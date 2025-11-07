@@ -3,27 +3,19 @@ import type { CollectionConfig } from 'payload'
 const REQUIRED_LOCALES = ['en', 'cs'] as const
 
 const validateLocalizedField = (fieldLabel: string) => (value: unknown) => {
-  if (!value) {
+  if (!value || typeof value !== 'object') {
     return `${fieldLabel} musí mít překlady EN i CS`
   }
 
-  if (typeof value === 'string') {
-    return `${fieldLabel} musí mít překlady EN i CS`
-  }
+  const record = value as Record<string, unknown>
+  const missing = REQUIRED_LOCALES.filter((locale) => {
+    const localized = record[locale]
+    return typeof localized !== 'string' || localized.trim().length === 0
+  })
 
-  if (typeof value === 'object') {
-    const record = value as Record<string, unknown>
-    const missing = REQUIRED_LOCALES.filter((locale) => {
-      const localized = record[locale]
-      return typeof localized !== 'string' || localized.trim().length === 0
-    })
-
-    return missing.length > 0
-      ? `${fieldLabel}: doplň ${missing.join(' a ')} překlad`
-      : true
-  }
-
-  return `${fieldLabel} musí mít překlady EN i CS`
+  return missing.length > 0
+    ? `${fieldLabel}: doplň ${missing.join(' a ')} překlad`
+    : true
 }
 
 export const References: CollectionConfig = {
@@ -83,31 +75,56 @@ export const References: CollectionConfig = {
       name: 'metrics',
       type: 'array',
       minRows: 1,
-      localized: true,
       fields: [
         {
           name: 'label',
-          type: 'text',
-          required: true,
-          localized: true,
+          type: 'group',
           validate: validateLocalizedField('Label'),
+          fields: [
+            {
+              name: 'en',
+              label: 'Label (EN)',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'cs',
+              label: 'Label (CS)',
+              type: 'text',
+              required: true,
+            },
+          ],
           admin: {
             description: 'Metric label (e.g., "Orders", "Leads", "Revenue")',
+            layout: 'horizontal',
           },
         },
         {
           name: 'value',
-          type: 'text',
-          required: true,
-          localized: true,
+          type: 'group',
           validate: validateLocalizedField('Value'),
+          fields: [
+            {
+              name: 'en',
+              label: 'Value (EN)',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'cs',
+              label: 'Value (CS)',
+              type: 'text',
+              required: true,
+            },
+          ],
           admin: {
             description: 'Metric value (e.g., "887 655 CZK", "9.2 %")',
+            layout: 'horizontal',
           },
         },
       ],
       admin: {
-        description: 'Key performance metrics to display in the stats card',
+        description: 'Key performance metrics to display in the stats card (vyplň EN i CS na jednom místě)',
       },
     },
     {

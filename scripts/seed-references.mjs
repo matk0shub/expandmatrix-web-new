@@ -303,25 +303,20 @@ const ensureMediaAsset = async (reference) => {
   return created.id ?? created._id
 }
 
-const normalizeMetricsForLocale = (metrics, ids = []) =>
-  metrics.map((metric, index) => {
-    const payloadMetric = {
-      label: metric.label,
-      value: metric.value,
+const buildDualLocaleMetrics = (enMetrics, csMetrics) =>
+  enMetrics.map((metric, index) => {
+    const csMetric = csMetrics[index] ?? {}
+    return {
+      label: {
+        en: metric.label,
+        cs: csMetric.label || metric.label,
+      },
+      value: {
+        en: metric.value,
+        cs: csMetric.value || metric.value,
+      },
     }
-
-    const existingId = ids[index]
-    if (existingId) {
-      payloadMetric.id = existingId
-    }
-
-    return payloadMetric
   })
-
-const extractMetricIds = (metrics) =>
-  Array.isArray(metrics)
-    ? metrics.map((metric) => metric?.id ?? metric?._id ?? null)
-    : []
 
 async function upsertReference(reference) {
   const { translationKey, slug, name, instagramUrl, websiteUrl, order } = reference
@@ -331,6 +326,7 @@ async function upsertReference(reference) {
 
   const enMetrics = resolveMetrics(enSample.metrics)
   const csMetrics = resolveMetrics(csSample.metrics)
+  const metrics = buildDualLocaleMetrics(enMetrics, csMetrics)
 
   const imageId = await ensureMediaAsset(reference)
 
@@ -339,6 +335,7 @@ async function upsertReference(reference) {
     instagramUrl,
     websiteUrl,
     order,
+    metrics,
     ...(imageId ? { image: imageId } : {}),
   }
 
@@ -354,18 +351,15 @@ async function upsertReference(reference) {
   })
 
   let targetId
-  let metricIds = []
 
   if (existing.totalDocs > 0) {
     const existingDoc = existing.docs[0]
     targetId = existingDoc.id ?? existingDoc._id
-    metricIds = extractMetricIds(existingDoc.metrics)
 
     const englishPayload = {
       ...baseData,
       name: name.en,
       subtitle: enSample.subtitle ?? '',
-      metrics: normalizeMetricsForLocale(enMetrics, metricIds),
     }
 
     await payload.update({
@@ -379,7 +373,6 @@ async function upsertReference(reference) {
       ...baseData,
       name: name.en,
       subtitle: enSample.subtitle ?? '',
-      metrics: normalizeMetricsForLocale(enMetrics),
     }
 
     const created = await payload.create({
@@ -389,16 +382,7 @@ async function upsertReference(reference) {
     })
 
     targetId = created.id ?? created._id
-    metricIds = extractMetricIds(created.metrics)
   }
-
-  const localizedMetrics = normalizeMetricsForLocale(
-    csMetrics.map((metric, index) => ({
-      label: metric.label || enMetrics[index]?.label || '',
-      value: metric.value || enMetrics[index]?.value || '',
-    })),
-    metricIds,
-  )
 
   await payload.update({
     collection: 'references',
@@ -407,7 +391,6 @@ async function upsertReference(reference) {
       ...baseData,
       name: name.cs ?? name.en,
       subtitle: csSample.subtitle ?? enSample.subtitle ?? '',
-      metrics: localizedMetrics,
     },
     locale: 'cs',
   })
