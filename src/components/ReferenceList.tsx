@@ -106,7 +106,7 @@ export default function ReferenceList({
             whileHover={{}}
             whileTap={{}}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4">
               {/* Company name */}
               <div className="flex-1">
                 <div className="relative">
@@ -149,18 +149,18 @@ export default function ReferenceList({
 
               {/* External links */}
               {isActive && (
-                <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
+                <div className="flex flex-wrap gap-3">
                   {reference.instagramUrl && (
                     <a
                       href={reference.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center gap-2 bg-blue-600 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black ${
+                      className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-medium text-white sm:px-5 sm:text-sm ${
                         prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
-                      }`}
+                      } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black`}
                       aria-label={formatLabel(copy.instagramAria, reference.name)}
                     >
-                      <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="whitespace-nowrap">{copy.instagram}</span>
                     </a>
                   )}
@@ -170,12 +170,12 @@ export default function ReferenceList({
                       href={reference.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center gap-2 bg-white/15 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black ${
+                      className={`inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:px-5 sm:text-sm ${
                         prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
-                      }`}
+                      } focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black`}
                       aria-label={formatLabel(copy.websiteAria, reference.name)}
                     >
-                      <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="whitespace-nowrap">{copy.website}</span>
                     </a>
                   )}
