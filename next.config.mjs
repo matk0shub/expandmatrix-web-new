@@ -229,11 +229,46 @@ const nextConfig = {
         ],
       },
       {
+        source: '/_next/image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
         source: '/:all*.(avif|webp|svg|png|jpg|jpeg|ico|woff2)',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:locale(en|cs)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=600',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Language, Cookie',
+          },
+        ],
+      },
+      {
+        source: '/:locale(en|cs)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=600',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Language, Cookie',
           },
         ],
       },

@@ -4,11 +4,8 @@ import { ArrowRight } from 'lucide-react';
 import {
   forwardRef,
   type ComponentPropsWithoutRef,
-  type FocusEvent,
   type MouseEvent,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
-  type TouchEvent,
   useCallback,
 } from 'react';
 
@@ -39,49 +36,13 @@ export const CalCTAButton = forwardRef<HTMLButtonElement, CalCTAButtonProps>(
       className,
       showIcon = true,
       onClick,
-      onPointerEnter,
-      onFocus,
-      onTouchStart,
       ...props
     },
     ref
   ) => {
-    const { status, primeCal, openCal } = useCalEmbed();
+    const { status, openCal } = useCalEmbed();
     const composedClassName = className ? `${BASE_CLASSES} ${className}` : BASE_CLASSES;
     const isOpening = status === 'opening';
-
-    const triggerPrime = useCallback(() => {
-      primeCal().catch(() => {
-        // Errors already surface via hook state/logging.
-      });
-    }, [primeCal]);
-
-    const handlePointerEnter = useCallback(
-      (event: ReactPointerEvent<HTMLButtonElement>) => {
-        onPointerEnter?.(event);
-        if (event.defaultPrevented) return;
-        triggerPrime();
-      },
-      [onPointerEnter, triggerPrime]
-    );
-
-    const handleFocus = useCallback(
-      (event: FocusEvent<HTMLButtonElement>) => {
-        onFocus?.(event);
-        if (event.defaultPrevented) return;
-        triggerPrime();
-      },
-      [onFocus, triggerPrime]
-    );
-
-    const handleTouchStart = useCallback(
-      (event: TouchEvent<HTMLButtonElement>) => {
-        onTouchStart?.(event);
-        if (event.defaultPrevented) return;
-        triggerPrime();
-      },
-      [onTouchStart, triggerPrime]
-    );
 
     const handleClick = useCallback(
       async (event: MouseEvent<HTMLButtonElement>) => {
@@ -100,9 +61,6 @@ export const CalCTAButton = forwardRef<HTMLButtonElement, CalCTAButtonProps>(
         aria-busy={isOpening}
         disabled={isOpening}
         onClick={handleClick}
-        onPointerEnter={handlePointerEnter}
-        onFocus={handleFocus}
-        onTouchStart={handleTouchStart}
         {...props}
       >
         <span className="relative z-10 uppercase tracking-wide">{children}</span>

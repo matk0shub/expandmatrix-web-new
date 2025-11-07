@@ -16,6 +16,26 @@ const intlMiddleware = createMiddleware({
 const getLocaleFromPath = (pathname: string) =>
   locales.find((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
 
+const getPreferredLocale = (request: NextRequest): (typeof locales)[number] => {
+  const cookieLocale = request.cookies.get(localeCookieName)?.value;
+  if (cookieLocale && locales.includes(cookieLocale as (typeof locales)[number])) {
+    return cookieLocale as (typeof locales)[number];
+  }
+
+  const accept = request.headers.get('accept-language');
+  if (accept) {
+    const preferred = accept
+      .split(',')
+      .map((part) => part.trim().split(';')[0])
+      .find((lng) => locales.includes(lng.split('-')[0] as (typeof locales)[number]));
+    if (preferred) {
+      return preferred.split('-')[0] as (typeof locales)[number];
+    }
+  }
+
+  return defaultLocale;
+};
+
 export default function middleware(request: NextRequest) {
   const cookieLocale = request.cookies.get(localeCookieName)?.value;
   const hasCookieLocale = cookieLocale && locales.includes(cookieLocale as (typeof locales)[number]);
@@ -45,13 +65,14 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!currentLocale && hasCookieLocale) {
+  if (!currentLocale) {
+    const target = hasCookieLocale ? (cookieLocale as (typeof locales)[number]) : getPreferredLocale(request);
     const suffix = pathname || '/';
     const normalizedSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
 
     const url = request.nextUrl.clone();
-    url.pathname = `/${cookieLocale}${normalizedSuffix === '/' ? '' : normalizedSuffix}`;
-    serverLog('[middleware] redirecting to cookie locale', { from: pathname, to: url.pathname })
+    url.pathname = `/${target}${normalizedSuffix === '/' ? '' : normalizedSuffix}`;
+    serverLog('[middleware] redirecting to preferred locale', { from: pathname, to: url.pathname });
     return NextResponse.redirect(url);
   }
 

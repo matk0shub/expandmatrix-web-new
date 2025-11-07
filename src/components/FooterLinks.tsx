@@ -27,7 +27,7 @@ type Props = {
 export default function FooterLinks({ groups }: Props) {
   const locale = useLocale();
   const orderedGroups = useMemo(() => [...groups].sort((a, b) => a.order - b.order), [groups]);
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const MotionUl = framer?.motion.ul ?? fallbackMotion.ul;
   const MotionLi = framer?.motion.li ?? fallbackMotion.li;

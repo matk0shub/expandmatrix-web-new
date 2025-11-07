@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Head from 'next/head';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
@@ -22,7 +23,7 @@ export default function Hero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isClient = useClient();
   const prefersReducedMotion = useReducedMotion();
-  const framer = useFramerMotion();
+  const framer = useFramerMotion('instant');
   const motion = framer?.motion ?? fallbackMotion;
   const MotionDiv = motion.div;
   const MotionNav = motion.nav;
@@ -135,7 +136,11 @@ export default function Hero() {
   };
 
   return (
-    <section
+    <>
+      <Head>
+        <link rel="preload" as="image" href="/logo.svg" fetchpriority="high" />
+      </Head>
+      <section
       ref={heroRef}
       className="hero-animated relative min-h-screen w-full overflow-hidden bg-black"
       style={{
@@ -227,6 +232,10 @@ export default function Hero() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="lg:hidden text-white p-2"
+                type="button"
+                aria-label={isMenuOpen ? nav('menuToggleClose') : nav('menuToggleOpen')}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </MotionButton>
@@ -239,6 +248,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg"
+                id="mobile-nav"
               >
                 <nav className="flex flex-col p-6 space-y-4">
                   <button 
@@ -355,7 +365,7 @@ export default function Hero() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ willChange: 'opacity' }}>
         {/* 3D Rotating Logo - Center */}
         {isClient && (
            <div 
@@ -447,6 +457,7 @@ export default function Hero() {
                       zIndex: 2,
                       transform: 'scale(1.05)',
                       filter: 'blur(8px)',
+                      willChange: 'opacity',
                     }}
                   />
                 </div>
@@ -679,5 +690,6 @@ export default function Hero() {
       {/* Smooth transition gradient to next section */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
     </section>
+    </>
   );
 }

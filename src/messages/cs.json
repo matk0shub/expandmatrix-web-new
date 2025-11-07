@@ -306,7 +306,9 @@
     "services": "SLUŽBY",
     "references": "REFERENCE",
     "faq": "FAQ",
-    "contact": "KONTAKT"
+    "contact": "KONTAKT",
+    "menuToggleOpen": "Otevřít navigační menu",
+    "menuToggleClose": "Zavřít navigační menu"
   },
   "footer": {
     "nav": "Hlavní navigace v patičce",
