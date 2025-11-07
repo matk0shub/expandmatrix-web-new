@@ -35,6 +35,7 @@ export default function ReferencesSectionClient({ references, copy }: References
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const boundsRef = useRef({ start: 0, end: 0 });
   const { ref: intersectionRef } = useIntersectionObserver({
     threshold: 0.5,
     triggerOnce: false,
@@ -72,18 +73,33 @@ export default function ReferencesSectionClient({ references, copy }: References
 
   // Handle scroll-based pinning
   useEffect(() => {
-    const handleScroll = () => {
+    const measure = () => {
       if (!sectionRef.current) return;
-
       const rect = sectionRef.current.getBoundingClientRect();
-      const shouldPin = rect.top <= 0 && rect.bottom > window.innerHeight;
+      const start = window.scrollY + rect.top;
+      boundsRef.current = {
+        start,
+        end: start + rect.height,
+      };
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [orderedReferences.length]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { start, end } = boundsRef.current;
+      const scroll = window.scrollY;
+      const pinStart = start;
+      const pinEnd = Math.max(start, end - window.innerHeight);
+      const shouldPin = scroll >= pinStart && scroll < pinEnd;
       setIsPinned(shouldPin);
     };
 
-    // Initial check
     handleScroll();
-    
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
