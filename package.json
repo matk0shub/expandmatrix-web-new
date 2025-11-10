@@ -75,6 +75,7 @@
     "eslint-visitor-keys": "^4.2.1",
     "find-up": "^8.0.0",
     "lighthouse": "^13.0.1",
+    "mongodb": "^7.0.0",
     "path-key": "^4.0.0",
     "puppeteer": "^24.27.0",
     "tailwindcss": "^4",
