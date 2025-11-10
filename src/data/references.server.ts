@@ -164,25 +164,31 @@ export interface ReferencesResult {
 
 const getReferencesCached = unstable_cache(
   async (locale: string): Promise<ReferencesResult> => {
-    const payload = await getPayloadClient();
     const resolvedLocale = resolveLocale(locale);
 
-    const result = await payload.find({
-      collection: 'references',
-      depth: 2,
-      sort: 'order',
-      limit: 100,
-      locale: 'all',
-    });
+    try {
+      const payload = await getPayloadClient();
 
-    const docs = Array.isArray(result.docs) ? (result.docs as PayloadReference[]) : [];
-    const references = normalizeReferences(docs, resolvedLocale);
+      const result = await payload.find({
+        collection: 'references',
+        depth: 2,
+        sort: 'order',
+        limit: 100,
+        locale: 'all',
+      });
 
-    if (!references.length) {
-      console.warn('[references] No references were returned from Payload CMS.');
+      const docs = Array.isArray(result.docs) ? (result.docs as PayloadReference[]) : [];
+      const references = normalizeReferences(docs, resolvedLocale);
+
+      if (!references.length) {
+        console.warn('[references] No references were returned from Payload CMS.');
+      }
+
+      return { references };
+    } catch (error) {
+      console.warn('[references] Payload CMS unavailable; returning fallback references.', error);
+      return { references: [] };
     }
-
-    return { references };
   },
   ['references'],
   { revalidate: 60, tags: ['references'] },

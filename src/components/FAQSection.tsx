@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { getPayloadClient } from '@/payload/getPayloadClient';
+import faqsFallback from '@/data/faqs.json' assert { type: 'json' };
 import type { FAQ } from '@/types/faqs';
 import FAQSectionClient from './FAQSectionClient';
 
@@ -31,21 +32,29 @@ export const revalidate = 60;
 
 export default async function FAQSection({ locale }: FAQSectionProps) {
   const t = await getTranslations({ locale, namespace: 'sections.faq' });
-  const payload = await getPayloadClient();
 
-  const response = await payload.find({
-    collection: 'faqs',
-    limit: 100,
-    depth: 0,
-    where: {
-      showOnSite: {
-        equals: true,
+  let faqs: FAQ[] = [];
+
+  try {
+    const payload = await getPayloadClient();
+
+    const response = await payload.find({
+      collection: 'faqs',
+      limit: 100,
+      depth: 0,
+      where: {
+        showOnSite: {
+          equals: true,
+        },
       },
-    },
-    sort: 'order',
-  });
+      sort: 'order',
+    });
 
-  const faqs = normalizeFaqs((response.docs ?? []) as FAQDocument[]);
+    faqs = normalizeFaqs((response.docs ?? []) as FAQDocument[]);
+  } catch (error) {
+    console.warn('[faq section] Payload CMS unavailable, using fallback FAQ data.', error);
+    faqs = normalizeFaqs(faqsFallback as FAQDocument[]);
+  }
 
   const copy = {
     titleLine1: t('title.line1'),
