@@ -125,22 +125,48 @@ let backingUp = false;
 let restoring = false;
 
 class EnsurePagesManifestPlugin {
-  async ensureManifest() {
-    const targetPath = path.join(process.cwd(), '.next', 'server', 'pages-manifest.json');
+  async ensureArtifacts() {
+    const serverDir = path.join(process.cwd(), '.next', 'server');
+    const vendorDir = path.join(serverDir, 'vendor-chunks');
+
     try {
-      await fs.promises.access(targetPath, fs.constants.F_OK);
-    } catch {
+      await fs.promises.mkdir(serverDir, { recursive: true });
+      await fs.promises.mkdir(vendorDir, { recursive: true });
+    } catch (error) {
+      console.warn('[next.config] Failed to create .next/server directories:', error);
+      return;
+    }
+
+    const fontManifest = { app: {}, pages: {} };
+    const middlewareManifest = { version: 3, sortedMiddleware: [], middleware: {}, functions: {} };
+    const stubs = [
+      { file: path.join(serverDir, 'pages-manifest.json'), contents: JSON.stringify({}) },
+      { file: path.join(serverDir, 'functions-config-manifest.json'), contents: JSON.stringify({ functions: {}, version: 1 }) },
+      { file: path.join(serverDir, 'middleware-manifest.json'), contents: JSON.stringify(middlewareManifest) },
+      { file: path.join(serverDir, 'app-paths-manifest.json'), contents: JSON.stringify({}) },
+      { file: path.join(serverDir, 'app-path-routes-manifest.json'), contents: JSON.stringify({}) },
+      { file: path.join(serverDir, 'app-build-manifest.json'), contents: JSON.stringify({ pages: {} }) },
+      { file: path.join(serverDir, 'next-font-manifest.json'), contents: JSON.stringify(fontManifest) },
+      { file: path.join(serverDir, 'next-font-manifest.js'), contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};` },
+      { file: path.join(vendorDir, '@opentelemetry.js'), contents: 'export {};' },
+      { file: path.join(vendorDir, 'next.js'), contents: 'module.exports = {};' },
+    ];
+
+    for (const stub of stubs) {
       try {
-        await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
-        await fs.promises.writeFile(targetPath, JSON.stringify({}), 'utf-8');
-      } catch (error) {
-        console.warn('[next.config] Failed to seed pages-manifest.json:', error);
+        await fs.promises.access(stub.file, fs.constants.F_OK);
+      } catch {
+        try {
+          await fs.promises.writeFile(stub.file, stub.contents, 'utf-8');
+        } catch (error) {
+          console.warn(`[next.config] Failed to seed ${path.basename(stub.file)}:`, error);
+        }
       }
     }
   }
 
   apply(compiler) {
-    const ensure = this.ensureManifest.bind(this);
+    const ensure = this.ensureArtifacts.bind(this);
     compiler.hooks.beforeCompile.tapPromise('EnsurePagesManifestPlugin', ensure);
     compiler.hooks.afterEmit.tapPromise('EnsurePagesManifestPlugin', ensure);
   }
