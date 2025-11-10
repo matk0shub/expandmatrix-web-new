@@ -10,35 +10,30 @@ export interface PartnersResult {
 
 const getPartnersCached = unstable_cache(
   async (): Promise<PartnersResult> => {
-    try {
-      const payload = await getPayloadClient();
+    const payload = await getPayloadClient();
 
-      const result = await payload.find({
-        collection: 'partners',
-        depth: 1,
-        sort: 'order',
-        limit: 100,
-        where: {
-          showOnSite: {
-            equals: true,
-          },
+    const result = await payload.find({
+      collection: 'partners',
+      depth: 1,
+      sort: 'order',
+      limit: 100,
+      where: {
+        showOnSite: {
+          equals: true,
         },
-      });
+      },
+    });
 
-      const docs = Array.isArray(result.docs) ? (result.docs as PartnerDocument[]) : [];
-      const normalized = normalizePayloadPartners(docs);
+    const docs = Array.isArray(result.docs) ? (result.docs as PartnerDocument[]) : [];
+    const normalized = normalizePayloadPartners(docs);
 
-      if (!normalized.length) {
-        console.warn('[partners] No partners were returned from Payload CMS.');
-      }
-
-      return {
-        partners: normalized,
-      };
-    } catch (error) {
-      console.warn('[partners] Payload CMS unavailable; returning empty partner list.', error);
-      return { partners: [] };
+    if (!normalized.length) {
+      console.warn('[partners] No partners were returned from Payload CMS.');
     }
+
+    return {
+      partners: normalized,
+    };
   },
   ['partners'],
   { revalidate: 60, tags: ['partners'] },
