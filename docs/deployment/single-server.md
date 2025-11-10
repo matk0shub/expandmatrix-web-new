@@ -34,6 +34,7 @@ Create `/opt/expandmatrix/shared/env/.env.production`:
 NODE_ENV=production
 PAYLOAD_SECRET=generate-a-long-random-string
 DATABASE_URI=mongodb://localhost:27017/expandmatrix?replicaSet=rs0
+# Optional: override the auto-detected host serving Payload media.
 NEXT_PUBLIC_PAYLOAD_SERVER_URL=https://cms.expandmatrix.com
 PAYLOAD_PUBLIC_SERVER_URL=https://cms.expandmatrix.com
 SMTP_HOST=smtp.gmail.com

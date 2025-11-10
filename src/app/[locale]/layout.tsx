@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import '@/payload/prewarm';
+import { getPayloadBaseUrl } from '@/utils/resolveMediaUrl';
 import { lato } from '../fonts';
 import "../globals.css";
 
@@ -97,14 +98,16 @@ export default async function LocaleLayout({
     ],
   };
 
+  const payloadBaseUrl = getPayloadBaseUrl();
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
         {/* Preconnect/DNS-prefetch for Payload host (if configured) */}
-        {process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL && (
+        {payloadBaseUrl && (
           <>
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL} crossOrigin="anonymous" />
-            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL} />
+            <link rel="preconnect" href={payloadBaseUrl} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={payloadBaseUrl} />
           </>
         )}
       </head>

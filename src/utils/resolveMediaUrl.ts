@@ -120,4 +120,6 @@ export const resolveMediaUrl = (input?: string | null): string => {
   return normalizedPath;
 };
 
+export const getPayloadBaseUrl = (): string => getPayloadServerUrl();
+
 export default resolveMediaUrl;

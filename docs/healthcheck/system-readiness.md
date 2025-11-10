@@ -8,8 +8,7 @@ Ensure the following variables are present before the app boots:
 
 - `PAYLOAD_SECRET`
 - `DATABASE_URI`
-- `NEXT_PUBLIC_PAYLOAD_SERVER_URL`
-- `PAYLOAD_PUBLIC_SERVER_URL`
+- `NEXT_PUBLIC_PAYLOAD_SERVER_URL` / `PAYLOAD_PUBLIC_SERVER_URL` *(optional – only needed when overriding the auto-detected host)*
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_NAME`
 
 Sample values live in `.env.example`. Copy it to `.env` for local work and to `/opt/…/.env.production` (or your secrets manager) for production deployments.

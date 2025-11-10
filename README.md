@@ -48,7 +48,7 @@ This repository contains the public-facing Expand Matrix website built with Next
    ```bash
    cp .env.example .env
    ```
-   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.). Keep `NEXT_PUBLIC_PAYLOAD_SERVER_URL` / `PAYLOAD_PUBLIC_SERVER_URL` on `http://localhost:3000` for local work; in production point both to the public URL where Payload is reachable (e.g., `https://cms.expandmatrix.com`). If you also need a production-only variant (e.g., `.env.production`), derive it from the same template outside Git.
+   Replace placeholders with the credentials you received (MongoDB `DATABASE_URI`, `PAYLOAD_SECRET`, SMTP, Cal keys, etc.). The site automatically falls back to the current deployment URL for Payload media, so `NEXT_PUBLIC_PAYLOAD_SERVER_URL` / `PAYLOAD_PUBLIC_SERVER_URL` are only required when you want to hardcode a different host (for example, when running the combined server on `http://localhost:3000`). If you also need a production-only variant (e.g., `.env.production`), derive it from the same template outside Git.
 3. **Install dependencies**
    ```bash
    pnpm install
@@ -136,7 +136,7 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
 1. `npm run lint`
 2. `npm run build`
 3. `npm run audit:all` (against a production URL or a local `npm run start` server)
-4. Ensure environment variables are supplied (`PAYLOAD_SECRET`, `DATABASE_URI`, `NEXT_PUBLIC_PAYLOAD_SERVER_URL`, SMTP credentials, analytics keys, etc.).
+4. Ensure environment variables are supplied (`PAYLOAD_SECRET`, `DATABASE_URI`, SMTP credentials, analytics keys, etc.). The Payload server URL is auto-detected from the deployment host, but you can still override it via `NEXT_PUBLIC_PAYLOAD_SERVER_URL` if needed.
 5. Upload optimised imagery to `public/images` (Next.js will convert to WebP on the fly) and keep CMS media metadata current.
 6. Run post-deploy tasks with production env vars loaded:
    ```bash

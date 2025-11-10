@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { getPayloadBaseUrl } from '@/utils/resolveMediaUrl';
+
 export const runtime = 'nodejs';
 
 const MEDIA_ROOT = path.join(process.cwd(), 'media');
@@ -20,7 +22,7 @@ const CONTENT_TYPES: Record<string, string> = {
 type ParamsPromise = Promise<{ path?: string[] }>;
 
 const resolvePayloadBase = (): URL | null => {
-  const base = process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL;
+  const base = getPayloadBaseUrl();
   if (!base) return null;
 
   try {
