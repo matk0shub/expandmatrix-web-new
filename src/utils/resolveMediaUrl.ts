@@ -1,4 +1,29 @@
-import { getPayloadBaseUrlFromEnv } from './payloadServerUrl';
+import { getPayloadBaseUrlFromEnv, getSelfHosts } from './payloadServerUrl';
+
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+
+const stripOriginIfInternal = (value: string): string => {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (!url.pathname.startsWith('/media/')) {
+      return value;
+    }
+
+    if (LOCAL_HOSTS.has(host)) {
+      return url.pathname + url.search;
+    }
+
+    const selfHosts = getSelfHosts();
+    if (selfHosts.includes(host)) {
+      return url.pathname + url.search;
+    }
+
+    return value;
+  } catch {
+    return value;
+  }
+};
 
 const getPayloadServerUrl = (): string => {
   const configured = getPayloadBaseUrlFromEnv();
@@ -41,7 +66,7 @@ export const resolveMediaUrl = (input?: string | null): string => {
   }
 
   if (/^https?:\/\//i.test(trimmed)) {
-    return trimmed;
+    return stripOriginIfInternal(trimmed);
   }
 
   if (trimmed.startsWith('//')) {

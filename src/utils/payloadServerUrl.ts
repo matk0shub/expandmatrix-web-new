@@ -3,6 +3,16 @@ const candidateEnvUrls = [
   process.env.PAYLOAD_PUBLIC_SERVER_URL,
 ];
 
+const candidateSiteUrls = [
+  process.env.NEXT_PUBLIC_SITE_URL,
+  process.env.SITE_URL,
+  process.env.URL,
+  process.env.DEPLOY_URL,
+  process.env.DEPLOY_PRIME_URL,
+  process.env.DEPLOY_PREVIEW_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+];
+
 const normalizeBaseUrl = (value?: string | null): string | null => {
   if (!value || typeof value !== 'string') {
     return null;
@@ -43,3 +53,28 @@ export const getPayloadBaseUrlFromEnv = (): string => {
 };
 
 export const getPayloadBaseUrl = (): string => getPayloadBaseUrlFromEnv();
+
+let cachedSelfHosts: string[] | null = null;
+
+export const getSelfHosts = (): string[] => {
+  if (cachedSelfHosts) {
+    return cachedSelfHosts;
+  }
+
+  const hosts = new Set<string>();
+
+  for (const candidate of candidateSiteUrls) {
+    if (!candidate || typeof candidate !== 'string') continue;
+    try {
+      const { hostname } = new URL(candidate);
+      if (hostname) {
+        hosts.add(hostname.toLowerCase());
+      }
+    } catch {
+      // ignore invalid URLs
+    }
+  }
+
+  cachedSelfHosts = Array.from(hosts);
+  return cachedSelfHosts;
+};
