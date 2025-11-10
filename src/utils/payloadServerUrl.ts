@@ -63,6 +63,16 @@ export const getSelfHosts = (): string[] => {
 
   const hosts = new Set<string>();
 
+  for (const candidate of candidateEnvUrls) {
+    if (!candidate || typeof candidate !== 'string') continue;
+    try {
+      const { hostname } = new URL(candidate);
+      if (hostname) hosts.add(hostname.toLowerCase());
+    } catch {
+      // ignore invalid
+    }
+  }
+
   for (const candidate of candidateSiteUrls) {
     if (!candidate || typeof candidate !== 'string') continue;
     try {

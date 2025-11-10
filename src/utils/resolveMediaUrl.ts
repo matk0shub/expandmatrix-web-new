@@ -1,12 +1,13 @@
 import { getPayloadBaseUrlFromEnv, getSelfHosts } from './payloadServerUrl';
 
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+const INTERNAL_PREFIXES = ['/media/', '/api/media/file/'];
 
 const stripOriginIfInternal = (value: string): string => {
   try {
     const url = new URL(value);
     const host = url.hostname.toLowerCase();
-    if (!url.pathname.startsWith('/media/')) {
+    if (!INTERNAL_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) {
       return value;
     }
 
