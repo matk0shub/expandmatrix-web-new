@@ -126,7 +126,7 @@ Payload powers team members, references, FAQs, footer links, subscribers and glo
    ```  
    Adds the baseline team profiles (with localized bios, focus badges and social links). Upload avatars via the Payload Media library afterwards.
 5. **Create the first admin user** directly in the browser when prompted (first visit to `/admin`).
-6. **Uploads** land in `/media` by default. Optimised sizes (`thumbnail`, `card`, `tablet`) are generated automatically.
+6. **Uploads** land in `/media` by default. Optimised sizes (`thumbnail`, `card`, `tablet`) are generated automatically. Because Netlify builds the site straight from git (without a long-lived Payload file store), commit new uploads to the repository whenever you publish media in Payload (`git add media/...`). A `.gitkeep` is included so the directory stays versioned.
 7. **Consuming content**: the Next.js app currently reads from localized JSON. When you’re ready to fetch live payload content, use the generated `payload-types.ts` for end-to-end typing.
 
 > Need to update admin bundles? Use the Payload CLI, e.g. `npx payload generate:importmap` or `npx payload generate:types` (ensure your env vars are loaded first).

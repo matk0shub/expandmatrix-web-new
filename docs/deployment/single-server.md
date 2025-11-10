@@ -24,7 +24,7 @@ This document outlines a pragmatic way to host the Expand Matrix marketing site 
     └── node_modules/          # optional cache when deploying via rsync
 ```
 
-The `media/` directory should be shared between releases so uploads created through Payload remain available after deploys.
+The `media/` directory should be shared between releases so uploads created through Payload remain available after deploys. When deploying via Netlify/GitHub (no persistent disk), commit the relevant files under `media/` so each build ships the latest uploads.
 
 ## 3. Preparing Environment Variables
 

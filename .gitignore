@@ -45,7 +45,9 @@ yarn-error.log*
 next-env.d.ts
 
 # payload uploads
-/media/
+# Keep tracked so Netlify receives current assets. Ignore Node-style temp files inside.
+/media/**/*
+!/media/.gitkeep
 
 # backup directories
 /node_modules.*
