@@ -21,12 +21,16 @@ const CONTENT_TYPES: Record<string, string> = {
 
 type ParamsPromise = Promise<{ path?: string[] }>;
 
-const resolvePayloadBase = (): URL | null => {
+const resolvePayloadBase = (requestOrigin?: string): URL | null => {
   const base = getPayloadBaseUrl();
   if (!base) return null;
 
   try {
-    return new URL(base);
+    const parsed = new URL(base);
+    if (requestOrigin && parsed.origin === requestOrigin) {
+      return null;
+    }
+    return parsed;
   } catch {
     console.error('[media] Invalid payload base URL:', base);
     return null;
@@ -70,8 +74,11 @@ const loadLocalMedia = async (segments: string[]): Promise<NextResponse | null> 
   }
 };
 
-const proxyFromPayload = async (segments: string[]): Promise<NextResponse | null> => {
-  const base = resolvePayloadBase();
+const proxyFromPayload = async (
+  segments: string[],
+  requestOrigin?: string,
+): Promise<NextResponse | null> => {
+  const base = resolvePayloadBase(requestOrigin);
   if (!base) return null;
 
   const pathname = ['/media', ...segments].join('/');
@@ -109,11 +116,14 @@ const resolveSegments = async (paramsPromise: ParamsPromise): Promise<string[]> 
   return Array.isArray(path) ? path : [];
 };
 
-const handleRequest = async (segments: string[]): Promise<NextResponse | null> => {
+const handleRequest = async (
+  segments: string[],
+  requestOrigin?: string,
+): Promise<NextResponse | null> => {
   const local = await loadLocalMedia(segments);
   if (local) return local;
 
-  return proxyFromPayload(segments);
+  return proxyFromPayload(segments, requestOrigin);
 };
 
 const missingPathResponse = () =>
@@ -123,24 +133,24 @@ const notFoundResponse = () =>
   NextResponse.json({ error: 'Media not found' }, { status: 404 });
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: ParamsPromise },
 ) {
   const segments = await resolveSegments(context.params);
   if (!segments.length) return missingPathResponse();
 
-  const response = await handleRequest(segments);
+  const response = await handleRequest(segments, request.nextUrl?.origin);
   return response ?? notFoundResponse();
 }
 
 export async function HEAD(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: ParamsPromise },
 ) {
   const segments = await resolveSegments(context.params);
   if (!segments.length) return missingPathResponse();
 
-  const response = await handleRequest(segments);
+  const response = await handleRequest(segments, request.nextUrl?.origin);
   if (!response) return notFoundResponse();
 
   return new NextResponse(null, {

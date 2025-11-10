@@ -5,11 +5,6 @@ const getPayloadServerUrl = (): string => {
   if (configured) {
     return configured;
   }
-
-  if (typeof window !== 'undefined' && window.location?.origin) {
-    return window.location.origin;
-  }
-
   return '';
 };
 
