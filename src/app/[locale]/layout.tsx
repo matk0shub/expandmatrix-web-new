@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import '@/payload/prewarm';
-import { getPayloadBaseUrl } from '@/utils/resolveMediaUrl';
+import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 import { lato } from '../fonts';
 import "../globals.css";
 

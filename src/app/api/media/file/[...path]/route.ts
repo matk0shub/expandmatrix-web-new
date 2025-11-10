@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { getPayloadBaseUrl } from '@/utils/resolveMediaUrl';
+import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 
 export const runtime = 'nodejs';
 
