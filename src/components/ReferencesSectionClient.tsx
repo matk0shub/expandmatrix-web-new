@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, type CSSProperties } from 'react';
+import { useState, useEffect, useMemo, useCallback, type CSSProperties, type ReactElement } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { FallbackAnimatePresence } from '@/utils/motionFallback';
@@ -26,7 +26,10 @@ interface ReferencesSectionClientProps {
   copy: ReferencesSectionCopy;
 }
 
-export default function ReferencesSectionClient({ references, copy }: ReferencesSectionClientProps) {
+export default function ReferencesSectionClient({
+  references,
+  copy,
+}: ReferencesSectionClientProps): ReactElement | null {
   const framer = useFramerMotion('idle');
   const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const prefersReducedMotion = useReducedMotion();
