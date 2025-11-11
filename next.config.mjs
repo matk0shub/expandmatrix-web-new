@@ -88,19 +88,6 @@ if (payloadServerUrl) {
   }
 }
 
-const ensureFileExists = async (filePath, contents) => {
-  try {
-    await fs.promises.access(filePath, fs.constants.F_OK);
-  } catch {
-    try {
-      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-      await fs.promises.writeFile(filePath, contents, 'utf8');
-    } catch (error) {
-      console.warn(`[next.config] Failed to seed ${path.basename(filePath)}:`, error);
-    }
-  }
-};
-
 const ensureManifestsSync = () => {
   const serverDir = path.join(process.cwd(), '.next', 'server');
   const vendorDir = path.join(serverDir, 'vendor-chunks');
@@ -145,49 +132,6 @@ const ensureManifestsSync = () => {
 
 ensureManifestsSync();
 
-class EnsureNextServerArtifactsPlugin {
-  async ensureArtifacts() {
-    const serverDir = path.join(process.cwd(), '.next', 'server');
-    const vendorDir = path.join(serverDir, 'vendor-chunks');
-
-    try {
-      await fs.promises.mkdir(serverDir, { recursive: true });
-      await fs.promises.mkdir(vendorDir, { recursive: true });
-    } catch (error) {
-      console.warn('[next.config] Failed to create .next/server directories:', error);
-      return;
-    }
-
-    const fontManifest = { app: {}, pages: {} };
-    const middlewareManifest = { version: 3, sortedMiddleware: [], middleware: {}, functions: {} };
-
-    const stubs = [
-      { file: path.join(serverDir, 'pages-manifest.json'), contents: JSON.stringify({}) },
-      {
-        file: path.join(serverDir, 'functions-config-manifest.json'),
-        contents: JSON.stringify({ functions: {}, version: 1 }),
-      },
-      { file: path.join(serverDir, 'middleware-manifest.json'), contents: JSON.stringify(middlewareManifest) },
-      { file: path.join(serverDir, 'app-paths-manifest.json'), contents: JSON.stringify({}) },
-      { file: path.join(serverDir, 'app-path-routes-manifest.json'), contents: JSON.stringify({}) },
-      { file: path.join(serverDir, 'app-build-manifest.json'), contents: JSON.stringify({ pages: {} }) },
-      { file: path.join(serverDir, 'next-font-manifest.json'), contents: JSON.stringify(fontManifest) },
-      { file: path.join(serverDir, 'next-font-manifest.js'), contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};` },
-      { file: path.join(serverDir, 'dynamic-css-manifest.js'), contents: 'module.exports = { cssImports: [] };' },
-      { file: path.join(vendorDir, '@opentelemetry.js'), contents: 'export {};' },
-      { file: path.join(vendorDir, 'next.js'), contents: 'module.exports = {};' },
-    ];
-
-    await Promise.all(stubs.map((stub) => ensureFileExists(stub.file, stub.contents)));
-  }
-
-  apply(compiler) {
-    const ensure = () => this.ensureArtifacts();
-    compiler.hooks.beforeCompile.tapPromise('EnsureNextServerArtifactsPlugin', ensure);
-    compiler.hooks.afterEmit.tapPromise('EnsureNextServerArtifactsPlugin', ensure);
-  }
-}
-
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -215,11 +159,6 @@ const nextConfig = {
         os: false,
       },
     };
-
-    if (isServer) {
-      config.plugins = config.plugins ?? [];
-      config.plugins.push(new EnsureNextServerArtifactsPlugin());
-    }
 
     return config;
   },
