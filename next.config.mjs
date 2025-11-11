@@ -1,8 +1,6 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import createBundleAnalyzer from '@next/bundle-analyzer';
 import { withPayload } from '@payloadcms/next/withPayload';
-import fs from 'node:fs';
-import path from 'node:path';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 const withBundleAnalyzer = createBundleAnalyzer({
@@ -87,50 +85,6 @@ if (payloadServerUrl) {
     );
   }
 }
-
-const ensureManifestsSync = () => {
-  const serverDir = path.join(process.cwd(), '.next', 'server');
-  const vendorDir = path.join(serverDir, 'vendor-chunks');
-
-  try {
-    fs.mkdirSync(vendorDir, { recursive: true });
-  } catch (error) {
-    console.warn('[next.config] Failed to create .next/server directories:', error);
-    return;
-  }
-
-  const fontManifest = { app: {}, pages: {} };
-  const middlewareManifest = { version: 3, sortedMiddleware: [], middleware: {}, functions: {} };
-
-  const stubs = [
-    { file: path.join(serverDir, 'pages-manifest.json'), contents: JSON.stringify({}) },
-    {
-      file: path.join(serverDir, 'functions-config-manifest.json'),
-      contents: JSON.stringify({ functions: {}, version: 1 }),
-    },
-    { file: path.join(serverDir, 'middleware-manifest.json'), contents: JSON.stringify(middlewareManifest) },
-    { file: path.join(serverDir, 'app-paths-manifest.json'), contents: JSON.stringify({}) },
-    { file: path.join(serverDir, 'app-path-routes-manifest.json'), contents: JSON.stringify({}) },
-    { file: path.join(serverDir, 'app-build-manifest.json'), contents: JSON.stringify({ pages: {} }) },
-    { file: path.join(serverDir, 'next-font-manifest.json'), contents: JSON.stringify(fontManifest) },
-    { file: path.join(serverDir, 'next-font-manifest.js'), contents: `self.__NEXT_FONT_MANIFEST=${JSON.stringify(fontManifest)};` },
-    { file: path.join(serverDir, 'dynamic-css-manifest.js'), contents: 'module.exports = { cssImports: [] };' },
-    { file: path.join(vendorDir, '@opentelemetry.js'), contents: 'export {};' },
-    { file: path.join(vendorDir, 'next.js'), contents: 'module.exports = {};' },
-  ];
-
-  for (const stub of stubs) {
-    if (!fs.existsSync(stub.file)) {
-      try {
-        fs.writeFileSync(stub.file, stub.contents, 'utf8');
-      } catch (error) {
-        console.warn(`[next.config] Failed to seed ${path.basename(stub.file)}:`, error);
-      }
-    }
-  }
-};
-
-ensureManifestsSync();
 
 const nextConfig = {
   reactStrictMode: true,
