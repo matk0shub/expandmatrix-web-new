@@ -6,6 +6,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const { resolveAuditUrl } = require('./resolve-audit-url');
+
 const REPORTS_DIR = path.resolve(process.cwd(), 'docs/lighthouse/reports');
 const SUMMARY_PATH = path.resolve(process.cwd(), 'docs/lighthouse/summary.json');
 
@@ -15,15 +17,7 @@ const REPORT_MAP = {
   desktop: 'desktop.json',
 };
 
-const DEFAULT_URL = 'http://127.0.0.1:3000';
-const resolvedUrl = (() => {
-  const candidates = [
-    process.env.LIGHTHOUSE_URL,
-    process.env.DEPLOY_URL,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  ];
-  return candidates.find((value) => typeof value === 'string' && value.length > 0) || DEFAULT_URL;
-})();
+const resolvedUrl = resolveAuditUrl();
 
 const EMPTY_SCORE = {
   performance: null,

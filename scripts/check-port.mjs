@@ -2,8 +2,28 @@
 
 import net from 'node:net';
 
-const port = Number(process.argv[2] ?? '3000');
-const host = process.env.DEV_HOST ?? '0.0.0.0';
+const resolvePort = () => {
+  const candidates = [
+    process.env.PORT,
+    process.env.NEXT_PORT,
+    process.env.APP_PORT,
+    process.env.npm_config_port,
+    process.argv[2],
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const parsed = Number.parseInt(candidate, 10);
+    if (Number.isInteger(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return 3000;
+};
+
+const port = resolvePort();
+const host = process.env.DEV_HOST ?? process.env.HOST ?? '0.0.0.0';
 
 const server = net.createServer();
 
