@@ -5,7 +5,7 @@ import path from 'node:path'
 
 const projectRoot = process.cwd()
 const entryPoint = path.resolve(projectRoot, 'payload.config.ts')
-const outFile = path.resolve(projectRoot, '.payload', 'build', 'payload.config.js')
+const outFile = path.resolve(projectRoot, 'payload.config.dist.cjs')
 
 await fs.mkdir(path.dirname(outFile), { recursive: true })
 

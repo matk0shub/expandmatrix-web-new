@@ -49,4 +49,4 @@ next-env.d.ts
 /node_modules.*
 
 # payload build artifacts
-/.payload/
+/payload.config.dist.cjs

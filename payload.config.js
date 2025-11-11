@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const COMPILED_PATH = path.resolve(process.cwd(), '.payload', 'build', 'payload.config.js');
+const COMPILED_PATH = path.resolve(process.cwd(), 'payload.config.dist.cjs');
 
 if (fs.existsSync(COMPILED_PATH)) {
   const compiled = require(COMPILED_PATH);
