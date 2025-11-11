@@ -47,3 +47,6 @@ next-env.d.ts
 
 # backup directories
 /node_modules.*
+
+# payload build artifacts
+/.payload/
