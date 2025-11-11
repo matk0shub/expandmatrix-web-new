@@ -33,6 +33,8 @@ __export(payload_config_exports, {
   default: () => payload_config_default
 });
 module.exports = __toCommonJS(payload_config_exports);
+
+// src/payload/config.ts
 var import_path = __toESM(require("path"));
 var import_db_mongodb = require("@payloadcms/db-mongodb");
 var import_richtext_lexical = require("@payloadcms/richtext-lexical");
@@ -782,7 +784,7 @@ var assertNotLocalMongo = (uri) => {
 var resolvePayloadSecret = () => requireEnv("PAYLOAD_SECRET");
 var resolveDatabaseUri = () => assertNotLocalMongo(resolveEnvWithFallback("DATABASE_URI", "MONGODB_URI"));
 
-// payload.config.ts
+// src/payload/config.ts
 var defaultFromAddress = process.env.SMTP_FROM ?? (process.env.SMTP_USER ? `${process.env.SMTP_USER}` : "info@expandmatrix.com");
 var defaultFromName = process.env.SMTP_FROM_NAME ?? "Expand Matrix";
 var smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
@@ -804,7 +806,7 @@ var databaseUri = resolveDatabaseUri();
 var enableAutoLogin = process.env.PAYLOAD_AUTOLOGIN === "true";
 var autoLoginEmail = process.env.PAYLOAD_ADMIN_EMAIL;
 var autoLoginPassword = process.env.PAYLOAD_ADMIN_PASSWORD;
-var payload_config_default = (0, import_payload.buildConfig)({
+var payloadConfig = (0, import_payload.buildConfig)({
   secret,
   admin: {
     user: "users",
@@ -871,3 +873,7 @@ var payload_config_default = (0, import_payload.buildConfig)({
     url: databaseUri
   })
 });
+var config_default = payloadConfig;
+
+// payload.config.ts
+var payload_config_default = config_default;
