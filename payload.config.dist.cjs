@@ -42,6 +42,17 @@ var import_nodemailer = __toESM(require("nodemailer"));
 var import_payload = require("payload");
 var import_sharp = __toESM(require("sharp"));
 
+// src/utils/silenceExperimentalWarnings.ts
+if (!global.__silencedSQLiteWarning) {
+  process.on("warning", (warning) => {
+    if (warning?.name === "ExperimentalWarning" && /SQLite/i.test(warning?.message ?? "")) {
+      return;
+    }
+    console.warn(warning);
+  });
+  global.__silencedSQLiteWarning = true;
+}
+
 // src/payload/collections/FAQ.ts
 var FAQ = {
   slug: "faqs",
