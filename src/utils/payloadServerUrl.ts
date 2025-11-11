@@ -1,3 +1,5 @@
+const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1']);
+
 const candidateEnvUrls = [
   process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL,
   process.env.PAYLOAD_PUBLIC_SERVER_URL,
@@ -13,6 +15,18 @@ const candidateSiteUrls = [
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
 ];
 
+const isHostedEnv =
+  Boolean(process.env.VERCEL) ||
+  Boolean(process.env.NETLIFY) ||
+  Boolean(process.env.URL) ||
+  Boolean(process.env.SITE_URL) ||
+  Boolean(process.env.DEPLOY_URL) ||
+  Boolean(process.env.DEPLOY_PRIME_URL) ||
+  Boolean(process.env.DEPLOY_PREVIEW_URL) ||
+  Boolean(process.env.CI && process.env.CI !== 'false' && process.env.CI !== '0');
+
+const allowLocalHostnames = process.env.ALLOW_LOCAL_PAYLOAD_URL === 'true' || !isHostedEnv;
+
 const normalizeBaseUrl = (value?: string | null): string | null => {
   if (!value || typeof value !== 'string') {
     return null;
@@ -27,6 +41,9 @@ const normalizeBaseUrl = (value?: string | null): string | null => {
 
   try {
     const url = new URL(withProtocol);
+    if (!allowLocalHostnames && LOCAL_HOSTNAMES.has(url.hostname.toLowerCase())) {
+      return null;
+    }
     return url.origin;
   } catch {
     return null;
@@ -40,12 +57,25 @@ export const getPayloadBaseUrlFromEnv = (): string => {
     return cachedServerBaseUrl ?? '';
   }
 
-  for (const candidate of candidateEnvUrls) {
-    const normalized = normalizeBaseUrl(candidate);
-    if (normalized) {
-      cachedServerBaseUrl = normalized;
-      return normalized;
+  const resolveFromList = (candidates: Array<string | undefined>) => {
+    for (const candidate of candidates) {
+      const normalized = normalizeBaseUrl(candidate);
+      if (normalized) {
+        cachedServerBaseUrl = normalized;
+        return normalized;
+      }
     }
+    return null;
+  };
+
+  const envResolved = resolveFromList(candidateEnvUrls);
+  if (envResolved) {
+    return envResolved;
+  }
+
+  const siteResolved = resolveFromList(candidateSiteUrls);
+  if (siteResolved) {
+    return siteResolved;
   }
 
   cachedServerBaseUrl = null;
@@ -63,26 +93,25 @@ export const getSelfHosts = (): string[] => {
 
   const hosts = new Set<string>();
 
-  for (const candidate of candidateEnvUrls) {
-    if (!candidate || typeof candidate !== 'string') continue;
+  const addHost = (candidate?: string | null) => {
+    const normalized = normalizeBaseUrl(candidate);
+    if (!normalized) return;
     try {
-      const { hostname } = new URL(candidate);
-      if (hostname) hosts.add(hostname.toLowerCase());
-    } catch {
-      // ignore invalid
-    }
-  }
-
-  for (const candidate of candidateSiteUrls) {
-    if (!candidate || typeof candidate !== 'string') continue;
-    try {
-      const { hostname } = new URL(candidate);
+      const { hostname } = new URL(normalized);
       if (hostname) {
         hosts.add(hostname.toLowerCase());
       }
     } catch {
       // ignore invalid URLs
     }
+  };
+
+  for (const candidate of candidateEnvUrls) {
+    addHost(candidate);
+  }
+
+  for (const candidate of candidateSiteUrls) {
+    addHost(candidate);
   }
 
   cachedSelfHosts = Array.from(hosts);

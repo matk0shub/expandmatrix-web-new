@@ -1,5 +1,22 @@
 import { setTimeout as delay } from 'node:timers/promises'
 
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1'])
+const hostedEnvHints = [
+  process.env.VERCEL,
+  process.env.NETLIFY,
+  process.env.URL,
+  process.env.SITE_URL,
+  process.env.DEPLOY_URL,
+  process.env.DEPLOY_PRIME_URL,
+  process.env.DEPLOY_PREVIEW_URL,
+  process.env.NETLIFY_DEV_URL,
+]
+const prefersRemoteHosts =
+  process.env.PAYLOAD_HEALTH_ALLOW_LOCAL === 'true'
+    ? false
+    : hostedEnvHints.some((value) => typeof value === 'string' && value.length > 0) ||
+      Boolean(process.env.CI && process.env.CI !== 'false' && process.env.CI !== '0')
+
 const toPositiveInteger = (value) => {
   if (!value) return null
   const parsed = Number.parseInt(value, 10)
@@ -54,6 +71,8 @@ const ensureLeadingSlash = (value) => {
   return value.startsWith('/') ? value : `/${value}`
 }
 
+const isLocalHost = (url) => LOCAL_HOSTS.has(url.hostname.toLowerCase())
+
 const resolveBaseUrl = () => {
   const candidates = [
     process.env.PAYLOAD_HEALTH_BASE_URL,
@@ -73,6 +92,9 @@ const resolveBaseUrl = () => {
   for (const candidate of candidates) {
     const url = tryParseUrl(candidate)
     if (url) {
+      if (prefersRemoteHosts && isLocalHost(url)) {
+        continue
+      }
       return url.origin
     }
   }
@@ -86,7 +108,11 @@ const resolvedHealthPath = ensureLeadingSlash(process.env.PAYLOAD_HEALTH_PATH ??
 const resolveHealthUrl = () => {
   const explicit = tryParseUrl(process.env.PAYLOAD_HEALTH_URL)
   if (explicit) {
-    return explicit.toString()
+    if (prefersRemoteHosts && isLocalHost(explicit)) {
+      // fall through to auto-resolved base when running in hosted environments
+    } else {
+      return explicit.toString()
+    }
   }
 
   const baseUrl = resolveBaseUrl() ?? defaultBaseUrl

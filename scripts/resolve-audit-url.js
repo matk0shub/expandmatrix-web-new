@@ -7,6 +7,23 @@
  *  3. Localhost default using the configured PORT (falls back to 3000)
  */
 
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+const hostedEnvHints = [
+  process.env.VERCEL,
+  process.env.NETLIFY,
+  process.env.URL,
+  process.env.SITE_URL,
+  process.env.DEPLOY_URL,
+  process.env.DEPLOY_PRIME_URL,
+  process.env.DEPLOY_PREVIEW_URL,
+  process.env.NETLIFY_DEV_URL,
+];
+const prefersRemoteHosts =
+  process.env.ALLOW_LOCAL_LIGHTHOUSE_URL === 'true'
+    ? false
+    : hostedEnvHints.some((value) => typeof value === 'string' && value.length > 0) ||
+      Boolean(process.env.CI && process.env.CI !== 'false' && process.env.CI !== '0');
+
 const PORT_HINTS = [
   process.env.PORT,
   process.env.APP_PORT,
@@ -55,11 +72,16 @@ const tryParseUrl = (value) => {
   return null;
 };
 
+const isLocalHost = (url) => LOCAL_HOSTS.has(url.hostname.toLowerCase());
+
 function resolveAuditUrl() {
   const exactCandidates = [process.env.LIGHTHOUSE_URL];
   for (const candidate of exactCandidates) {
     const url = tryParseUrl(candidate);
     if (url) {
+      if (prefersRemoteHosts && isLocalHost(url)) {
+        continue;
+      }
       return url.toString();
     }
   }
@@ -81,6 +103,9 @@ function resolveAuditUrl() {
   for (const candidate of baseCandidates) {
     const url = tryParseUrl(candidate);
     if (url) {
+      if (prefersRemoteHosts && isLocalHost(url)) {
+        continue;
+      }
       return url.origin;
     }
   }
