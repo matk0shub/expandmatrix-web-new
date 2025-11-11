@@ -1,3 +1,4 @@
+import jitiFactory from 'jiti'
 import payload from 'payload'
 import path from 'path'
 import { pathToFileURL } from 'url'
@@ -16,6 +17,19 @@ let payloadInitPromise: Promise<void> | null = null
 
 const loadConfig = async (): Promise<PayloadConfigShape> => {
   if (!cachedConfig) {
+    const loader = jitiFactory(process.cwd())
+    try {
+      const mod = loader(path.resolve(process.cwd(), 'payload.config.ts'))
+      cachedConfig = (mod.default ?? mod) as PayloadConfigShape
+      return cachedConfig
+    } catch (error) {
+      serverLog(
+        `[payload] Failed to load payload.config.ts via jiti: ${
+          error instanceof Error ? error.message : String(error)
+        }. Falling back to payload.config.js.`,
+      )
+    }
+
     const configPath = path.resolve(process.cwd(), 'payload.config.js')
     const mod = await import(/* webpackIgnore: true */ pathToFileURL(configPath).href)
     const resolvedConfig = await Promise.resolve(mod.default ?? mod)
