@@ -383,7 +383,10 @@
     "faq": "FAQ",
     "contact": "KONTAKT",
     "menuToggleOpen": "Otevřít navigační menu",
-    "menuToggleClose": "Zavřít navigační menu"
+    "menuToggleClose": "Zavřít navigační menu",
+    "process": "Proces",
+    "team": "Tým",
+    "cta": "Začít spolupráci"
   },
   "footer": {
     "nav": "Hlavní navigace v patičce",

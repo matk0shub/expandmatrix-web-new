@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
+
+import CookieConsent from '@/components/CookieConsent';
+import Footer from '@/components/Footer';
+import SiteNavbar from '@/components/SiteNavbar';
 
 interface PageParams {
   locale: string;
@@ -20,11 +24,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PrivacyPolicyPage({
-  params,
-}: {
-  params: Promise<PageParams>;
-}) {
+export default async function PrivacyPolicyPage({ params }: { params: Promise<PageParams> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.privacy' });
   const sections = t.raw('sections') as Array<{
@@ -33,8 +33,10 @@ export default async function PrivacyPolicyPage({
   }>;
 
   return (
-    <main className="min-h-screen bg-black text-white py-24 md:py-32">
-      <div className="max-w-5xl mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 space-y-12">
+    <>
+      <SiteNavbar />
+      <main className="min-h-screen bg-black text-white py-24 md:py-32">
+        <div className="max-w-5xl mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 space-y-12">
         <div className="space-y-4">
           <Link
             href={`/${locale}`}
@@ -80,6 +82,9 @@ export default async function PrivacyPolicyPage({
           </div>
         </div>
       </div>
-    </main>
+      </main>
+      <Footer />
+      <CookieConsent />
+    </>
   );
 }

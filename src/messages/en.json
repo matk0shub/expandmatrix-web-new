@@ -383,7 +383,10 @@
     "faq": "FAQ",
     "contact": "CONTACT",
     "menuToggleOpen": "Open navigation menu",
-    "menuToggleClose": "Close navigation menu"
+    "menuToggleClose": "Close navigation menu",
+    "process": "Process",
+    "team": "Team",
+    "cta": "Start cooperation"
   },
   "footer": {
     "nav": "Footer primary navigation",
