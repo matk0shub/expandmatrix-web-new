@@ -1,16 +1,31 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import CookieConsent from 'react-cookie-consent';
 
+import { COOKIE_CONSENT_NAME, COOKIE_RESET_EVENT, clearCookieConsent } from '@/constants/cookies';
+
 export default function CookieConsentBanner() {
   const t = useTranslations('cookie');
+  const [resetCounter, setResetCounter] = useState(0);
+
+  useEffect(() => {
+    const handleReset = () => {
+      clearCookieConsent();
+      setResetCounter((prev) => prev + 1);
+    };
+
+    document.addEventListener(COOKIE_RESET_EVENT, handleReset);
+    return () => document.removeEventListener(COOKIE_RESET_EVENT, handleReset);
+  }, []);
 
   return (
     <CookieConsent
+      key={resetCounter}
       location="bottom"
       buttonText={t('buttonText')}
-      cookieName="expandmatrix-cookie-consent"
+      cookieName={COOKIE_CONSENT_NAME}
       style={{
         background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
         backdropFilter: 'blur(20px)',

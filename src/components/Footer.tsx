@@ -1,13 +1,22 @@
 'use client';
 
+import { useCallback } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { CalCTAButton } from './CalCTAButton';
+import { COOKIE_RESET_EVENT, clearCookieConsent } from '@/constants/cookies';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const locale = useLocale();
   const t = useTranslations('footer.cta');
+  const linksT = useTranslations('footer.links');
+
+  const handleCookieSettings = useCallback(() => {
+    clearCookieConsent();
+    document.dispatchEvent(new Event(COOKIE_RESET_EVENT));
+  }, []);
 
   return (
     <footer
@@ -103,23 +112,24 @@ export default function Footer() {
             className="flex flex-col items-center gap-4 md:flex-row md:gap-[var(--gap-x)]"
           >
             <Link
-              href="/terms"
+              href={`/${locale}/terms`}
               className="rounded-full px-3 py-2 text-[var(--brand-fg)] opacity-80 transition duration-200 hover:opacity-100 hover:underline hover:underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-accent)]"
             >
-              Obchodní podmínky
+              {linksT('terms')}
             </Link>
             <Link
-              href="/gdpr"
+              href={`/${locale}/privacy`}
               className="rounded-full px-3 py-2 text-[var(--brand-fg)] opacity-80 transition duration-200 hover:opacity-100 hover:underline hover:underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-accent)]"
             >
-              GDPR
+              {linksT('privacy')}
             </Link>
-            <Link
-              href="/cookies"
+            <button
+              type="button"
+              onClick={handleCookieSettings}
               className="rounded-full px-3 py-2 text-[var(--brand-fg)] opacity-80 transition duration-200 hover:opacity-100 hover:underline hover:underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-accent)]"
             >
-              Cookies
-            </Link>
+              {linksT('cookies')}
+            </button>
           </nav>
 
           <p className="text-sm opacity-70 md:text-right">

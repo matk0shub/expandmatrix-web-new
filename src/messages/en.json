@@ -239,53 +239,98 @@
               "label": "Customer verification speed",
               "value": "↓ from 48h to 6m"
             },
-      {
-        "label": "Service uptime with AI ops",
-        "value": "99.98%"
+            {
+              "label": "Service uptime with AI ops",
+              "value": "99.98%"
+            }
+          ]
+        },
+        "acTomes": {
+          "subtitle": "HVAC Servicing & Predictive Maintenance",
+          "metrics": [
+            {
+              "label": "Preventive jobs dispatched by AI",
+              "value": "320 / month"
+            },
+            {
+              "label": "Technician routing time saved",
+              "value": "68%"
+            },
+            {
+              "label": "Emergency callouts reduced",
+              "value": "-42%"
+            },
+            {
+              "label": "Quote turnaround time",
+              "value": "15 min"
+            },
+            {
+              "label": "Customer satisfaction",
+              "value": "4.9 / 5"
+            }
+          ]
+        },
+        "novaClinic": {
+          "subtitle": "Aesthetic & Dental Care Network",
+          "metrics": [
+            {
+              "label": "AI-handled patient inquiries",
+              "value": "4,500 / month"
+            },
+            {
+              "label": "Consult scheduling automation",
+              "value": "92%"
+            },
+            {
+              "label": "Treatment plan generation",
+              "value": "18 mins → 3 mins"
+            },
+            {
+              "label": "Cross-sell conversion lift",
+              "value": "+36%"
+            },
+            {
+              "label": "Clinician admin time saved",
+              "value": "55 hrs / week"
+            }
+          ]
+        },
+        "expandoLogistics": {
+          "subtitle": "Mid-mile Logistics & Warehousing",
+          "metrics": [
+            {
+              "label": "Loads planned by AI dispatchers",
+              "value": "1,240 / week"
+            },
+            {
+              "label": "Fuel spend optimization",
+              "value": "-18%"
+            },
+            {
+              "label": "Dock idle time reduction",
+              "value": "-41%"
+            },
+            {
+              "label": "Carrier onboarding automation",
+              "value": "80%"
+            },
+            {
+              "label": "On-time deliveries",
+              "value": "99.2%"
+            }
+          ]
+        }
       }
-    ]
-  },
-  "acTomes": {
-    "subtitle": "HVAC Servicing & Predictive Maintenance",
-    "metrics": [
-      { "label": "Preventive jobs dispatched by AI", "value": "320 / month" },
-      { "label": "Technician routing time saved", "value": "68%" },
-      { "label": "Emergency callouts reduced", "value": "-42%" },
-      { "label": "Quote turnaround time", "value": "15 min" },
-      { "label": "Customer satisfaction", "value": "4.9 / 5" }
-    ]
-  },
-  "novaClinic": {
-    "subtitle": "Aesthetic & Dental Care Network",
-    "metrics": [
-      { "label": "AI-handled patient inquiries", "value": "4,500 / month" },
-      { "label": "Consult scheduling automation", "value": "92%" },
-      { "label": "Treatment plan generation", "value": "18 mins → 3 mins" },
-      { "label": "Cross-sell conversion lift", "value": "+36%" },
-      { "label": "Clinician admin time saved", "value": "55 hrs / week" }
-    ]
-  },
-  "expandoLogistics": {
-    "subtitle": "Mid-mile Logistics & Warehousing",
-    "metrics": [
-      { "label": "Loads planned by AI dispatchers", "value": "1,240 / week" },
-      { "label": "Fuel spend optimization", "value": "-18%" },
-      { "label": "Dock idle time reduction", "value": "-41%" },
-      { "label": "Carrier onboarding automation", "value": "80%" },
-      { "label": "On-time deliveries", "value": "99.2%" }
-    ]
-  }
-}
     },
     "team": {
       "eyebrow": "meet our",
       "title": "Team",
       "description": "We are a multidisciplinary crew blending AI strategy, product design and flawless delivery. Every project gets an accountable lead, transparent communication and measurable impact.",
-    "availability": "Ready for new missions",
-    "loading": "Loading team…",
-    "error": "Unable to load team members. Please try again later.",
-    "empty": "Team members will appear here once they are published in the CMS.",
-    "members": {
+      "availability": "Ready for new missions",
+      "loading": "Loading team…",
+      "error": "Unable to load team members. Please try again later.",
+      "empty": "Team members will appear here once they are published in the CMS.",
+      "members": {
         "matejStipcak": {
           "name": "Matěj Štipčák",
           "role": "Founder & System Engineer",
@@ -369,7 +414,8 @@
       "faq": "FAQ",
       "contact": "Contact",
       "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
+      "terms": "Terms of Service",
+      "cookies": "Cookie settings"
     },
     "groups": {
       "navigate": "Navigate",
@@ -399,68 +445,112 @@
   },
   "legal": {
     "privacy": {
-      "metaTitle": "Privacy Policy",
-      "metaDescription": "Understand how ExpandMatrix handles personal data and cookies.",
+      "metaTitle": "Privacy Policy | Expand Matrix",
+      "metaDescription": "Learn how Expand Matrix s.r.o. collects, uses and protects personal data and cookies.",
       "title": "Privacy Policy",
-      "updated": "Last updated: January 1, 2025",
-      "intro": "This placeholder policy outlines how we expect to collect, use, and protect information shared with us. We'll replace it with the final legal copy before launch.",
+      "back": "Back to homepage",
+      "updated": "Last updated: 11 November 2025",
+      "intro": "This Privacy Policy explains how Expand Matrix s.r.o. (\"Expand Matrix\", \"we\", \"us\") handles personal data when you visit our website, contact us or use our services.",
       "sections": [
         {
-          "heading": "1. Information We Collect",
+          "heading": "1. Data controller",
           "body": [
-            "We collect the details you share when you request a demo, subscribe to updates, or otherwise get in touch with us.",
-            "Technical information such as browser type, device identifiers, and aggregate usage analytics may also be captured to keep the experience smooth."
+            "Expand Matrix s.r.o., registered in the Czech Republic and reachable at info@expandmatrix.com, is the controller of the personal data described below.",
+            "We are responsible for keeping your information secure and for ensuring that every processing step follows applicable EU and Czech legislation, especially the GDPR."
           ]
         },
         {
-          "heading": "2. How We Use Information",
+          "heading": "2. Personal data we process",
           "body": [
-            "We use collected information to respond to enquiries, deliver requested resources, and improve the performance of our products and services.",
-            "Occasionally we may send service updates or relevant announcements; you can opt out of these communications at any time."
+            "Identification and contact details that you share with us in forms, emails or during onboarding (name, company, role, phone number, billing details).",
+            "Service data such as project documentation, credentials or assets that you provide so we can deliver ordered services.",
+            "Technical data collected automatically through necessary cookies and analytics (device information, pages visited, interaction logs)."
           ]
         },
         {
-          "heading": "3. Your Choices",
+          "heading": "3. Purposes and legal bases",
           "body": [
-            "You can ask us to update or delete your data, and you can object to certain types of processing where applicable.",
-            "Additional tooling for managing preferences will be provided when the final legal text is published."
+            "Responding to your enquiries, preparing offers and performing contracts is based on Article 6(1)(b) GDPR.",
+            "Accounting, invoicing and records we must keep to comply with legal obligations rely on Article 6(1)(c) GDPR.",
+            "Improving services, protecting our systems and optional marketing communication are based on legitimate interest or your consent. You may object to legitimate interest processing at any time."
+          ]
+        },
+        {
+          "heading": "4. Cookies and analytics",
+          "body": [
+            "We use essential cookies that keep the website secure and usable. Analytical and marketing cookies are activated only after you provide consent via the cookie banner.",
+            "You can withdraw or change your consent at any time through the cookie settings link in the footer, which will re-open the banner and let you choose again."
+          ]
+        },
+        {
+          "heading": "5. Data sharing and retention",
+          "body": [
+            "Personal data is stored on EU-based infrastructure providers that we have vetted and bound by processing agreements. When required for support, we may use suppliers seated outside the EU, but only with appropriate safeguards in place.",
+            "We retain personal data only for the time necessary to deliver the service, meet legal requirements or resolve claims. Afterwards the data is securely deleted or anonymised."
+          ]
+        },
+        {
+          "heading": "6. Your rights",
+          "body": [
+            "You have the right to access, correct or delete your data, to request restriction or portability and to object to processing based on legitimate interest.",
+            "If you believe your rights have been infringed, you may lodge a complaint with the Czech Data Protection Authority, but we encourage you to contact us first so we can resolve the issue quickly."
           ]
         }
       ],
-      "contact": "If you have questions about this policy, email privacy@expandmatrix.com and we’ll be happy to help.",
-      "back": "Back to homepage"
+      "contact": "Questions regarding privacy can be sent to Expand Matrix s.r.o., info@expandmatrix.com."
     },
     "terms": {
-      "metaTitle": "Terms of Service",
-      "metaDescription": "Preview the placeholder terms governing the use of ExpandMatrix services.",
+      "metaTitle": "Terms of Service | Expand Matrix",
+      "metaDescription": "Contractual principles governing cooperation with Expand Matrix s.r.o.",
       "title": "Terms of Service",
-      "updated": "Last updated: January 1, 2025",
-      "intro": "These temporary terms describe how we expect our collaboration to work. They will be replaced with the final, legally reviewed document before the site goes live.",
+      "back": "Back to homepage",
+      "updated": "Last updated: 11 November 2025",
+      "intro": "These Terms describe the basic rules that apply when you order consulting, AI development or digital services from Expand Matrix s.r.o.",
       "sections": [
         {
-          "heading": "1. Using Our Services",
+          "heading": "1. Scope of services",
           "body": [
-            "Our services help teams design, deploy, and manage AI-driven products. Access is provided for legitimate business activities and may not be misused.",
-            "We may update functionality from time to time; staying informed about updates is part of using the platform responsibly."
+            "We design, build and manage AI-driven and digital solutions according to the agreed proposal or statement of work.",
+            "Any changes to the agreed scope must be confirmed in writing, including the impact on price and timelines."
           ]
         },
         {
-          "heading": "2. Intellectual Property",
+          "heading": "2. Cooperation and responsibilities",
           "body": [
-            "Unless stated otherwise, ExpandMatrix retains ownership of platform assets, designs, and proprietary tooling.",
-            "Clients retain ownership of their own data and may grant us limited rights to process it for delivery of agreed services."
+            "You provide accurate inputs, timely feedback and the access necessary to deliver the project.",
+            "We keep you informed about progress, appoint a responsible contact person and handle your data with due care."
           ]
         },
         {
-          "heading": "3. Liability and Support",
+          "heading": "3. Deliverables and approvals",
           "body": [
-            "We work hard to deliver reliable solutions, but the service is provided as-is while in preview. We are not liable for indirect losses arising from experimental features.",
-            "Support requests can be sent to support@expandmatrix.com and we will respond within a reasonable timeframe."
+            "Interim deliverables are shared for review. Unless you provide comments within the agreed review window, the deliverable is considered approved.",
+            "After acceptance we may use anonymised references for portfolio purposes unless you explicitly forbid it."
+          ]
+        },
+        {
+          "heading": "4. Fees and payment",
+          "body": [
+            "Prices are stated without VAT unless specified otherwise. Invoices are due within the period stated on the invoice, typically 14 days.",
+            "Late payments may be subject to statutory interest and we may pause work until outstanding invoices are settled."
+          ]
+        },
+        {
+          "heading": "5. Confidentiality and intellectual property",
+          "body": [
+            "Both parties treat all non-public information as confidential and use it only for fulfilling the contract.",
+            "Unless agreed otherwise, the client obtains a licence to use the deliverables for their internal needs after full payment; Expand Matrix retains underlying know-how and tools."
+          ]
+        },
+        {
+          "heading": "6. Liability and governing law",
+          "body": [
+            "Each party is liable for direct damages caused by proven breach, limited to the total amount paid for the relevant project. We are not liable for indirect or consequential loss.",
+            "The Terms are governed by Czech law and any disputes will be resolved amicably or before the courts in the Czech Republic."
           ]
         }
       ],
-      "contact": "Questions about these terms? Email legal@expandmatrix.com so we can clarify anything you need.",
-      "back": "Back to homepage"
+      "contact": "Questions about these Terms? Contact us at info@expandmatrix.com."
     }
   },
   "cookie": {

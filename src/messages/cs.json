@@ -239,40 +239,85 @@
               "label": "Rychlost ověření klienta",
               "value": "↓ z 48 h na 6 min"
             },
-        {
-          "label": "Dostupnost služeb díky AI ops",
-          "value": "99,98 %"
-        }
-      ]
-    },
+            {
+              "label": "Dostupnost služeb díky AI ops",
+              "value": "99,98 %"
+            }
+          ]
+        },
         "acTomes": {
           "subtitle": "Servis klimatizací a prediktivní údržba",
           "metrics": [
-            { "label": "Preventivních zásahů řízených AI", "value": "320 / měsíc" },
-            { "label": "Ušetřený čas plánování techniků", "value": "68 %" },
-            { "label": "Pokles pohotovostních výjezdů", "value": "-42 %" },
-            { "label": "Rychlost tvorby cenové nabídky", "value": "15 minut" },
-            { "label": "Spokojenost zákazníků", "value": "4,9 / 5" }
+            {
+              "label": "Preventivních zásahů řízených AI",
+              "value": "320 / měsíc"
+            },
+            {
+              "label": "Ušetřený čas plánování techniků",
+              "value": "68 %"
+            },
+            {
+              "label": "Pokles pohotovostních výjezdů",
+              "value": "-42 %"
+            },
+            {
+              "label": "Rychlost tvorby cenové nabídky",
+              "value": "15 minut"
+            },
+            {
+              "label": "Spokojenost zákazníků",
+              "value": "4,9 / 5"
+            }
           ]
         },
         "novaClinic": {
           "subtitle": "Síť estetických a stomatologických klinik",
           "metrics": [
-            { "label": "Dotazů vyřešených AI recepcí", "value": "4 500 / měsíc" },
-            { "label": "Automatizace objednání konzultací", "value": "92 %" },
-            { "label": "Tvorba léčebného plánu", "value": "18 min → 3 min" },
-            { "label": "Nárůst cross-sellu", "value": "+36 %" },
-            { "label": "Čas ušetřený lékařům na administrativě", "value": "55 h / týden" }
+            {
+              "label": "Dotazů vyřešených AI recepcí",
+              "value": "4 500 / měsíc"
+            },
+            {
+              "label": "Automatizace objednání konzultací",
+              "value": "92 %"
+            },
+            {
+              "label": "Tvorba léčebného plánu",
+              "value": "18 min → 3 min"
+            },
+            {
+              "label": "Nárůst cross-sellu",
+              "value": "+36 %"
+            },
+            {
+              "label": "Čas ušetřený lékařům na administrativě",
+              "value": "55 h / týden"
+            }
           ]
         },
         "expandoLogistics": {
           "subtitle": "Mid-mile logistika a skladové operace",
           "metrics": [
-            { "label": "Nakládek plánovaných AI dispečerem", "value": "1 240 / týden" },
-            { "label": "Optimalizace spotřeby paliva", "value": "-18 %" },
-            { "label": "Zkrácení prostojů na rampě", "value": "-41 %" },
-            { "label": "Automatizace onboardingů dopravců", "value": "80 %" },
-            { "label": "Včasné doručení", "value": "99,2 %" }
+            {
+              "label": "Nakládek plánovaných AI dispečerem",
+              "value": "1 240 / týden"
+            },
+            {
+              "label": "Optimalizace spotřeby paliva",
+              "value": "-18 %"
+            },
+            {
+              "label": "Zkrácení prostojů na rampě",
+              "value": "-41 %"
+            },
+            {
+              "label": "Automatizace onboardingů dopravců",
+              "value": "80 %"
+            },
+            {
+              "label": "Včasné doručení",
+              "value": "99,2 %"
+            }
           ]
         }
       }
@@ -281,11 +326,11 @@
       "eyebrow": "poznejte náš",
       "title": "Tým",
       "description": "Jsme multidisciplinární parta, která kombinuje AI směřování, produktový design a bezchybnou exekuci. Každý projekt má svého lídra, otevřenou komunikaci a jasně měřitelný přínos.",
-    "availability": "Připravení na nové výzvy",
-    "loading": "Načítám tým…",
-    "error": "Tým se nepodařilo načíst. Zkuste to prosím znovu později.",
-    "empty": "Jakmile budou členové týmu publikováni v CMS, zobrazí se zde.",
-    "members": {
+      "availability": "Připravení na nové výzvy",
+      "loading": "Načítám tým…",
+      "error": "Tým se nepodařilo načíst. Zkuste to prosím znovu později.",
+      "empty": "Jakmile budou členové týmu publikováni v CMS, zobrazí se zde.",
+      "members": {
         "matejStipcak": {
           "name": "Matěj Štipčák",
           "role": "Jednatel & Systémový inženýr",
@@ -369,7 +414,8 @@
       "faq": "FAQ",
       "contact": "Kontakt",
       "privacy": "Zásady ochrany osobních údajů",
-      "terms": "Obchodní podmínky"
+      "terms": "Obchodní podmínky",
+      "cookies": "Nastavení cookies"
     },
     "groups": {
       "navigate": "Navigace",
@@ -399,68 +445,112 @@
   },
   "legal": {
     "privacy": {
-      "metaTitle": "Zásady ochrany osobních údajů",
-      "metaDescription": "Získáte přehled o tom, jak ExpandMatrix pracuje s osobními údaji.",
+      "metaTitle": "Zásady ochrany osobních údajů | Expand Matrix",
+      "metaDescription": "Zjistěte, jak Expand Matrix s.r.o. zpracovává osobní údaje a používá cookies.",
       "title": "Zásady ochrany osobních údajů",
-      "updated": "Poslední aktualizace: 1. ledna 2025",
-      "intro": "Tento dočasný dokument popisuje, jak můžeme shromažďovat, používat a chránit informace, které nám předáte. Před ostrým spuštěním jej nahradíme finální právní verzí.",
+      "back": "Zpět na hlavní stránku",
+      "updated": "Poslední aktualizace: 11. listopadu 2025",
+      "intro": "Tyto zásady vysvětlují, jak Expand Matrix s.r.o. (\"Expand Matrix\", \"my\", \"nás\") nakládá s osobními údaji při návštěvě webu, kontaktu nebo využití našich služeb.",
       "sections": [
         {
-          "heading": "1. Jaké údaje můžeme shromažďovat",
+          "heading": "1. Správce údajů",
           "body": [
-            "Získáváme údaje, které nám poskytnete při poptávce, registraci k odběru novinek nebo jiné komunikaci.",
-            "Můžeme zaznamenávat i technické informace jako typ prohlížeče, identifikátory zařízení nebo agregovanou analytiku provozu, abychom službu vyladili."
+            "Správcem osobních údajů je Expand Matrix s.r.o., registrovaná v České republice, e-mail info@expandmatrix.com.",
+            "Zodpovídáme za bezpečnost údajů a za to, že veškeré zpracování probíhá v souladu s GDPR a českou legislativou."
           ]
         },
         {
-          "heading": "2. K čemu údaje využíváme",
+          "heading": "2. Jaké údaje zpracováváme",
           "body": [
-            "Data používáme ke zodpovězení dotazů, doručení požadovaných materiálů a k vylepšování našich produktů a služeb.",
-            "Občas můžeme poslat novinku nebo informaci o službě; z odběru se lze kdykoliv odhlásit."
+            "Identifikační a kontaktní údaje, které nám poskytnete ve formulářích, e-mailech nebo během spolupráce (jméno, firma, role, telefon, fakturační údaje).",
+            "Projektová data a podklady nutné k dodání služeb, například přístupy do systémů nebo obsah, který máme zpracovat.",
+            "Technické údaje získané prostřednictvím nezbytných cookies a analytiky (informace o zařízení, návštěvnosti a interakcích)."
           ]
         },
         {
-          "heading": "3. Vaše možnosti",
+          "heading": "3. Účely a právní základy",
           "body": [
-            "Můžete nás požádat o úpravu či smazání svých údajů a vyjádřit nesouhlas s některými způsoby zpracování, pokud to právo umožňuje.",
-            "Další nástroje pro správu preferencí přidáme spolu s finální právní verzí dokumentu."
+            "Reakce na poptávky, příprava nabídek a plnění smlouvy vychází z čl. 6 odst. 1 písm. b) GDPR.",
+            "Účetní evidence a archivace nutná k plnění právních povinností vychází z čl. 6 odst. 1 písm. c) GDPR.",
+            "Vylepšování služeb, ochrana systému a dobrovolná marketingová komunikace jsou založeny na oprávněném zájmu nebo na vašem souhlasu. Proti zpracování z oprávněného zájmu můžete kdykoli vznést námitku."
+          ]
+        },
+        {
+          "heading": "4. Cookies a analytika",
+          "body": [
+            "Používáme pouze nezbytné cookies a analytické či marketingové cookies aktivujeme až po udělení souhlasu prostřednictvím cookie lišty.",
+            "Souhlas můžete kdykoli odvolat pomocí odkazu na nastavení cookies v patičce – lišta se znovu zobrazí a můžete volbu upravit."
+          ]
+        },
+        {
+          "heading": "5. Sdílení a uložení údajů",
+          "body": [
+            "Údaje uchováváme u ověřených poskytovatelů infrastruktury v EU nebo s odpovídajícími zárukami. Pokud je nutné zapojit dodavatele mimo EU, vždy používáme vhodné smluvní nástroje.",
+            "Osobní údaje uchováváme jen po dobu nezbytnou k poskytnutí služby, splnění právních povinností nebo vyřešení nároků, poté je bezpečně smažeme nebo anonymizujeme."
+          ]
+        },
+        {
+          "heading": "6. Vaše práva",
+          "body": [
+            "Máte právo na přístup, opravu či výmaz údajů, na omezení zpracování, přenositelnost a právo vznést námitku proti zpracování z oprávněného zájmu.",
+            "V případě pochybností se na nás obraťte na info@expandmatrix.com; také můžete podat stížnost u Úřadu pro ochranu osobních údajů."
           ]
         }
       ],
-      "contact": "Dotazy k této politice? Napište na privacy@expandmatrix.com a ozveme se zpět.",
-      "back": "Zpět na úvod"
+      "contact": "Dotazy ke zpracování osobních údajů směřujte na Expand Matrix s.r.o., info@expandmatrix.com."
     },
     "terms": {
-      "metaTitle": "Obchodní podmínky",
-      "metaDescription": "Dočasné podmínky popisují, jak má spolupráce s ExpandMatrix fungovat.",
+      "metaTitle": "Obchodní podmínky | Expand Matrix",
+      "metaDescription": "Rámcové podmínky spolupráce se společností Expand Matrix s.r.o.",
       "title": "Obchodní podmínky",
-      "updated": "Poslední aktualizace: 1. ledna 2025",
-      "intro": "Tyto provizorní podmínky naznačují rámcová pravidla spolupráce. Před uvedením webu je nahradíme finálním právním textem.",
+      "back": "Zpět na hlavní stránku",
+      "updated": "Poslední aktualizace: 11. listopadu 2025",
+      "intro": "Tyto podmínky upravují základní pravidla při objednávce konzultací, vývoje AI a digitálních služeb u Expand Matrix s.r.o.",
       "sections": [
         {
-          "heading": "1. Používání našich služeb",
+          "heading": "1. Rozsah služeb",
           "body": [
-            "Naše služby pomáhají firmám navrhovat a nasazovat řešení s umělou inteligencí. Přístup je určen pro legitimní obchodní účely.",
-            "Funkce se mohou průběžně měnit; součástí zodpovědného používání je sledovat aktualizace a doporučení."
+            "Služby poskytujeme podle schválené nabídky nebo statement of work. Konkrétní rozsah, výstupy a termíny jsou popsány v těchto dokumentech.",
+            "Jakékoli změny rozsahu musí být odsouhlaseny písemně včetně dopadu na cenu a harmonogram."
           ]
         },
         {
-          "heading": "2. Duševní vlastnictví",
+          "heading": "2. Spolupráce a odpovědnosti",
           "body": [
-            "Pokud není uvedeno jinak, ExpandMatrix vlastní platformu, designy i interní nástroje.",
-            "Klienti si ponechávají vlastnictví svých dat a udělují nám pouze nezbytná práva k jejich zpracování během poskytování služeb."
+            "Klient poskytuje pravdivé podklady, včasné připomínky a nezbytné přístupy. Bez této součinnosti se termíny automaticky prodlužují.",
+            "Expand Matrix průběžně informuje o stavu prací, jmenuje kontaktní osobu a zachází s daty klienta s náležitou péčí."
           ]
         },
         {
-          "heading": "3. Odpovědnost a podpora",
+          "heading": "3. Výstupy a jejich schválení",
           "body": [
-            "Děláme maximum pro stabilní provoz, ale v režimu náhledu poskytujeme služby bez záruk za následné škody.",
-            "S dotazy na podporu se ozvěte na support@expandmatrix.com, odpovíme v rozumném čase."
+            "Průběžné výstupy sdílíme k připomínkám. Pokud klient do sjednané lhůty nepředá komentáře, považuje se výstup za schválený.",
+            "Po schválení můžeme anonymizované reference využít v našem portfoliu, pokud klient nepožádá jinak."
+          ]
+        },
+        {
+          "heading": "4. Odměna a platby",
+          "body": [
+            "Ceny jsou uvedeny bez DPH, není-li stanoveno jinak. Faktury jsou splatné ve lhůtě uvedené na faktuře, obvykle 14 dní.",
+            "Při prodlení můžeme účtovat zákonný úrok a pozastavit práce do uhrazení dlužných částek."
+          ]
+        },
+        {
+          "heading": "5. Důvěrnost a duševní vlastnictví",
+          "body": [
+            "Obě strany zachovávají mlčenlivost o všech neveřejných informacích a použijí je pouze k plnění smlouvy.",
+            "Není-li dohodnuto jinak, klient získává po zaplacení licenci k internímu užití výstupů; Expand Matrix si ponechává know-how a podpůrné nástroje."
+          ]
+        },
+        {
+          "heading": "6. Odpovědnost a rozhodné právo",
+          "body": [
+            "Každá strana odpovídá za skutečnou škodu způsobenou prokazatelným porušením, maximálně však do výše zaplacené ceny za daný projekt. Neneseme odpovědnost za následné nebo ušlé škody.",
+            "Podmínky se řídí českým právem a případné spory se řeší před soudy České republiky; přednostně se pokusíme o smírné řešení."
           ]
         }
       ],
-      "contact": "Máte k podmínkám dotaz? Napište na legal@expandmatrix.com a vše upřesníme.",
-      "back": "Zpět na úvod"
+      "contact": "Dotazy k těmto podmínkám směřujte na info@expandmatrix.com."
     }
   },
   "cookie": {
