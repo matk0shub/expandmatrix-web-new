@@ -106,7 +106,7 @@ export default function SiteNavbar({
   };
 
   const logoWrapperClass = 'flex items-center gap-3 shrink-0';
-  const homeHref = `/${locale}`;
+  const homeHref = '/';
 
   const logoContent = (
     <>
