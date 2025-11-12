@@ -997,7 +997,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        style={{ touchAction: 'none', userSelect: 'none' }}
+        style={{ touchAction: 'pan-y pinch-zoom', userSelect: 'none' }}
       >
         {ballConfigs.slice(0, layout.ballCount).map((ball) => (
           <div
