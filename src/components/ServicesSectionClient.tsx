@@ -49,6 +49,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
 
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
   const [activeServiceKey, setActiveServiceKey] = useState<string | null>(null);
+  const [supportsHover, setSupportsHover] = useState(true);
   
   useEffect(() => {
     setAnimationValues(
@@ -58,6 +59,37 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
       }))
     );
   }, [services.length]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const update = (event: MediaQueryList | MediaQueryListEvent) => {
+      setSupportsHover('matches' in event ? event.matches : mediaQuery.matches);
+    };
+
+    update(mediaQuery);
+
+    const listener = (event: MediaQueryListEvent) => update(event);
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', listener);
+    } else {
+      mediaQuery.addListener(listener);
+    }
+
+    return () => {
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', listener);
+      } else {
+        mediaQuery.removeListener(listener);
+      }
+    };
+  }, []);
+
+  const shouldUseHoverInteractions = supportsHover && !prefersReducedMotion;
 
   return (
     <section 
@@ -216,10 +248,13 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                   <h3
                     className={clsx(
                       'heading-secondary m-0 max-w-[90%] text-center text-lg sm:text-xl md:text-2xl leading-tight sm:leading-snug md:leading-snug transition-opacity duration-500',
-                      prefersReducedMotion
-                        ? 'group-hover:opacity-0'
-                        : 'opacity-100 group-hover:opacity-0',
-                      isActive && 'opacity-0'
+                      shouldUseHoverInteractions
+                        ? prefersReducedMotion
+                          ? 'group-hover:opacity-0'
+                          : 'opacity-100 group-hover:opacity-0'
+                        : isActive
+                          ? 'opacity-0'
+                          : 'opacity-100'
                     )}
                     aria-hidden
                   >
@@ -231,10 +266,13 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                     id={descriptionId}
                     className={clsx(
                       'm-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500',
-                      prefersReducedMotion
-                        ? 'opacity-0 group-hover:opacity-100'
-                        : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0',
-                      isActive && 'opacity-100 translate-y-0'
+                      shouldUseHoverInteractions
+                        ? prefersReducedMotion
+                          ? 'opacity-0 group-hover:opacity-100'
+                          : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'
+                        : isActive
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-2'
                     )}
                   >
                     {service.description}
