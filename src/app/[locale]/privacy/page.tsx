@@ -34,7 +34,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<Pa
 
   return (
     <>
-      <SiteNavbar />
+      <SiteNavbar mode="link" variant="page" localeOverride={locale} />
       <main className="min-h-screen bg-black text-white py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 space-y-12">
         <div className="space-y-4">

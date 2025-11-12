@@ -8,6 +8,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { CalCTAButton } from './CalCTAButton';
 import LocaleSwitcher from './LocaleSwitcher';
 
+type Mode = 'scroll' | 'link';
+type Variant = 'landing' | 'page';
+
 const NAV_SECTIONS: Array<{ key: string; id: string }> = [
   { key: 'about', id: 'about' },
   { key: 'services', id: 'services' },
@@ -17,20 +20,88 @@ const NAV_SECTIONS: Array<{ key: string; id: string }> = [
   { key: 'faq', id: 'faq' },
 ];
 
-export default function SiteNavbar() {
-  const locale = useLocale();
-  const tNav = useTranslations('navigation');
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface SiteNavbarProps {
+  mode?: Mode;
+  variant?: Variant;
+  onNavigate?: (section: string) => void;
+  localeOverride?: string;
+}
 
-  const sectionHref = (id: string) => `/${locale}/#${id}`;
+export default function SiteNavbar({
+  mode = 'scroll',
+  variant = 'landing',
+  onNavigate,
+  localeOverride,
+}: SiteNavbarProps) {
+  const currentLocale = useLocale();
+  const locale = localeOverride ?? currentLocale;
+  const tNav = useTranslations('navigation');
+  const [open, setOpen] = useState(false);
+
+  const handleNavigate = (id: string) => {
+    setOpen(false);
+    if (mode === 'scroll') {
+      onNavigate?.(id);
+    }
+  };
+
+  const headerClass =
+    variant === 'landing'
+      ? 'absolute top-0 left-0 right-0 z-50 bg-transparent'
+      : 'sticky top-0 z-40 border-b border-white/10 bg-black/80 backdrop-blur-2xl';
+
+  const containerPadding = 'px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24';
+
+  const renderNavItem = (sectionId: string, labelKey: string) => {
+    if (mode === 'link') {
+      return (
+        <Link
+          key={sectionId}
+          href={`/${locale}/#${sectionId}`}
+          className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:text-white"
+          onClick={() => setOpen(false)}
+        >
+          {tNav(labelKey)}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        key={sectionId}
+        type="button"
+        onClick={() => handleNavigate(sectionId)}
+        className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:text-white"
+      >
+        {tNav(labelKey)}
+      </button>
+    );
+  };
+
+  const renderCta = () => {
+    const label = tNav.has('cta') ? tNav('cta') : tNav('contact');
+    if (mode === 'link') {
+      return (
+        <CalCTAButton href={`/${locale}#contact`} size="sm" onClick={() => setOpen(false)}>
+          {label}
+        </CalCTAButton>
+      );
+    }
+
+    return (
+      <CalCTAButton size="sm" onClick={() => handleNavigate('contact')}>
+        {label}
+      </CalCTAButton>
+    );
+  };
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/70 backdrop-blur-2xl">
-        <div className="mx-auto flex w-full max-w-[1780px] items-center justify-between px-6 py-4 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+      <header className={headerClass}>
+        <div className={`mx-auto flex w-full max-w-[1780px] items-center justify-between ${containerPadding} py-6`}>
           <Link
             href={`/${locale}`}
-            className="flex items-center gap-3 text-white transition hover:opacity-80"
+            className="flex items-center gap-3 text-white transition duration-200 hover:opacity-80"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5">
               <svg viewBox="0 0 1041.587182 1000" className="h-6 w-6 text-[#00d76b]" aria-hidden="true">
@@ -44,53 +115,46 @@ export default function SiteNavbar() {
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
-            {NAV_SECTIONS.map((section) => (
-              <Link
-                key={section.id}
-                href={sectionHref(section.id)}
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70 transition hover:text-white"
-              >
-                {tNav(section.key)}
-              </Link>
-            ))}
+            {NAV_SECTIONS.map((section) => renderNavItem(section.id, section.key))}
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
             <LocaleSwitcher />
-            <CalCTAButton href={`/${locale}#contact`} size="sm">
-              {tNav('cta')}
-            </CalCTAButton>
+            {renderCta()}
           </div>
 
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 p-2 text-white lg:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-label={open ? tNav('menuToggleClose') : tNav('menuToggleOpen')}
+            aria-expanded={open}
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </header>
 
-      {mobileOpen && (
+      {open && (
         <div className="border-b border-white/10 bg-black/90 py-6 lg:hidden">
-          <div className="mx-auto flex w-full max-w-[1780px] flex-col gap-4 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+          <div className={`mx-auto flex w-full max-w-[1780px] flex-col gap-4 ${containerPadding}`}>
             {NAV_SECTIONS.map((section) => (
-              <Link
+              <button
                 key={section.id}
-                href={sectionHref(section.id)}
-                onClick={() => setMobileOpen(false)}
-                className="text-base font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:text-white"
+                type="button"
+                onClick={() =>
+                  mode === 'link'
+                    ? (window.location.href = `/${locale}/#${section.id}`)
+                    : handleNavigate(section.id)
+                }
+                className="text-base font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:text-white text-left"
               >
                 {tNav(section.key)}
-              </Link>
+              </button>
             ))}
             <div className="flex items-center justify-between pt-4">
               <LocaleSwitcher />
-              <CalCTAButton href={`/${locale}#contact`} size="sm" onClick={() => setMobileOpen(false)}>
-                {tNav('cta')}
-              </CalCTAButton>
+              {renderCta()}
             </div>
           </div>
         </div>
