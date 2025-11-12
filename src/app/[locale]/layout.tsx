@@ -4,6 +4,7 @@ import '@/payload/prewarm';
 import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 import { lato } from '../fonts';
 import "../globals.css";
+import ScrollRestoration from '@/components/ScrollRestoration';
 
 const BASE_URL = 'https://expandmatrix.com';
 const LOGO_URL = `${BASE_URL}/logo.png`;
@@ -118,6 +119,7 @@ export default async function LocaleLayout({
         />
         <NextIntlClientProvider messages={messages}>
           {children}
+          <ScrollRestoration />
         </NextIntlClientProvider>
       </body>
     </html>
