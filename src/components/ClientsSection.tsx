@@ -66,6 +66,7 @@ export default function ClientsSection({ partners = [] }: ClientsSectionProps) {
 const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   const ballSizeRef = useRef(160);
   const physicsConfigRef = useRef({ maxVx: 900, maxVy: 1200 });
+  const lastViewportSizeRef = useRef({ width: 0, height: 0 });
 
   const [isInViewport, setIsInViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -85,6 +86,46 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     sectionMinHeight: 720,
     ballCount: Math.max(partnerCount, 1),
   }));
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(pointer: coarse)');
+    const update = (event: MediaQueryList | MediaQueryListEvent) => {
+      setIsCoarsePointer('matches' in event ? event.matches : mediaQuery.matches);
+    };
+
+    update(mediaQuery);
+
+    const listener = (event: MediaQueryListEvent) => update(event);
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', listener);
+    } else {
+      mediaQuery.addListener(listener);
+    }
+
+    return () => {
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', listener);
+      } else {
+        mediaQuery.removeListener(listener);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    lastViewportSizeRef.current = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+  }, []);
   const clampValue = useCallback(
     (value: number, min: number, max: number) => Math.min(Math.max(value, min), max),
     []
@@ -882,6 +923,26 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     }
 
     const handleResize = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const { width: lastWidth, height: lastHeight } = lastViewportSizeRef.current;
+
+      const widthDelta = Math.abs(width - lastWidth);
+      const heightDelta = Math.abs(height - lastHeight);
+
+      const widthThreshold = isCoarsePointer ? 60 : 4;
+      const heightThreshold = isCoarsePointer ? 120 : 4;
+
+      if (widthDelta < widthThreshold && heightDelta < heightThreshold) {
+        return;
+      }
+
+      lastViewportSizeRef.current = { width, height };
+
       stopAnimation();
       initializeBalls();
       startAnimation();
@@ -889,7 +950,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation]);
+  }, [initializeBalls, prefersReducedMotion, startAnimation, stopAnimation, isCoarsePointer]);
 
   useEffect(() => {
     if (!marqueeRef.current || prefersReducedMotion) {
