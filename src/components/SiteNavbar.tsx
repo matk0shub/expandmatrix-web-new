@@ -1,100 +1,230 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
+import { useState } from 'react';
 
-import { CalCTAButton } from './CalCTAButton';
 import LocaleSwitcher from './LocaleSwitcher';
+import { useFramerMotion } from '@/hooks/useFramerMotion';
+import { fallbackMotion } from '@/utils/motionFallback';
 
-const NAV_SECTIONS: Array<{ key: string; id: string }> = [
-  { key: 'about', id: 'about' },
-  { key: 'services', id: 'services' },
-  { key: 'process', id: 'process' },
-  { key: 'references', id: 'references' },
-  { key: 'team', id: 'team' },
-  { key: 'faq', id: 'faq' },
+type SiteNavbarProps = {
+  variant?: 'hero' | 'page';
+  onNavigateSection?: (sectionId: string) => void;
+  className?: string;
+};
+
+const NAV_LINKS: Array<{ id: string; labelKey: string }> = [
+  { id: 'about', labelKey: 'about' },
+  { id: 'services', labelKey: 'services' },
+  { id: 'references', labelKey: 'references' },
+  { id: 'faq', labelKey: 'faq' },
+  { id: 'contact', labelKey: 'contact' },
 ];
 
-export default function SiteNavbar() {
+export default function SiteNavbar({
+  variant = 'page',
+  onNavigateSection,
+  className,
+}: SiteNavbarProps) {
   const locale = useLocale();
-  const tNav = useTranslations('navigation');
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const navT = useTranslations('navigation');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const framer = useFramerMotion('instant');
+  const motion = framer?.motion ?? fallbackMotion;
+  const enableMotion = variant === 'hero';
 
-  const sectionHref = (id: string) => `/${locale}/#${id}`;
+  const wrapperClasses = clsx(
+    'z-50',
+    variant === 'hero' ? 'absolute inset-x-0 top-0' : 'relative',
+    className,
+  );
+
+  const innerPadding = 'py-16 md:py-20';
+  const desktopLinkClass =
+    'text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato';
+  const mobileLinkClass =
+    'text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left';
+
+  const sectionHref = (id: string) => `/${locale}#${id}`;
+
+  const closeMenu = () => setIsMenuOpen(false);
+
+  const handleSectionSelect = (sectionId: string) => {
+    onNavigateSection?.(sectionId);
+    closeMenu();
+  };
+
+  const renderDesktopLink = (link: (typeof NAV_LINKS)[number]) => {
+    if (onNavigateSection) {
+      return (
+        <button
+          key={link.id}
+          type="button"
+          onClick={() => handleSectionSelect(link.id)}
+          className={desktopLinkClass}
+        >
+          {navT(link.labelKey)}
+        </button>
+      );
+    }
+
+    return (
+      <Link key={link.id} href={sectionHref(link.id)} className={desktopLinkClass} scroll>
+        {navT(link.labelKey)}
+      </Link>
+    );
+  };
+
+  const renderMobileLink = (link: (typeof NAV_LINKS)[number]) => {
+    if (onNavigateSection) {
+      return (
+        <button
+          key={link.id}
+          type="button"
+          onClick={() => handleSectionSelect(link.id)}
+          className={mobileLinkClass}
+        >
+          {navT(link.labelKey)}
+        </button>
+      );
+    }
+
+    return (
+      <Link
+        key={link.id}
+        href={sectionHref(link.id)}
+        className={mobileLinkClass}
+        onClick={closeMenu}
+        scroll
+      >
+        {navT(link.labelKey)}
+      </Link>
+    );
+  };
+
+  const logoWrapperClass = 'flex items-center gap-3 shrink-0';
+
+  const logoContent = (
+    <>
+      <div className="w-8 h-8 flex items-center justify-center group">
+        <svg
+          viewBox="0 0 1041.587182 1000"
+          className="w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-lg"
+          aria-label="Expand Matrix Logo"
+        >
+          <defs>
+            <style>{`
+              .logo-fill { fill: #00d76b; }
+              .group:hover .logo-fill { fill: #00e673; }
+            `}</style>
+          </defs>
+          <polygon
+            className="logo-fill transition-colors duration-300"
+            points="963.414598 472.195172 925.243946 426.829244 807.134231 286.585378 140.243863 286.585378 140.243863 140.243866 680.366063 140.243866 562.256102 0 0 0 0 527.804828 38.170652 573.170756 140.243863 694.390344 156.280366 713.414622 519.878196 713.414622 401.768481 573.170756 226.890311 573.170756 140.243863 470.305027 140.243863 426.829244 739.390212 426.829244 823.170735 526.280478 823.170735 573.170756 504.329337 573.170756 624.207347 713.414622 749.329316 859.756134 286.890282 859.756134 404.999955 1000 932.926866 1000 932.926866 849.451234 823.170735 719.146472 818.353741 713.414622 963.414598 713.414622 963.414598 472.195172"
+          />
+        </svg>
+      </div>
+      <span className="text-white font-bold text-sm sm:text-base lg:text-lg whitespace-nowrap font-lato">
+        EXPAND MATRIX
+      </span>
+    </>
+  );
+
+  const desktopNavChildren = (
+    <>
+      {NAV_LINKS.map(renderDesktopLink)}
+      <LocaleSwitcher />
+    </>
+  );
+
+  const mobileMenu = (
+    <div className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg">
+      <nav className="flex flex-col p-6 space-y-4" id="site-mobile-nav">
+        {NAV_LINKS.map(renderMobileLink)}
+        <div className="pt-4 border-t border-white/10">
+          <LocaleSwitcher />
+        </div>
+      </nav>
+    </div>
+  );
 
   return (
-    <>
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/70 backdrop-blur-2xl">
-        <div className="mx-auto flex w-full max-w-[1780px] items-center justify-between px-6 py-4 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-          <Link
-            href={`/${locale}`}
-            className="flex items-center gap-3 text-white transition hover:opacity-80"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5">
-              <svg viewBox="0 0 1041.587182 1000" className="h-6 w-6 text-[#00d76b]" aria-hidden="true">
-                <polygon
-                  fill="currentColor"
-                  points="963.414598 472.195172 925.243946 426.829244 807.134231 286.585378 140.243863 286.585378 140.243863 140.243866 680.366063 140.243866 562.256102 0 0 0 0 527.804828 38.170652 573.170756 140.243863 694.390344 156.280366 713.414622 519.878196 713.414622 401.768481 573.170756 226.890311 573.170756 140.243863 470.305027 140.243863 426.829244 739.390212 426.829244 823.170735 526.280478 823.170735 573.170756 504.329337 573.170756 624.207347 713.414622 749.329316 859.756134 286.890282 859.756134 404.999955 1000 932.926866 1000 932.926866 849.451234 823.170735 719.146472 818.353741 713.414622 963.414598 713.414622 963.414598 472.195172"
-                />
-              </svg>
-            </div>
-            <span className="font-lato text-sm font-semibold tracking-[0.2em] text-white">EXPAND MATRIX</span>
-          </Link>
+    <header className={wrapperClasses}>
+      <div className={clsx('w-full max-w-[1780px] mx-auto px-0', innerPadding)}>
+        <div className="flex items-center justify-between px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+          {enableMotion ? (
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className={logoWrapperClass}
+            >
+              {logoContent}
+            </motion.div>
+          ) : (
+            <div className={logoWrapperClass}>{logoContent}</div>
+          )}
 
-          <nav className="hidden items-center gap-6 lg:flex">
-            {NAV_SECTIONS.map((section) => (
-              <Link
-                key={section.id}
-                href={sectionHref(section.id)}
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70 transition hover:text-white"
-              >
-                {tNav(section.key)}
-              </Link>
-            ))}
-          </nav>
+          {enableMotion ? (
+            <motion.nav
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="hidden lg:flex items-center gap-6 xl:gap-8"
+              aria-label="Primary navigation"
+            >
+              {desktopNavChildren}
+            </motion.nav>
+          ) : (
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8" aria-label="Primary navigation">
+              {desktopNavChildren}
+            </nav>
+          )}
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <LocaleSwitcher />
-            <CalCTAButton href={`/${locale}#contact`} size="sm">
-              {tNav('cta')}
-            </CalCTAButton>
-          </div>
-
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 p-2 text-white lg:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {enableMotion ? (
+            <motion.button
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              className="lg:hidden text-white p-2"
+              aria-label={isMenuOpen ? navT('menuToggleClose') : navT('menuToggleOpen')}
+              aria-expanded={isMenuOpen}
+              aria-controls="site-mobile-nav"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              className="lg:hidden text-white p-2"
+              aria-label={isMenuOpen ? navT('menuToggleClose') : navT('menuToggleOpen')}
+              aria-expanded={isMenuOpen}
+              aria-controls="site-mobile-nav"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          )}
         </div>
-      </header>
 
-      {mobileOpen && (
-        <div className="border-b border-white/10 bg-black/90 py-6 lg:hidden">
-          <div className="mx-auto flex w-full max-w-[1780px] flex-col gap-4 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-            {NAV_SECTIONS.map((section) => (
-              <Link
-                key={section.id}
-                href={sectionHref(section.id)}
-                onClick={() => setMobileOpen(false)}
-                className="text-base font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:text-white"
-              >
-                {tNav(section.key)}
-              </Link>
-            ))}
-            <div className="flex items-center justify-between pt-4">
-              <LocaleSwitcher />
-              <CalCTAButton href={`/${locale}#contact`} size="sm" onClick={() => setMobileOpen(false)}>
-                {tNav('cta')}
-              </CalCTAButton>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+        {isMenuOpen &&
+          (enableMotion ? (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              {mobileMenu}
+            </motion.div>
+          ) : (
+            mobileMenu
+          ))}
+      </div>
+    </header>
   );
 }

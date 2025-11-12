@@ -2,10 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
-import LocaleSwitcher from './LocaleSwitcher';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useClient } from '@/hooks/useClient';
@@ -13,21 +11,17 @@ import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
 import AnimatedHeading from './AnimatedHeading';
+import SiteNavbar from './SiteNavbar';
 
 export default function Hero() {
   const t = useTranslations('hero');
-  const nav = useTranslations('navigation');
   const heroRef = useRef<HTMLDivElement>(null);
-  const headerLogoRef = useRef<HTMLDivElement>(null);
   const heroLogoRef = useRef<HTMLDivElement>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isClient = useClient();
   const prefersReducedMotion = useReducedMotion();
   const framer = useFramerMotion('instant');
   const motion = framer?.motion ?? fallbackMotion;
   const MotionDiv = motion.div;
-  const MotionNav = motion.nav;
-  const MotionButton = motion.button;
   const logoSizes = '(max-width: 768px) 160px, (max-width: 1280px) 200px, 240px';
 
 
@@ -132,7 +126,6 @@ export default function Hero() {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-    setIsMenuOpen(false);
   };
 
   return (
@@ -150,145 +143,7 @@ export default function Hero() {
           {/* Container with max-width */}
           <div className="w-full max-w-[1780px] mx-auto relative min-h-screen px-0">
         {/* Header with Logo and Navigation */}
-        <header className="absolute top-0 left-0 right-0 z-50">
-          <div className="w-full max-w-[1780px] mx-auto py-16 md:py-20 px-0">
-            <div className="flex items-center justify-between px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-              {/* Logo */}
-              <MotionDiv
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="flex items-center gap-3 shrink-0"
-              >
-               <div ref={headerLogoRef} className="w-8 h-8 flex items-center justify-center group">
-                 <svg 
-                   viewBox="0 0 1041.587182 1000"
-                   className="w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-lg"
-                   aria-label="Expand Matrix Logo"
-                 >
-                   <defs>
-                     <style>{`
-                       .logo-fill { fill: #00d76b; }
-                       .group:hover .logo-fill { fill: #00e673; }
-                     `}</style>
-                   </defs>
-                   <polygon 
-                     className="logo-fill transition-colors duration-300" 
-                     points="963.414598 472.195172 925.243946 426.829244 807.134231 286.585378 140.243863 286.585378 140.243863 140.243866 680.366063 140.243866 562.256102 0 0 0 0 527.804828 38.170652 573.170756 140.243863 694.390344 156.280366 713.414622 519.878196 713.414622 401.768481 573.170756 226.890311 573.170756 140.243863 470.305027 140.243863 426.829244 739.390212 426.829244 823.170735 526.280478 823.170735 573.170756 504.329337 573.170756 624.207347 713.414622 749.329316 859.756134 286.890282 859.756134 404.999955 1000 932.926866 1000 932.926866 849.451234 823.170735 719.146472 818.353741 713.414622 963.414598 713.414622 963.414598 472.195172"
-                   />
-                 </svg>
-               </div>
-                   <span
-                     className="text-white font-bold text-sm sm:text-base lg:text-lg whitespace-nowrap font-lato"
-                   >
-                     EXPAND MATRIX
-                   </span>
-              </MotionDiv>
-
-              {/* Desktop Navigation */}
-              <MotionNav
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="hidden lg:flex items-center gap-6 xl:gap-8"
-              >
-                  <button
-                    onClick={() => scrollToSection('about')}
-                    className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
-                  >
-                    {nav('about')}
-                  </button>
-                <button 
-                  onClick={() => scrollToSection('services')}
-                    className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
-                >
-                  {nav('services')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('references')}
-                    className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
-                >
-                  {nav('references')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('faq')}
-                    className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
-                >
-                  {nav('faq')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('contact')}
-                    className="text-white/80 hover:text-white transition-colors text-base font-medium uppercase tracking-wider font-lato"
-                >
-                  {nav('contact')}
-                </button>
-                <LocaleSwitcher />
-              </MotionNav>
-
-              {/* Mobile Menu Button */}
-              <MotionButton
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden text-white p-2"
-                type="button"
-                aria-label={isMenuOpen ? nav('menuToggleClose') : nav('menuToggleOpen')}
-                aria-expanded={isMenuOpen}
-                aria-controls="mobile-nav"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </MotionButton>
-            </div>
-
-            {/* Mobile Navigation */}
-            {isMenuOpen && (
-              <MotionDiv
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg"
-                id="mobile-nav"
-              >
-                <nav className="flex flex-col p-6 space-y-4">
-                  <button 
-                    onClick={() => scrollToSection('about')}
-                    className="text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left"
-                  >
-                    {nav('about')}
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('services')}
-                    className="text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left"
-                  >
-                    {nav('services')}
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('references')}
-                    className="text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left"
-                  >
-                    {nav('references')}
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('faq')}
-                    className="text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left"
-                  >
-                    {nav('faq')}
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('contact')}
-                    className="text-white/80 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider text-left"
-                  >
-                    {nav('contact')}
-                  </button>
-                  <div className="pt-4 border-t border-white/10">
-                    <LocaleSwitcher />
-                  </div>
-                </nav>
-              </MotionDiv>
-            )}
-          </div>
-        </header>
+        <SiteNavbar variant="hero" onNavigateSection={scrollToSection} />
 
             {/* Main Content */}
             <div className="relative z-10 min-h-screen flex flex-col justify-between py-15 md:py-19 px-0">
