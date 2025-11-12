@@ -106,10 +106,11 @@ export default function SiteNavbar({
   };
 
   const logoWrapperClass = 'flex items-center gap-3 shrink-0';
+  const homeHref = `/${locale}`;
 
   const logoContent = (
     <>
-      <div className="w-8 h-8 flex items-center justify-center group">
+      <div className="w-8 h-8 flex items-center justify-center">
         <svg
           viewBox="0 0 1041.587182 1000"
           className="w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-lg"
@@ -151,22 +152,30 @@ export default function SiteNavbar({
     </div>
   );
 
+  const logoNode = enableMotion ? (
+    <motion.div
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className={logoWrapperClass}
+    >
+      {logoContent}
+    </motion.div>
+  ) : (
+    <div className={logoWrapperClass}>{logoContent}</div>
+  );
+
   return (
     <header className={wrapperClasses}>
       <div className={clsx('w-full max-w-[1780px] mx-auto px-0', innerPadding)}>
         <div className="flex items-center justify-between px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
-          {enableMotion ? (
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className={logoWrapperClass}
-            >
-              {logoContent}
-            </motion.div>
-          ) : (
-            <div className={logoWrapperClass}>{logoContent}</div>
-          )}
+          <Link
+            href={homeHref}
+            className="group inline-flex items-center shrink-0 rounded-full px-1 -mx-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[#00d76b]/70"
+            aria-label={navT('homeLinkLabel')}
+          >
+            {logoNode}
+          </Link>
 
           {enableMotion ? (
             <motion.nav
