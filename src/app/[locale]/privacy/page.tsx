@@ -76,7 +76,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<Pa
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
                       <Icon className="h-5 w-5 text-[#00d76b]" />
                     </div>
-                    <h2 className="text-base font-semibold text-white font-lato sm:text-lg">{section.title}</h2>
+                    <h2 className="text-sm font-semibold text-white font-lato sm:text-base">{section.title}</h2>
                   </div>
                   <div className="space-y-4 text-white/70 leading-relaxed flex-1">
                     {section.body.map((paragraph, index) => (
