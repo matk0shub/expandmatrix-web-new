@@ -694,7 +694,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
     const responsive = computeResponsiveValues(width, height);
     const { layout: layoutValues, padding, velocity, maxVelocity } = responsive;
-    const effectiveHeight = padding.height;
+    const effectiveHeight = height || padding.height;
 
     ballSizeRef.current = layoutValues.ballSize;
     dimensionsRef.current = { width, height: effectiveHeight };
@@ -1053,7 +1053,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       <div
         ref={containerRef}
-        className="absolute inset-0 z-20"
+        className="absolute inset-0"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -1080,7 +1080,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         ))}
       </div>
 
-      <div className="absolute inset-0 pointer-events-none z-10">
+      <div className="absolute inset-0 pointer-events-none">
         <div
           className="relative rounded-full overflow-hidden shadow-2xl"
           style={{
