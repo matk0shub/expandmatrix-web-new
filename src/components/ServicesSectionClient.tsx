@@ -2,6 +2,7 @@
 
 import { useState, useEffect, type CSSProperties } from 'react';
 import { Plus } from 'lucide-react';
+import clsx from 'clsx';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -47,6 +48,7 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
   const prefersReducedMotion = useReducedMotion();
 
   const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  const [activeServiceKey, setActiveServiceKey] = useState<string | null>(null);
   
   useEffect(() => {
     setAnimationValues(
@@ -113,31 +115,47 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
-          {services.map((service, index) => (
-            <AnimatedReveal
-              key={service.key}
-              className="group"
-              direction="up"
-              delay={index * CARD_CONFIG.animation.staggerDelay}
-              distance={200}
-              viewportAmount={0.55}
-              fade={false}
-            >
-              <div 
-                className={`
-                  relative w-full
-                  ${CARD_CONFIG.height.base}
-                  ${CARD_CONFIG.height.md}
-                  ${CARD_CONFIG.height.lg}
-                  ${CARD_CONFIG.borderRadius}
-                  bg-gradient-to-br from-black/98 via-black/95 to-black/90
-                  backdrop-blur-2xl
-                  transition-all duration-500
-                  group-hover:scale-[1.02]
-                  overflow-hidden
-                `}
+          {services.map((service, index) => {
+            const isActive = activeServiceKey === service.key;
+            const descriptionId = `service-${service.key}-description`;
+
+            const toggleActive = () => {
+              setActiveServiceKey((prev) => (prev === service.key ? null : service.key));
+            };
+
+            return (
+              <AnimatedReveal
+                key={service.key}
+                className="group"
+                direction="up"
+                delay={index * CARD_CONFIG.animation.staggerDelay}
+                distance={200}
+                viewportAmount={0.55}
+                fade={false}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={isActive}
+                  aria-controls={descriptionId}
+                  onClick={toggleActive}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      toggleActive();
+                    }
+                  }}
+                  className={clsx(
+                    'relative w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/50',
+                    CARD_CONFIG.height.base,
+                    CARD_CONFIG.height.md,
+                    CARD_CONFIG.height.lg,
+                    CARD_CONFIG.borderRadius,
+                    'bg-gradient-to-br from-black/98 via-black/95 to-black/90 backdrop-blur-2xl transition-all duration-500 group-hover:scale-[1.02] overflow-hidden',
+                    isActive && 'scale-[1.02]'
+                  )}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-3xl pointer-events-none mix-blend-normal" />
@@ -171,19 +189,38 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                     {service.number}
                   </div>
                   <div className="absolute top-6 right-6 z-30">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center transition-all duration-300 group-hover:bg-green-400 group-hover:scale-110">
-                      <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:rotate-90" />
+                    <div
+                      className={clsx(
+                        'w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center transition-all duration-300 group-hover:bg-green-400 group-hover:scale-110',
+                        isActive && 'bg-green-400 scale-110'
+                      )}
+                    >
+                      <Plus
+                        className={clsx(
+                          'w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:rotate-90',
+                          isActive && 'rotate-90'
+                        )}
+                      />
                     </div>
-                    <div className="absolute inset-0 rounded-full bg-green-500/50 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <div
+                      className={clsx(
+                        'absolute inset-0 rounded-full bg-green-500/50 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100',
+                        isActive && 'opacity-100'
+                      )}
+                    />
                   </div>
                 </div>
 
                 {/* Centered overlays bound to the whole card area */}
                 <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <h3
-                    className={`heading-secondary m-0 max-w-[90%] text-center text-lg sm:text-xl md:text-2xl leading-tight sm:leading-snug md:leading-snug transition-opacity duration-500 ${
-                      prefersReducedMotion ? 'group-hover:opacity-0' : 'opacity-100 group-hover:opacity-0'
-                    }`}
+                    className={clsx(
+                      'heading-secondary m-0 max-w-[90%] text-center text-lg sm:text-xl md:text-2xl leading-tight sm:leading-snug md:leading-snug transition-opacity duration-500',
+                      prefersReducedMotion
+                        ? 'group-hover:opacity-0'
+                        : 'opacity-100 group-hover:opacity-0',
+                      isActive && 'opacity-0'
+                    )}
                     aria-hidden
                   >
                     {service.title}
@@ -191,12 +228,14 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                 </div>
                 <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none h-full w-full px-4 sm:px-6">
                   <p
-                    className={`m-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500 ${
+                    id={descriptionId}
+                    className={clsx(
+                      'm-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500',
                       prefersReducedMotion
                         ? 'opacity-0 group-hover:opacity-100'
-                        : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0'
-                    }`}
-                    aria-hidden
+                        : 'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0',
+                      isActive && 'opacity-100 translate-y-0'
+                    )}
                   >
                     {service.description}
                   </p>
@@ -205,7 +244,8 @@ export default function ServicesSectionClient({ copy }: ServicesSectionClientPro
                 <div className="pointer-events-none absolute inset-0 rounded-3xl bg-white/0 group-hover:bg-white/[0.02] backdrop-blur-0 group-hover:backdrop-blur-sm transition-all duration-500" />
               </div>
             </AnimatedReveal>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
