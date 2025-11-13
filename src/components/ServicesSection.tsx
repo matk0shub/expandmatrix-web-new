@@ -101,11 +101,11 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
         )}
       >
         <CardBackgroundLayers glowDelay={glowDelay} glowDuration={glowDuration} />
-        <div className="relative z-10 h-full">
-          <div className="absolute top-6 left-6 text-white/70 font-lato text-lg sm:text-xl md:text-2xl font-semibold">
-            {service.number}
-          </div>
-          <div className="absolute top-6 right-6">
+        <div className="relative z-10 flex h-full flex-col">
+          <div className="flex items-start justify-between px-1 pb-4 sm:px-0">
+            <div className="text-white/70 font-lato text-lg sm:text-xl md:text-2xl font-semibold">
+              {service.number}
+            </div>
             <span
               className={clsx(
                 'inline-flex items-center justify-center rounded-full bg-green-500 transition-all duration-300',
@@ -118,23 +118,21 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             </span>
           </div>
 
-          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
-            <div className="flex w-full max-w-[24ch] flex-col items-center justify-center text-center text-balance">
+          <div className="relative flex flex-1 items-center justify-center px-6 sm:px-8 text-center text-balance">
+            <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
               <h3
                 className={clsx(
-                  'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight',
+                  'w-full max-w-[24ch] text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
                   'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
                 )}
               >
                 {service.title}
               </h3>
             </div>
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
-            <div className="flex w-full max-w-[32ch] flex-col items-center justify-center text-center text-balance">
+            <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
               <p
                 className={clsx(
-                  'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium',
+                  'w-full max-w-[32ch] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
                   'opacity-0 scale-95 transition-all duration-500',
                   'group-hover:opacity-100 group-hover:scale-100',
                   'peer-checked:opacity-100 peer-checked:scale-100',
