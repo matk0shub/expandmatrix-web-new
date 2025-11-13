@@ -30,6 +30,7 @@
     "payload:health": "NODE_ENV=production node scripts/payload-health.mjs"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "esbuild": "^0.25.11",
     "@calcom/embed-react": "^1.5.3",
     "@payloadcms/db-mongodb": "^3.62.0",

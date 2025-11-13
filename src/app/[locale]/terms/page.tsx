@@ -11,12 +11,10 @@ interface PageParams {
   locale: string;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<PageParams>;
-}): Promise<Metadata> {
-  const { locale } = await params;
+type RouteProps = { params: PageParams };
+
+export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
 
   return {
@@ -25,8 +23,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function TermsPage({ params }: { params: Promise<PageParams> }) {
-  const { locale } = await params;
+export default async function TermsPage({ params }: RouteProps) {
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
   const localeKey = locale === 'cs' ? 'cs' : 'en';
   const content = legalContent.terms[localeKey];
@@ -85,8 +83,8 @@ export default async function TermsPage({ params }: { params: Promise<PageParams
                     </p>
                   </div>
                   <div className="space-y-4 text-white/70 leading-relaxed flex-1">
-                    {section.body.map((paragraph, index) => (
-                      <p key={index}>{paragraph}</p>
+                    {section.body.map((paragraph: string, paragraphIndex: number) => (
+                      <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
                     ))}
                   </div>
                 </article>
@@ -97,8 +95,8 @@ export default async function TermsPage({ params }: { params: Promise<PageParams
           <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.05] to-[#00d76b]/10 p-8 backdrop-blur lg:flex lg:items-center lg:justify-between">
             <p className="text-white/70 text-base">{t('contact')}</p>
             <div className="mt-4 space-y-1 text-sm text-white/70 lg:mt-0 lg:text-right">
-              {content.companyInfo.map((line) => (
-                <p key={line}>{line}</p>
+              {content.companyInfo.map((line: string, lineIndex: number) => (
+                <p key={`${line}-${lineIndex}`}>{line}</p>
               ))}
             </div>
           </div>

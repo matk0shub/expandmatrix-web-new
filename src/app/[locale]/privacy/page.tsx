@@ -11,12 +11,10 @@ interface PageParams {
   locale: string;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<PageParams>;
-}): Promise<Metadata> {
-  const { locale } = await params;
+type RouteProps = { params: PageParams };
+
+export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'legal.privacy' });
 
   return {
@@ -25,8 +23,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function PrivacyPolicyPage({ params }: { params: Promise<PageParams> }) {
-  const { locale } = await params;
+export default async function PrivacyPolicyPage({ params }: RouteProps) {
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'legal.privacy' });
   const localeKey = locale === 'cs' ? 'cs' : 'en';
   const content = legalContent.privacy[localeKey];
