@@ -75,82 +75,76 @@ export default async function ServicesSection({ locale }: ServicesSectionProps) 
 }
 
 function ServiceCard({ service, index }: { service: ServiceItem; index: number }) {
-  const controlId = `service-card-${service.key}-${index}`;
+  const defaultOpen = index === 0;
 
   return (
-    <div className="relative">
-      <input
-        type="checkbox"
-        id={controlId}
-        className="peer sr-only"
-        aria-label={service.title}
-      />
-      <label
-        htmlFor={controlId}
+    <details
+      className={clsx(
+        'group relative w-full overflow-hidden',
+        'min-h-[260px] md:min-h-[320px] lg:min-h-[360px]',
+        'rounded-3xl bg-gradient-to-br from-black/95 via-black/98 to-black/99',
+        'border border-white/10 shadow-[0_35px_120px_rgba(0,0,0,0.6)]',
+        'backdrop-blur-2xl transition-all duration-500',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/40 focus-visible:ring-offset-4 focus-visible:ring-offset-black',
+        'hover:scale-[1.02] hover:rotate-[0.35deg]',
+      )}
+      defaultOpen={defaultOpen}
+    >
+      <CardBackgroundLayers />
+
+      <summary
         className={clsx(
-          'group relative w-full cursor-pointer',
-          'min-h-[260px] md:min-h-[320px] lg:min-h-[360px]',
-          'rounded-3xl bg-gradient-to-br from-black/95 via-black/98 to-black/99',
-          'border border-white/10 shadow-[0_35px_120px_rgba(0,0,0,0.6)]',
-          'backdrop-blur-2xl transition-all duration-500',
-          'focus-visible:ring-2 focus-visible:ring-[#00d76b]/40 focus-visible:ring-offset-4 focus-visible:ring-offset-black',
-          'hover:scale-[1.02] hover:rotate-[0.5deg]',
+          'relative z-10 list-none cursor-pointer',
+          'p-6 sm:p-8 md:p-10 lg:p-12',
+          'flex flex-col items-center justify-center gap-4 text-center text-balance',
+          '[&::-webkit-details-marker]:hidden',
         )}
       >
-        <CardBackgroundLayers />
-
-        <div
-          className={clsx(
-            'relative z-10',
-            'p-6 sm:p-8 md:p-10 lg:p-12',
-            'h-full flex flex-col items-center justify-center text-center gap-4',
-          )}
-        >
-          <div className="absolute top-6 left-6 z-30 text-lg sm:text-xl md:text-2xl text-white/70 font-medium font-lato">
-            {service.number}
-          </div>
-          <div className="absolute top-6 right-6 z-30">
-            <div
-              className={clsx(
-                'w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center transition-all duration-300',
-                'group-hover:bg-green-400 group-hover:scale-110',
-                'peer-checked:bg-green-400 peer-checked:scale-110',
-              )}
-            >
-              <PlusIcon className="transition-transform duration-300 group-hover:rotate-90 peer-checked:rotate-90" />
-            </div>
-            <div
-              className={clsx(
-                'absolute inset-0 rounded-full bg-green-500/50 blur-xl opacity-0 transition-opacity duration-300',
-                'group-hover:opacity-100 peer-checked:opacity-100',
-              )}
-            />
-          </div>
-
-          <div className="flex flex-col items-center justify-center gap-3 text-balance">
-            <h3
-              className={clsx(
-                'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight transition-opacity duration-500',
-                'group-hover:opacity-0 peer-checked:opacity-0',
-              )}
-            >
-              {service.title}
-            </h3>
-            <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0" />
-          </div>
-
-          <p
+        <div className="absolute top-6 left-6 z-30 text-lg sm:text-xl md:text-2xl text-white/70 font-medium font-lato">
+          {service.number}
+        </div>
+        <div className="absolute top-6 right-6 z-30">
+          <div
             className={clsx(
-              'm-0 max-w-[90%] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium text-center transition-all duration-500',
-              'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0',
-              'peer-checked:opacity-100 peer-checked:translate-y-0',
+              'w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-500 flex items-center justify-center transition-all duration-300',
+              'group-hover:bg-green-400 group-hover:scale-110',
+              'group-open:bg-green-400 group-open:scale-110',
             )}
           >
-            {service.description}
-          </p>
+            <PlusIcon className="transition-transform duration-300 group-hover:rotate-90 group-open:rotate-90" />
+          </div>
+          <div
+            className={clsx(
+              'absolute inset-0 rounded-full bg-green-500/50 blur-xl opacity-0 transition-opacity duration-300',
+              'group-hover:opacity-100 group-open:opacity-100',
+            )}
+          />
         </div>
-      </label>
-    </div>
+
+        <div className="flex flex-col items-center justify-center gap-3">
+          <h3
+            className={clsx(
+              'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight transition-opacity duration-500',
+              'group-hover:opacity-0 group-open:opacity-0',
+            )}
+          >
+            {service.title}
+          </h3>
+          <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 transition-opacity duration-500 group-hover:opacity-0 group-open:opacity-0" />
+        </div>
+      </summary>
+
+      <div
+        className={clsx(
+          'relative z-10 px-6 sm:px-8 md:px-10 lg:px-12 pb-8 text-center',
+          'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium',
+          'opacity-0 translate-y-2 transition-all duration-500',
+          'group-open:opacity-100 group-open:translate-y-0',
+        )}
+      >
+        {service.description}
+      </div>
+    </details>
   );
 }
 
