@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 import clsx from 'clsx';
 import type { CSSProperties } from 'react';
 
+import AnimatedReveal from './AnimatedReveal';
+
 interface ServicesSectionProps {
   locale: string;
 }
@@ -67,7 +69,17 @@ export default async function ServicesSection({ locale }: ServicesSectionProps) 
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
           {services.map((service, index) => (
-            <ServiceCard key={service.key} service={service} index={index} />
+            <AnimatedReveal
+              key={service.key}
+              className="relative w-full"
+              direction="up"
+              distance={220}
+              delay={index * 0.12}
+              viewportAmount={0.5}
+              fade={false}
+            >
+              <ServiceCard service={service} index={index} />
+            </AnimatedReveal>
           ))}
         </div>
       </div>
@@ -119,31 +131,37 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
           </div>
 
           <div className="relative flex flex-1 items-center justify-center px-6 sm:px-8 text-center text-balance">
-            <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
-              <div className="flex w-full max-w-[24ch] flex-col items-center text-center text-balance translate-y-6 sm:translate-y-8 lg:translate-y-10">
-                <h3
-                  className={clsx(
-                    'w-full text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
-                    'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
-                  )}
-                >
-                  {service.title}
-                </h3>
-              </div>
+            <div
+              className={clsx(
+                'absolute inset-0 flex items-center justify-center px-4 text-center text-balance',
+                'translate-y-14 sm:translate-y-16 lg:translate-y-20',
+              )}
+            >
+              <h3
+                className={clsx(
+                  'w-full max-w-[24ch] text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
+                  'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
+                )}
+              >
+                {service.title}
+              </h3>
             </div>
-            <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
-              <div className="flex w-full max-w-[32ch] flex-col items-center text-center text-balance translate-y-6 sm:translate-y-8 lg:translate-y-10">
-                <p
-                  className={clsx(
-                    'w-full text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
-                    'opacity-0 scale-95 transition-all duration-500',
-                    'group-hover:opacity-100 group-hover:scale-100',
-                    'peer-checked:opacity-100 peer-checked:scale-100',
-                  )}
-                >
-                  {service.description}
-                </p>
-              </div>
+            <div
+              className={clsx(
+                'absolute inset-0 flex items-center justify-center px-4 text-center text-balance',
+                'translate-y-14 sm:translate-y-16 lg:translate-y-20',
+              )}
+            >
+              <p
+                className={clsx(
+                  'w-full max-w-[32ch] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
+                  'opacity-0 scale-95 transition-all duration-500',
+                  'group-hover:opacity-100 group-hover:scale-100',
+                  'peer-checked:opacity-100 peer-checked:scale-100',
+                )}
+              >
+                {service.description}
+              </p>
             </div>
           </div>
         </div>
