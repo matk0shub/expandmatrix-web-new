@@ -120,26 +120,30 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
 
           <div className="relative flex flex-1 items-center justify-center px-6 sm:px-8 text-center text-balance">
             <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
-              <h3
-                className={clsx(
-                  'w-full max-w-[24ch] text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
-                  'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
-                )}
-              >
-                {service.title}
-              </h3>
+              <div className="flex w-full max-w-[24ch] flex-col items-center text-center text-balance translate-y-2 sm:translate-y-3 lg:translate-y-4">
+                <h3
+                  className={clsx(
+                    'w-full text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
+                    'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
+                  )}
+                >
+                  {service.title}
+                </h3>
+              </div>
             </div>
             <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-balance">
-              <p
-                className={clsx(
-                  'w-full max-w-[32ch] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
-                  'opacity-0 scale-95 transition-all duration-500',
-                  'group-hover:opacity-100 group-hover:scale-100',
-                  'peer-checked:opacity-100 peer-checked:scale-100',
-                )}
-              >
-                {service.description}
-              </p>
+              <div className="flex w-full max-w-[32ch] flex-col items-center text-center text-balance translate-y-2 sm:translate-y-3 lg:translate-y-4">
+                <p
+                  className={clsx(
+                    'w-full text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
+                    'opacity-0 scale-95 transition-all duration-500',
+                    'group-hover:opacity-100 group-hover:scale-100',
+                    'peer-checked:opacity-100 peer-checked:scale-100',
+                  )}
+                >
+                  {service.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
