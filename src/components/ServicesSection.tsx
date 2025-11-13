@@ -90,7 +90,8 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
         className={clsx(
           'group relative w-full cursor-pointer',
           'min-h-[260px] md:min-h-[320px] lg:min-h-[360px]',
-          'rounded-3xl bg-gradient-to-br from-black/92 via-black/96 to-black/98',
+          'rounded-3xl bg-gradient-to-br from-black/95 via-black/98 to-black/99',
+          'border border-white/10 shadow-[0_35px_120px_rgba(0,0,0,0.6)]',
           'backdrop-blur-2xl transition-all duration-500',
           'focus-visible:ring-2 focus-visible:ring-[#00d76b]/40 focus-visible:ring-offset-4 focus-visible:ring-offset-black',
           'hover:scale-[1.02] hover:rotate-[0.5deg]',
@@ -126,16 +127,16 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             />
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-3 text-balance">
             <h3
               className={clsx(
-                'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight text-balance transition-opacity duration-500',
+                'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight transition-opacity duration-500',
                 'group-hover:opacity-0 peer-checked:opacity-0',
               )}
             >
               {service.title}
             </h3>
-            <div className="h-1 w-24 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-70 group-hover:opacity-0 peer-checked:opacity-0 transition-opacity duration-500" />
+            <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0" />
           </div>
 
           <p
@@ -158,9 +159,9 @@ function CardBackgroundLayers() {
     <>
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] pointer-events-none mix-blend-normal" />
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-40 pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl border border-white/5 opacity-70 pointer-events-none" />
+      <div className="absolute inset-0 rounded-3xl border border-white/10 opacity-80 pointer-events-none" />
       <div className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none" />
-      <div className="absolute inset-0 rounded-3xl bg-white/0 group-hover:bg-white/[0.02] group-hover:backdrop-blur-sm peer-checked:bg-white/[0.02] transition-all duration-500 pointer-events-none" />
+      <div className="absolute inset-0 rounded-3xl bg-white/0 transition-all duration-500 pointer-events-none group-hover:bg-white/[0.02] group-hover:backdrop-blur-sm peer-checked:bg-white/[0.02]" />
       <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 rounded-b-3xl" />
     </>
   );
