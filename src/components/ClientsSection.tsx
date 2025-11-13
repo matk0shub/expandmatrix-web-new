@@ -47,6 +47,7 @@ const FLOOR_RESTITUTION = 0.74;
 const WALL_RESTITUTION = 0.82;
 const GROUND_FRICTION = 0.84;
 const SURFACE_FRICTION = 0.18;
+const BALL_SIZE_MULTIPLIER = 1.12;
 
 interface ClientsSectionProps {
   partners?: NormalizedPartner[];
@@ -306,7 +307,10 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       const partnerTotal = Math.max(ballConfigs.length, 1);
       const idealCount = Math.max(config.ballCount, 1);
       const densityRatio = partnerTotal / idealCount;
-      const sizeFactor = clampValue(Math.sqrt(idealCount / partnerTotal), 0.65, 1.2);
+      const sizeFactor =
+        partnerTotal >= idealCount
+          ? 1
+          : clampValue(Math.sqrt(idealCount / partnerTotal), 1, 1.25);
       const velocityFactor = clampValue(Math.sqrt(densityRatio), 0.75, 1.28);
 
       const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : height;
@@ -322,10 +326,10 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       const ballSize = Math.round(
         clampValue(
-          width * config.ballScale * sizeFactor,
-          config.ballMin * sizeFactor,
-          config.ballMax * sizeFactor
-        )
+          width * config.ballScale * sizeFactor * BALL_SIZE_MULTIPLIER,
+          config.ballMin * sizeFactor * BALL_SIZE_MULTIPLIER,
+          config.ballMax * sizeFactor * BALL_SIZE_MULTIPLIER,
+        ),
       );
       const greenRadius = clampValue(
         width * config.greenScale,
@@ -416,7 +420,6 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       transition: prefersReducedMotion ? 'transform 0.3s ease' : 'none',
       border: '2px solid rgba(140, 148, 156, 0.6)',
       backgroundColor: '#333333',
-      boxShadow: '0 24px 44px rgba(0, 0, 0, 0.5), 0 12px 24px rgba(0, 0, 0, 0.35)',
       overflow: 'hidden'
     }),
     [layout.ballSize, prefersReducedMotion]
