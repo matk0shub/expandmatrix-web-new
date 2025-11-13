@@ -53,6 +53,7 @@ const eslintConfig = [
       'generated-schema.graphql',
       '**/*.log',
       'next-env.d.ts',
+      'payload.config.dist.cjs',
     ],
   },
 ];
