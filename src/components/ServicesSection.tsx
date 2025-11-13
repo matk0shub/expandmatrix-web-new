@@ -118,8 +118,8 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             </span>
           </div>
 
-          <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 px-8 text-center text-balance">
-            <div className="mx-auto flex w-full max-w-[24ch] flex-col items-center text-center text-balance">
+          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
+            <div className="flex w-full max-w-[24ch] flex-col items-center justify-center text-center text-balance">
               <h3
                 className={clsx(
                   'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight',
@@ -130,8 +130,8 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
               </h3>
             </div>
           </div>
-          <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 px-8 text-center text-balance">
-            <div className="mx-auto flex w-full max-w-[32ch] flex-col items-center text-center text-balance">
+          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
+            <div className="flex w-full max-w-[32ch] flex-col items-center justify-center text-center text-balance">
               <p
                 className={clsx(
                   'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium',
