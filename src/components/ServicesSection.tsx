@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import clsx from 'clsx';
+import type { CSSProperties } from 'react';
 
 interface ServicesSectionProps {
   locale: string;
@@ -77,7 +78,8 @@ export default async function ServicesSection({ locale }: ServicesSectionProps) 
 function ServiceCard({ service, index }: { service: ServiceItem; index: number }) {
   const controlId = `service-card-${service.key}-${index}`;
   const defaultChecked = index === 0;
-
+  const glowDelay = index * 0.45;
+  const glowDuration = `${3 + index * 0.4}s`;
   return (
     <div className="relative w-full">
       <input
@@ -90,16 +92,15 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
       <label
         htmlFor={controlId}
         className={clsx(
-          'group relative block overflow-hidden cursor-pointer',
-          'min-h-[260px] md:min-h-[320px] lg:min-h-[360px]',
-          'rounded-3xl bg-gradient-to-br from-black/95 via-black/98 to-black/99',
-          'shadow-[0_35px_120px_rgba(0,0,0,0.55)]',
-          'backdrop-blur-2xl transition-all duration-500',
+          'group relative block overflow-hidden cursor-pointer rounded-3xl',
+          'bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl',
+          'shadow-[0_35px_120px_rgba(0,0,0,0.55)] transition-all duration-500',
           'focus-visible:ring-2 focus-visible:ring-[#00d76b]/40 focus-visible:ring-offset-4 focus-visible:ring-offset-black',
           'hover:scale-[1.02] hover:rotate-[0.15deg]',
+          'min-h-[260px] md:min-h-[320px] lg:min-h-[360px] px-6 py-10 sm:px-8 sm:py-12',
         )}
       >
-        <CardBackgroundLayers />
+        <CardBackgroundLayers glowDelay={glowDelay} glowDuration={glowDuration} />
         <div className="relative z-10 h-full">
           <div className="absolute top-6 left-6 text-white/70 font-lato text-lg sm:text-xl md:text-2xl font-semibold">
             {service.number}
@@ -117,23 +118,35 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             </span>
           </div>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-8 text-center text-balance">
-            <h3
-              className={clsx(
-                'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight transition-opacity duration-500',
-              )}
+          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
+            <div
+              className="flex h-full w-full max-w-[24ch] flex-col items-center justify-center text-center text-balance"
             >
-              {service.title}
-            </h3>
-            <p
-              className={clsx(
-                'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium transition-all duration-500',
-                'opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0',
-                'peer-checked:opacity-100 peer-checked:translate-y-0',
-              )}
+              <h3
+                className={clsx(
+                  'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight',
+                  'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
+                )}
+              >
+                {service.title}
+              </h3>
+            </div>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-balance">
+            <div
+              className="flex h-full w-full max-w-[32ch] flex-col items-center justify-center text-center text-balance"
             >
-              {service.description}
-            </p>
+              <p
+                className={clsx(
+                  'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium',
+                  'opacity-0 scale-95 transition-all duration-500',
+                  'group-hover:opacity-100 group-hover:scale-100',
+                  'peer-checked:opacity-100 peer-checked:scale-100',
+                )}
+              >
+                {service.description}
+              </p>
+            </div>
           </div>
         </div>
       </label>
@@ -141,13 +154,28 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
   );
 }
 
-function CardBackgroundLayers() {
+function CardBackgroundLayers({
+  glowDelay,
+  glowDuration,
+}: {
+  glowDelay?: number;
+  glowDuration?: string;
+}) {
   return (
     <>
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-40 pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/[0.02] via-transparent to-transparent opacity-50 pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none" />
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 pointer-events-none mix-blend-normal" />
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 pointer-events-none mix-blend-normal" />
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 pointer-events-none mix-blend-normal" />
+      <div
+        className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
+        style={
+          {
+            '--glow-delay': glowDelay ? `${glowDelay}s` : undefined,
+            '--glow-duration': glowDuration,
+          } as CSSProperties
+        }
+      />
       <div className="absolute inset-0 rounded-3xl bg-white/0 transition-all duration-500 pointer-events-none group-hover:bg-white/[0.03] group-hover:backdrop-blur-sm peer-checked:bg-white/[0.03]" />
       <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 rounded-b-3xl" />
     </>
