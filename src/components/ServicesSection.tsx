@@ -93,11 +93,10 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
           'min-h-[260px] md:min-h-[320px] lg:min-h-[360px]',
           'rounded-3xl bg-gradient-to-br from-black/98 via-black/95 to-black/90',
           'backdrop-blur-2xl transition-all duration-500',
-          'focus-within:ring-2 focus-within:ring-[#00d76b]/40 focus-within:ring-offset-4 focus-within:ring-offset-black',
+          'focus-visible:ring-2 focus-visible:ring-[#00d76b]/40 focus-visible:ring-offset-4 focus-visible:ring-offset-black',
           'hover:scale-[1.02]',
         )}
       >
-        <CardGlow index={index} />
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
