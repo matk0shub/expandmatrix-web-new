@@ -73,6 +73,34 @@ const tryParseUrl = (value) => {
 };
 
 const isLocalHost = (url) => LOCAL_HOSTS.has(url.hostname.toLowerCase());
+const normalizeLocalePath = (value) => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === '/') {
+    return '';
+  }
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
+};
+
+const DEFAULT_LOCALE_PATH = normalizeLocalePath(
+  process.env.LIGHTHOUSE_PATH ||
+    process.env.LIGHTHOUSE_DEFAULT_PATH ||
+    process.env.LIGHTHOUSE_LOCALE ||
+    process.env.DEFAULT_LOCALE ||
+    'en',
+);
+
+const applyPreferredPath = (url, { allowOverride = false } = {}) => {
+  if (!DEFAULT_LOCALE_PATH || allowOverride) {
+    return url.toString();
+  }
+  if (url.pathname && url.pathname !== '/' && url.pathname !== '') {
+    return url.toString();
+  }
+  const updated = new URL(url.toString());
+  updated.pathname = DEFAULT_LOCALE_PATH;
+  return updated.toString();
+};
 
 function resolveAuditUrl() {
   const exactCandidates = [process.env.LIGHTHOUSE_URL];
@@ -106,11 +134,12 @@ function resolveAuditUrl() {
       if (prefersRemoteHosts && isLocalHost(url)) {
         continue;
       }
-      return url.origin;
+      return applyPreferredPath(url);
     }
   }
 
-  return createDefaultUrl();
+  const fallback = tryParseUrl(createDefaultUrl());
+  return fallback ? applyPreferredPath(fallback) : createDefaultUrl();
 }
 
 function main() {
