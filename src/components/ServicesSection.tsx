@@ -100,9 +100,11 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
         )}
       >
         <CardBackgroundLayers />
-        <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 sm:px-8 md:px-10 lg:px-12 py-12 text-center text-balance">
-          <div className="absolute top-6 left-6 flex items-center gap-4 text-white/70 font-lato">
-            <span className="text-lg sm:text-xl md:text-2xl font-semibold">{service.number}</span>
+        <div className="relative z-10 h-full">
+          <div className="absolute top-6 left-6 text-white/70 font-lato text-lg sm:text-xl md:text-2xl font-semibold">
+            {service.number}
+          </div>
+          <div className="absolute top-6 right-6">
             <span
               className={clsx(
                 'inline-flex items-center justify-center rounded-full bg-green-500 transition-all duration-300',
@@ -115,7 +117,7 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             </span>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-5 max-w-[90%]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-8 text-center text-balance">
             <h3
               className={clsx(
                 'text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight transition-opacity duration-500',
@@ -124,7 +126,6 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
             >
               {service.title}
             </h3>
-
             <p
               className={clsx(
                 'text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium transition-all duration-500',
