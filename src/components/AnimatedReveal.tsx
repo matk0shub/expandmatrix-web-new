@@ -1,29 +1,30 @@
 'use client';
 
 import {
+  createElement,
   useEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
   type HTMLAttributes,
-  type JSX,
 } from 'react';
 
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
-type AnimatedRevealProps<T extends keyof JSX.IntrinsicElements = 'div'> =
-  HTMLAttributes<HTMLElement> & {
-    as?: T;
-    delay?: number;
-    direction?: Direction;
-    distance?: number;
-    once?: boolean;
-    viewportAmount?: number;
-    fade?: boolean;
-  };
+type HtmlTag = keyof HTMLElementTagNameMap;
+
+type AnimatedRevealProps = HTMLAttributes<HTMLElement> & {
+  as?: HtmlTag;
+  delay?: number;
+  direction?: Direction;
+  distance?: number;
+  once?: boolean;
+  viewportAmount?: number;
+  fade?: boolean;
+};
 
 const DEFAULT_DISTANCE = 200;
 
@@ -35,8 +36,8 @@ const DISTANCE_BREAKPOINTS: Array<{ minWidth: number; intensity: number }> = [
   { minWidth: 0, intensity: 0.4 },
 ];
 
-export default function AnimatedReveal<T extends keyof JSX.IntrinsicElements = 'div'>({
-  as,
+export default function AnimatedReveal({
+  as = 'div',
   delay = 0,
   direction = 'up',
   distance = DEFAULT_DISTANCE,
@@ -46,8 +47,8 @@ export default function AnimatedReveal<T extends keyof JSX.IntrinsicElements = '
   className,
   children,
   ...rest
-}: AnimatedRevealProps<T>) {
-  const resolvedTag = as ?? ('div' as T);
+}: AnimatedRevealProps) {
+  const resolvedTag = as;
   const prefersReducedMotion = useReducedMotion();
   const elementRef = useRef<HTMLElement | null>(null);
 
@@ -160,18 +161,15 @@ export default function AnimatedReveal<T extends keyof JSX.IntrinsicElements = '
   const mergedStyle = style
     ? ({ ...style, ...computedStyle } as CSSProperties)
     : computedStyle;
-
-  const Element = resolvedTag as keyof JSX.IntrinsicElements;
-
-  return (
-    <Element
-      ref={elementRef as never}
-      className={className}
-      style={mergedStyle}
-      {...(restProps as Omit<HTMLAttributes<HTMLElement>, 'style'>)}
-    >
-      {children}
-    </Element>
+  return createElement(
+    resolvedTag,
+    {
+      ref: elementRef as never,
+      className,
+      style: mergedStyle,
+      ...(restProps as Omit<HTMLAttributes<HTMLElement>, 'style'>),
+    },
+    children,
   );
 }
 

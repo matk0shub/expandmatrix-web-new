@@ -28,13 +28,13 @@ const dualLocaleTextField = ({
   label: string
   description?: string
   required?: boolean
-}) => ({
+}) =>
+({
   name,
   type: 'group',
   validate: validateLocalizedField(label),
   admin: {
     description,
-    layout: 'horizontal',
   },
   fields: REQUIRED_LOCALES.map((locale) => ({
     name: locale,
@@ -42,7 +42,7 @@ const dualLocaleTextField = ({
     type: 'text',
     required,
   })),
-})
+}) as CollectionConfig['fields'][number]
 
 export const References: CollectionConfig = {
   slug: 'references',
@@ -119,7 +119,6 @@ export const References: CollectionConfig = {
           ],
           admin: {
             description: 'Metric label (e.g., "Orders", "Leads", "Revenue")',
-            layout: 'horizontal',
           },
         },
         {
@@ -142,7 +141,6 @@ export const References: CollectionConfig = {
           ],
           admin: {
             description: 'Metric value (e.g., "887 655 CZK", "9.2 %")',
-            layout: 'horizontal',
           },
         },
       ],

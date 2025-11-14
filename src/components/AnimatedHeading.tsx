@@ -34,7 +34,7 @@ export default function AnimatedHeading({
   ...rest
 }: AnimatedHeadingProps) {
   const prefersReducedMotion = useReducedMotion();
-  const Component = as as keyof JSX.IntrinsicElements;
+  const HeadingTag: HeadingTag = as;
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [offset, setOffset] = useState(() => distance);
   const [isVisible, setIsVisible] = useState(prefersReducedMotion);
@@ -110,8 +110,8 @@ export default function AnimatedHeading({
   }
 
   return (
-    <Component ref={headingRef} className={classes.filter(Boolean).join(' ')} style={style} {...rest}>
+    <HeadingTag ref={headingRef} className={classes.filter(Boolean).join(' ')} style={style} {...rest}>
       {children}
-    </Component>
+    </HeadingTag>
   );
 }

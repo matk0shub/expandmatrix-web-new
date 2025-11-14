@@ -131,7 +131,7 @@ export default function Hero() {
   return (
     <>
       <Head>
-        <link rel="preload" as="image" href="/logo.svg" fetchpriority="high" />
+        <link rel="preload" as="image" href="/logo.svg" fetchPriority="high" />
       </Head>
       <section
       ref={heroRef}

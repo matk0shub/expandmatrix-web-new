@@ -1,10 +1,7 @@
 import payload from 'payload'
 
-import { resolvePayloadSecret } from '@/payload/env'
 import payloadConfig from '@/payload/config'
 import { serverLog } from '@/utils/serverLog'
-
-type PayloadConfigShape = Record<string, unknown>
 
 type GlobalWithPayloadInit = typeof globalThis & {
   __payloadInit?: Promise<void> | null
@@ -14,13 +11,9 @@ let payloadInitPromise: Promise<void> | null = null
 
 const initializePayload = async () => {
   serverLog('[payload] initializePayload: start')
-  const secret = resolvePayloadSecret()
-
   const init = payload.init({
-    config: payloadConfig as PayloadConfigShape as never,
-    local: true,
-    secret,
-  } as never)
+    config: payloadConfig,
+  })
   await init
   serverLog('[payload] initializePayload: finished')
 }

@@ -36,7 +36,7 @@ export async function GET(request: Request) {
       : {};
 
     const result = await payload.find({
-      collection: 'faq',
+      collection: 'faqs',
       sort: 'order',
       limit: 100,
       locale: payloadLocale,

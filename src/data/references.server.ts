@@ -175,7 +175,9 @@ const getReferencesCached = unstable_cache(
       locale: 'all',
     });
 
-    const docs = Array.isArray(result.docs) ? (result.docs as PayloadReference[]) : [];
+    const docs = Array.isArray(result.docs)
+      ? (result.docs as unknown as PayloadReference[])
+      : [];
     const references = normalizeReferences(docs, resolvedLocale);
 
     if (!references.length) {

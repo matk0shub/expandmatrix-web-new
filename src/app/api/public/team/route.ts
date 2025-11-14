@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const payload = await getPayloadClient();
 
     const result = await payload.find({
-      collection: 'team',
+      collection: 'teamMembers',
       depth: 1,
       sort: 'order',
       limit: 100,

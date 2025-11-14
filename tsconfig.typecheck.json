@@ -10,5 +10,11 @@
     "allowArbitraryExtensions": true,
     "noEmit": true
   },
-  "exclude": [".next/types/**/*"]
+  "exclude": [
+    ".next/types/**/*",
+    "node_modules",
+    "node_modules.old",
+    "node_modules.health-backup",
+    "node_modules.bak"
+  ]
 }
