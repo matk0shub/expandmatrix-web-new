@@ -38,6 +38,7 @@
   "exclude": [
     "node_modules",
     "node_modules.old",
-    "node_modules.bak"
+    "node_modules.bak",
+    "node_modules.health-backup"
   ]
 }
