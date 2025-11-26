@@ -49,13 +49,27 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
     }
 
     const query = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const handleChange = (event: MediaQueryList | MediaQueryListEvent) => {
-      setSupportsHover(event.matches);
+
+    const computeSupport = (matches: boolean) => {
+      if (typeof navigator === 'undefined') {
+        setSupportsHover(matches);
+        return;
+      }
+
+      const hasTouch =
+        navigator.maxTouchPoints > 0 ||
+        'ontouchstart' in window ||
+        Boolean((navigator as Navigator & { msMaxTouchPoints?: number }).msMaxTouchPoints) ||
+        Boolean((navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData?.mobile);
+
+      setSupportsHover(matches && !hasTouch);
     };
 
-    handleChange(query);
+    computeSupport(query.matches);
 
-    const listener = (event: MediaQueryListEvent) => handleChange(event);
+    const listener = (event: MediaQueryListEvent) => {
+      computeSupport(event.matches);
+    };
 
     if (typeof query.addEventListener === 'function') {
       query.addEventListener('change', listener);
