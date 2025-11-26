@@ -69,14 +69,16 @@ export async function initProcessStackingEffect({
       return;
     }
 
+    const getRotationValue = (value: string | number | undefined) =>
+      typeof value === 'string' ? parseFloat(value) || 0 : value ?? 0;
+
     cards.forEach((card, idx) => {
-      const rotationValue = cardRotations[idx];
+      const rotationValue = getRotationValue(cardRotations[idx]);
       gsap.set(card, {
         opacity: 1,
-        yPercent: 12,
-        scale: 0.97,
-        rotation:
-          typeof rotationValue === 'string' ? parseFloat(rotationValue) || 0 : rotationValue ?? 0,
+        yPercent: 18,
+        scale: 0.94,
+        rotation: rotationValue,
         x: cardOffsets[idx] ?? 0,
       });
     });
@@ -90,20 +92,31 @@ export async function initProcessStackingEffect({
       const card = cards[index];
       if (!card) return;
 
-      const rotationValue = cardRotations[index];
-      const tween = gsap
+      const rotationValue = getRotationValue(cardRotations[index]);
+      const xOffset = cardOffsets[index] ?? 0;
+
+      const timeline = gsap
+        .timeline({ defaults: { overwrite: 'auto' } })
         .to(card, {
-          yPercent: 0,
-          scale: 1,
-          rotation:
-            typeof rotationValue === 'string'
-              ? parseFloat(rotationValue) || 0
-              : rotationValue ?? 0,
-          x: cardOffsets[index],
-          duration: animation.duration,
+          yPercent: -4,
+          scale: 1.02,
+          rotation: rotationValue + 0.15,
+          x: xOffset,
+          duration: animation.duration * 0.6,
           ease: animation.ease,
-          overwrite: 'auto',
         })
+        .to(
+          card,
+          {
+            yPercent: 0,
+            scale: 1,
+            rotation: rotationValue,
+            x: xOffset,
+            duration: animation.duration * 0.4,
+            ease: 'power1.out',
+          },
+          '-=0.25',
+        )
         .pause();
 
       ScrollTrigger.create({
@@ -116,7 +129,7 @@ export async function initProcessStackingEffect({
         anticipatePin: 1,
         invalidateOnRefresh: true,
         scrub: animation.scrub,
-        animation: tween,
+        animation: timeline,
       });
     });
 
