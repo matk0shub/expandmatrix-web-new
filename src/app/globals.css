@@ -325,6 +325,40 @@ h6 {
   }
 }
 
+/* Accuracy card interaction states */
+.accuracy-card {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .accuracy-card:hover {
+    transform: scale(1.05) rotate(1deg);
+  }
+
+  .accuracy-card:hover .accuracy-card__label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .accuracy-card:hover .accuracy-card__value {
+    transform: scale(1.1);
+  }
+}
+
+@media (hover: none) {
+  .accuracy-card:active {
+    transform: scale(0.985);
+  }
+
+  .accuracy-card:active .accuracy-card__label {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .accuracy-card:active .accuracy-card__value {
+    transform: scale(1.02);
+  }
+}
+
 /* Traveling animations for neon spots */
 @keyframes float {
   0%, 100% {

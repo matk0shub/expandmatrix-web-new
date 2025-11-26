@@ -114,14 +114,14 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
           {stats.map((stat, index) => (
             <AnimatedReveal
               key={`${stat.label}-${index}`}
-              className="stat-item relative group"
+              className="stat-item relative"
               direction="up"
               delay={index * 0.12}
               distance={220}
               viewportAmount={0.55}
               fade={false}
             >
-              <div className="relative p-6 sm:p-8 md:p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 group-hover:scale-[1.05] group-hover:rotate-1 min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex flex-col overflow-hidden">
+              <div className="accuracy-card relative p-6 sm:p-8 md:p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl transition-all duration-700 min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex flex-col overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
@@ -139,13 +139,13 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-6 sm:mb-8 md:mb-10">
-                    <div className="text-sm md:text-base text-white/70 font-medium uppercase tracking-[0.2em] font-lato group-hover:text-white/90 transition-colors duration-500">
+                    <div className="accuracy-card__label text-sm md:text-base text-white/70 font-medium uppercase tracking-[0.2em] font-lato transition-colors duration-500">
                       {stat.label}
                     </div>
                   </div>
 
                   <div
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mt-auto font-lato tracking-tight group-hover:scale-110 transition-transform duration-700"
+                    className="accuracy-card__value text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mt-auto font-lato tracking-tight transition-transform duration-700"
                     style={{
                       background:
                         'linear-gradient(135deg, #ffffff 0%, #f8f8f8 25%, #e8e8e8 50%, #d8d8d8 75%, #c8c8c8 100%)',
