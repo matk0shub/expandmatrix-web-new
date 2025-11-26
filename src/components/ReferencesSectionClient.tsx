@@ -46,14 +46,14 @@ export default function ReferencesSectionClient({
 
   useEffect(() => {
     if (orderedReferences.length < 2) return;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || hasInteracted) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % orderedReferences.length);
     }, 6500);
 
     return () => clearInterval(interval);
-  }, [orderedReferences.length, prefersReducedMotion]);
+  }, [orderedReferences.length, prefersReducedMotion, hasInteracted]);
 
   const activeReference = orderedReferences[activeIndex];
 

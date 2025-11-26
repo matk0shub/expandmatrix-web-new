@@ -26,7 +26,7 @@ export default function ReferenceStatsCard({
 
   return (
     <MotionDiv
-      className="relative z-10 w-full max-w-[540px]"
+      className="relative z-10 w-full max-w-full lg:max-w-[540px]"
       initial={{ opacity: 0, y: 20, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.98 }}
@@ -35,13 +35,13 @@ export default function ReferenceStatsCard({
         ease: 'easeOut',
       }}
     >
-      <div className="relative w-full min-w-0 rounded-2xl border border-white/30 bg-white/15 p-6 shadow-2xl backdrop-blur-xl lg:rounded-3xl lg:p-8">
-        <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+      <div className="relative w-full min-w-0 rounded-2xl border border-white/30 bg-white/12 p-4 shadow-2xl backdrop-blur-lg sm:p-5 lg:rounded-3xl lg:p-8">
+        <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/70 sm:text-xs">
           {heading}
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           {/* Mobile grid */}
-          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:hidden">
+          <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:hidden">
             {metrics.map((metric, index) => (
               <MotionDiv
                 key={`${metric.label}-${index}`}
@@ -51,12 +51,12 @@ export default function ReferenceStatsCard({
                   duration: prefersReducedMotion ? 0 : 0.3,
                   delay: prefersReducedMotion ? 0 : index * 0.05,
                 }}
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-3"
               >
-                <div className="text-xs font-medium uppercase tracking-[0.1em] text-white/70">
+                <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 sm:text-xs">
                   {metric.label}
                 </div>
-                <div className="text-2xl font-semibold text-white leading-tight mt-1">
+                <div className="text-xl font-semibold text-white leading-tight mt-1 sm:text-2xl">
                   {metric.value}
                 </div>
               </MotionDiv>
