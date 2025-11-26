@@ -10,12 +10,14 @@ interface ReferenceStatsCardProps {
   }>;
   prefersReducedMotion: boolean;
   heading: string;
+  animate?: boolean;
 }
 
 export default function ReferenceStatsCard({
   metrics,
   prefersReducedMotion,
   heading,
+  animate = true,
 }: ReferenceStatsCardProps) {
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
@@ -24,16 +26,22 @@ export default function ReferenceStatsCard({
 
   if (!metrics.length) return null;
 
+  const Wrapper = animate ? MotionDiv : 'div';
+
   return (
-    <MotionDiv
+    <Wrapper
       className="relative z-10 w-full max-w-full lg:max-w-[540px]"
-      initial={{ opacity: 0, y: 20, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.98 }}
-      transition={{
-        duration: prefersReducedMotion ? 0 : 0.5,
-        ease: 'easeOut',
-      }}
+      {...(animate
+        ? {
+            initial: { opacity: 0, y: 20, scale: 0.98 },
+            animate: { opacity: 1, y: 0, scale: 1 },
+            exit: { opacity: 0, y: -20, scale: 0.98 },
+            transition: {
+              duration: prefersReducedMotion ? 0 : 0.5,
+              ease: 'easeOut',
+            },
+          }
+        : {})}
     >
       <div className="relative w-full min-w-0 rounded-2xl border border-white/30 bg-white/12 p-4 shadow-2xl backdrop-blur-lg sm:p-5 lg:rounded-3xl lg:p-8">
         <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/70 sm:text-xs">
@@ -41,22 +49,26 @@ export default function ReferenceStatsCard({
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           {/* Mobile grid */}
-          <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:hidden">
+          <div className="grid grid-cols-1 gap-2 p-3 sm:grid-cols-2 lg:hidden">
             {metrics.map((metric, index) => (
               <MotionDiv
                 key={`${metric.label}-${index}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.3,
-                  delay: prefersReducedMotion ? 0 : index * 0.05,
-                }}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-3"
+                initial={animate ? { opacity: 0, y: 10 } : false}
+                animate={animate ? { opacity: 1, y: 0 } : false}
+                transition={
+                  animate
+                    ? {
+                        duration: prefersReducedMotion ? 0 : 0.3,
+                        delay: prefersReducedMotion ? 0 : index * 0.05,
+                      }
+                    : undefined
+                }
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5"
               >
-                <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 sm:text-xs">
+                <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 sm:text-xs leading-tight">
                   {metric.label}
                 </div>
-                <div className="text-xl font-semibold text-white leading-tight mt-1 sm:text-2xl">
+                <div className="text-lg sm:text-xl font-semibold text-white leading-tight mt-0.5 sm:mt-1">
                   {metric.value}
                 </div>
               </MotionDiv>
@@ -102,14 +114,18 @@ export default function ReferenceStatsCard({
         {/* Subtle glow effect */}
         <MotionDiv
           className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-blue-500/10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: prefersReducedMotion ? 0 : 1,
-            delay: prefersReducedMotion ? 0 : 0.3
-          }}
+          initial={animate ? { opacity: 0 } : false}
+          animate={animate ? { opacity: 1 } : false}
+          transition={
+            animate
+              ? {
+                  duration: prefersReducedMotion ? 0 : 1,
+                  delay: prefersReducedMotion ? 0 : 0.3,
+                }
+              : undefined
+          }
         />
       </div>
-    </MotionDiv>
+    </Wrapper>
   );
 }

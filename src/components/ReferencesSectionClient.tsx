@@ -165,16 +165,14 @@ export default function ReferencesSectionClient({
 
               <div className="w-full lg:w-1/2">
                 <div className="flex justify-center lg:justify-end">
-                  <AnimatePresence mode="wait">
-                    {activeReference && (
-                      <ReferenceStatsCard
-                        key={`stats-${activeReference.id}`}
-                        metrics={activeReference.metrics}
-                        prefersReducedMotion={prefersReducedMotion}
-                        heading={copy.impactHeading}
-                      />
-                    )}
-                  </AnimatePresence>
+                  {activeReference && (
+                    <ReferenceStatsCard
+                      metrics={activeReference.metrics}
+                      prefersReducedMotion={prefersReducedMotion}
+                      heading={copy.impactHeading}
+                      animate={!prefersReducedMotion}
+                    />
+                  )}
                 </div>
               </div>
             </div>
