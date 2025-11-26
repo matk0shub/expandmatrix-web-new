@@ -40,7 +40,31 @@ export default function ReferenceStatsCard({
           {heading}
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-          <table className="w-full">
+          {/* Mobile grid */}
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:hidden">
+            {metrics.map((metric, index) => (
+              <MotionDiv
+                key={`${metric.label}-${index}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : 0.3,
+                  delay: prefersReducedMotion ? 0 : index * 0.05,
+                }}
+                className="rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+              >
+                <div className="text-xs font-medium uppercase tracking-[0.1em] text-white/70">
+                  {metric.label}
+                </div>
+                <div className="text-2xl font-semibold text-white leading-tight mt-1">
+                  {metric.value}
+                </div>
+              </MotionDiv>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <table className="w-full hidden lg:table">
             <tbody>
               {metrics.map((metric, index) => (
                 <MotionTr
