@@ -18,15 +18,15 @@ type ProcessStackingModule = typeof import('./processStackingEffect');
 
 const CARD_CONFIG = {
   width: {
-    base: 'w-[88vw] max-w-[360px]',
-    sm: 'sm:w-[80vw] sm:max-w-[420px]',
+    base: 'w-[84vw] max-w-[320px]',
+    sm: 'sm:w-[75vw] sm:max-w-[380px]',
     md: 'md:w-[600px]',
     lg: 'lg:w-[720px]',
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[360px]',
-    sm: 'sm:min-h-[420px]',
+    base: 'min-h-[320px]',
+    sm: 'sm:min-h-[400px]',
     md: 'md:min-h-[520px]',
     lg: 'lg:min-h-[600px]'
   },
@@ -110,22 +110,7 @@ export default function ProcessSection() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const desktopQuery = window.matchMedia('(min-width: 1024px)');
-    const updateStackingState = () => {
-      setStackingEnabled(!prefersReducedMotion && desktopQuery.matches);
-    };
-    updateStackingState();
-
-    if (typeof desktopQuery.addEventListener === 'function') {
-      desktopQuery.addEventListener('change', updateStackingState);
-      return () => desktopQuery.removeEventListener('change', updateStackingState);
-    }
-
-    if (typeof desktopQuery.addListener === 'function') {
-      desktopQuery.addListener(updateStackingState);
-      return () => desktopQuery.removeListener(updateStackingState);
-    }
+    setStackingEnabled(!prefersReducedMotion);
   }, [prefersReducedMotion]);
 
   useEffect(() => {
