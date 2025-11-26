@@ -48,7 +48,7 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
       return;
     }
 
-    const query = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const query = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)');
 
     const computeSupport = (matches: boolean) => {
       if (typeof navigator === 'undefined') {
