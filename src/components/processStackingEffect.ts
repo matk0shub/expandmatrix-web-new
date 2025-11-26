@@ -31,6 +31,7 @@ type AnimationConfig = {
   stickDistance: number;
   duration: number;
   ease: string;
+  scrub: number;
 };
 
 export type ProcessStackingOptions = {
@@ -71,7 +72,8 @@ export async function initProcessStackingEffect({
     cards.forEach((card, idx) => {
       gsap.set(card, {
         opacity: 1,
-        yPercent: 0,
+        yPercent: 12,
+        scale: 0.97,
         rotation: cardRotations[idx] ?? 0,
         x: cardOffsets[idx] ?? 0,
       });
@@ -86,6 +88,18 @@ export async function initProcessStackingEffect({
       const card = cards[index];
       if (!card) return;
 
+      const tween = gsap
+        .to(card, {
+          yPercent: 0,
+          scale: 1,
+          rotation: cardRotations[index],
+          x: cardOffsets[index],
+          duration: animation.duration,
+          ease: animation.ease,
+          overwrite: 'auto',
+        })
+        .pause();
+
       ScrollTrigger.create({
         id: `process-card-${index}`,
         trigger: wrapper,
@@ -95,27 +109,8 @@ export async function initProcessStackingEffect({
         pinSpacing: false,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        toggleActions: 'restart none none reverse',
-        onEnter: () => {
-          gsap.to(card, {
-            yPercent: 0,
-            rotation: cardRotations[index],
-            x: cardOffsets[index],
-            duration: animation.duration,
-            ease: animation.ease,
-            overwrite: 'auto',
-          });
-        },
-        onEnterBack: () => {
-          gsap.to(card, {
-            yPercent: 0,
-            rotation: cardRotations[index],
-            x: cardOffsets[index],
-            duration: animation.duration,
-            ease: animation.ease,
-            overwrite: 'auto',
-          });
-        },
+        scrub: animation.scrub,
+        animation: tween,
       });
     });
 
