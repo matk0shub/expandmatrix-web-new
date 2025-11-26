@@ -329,34 +329,33 @@ h6 {
 .accuracy-card {
   transform: translateZ(0);
   will-change: transform;
+  transition: transform 0.7s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .accuracy-card:hover {
-    transform: scale(1.05) rotate(1deg);
-  }
-
-  .accuracy-card:hover .accuracy-card__label {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .accuracy-card:hover .accuracy-card__value {
-    transform: scale(1.1);
-  }
+.accuracy-card__label,
+.accuracy-card__value {
+  transition: color 0.5s ease, transform 0.7s ease;
 }
 
-@media (hover: none) {
-  .accuracy-card:active {
-    transform: scale(0.985);
-  }
+.accuracy-card[data-hover='enabled']:hover {
+  transform: scale(1.05) rotate(1deg);
+}
 
-  .accuracy-card:active .accuracy-card__label {
-    color: rgba(255, 255, 255, 0.75);
-  }
+.accuracy-card[data-hover='enabled']:hover .accuracy-card__label {
+  color: rgba(255, 255, 255, 0.9);
+}
 
-  .accuracy-card:active .accuracy-card__value {
-    transform: scale(1.02);
-  }
+.accuracy-card[data-hover='enabled']:hover .accuracy-card__value {
+  transform: scale(1.1);
+}
+
+.accuracy-card[data-hover='disabled'] {
+  transition: none;
+}
+
+.accuracy-card[data-hover='disabled'] .accuracy-card__label,
+.accuracy-card[data-hover='disabled'] .accuracy-card__value {
+  transition: none;
 }
 
 /* Traveling animations for neon spots */
