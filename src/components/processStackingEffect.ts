@@ -36,7 +36,7 @@ type AnimationConfig = {
 
 export type ProcessStackingOptions = {
   container: HTMLElement;
-  cardRotations: readonly string[];
+  cardRotations: readonly (string | number)[];
   cardOffsets: readonly string[];
   animation: AnimationConfig;
 };
@@ -70,11 +70,13 @@ export async function initProcessStackingEffect({
     }
 
     cards.forEach((card, idx) => {
+      const rotationValue = cardRotations[idx];
       gsap.set(card, {
         opacity: 1,
         yPercent: 12,
         scale: 0.97,
-        rotation: cardRotations[idx] ?? 0,
+        rotation:
+          typeof rotationValue === 'string' ? parseFloat(rotationValue) || 0 : rotationValue ?? 0,
         x: cardOffsets[idx] ?? 0,
       });
     });
@@ -88,11 +90,15 @@ export async function initProcessStackingEffect({
       const card = cards[index];
       if (!card) return;
 
+      const rotationValue = cardRotations[index];
       const tween = gsap
         .to(card, {
           yPercent: 0,
           scale: 1,
-          rotation: cardRotations[index],
+          rotation:
+            typeof rotationValue === 'string'
+              ? parseFloat(rotationValue) || 0
+              : rotationValue ?? 0,
           x: cardOffsets[index],
           duration: animation.duration,
           ease: animation.ease,

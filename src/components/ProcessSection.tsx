@@ -25,9 +25,9 @@ const CARD_CONFIG = {
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[420px]',
-    sm: 'sm:min-h-[480px]',
-    md: 'md:min-h-[540px]',
+    base: 'min-h-[360px]',
+    sm: 'sm:min-h-[420px]',
+    md: 'md:min-h-[520px]',
     lg: 'lg:min-h-[600px]'
   },
   padding: {
@@ -79,7 +79,7 @@ const cardBaseStyle = `
 `;
 
 // Subtle rotations for scattered look
-const cardRotations = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg'];
+const cardRotations = [-2, 1.5, -1, 2, -1.5];
 const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 
 // ============================================================================
@@ -99,7 +99,6 @@ export default function ProcessSection() {
   const [stackingEnabled, setStackingEnabled] = useState(false);
   const [shouldInitGsap, setShouldInitGsap] = useState(false);
   const [isSmall, setIsSmall] = useState(false);
-  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   
   useEffect(() => {
     setAnimationValues(
@@ -113,23 +112,21 @@ export default function ProcessSection() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
-    const updateDesktop = () => setIsDesktopViewport(desktopQuery.matches);
-    updateDesktop();
+    const updateStackingState = () => {
+      setStackingEnabled(!prefersReducedMotion && desktopQuery.matches);
+    };
+    updateStackingState();
 
     if (typeof desktopQuery.addEventListener === 'function') {
-      desktopQuery.addEventListener('change', updateDesktop);
-      return () => desktopQuery.removeEventListener('change', updateDesktop);
+      desktopQuery.addEventListener('change', updateStackingState);
+      return () => desktopQuery.removeEventListener('change', updateStackingState);
     }
 
     if (typeof desktopQuery.addListener === 'function') {
-      desktopQuery.addListener(updateDesktop);
-      return () => desktopQuery.removeListener(updateDesktop);
+      desktopQuery.addListener(updateStackingState);
+      return () => desktopQuery.removeListener(updateStackingState);
     }
-  }, []);
-
-  useEffect(() => {
-    setStackingEnabled(!prefersReducedMotion && isDesktopViewport);
-  }, [prefersReducedMotion, isDesktopViewport]);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -342,8 +339,10 @@ export default function ProcessSection() {
       <section className="relative w-full overflow-hidden bg-transparent py-20 sm:py-32 md:py-48 lg:py-64">
         <div
           ref={cardsContainerRef}
-          className={`relative w-full flex flex-col ${
-            stackingEnabled ? '' : 'space-y-10 sm:space-y-14 px-2 sm:px-4'
+          className={`relative w-full ${
+            stackingEnabled
+              ? ''
+              : 'flex flex-col space-y-10 sm:space-y-14 px-2 sm:px-4 snap-y snap-mandatory'
           }`}
         >
           {steps.map((step, index) => (
