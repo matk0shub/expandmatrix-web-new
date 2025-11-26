@@ -79,7 +79,7 @@ const cardBaseStyle = `
 `;
 
 // Subtle rotations for scattered look
-const cardRotations = [-2, 1.5, -1, 2, -1.5];
+const cardRotations = [0, 0, 0, 0, 0];
 const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 
 // ============================================================================
