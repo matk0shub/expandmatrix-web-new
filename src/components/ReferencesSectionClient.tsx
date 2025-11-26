@@ -97,7 +97,7 @@ export default function ReferencesSectionClient({
     return null;
   }
 
-  const referencesPadding = 'clamp(24px, 4vw, 96px)';
+  const referencesPadding = 'clamp(12px, 3vw, 72px)';
   const sectionStyle = {
     '--references-padding': referencesPadding,
   } as CSSProperties;
@@ -121,7 +121,7 @@ export default function ReferencesSectionClient({
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative min-h-screen overflow-hidden rounded-[48px] bg-black">
+      <div className="relative min-h-screen overflow-hidden rounded-[36px] sm:rounded-[40px] lg:rounded-[48px] bg-black">
         <div
           className="pointer-events-none absolute overflow-hidden rounded-[40px]"
           style={backgroundInsetStyle}
@@ -143,7 +143,7 @@ export default function ReferencesSectionClient({
           style={contentPaddingStyle}
         >
           <div className="mx-auto w-full max-w-[1780px]">
-            <div className="flex flex-col gap-10 sm:gap-12 rounded-[32px] px-4 py-8 sm:px-8 sm:py-10 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12 bg-black/40 backdrop-blur-md ring-1 ring-white/5">
+            <div className="flex flex-col gap-8 sm:gap-10 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12 bg-black/45 backdrop-blur-md ring-1 ring-white/5">
               <div className="w-full lg:w-1/2 flex flex-col gap-6">
                 <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-gray-300">
                   {copy.overline}
