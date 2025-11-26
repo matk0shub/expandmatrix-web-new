@@ -18,16 +18,16 @@ type ProcessStackingModule = typeof import('./processStackingEffect');
 
 const CARD_CONFIG = {
   width: {
-    base: 'w-full',
-    sm: 'sm:w-[95%]',
-    md: 'md:w-[85%]',
+    base: 'w-[88vw] max-w-[360px]',
+    sm: 'sm:w-[80vw] sm:max-w-[420px]',
+    md: 'md:w-[600px]',
     lg: 'lg:w-[720px]',
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[320px]',
-    sm: 'sm:min-h-[400px]',
-    md: 'md:min-h-[520px]',
+    base: 'min-h-[420px]',
+    sm: 'sm:min-h-[480px]',
+    md: 'md:min-h-[540px]',
     lg: 'lg:min-h-[600px]'
   },
   padding: {
@@ -38,7 +38,7 @@ const CARD_CONFIG = {
     xl: 'xl:p-16'
   },
   borderRadius: 'rounded-3xl', // Standard border-radius
-  maxWidth: 'max-w-[86vw] lg:max-w-none',
+  maxWidth: 'lg:max-w-none',
   typography: {
     number: {
       size: 'text-base sm:text-lg md:text-xl lg:text-2xl',
@@ -64,7 +64,8 @@ const CARD_CONFIG = {
   animation: {
     stickDistance: 100,
     duration: 0.8,
-    ease: 'power2.out'
+    ease: 'power2.out',
+    scrub: 0.55,
   }
 } as const;
 
@@ -98,6 +99,7 @@ export default function ProcessSection() {
   const [stackingEnabled, setStackingEnabled] = useState(false);
   const [shouldInitGsap, setShouldInitGsap] = useState(false);
   const [isSmall, setIsSmall] = useState(false);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   
   useEffect(() => {
     setAnimationValues(
@@ -109,9 +111,25 @@ export default function ProcessSection() {
   }, []);
 
   useEffect(() => {
-    // Enable stacking across all breakpoints unless user prefers reduced motion
-    setStackingEnabled(!prefersReducedMotion);
-  }, [prefersReducedMotion]);
+    if (typeof window === 'undefined') return;
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+    const updateDesktop = () => setIsDesktopViewport(desktopQuery.matches);
+    updateDesktop();
+
+    if (typeof desktopQuery.addEventListener === 'function') {
+      desktopQuery.addEventListener('change', updateDesktop);
+      return () => desktopQuery.removeEventListener('change', updateDesktop);
+    }
+
+    if (typeof desktopQuery.addListener === 'function') {
+      desktopQuery.addListener(updateDesktop);
+      return () => desktopQuery.removeListener(updateDesktop);
+    }
+  }, []);
+
+  useEffect(() => {
+    setStackingEnabled(!prefersReducedMotion && isDesktopViewport);
+  }, [prefersReducedMotion, isDesktopViewport]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -324,7 +342,9 @@ export default function ProcessSection() {
       <section className="relative w-full overflow-hidden bg-transparent py-20 sm:py-32 md:py-48 lg:py-64">
         <div
           ref={cardsContainerRef}
-          className={`relative w-full ${stackingEnabled ? '' : 'space-y-12 sm:space-y-16'}`}
+          className={`relative w-full flex flex-col ${
+            stackingEnabled ? '' : 'space-y-10 sm:space-y-14 px-2 sm:px-4'
+          }`}
         >
           {steps.map((step, index) => (
             <section
@@ -332,12 +352,33 @@ export default function ProcessSection() {
               className={`process-card-wrapper ${
                 stackingEnabled
                   ? 'flex min-h-screen items-center justify-center'
-                  : 'relative py-8 sm:py-12'
+                  : 'relative py-8 sm:py-12 snap-center'
               }`}
             >
               {/* Futuristic Card Container */}
-              <div
-                className={`
+              <MotionDiv
+                className="w-full"
+                initial={
+                  stackingEnabled || prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.85, y: 30, scale: 0.97 }
+                }
+                whileInView={
+                  stackingEnabled || prefersReducedMotion
+                    ? undefined
+                    : { opacity: 1, y: 0, scale: 1 }
+                }
+                viewport={
+                  stackingEnabled || prefersReducedMotion ? undefined : { once: false, amount: 0.5 }
+                }
+                transition={
+                  stackingEnabled || prefersReducedMotion
+                    ? undefined
+                    : { duration: 0.7, ease: 'easeOut' }
+                }
+              >
+                <div
+                  className={`
                   process-card
                   group
                   ${CARD_CONFIG.width.base}
@@ -432,9 +473,9 @@ export default function ProcessSection() {
                     relative
                     z-10
                     flex
-                    h-full
-                    flex-col
-                  `}
+                  h-full
+                  flex-col
+                `}
                 >
                   {/* Content */}
                   <div className="flex flex-1 flex-col items-start justify-center gap-6 sm:gap-8 md:gap-10">
@@ -496,6 +537,7 @@ export default function ProcessSection() {
                   {/* Bottom glow accent */}
                 </div>
               </div>
+              </MotionDiv>
             </section>
           ))}
         </div>
