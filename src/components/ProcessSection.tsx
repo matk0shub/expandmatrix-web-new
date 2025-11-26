@@ -62,10 +62,10 @@ const CARD_CONFIG = {
     hoverTransform: 'hover:-translate-y-6'
   },
   animation: {
-    stickDistance: 120,
-    duration: 1.2,
-    ease: 'power3.out',
-    scrub: 0.85,
+    stickDistance: 140,
+    duration: 1.4,
+    ease: 'power4.out',
+    scrub: 1,
   }
 } as const;
 

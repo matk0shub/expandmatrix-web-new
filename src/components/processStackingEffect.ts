@@ -76,8 +76,8 @@ export async function initProcessStackingEffect({
       const rotationValue = getRotationValue(cardRotations[idx]);
       gsap.set(card, {
         opacity: 1,
-        yPercent: 18,
-        scale: 0.94,
+        yPercent: 15,
+        scale: 0.96,
         rotation: rotationValue,
         x: cardOffsets[idx] ?? 0,
       });
@@ -98,11 +98,11 @@ export async function initProcessStackingEffect({
       const timeline = gsap
         .timeline({ defaults: { overwrite: 'auto' } })
         .to(card, {
-          yPercent: -4,
-          scale: 1.02,
-          rotation: rotationValue + 0.15,
+          yPercent: -3,
+          scale: 1.015,
+          rotation: rotationValue,
           x: xOffset,
-          duration: animation.duration * 0.6,
+          duration: animation.duration * 0.65,
           ease: animation.ease,
         })
         .to(
@@ -112,10 +112,10 @@ export async function initProcessStackingEffect({
             scale: 1,
             rotation: rotationValue,
             x: xOffset,
-            duration: animation.duration * 0.4,
+            duration: animation.duration * 0.5,
             ease: 'power1.out',
           },
-          '-=0.25',
+          '-=0.35',
         )
         .pause();
 
