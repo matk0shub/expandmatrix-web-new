@@ -49,7 +49,7 @@ export default function ReferenceStatsCard({
         </div>
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
           {/* Mobile grid */}
-          <div className="grid grid-cols-1 gap-2 p-3 sm:grid-cols-2 lg:hidden">
+          <div className="grid grid-cols-1 gap-2 p-2 sm:grid-cols-2 lg:hidden">
             {metrics.map((metric, index) => (
               <MotionDiv
                 key={`${metric.label}-${index}`}
@@ -63,12 +63,12 @@ export default function ReferenceStatsCard({
                       }
                     : undefined
                 }
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5"
+                className="rounded-xl border border-white/10 bg-white/5 px-2.5 py-2"
               >
-                <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/70 sm:text-xs leading-tight">
+                <div className="text-[10px] font-medium uppercase tracking-[0.08em] text-white/70 sm:text-xs leading-tight">
                   {metric.label}
                 </div>
-                <div className="text-lg sm:text-xl font-semibold text-white leading-tight mt-0.5 sm:mt-1">
+                <div className="text-base sm:text-xl font-semibold text-white leading-tight mt-0.5 sm:mt-1">
                   {metric.value}
                 </div>
               </MotionDiv>
