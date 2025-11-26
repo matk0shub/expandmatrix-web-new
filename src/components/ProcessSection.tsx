@@ -18,15 +18,15 @@ type ProcessStackingModule = typeof import('./processStackingEffect');
 
 const CARD_CONFIG = {
   width: {
-    base: 'w-[84vw] max-w-[320px]',
-    sm: 'sm:w-[75vw] sm:max-w-[380px]',
+    base: 'w-[92vw] max-w-[380px]',
+    sm: 'sm:w-[82vw] sm:max-w-[420px]',
     md: 'md:w-[600px]',
     lg: 'lg:w-[720px]',
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[320px]',
-    sm: 'sm:min-h-[400px]',
+    base: 'min-h-[380px]',
+    sm: 'sm:min-h-[440px]',
     md: 'md:min-h-[520px]',
     lg: 'lg:min-h-[600px]'
   },
@@ -407,32 +407,15 @@ export default function ProcessSection() {
                 <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 {/* Icon Accent */}
-                <MotionDiv
+                <div
                   className="pointer-events-none absolute z-[2]"
                   style={{
                     width: step.icon.size,
                     height: step.icon.size,
                     bottom: (isSmall && 'bottomMobile' in step.icon ? step.icon.bottomMobile : step.icon.bottom) as string,
-                    right: step.icon.right
+                    right: step.icon.right,
+                    transform: `rotate(${step.icon.rotation}deg)`
                   }}
-                  initial={{ rotate: step.icon.rotation }}
-                  animate={
-                    prefersReducedMotion
-                      ? undefined
-                      : {
-                          rotate: [
-                            step.icon.rotation - 4,
-                            step.icon.rotation + 4,
-                            step.icon.rotation - 4
-                          ],
-                          y: [-10, 8, -10]
-                        }
-                  }
-                  transition={
-                    prefersReducedMotion
-                      ? undefined
-                      : { duration: 9 + index * 0.6, repeat: Infinity, ease: 'easeInOut' }
-                  }
                 >
                   <div className="relative w-full h-full">
                     <Image
@@ -444,7 +427,7 @@ export default function ProcessSection() {
                       priority={index === 0}
                     />
                   </div>
-                </MotionDiv>
+                </div>
 
                 {/* Card Content */}
                 <div
