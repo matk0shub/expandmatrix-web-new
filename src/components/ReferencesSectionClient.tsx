@@ -143,7 +143,7 @@ export default function ReferencesSectionClient({
           style={contentPaddingStyle}
         >
           <div className="mx-auto w-full max-w-[1780px]">
-            <div className="flex flex-col gap-8 sm:gap-10 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12 bg-white/8 backdrop-blur-md ring-1 ring-white/5">
+            <div className="flex flex-col gap-8 sm:gap-10 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12">
               <div className="w-full lg:w-1/2 flex flex-col gap-6">
                 <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-gray-300">
                   {copy.overline}
