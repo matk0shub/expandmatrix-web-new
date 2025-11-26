@@ -18,15 +18,15 @@ type ProcessStackingModule = typeof import('./processStackingEffect');
 
 const CARD_CONFIG = {
   width: {
-    base: 'w-[92vw] max-w-[380px]',
-    sm: 'sm:w-[82vw] sm:max-w-[420px]',
+    base: 'w-[96vw] max-w-[400px]',
+    sm: 'sm:w-[88vw] sm:max-w-[460px]',
     md: 'md:w-[600px]',
     lg: 'lg:w-[720px]',
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[380px]',
-    sm: 'sm:min-h-[440px]',
+    base: 'min-h-[420px]',
+    sm: 'sm:min-h-[480px]',
     md: 'md:min-h-[520px]',
     lg: 'lg:min-h-[600px]'
   },
