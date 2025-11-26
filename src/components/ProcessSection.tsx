@@ -25,8 +25,8 @@ const CARD_CONFIG = {
     xl: 'xl:w-[800px]'
   },
   height: {
-    base: 'min-h-[420px]',
-    sm: 'sm:min-h-[480px]',
+    base: 'min-h-[380px]',
+    sm: 'sm:min-h-[440px]',
     md: 'md:min-h-[520px]',
     lg: 'lg:min-h-[600px]'
   },
