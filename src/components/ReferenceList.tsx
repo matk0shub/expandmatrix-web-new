@@ -59,6 +59,9 @@ export default function ReferenceList({
       <div className="relative">
         <div className="space-y-4 lg:space-y-6 flex-1 overflow-visible">
           {visibleIndices.map((index) => {
+            const reference = references[index];
+            if (!reference) return null;
+
             const isActive = index === activeIndex;
             const isHovered = hoveredIndex === index;
             const shouldAnimate = isActive || isHovered;
