@@ -128,30 +128,28 @@ export default function ReferencesSectionClient({
         </div>
 
         <div
-          className="relative z-10 flex h-full items-start py-24 md:py-40 lg:py-48"
+          className="relative z-10 py-16 sm:py-20 lg:py-32"
           style={contentPaddingStyle}
         >
           <div className="mx-auto w-full max-w-[1780px]">
-            <div className="flex flex-col gap-12 rounded-[32px] px-6 py-10 sm:px-10 sm:py-12 lg:flex-row lg:items-start lg:gap-16">
-              <div className="w-full lg:w-1/2">
-                <p className="text-sm font-medium uppercase tracking-wider text-gray-300">
+            <div className="flex flex-col gap-10 sm:gap-12 rounded-[32px] px-4 py-8 sm:px-8 sm:py-10 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12 bg-black/40 backdrop-blur-md ring-1 ring-white/5">
+              <div className="w-full lg:w-1/2 flex flex-col gap-6">
+                <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-gray-300">
                   {copy.overline}
                 </p>
-                <div className="mt-8">
-                  <ReferenceList
-                    references={orderedReferences}
-                    activeIndex={activeIndex}
-                    onSelect={handleSelect}
-                    prefersReducedMotion={prefersReducedMotion}
-                    copy={{
-                      selectReference: copy.selectReference,
-                      instagram: copy.instagram,
-                      instagramAria: copy.instagramAria,
-                      website: copy.website,
-                      websiteAria: copy.websiteAria,
-                    }}
-                  />
-                </div>
+                <ReferenceList
+                  references={orderedReferences}
+                  activeIndex={activeIndex}
+                  onSelect={handleSelect}
+                  prefersReducedMotion={prefersReducedMotion}
+                  copy={{
+                    selectReference: copy.selectReference,
+                    instagram: copy.instagram,
+                    instagramAria: copy.instagramAria,
+                    website: copy.website,
+                    websiteAria: copy.websiteAria,
+                  }}
+                />
               </div>
 
               <div className="w-full lg:w-1/2">

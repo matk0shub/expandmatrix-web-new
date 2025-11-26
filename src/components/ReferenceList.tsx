@@ -67,125 +67,147 @@ export default function ReferenceList({
     }
   }, [activeIndex, prefersReducedMotion]);
 
+  const visibleCount = Math.min(4, references.length);
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <div className="relative h-full flex flex-col">
-      <div
-        ref={listRef}
-        className="space-y-4 lg:space-y-6 flex-1 overflow-y-auto overflow-x-hidden pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-        style={{ 
-          maxHeight: 'calc(100vh - 200px)',
-          WebkitOverflowScrolling: 'touch'
-        }}
-      >
-      {references.map((reference, index) => {
-        const isActive = index === activeIndex;
-        const isHovered = hoveredIndex === index;
-        const shouldAnimate = isActive || isHovered;
+    <div className="relative h-full flex flex-col gap-4">
+      <div className="relative">
+        <div
+          ref={listRef}
+          className={`space-y-4 lg:space-y-6 flex-1 overflow-x-hidden pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30 transition-all duration-300 ${
+            isExpanded ? 'max-h-none overflow-y-auto' : 'max-h-[60vh] overflow-y-auto'
+          }`}
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {references.map((reference, index) => {
+            const isActive = index === activeIndex;
+            const isHovered = hoveredIndex === index;
+            const shouldAnimate = isActive || isHovered;
 
-        return (
-          <MotionDiv
-            key={reference.id}
-            className={`cursor-pointer transition-all duration-300 ${
-              isActive 
-                ? 'opacity-100' 
-                : 'opacity-50 sm:opacity-40 hover:opacity-80 sm:hover:opacity-70'
-            }`}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            onClick={() => onSelect(index)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onSelect(index);
-              }
-            }}
-            tabIndex={0}
-            role="button"
-            aria-label={formatLabel(copy.selectReference, reference.name)}
-            aria-pressed={isActive}
-            whileHover={{}}
-            whileTap={{}}
-          >
-            <div className="flex flex-col gap-4">
-              {/* Company name */}
-              <div className="flex-1">
-                <div className="relative">
-                  <div className="relative z-10">
-                    <ScrambleText
-                      text={reference.name}
-                      className={`font-bold transition-all duration-300 ${
-                        isActive 
-                          ? 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-white sm:drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] lg:drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]' 
-                          : 'text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 sm:drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_3px_8px_rgba(0,0,0,0.6)]'
-                      }`}
-                      applyScramble={shouldAnimate && !prefersReducedMotion}
-                      trigger="manual"
-                    />
-                    
-                    {/* Subtitle */}
-                  {reference.subtitle && (
-                      <MotionDiv
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ 
-                          opacity: isActive ? 1 : 0.6,
-                          y: 0 
-                        }}
-                        transition={{ 
-                          duration: prefersReducedMotion ? 0 : 0.3,
-                          delay: prefersReducedMotion ? 0 : 0.1 
-                        }}
-                        className={`mt-1 lg:mt-2 text-xs sm:text-sm lg:text-base transition-colors duration-300 ${
-                          isActive 
-                            ? 'text-gray-200 sm:drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]' 
-                            : 'text-gray-400 sm:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
-                        }`}
-                      >
-                        {reference.subtitle}
-                      </MotionDiv>
-                    )}
+            return (
+              <MotionDiv
+                key={reference.id}
+                className={`cursor-pointer transition-all duration-300 ${
+                  isActive
+                    ? 'opacity-100'
+                    : 'opacity-50 sm:opacity-40 hover:opacity-80 sm:hover:opacity-70'
+                }`}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => onSelect(index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelect(index);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={formatLabel(copy.selectReference, reference.name)}
+                aria-pressed={isActive}
+                whileHover={{}}
+                whileTap={{}}
+              >
+                <div className="flex flex-col gap-4">
+                  {/* Company name */}
+                  <div className="flex-1">
+                    <div className="relative">
+                      <div className="relative z-10">
+                        <ScrambleText
+                          text={reference.name}
+                          className={`font-bold transition-all duration-300 ${
+                            isActive
+                              ? 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-white sm:drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] lg:drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]'
+                              : 'text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 sm:drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_3px_8px_rgba(0,0,0,0.6)]'
+                          }`}
+                          applyScramble={shouldAnimate && !prefersReducedMotion}
+                          trigger="manual"
+                        />
+
+                        {/* Subtitle */}
+                        {reference.subtitle && (
+                          <MotionDiv
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{
+                              opacity: isActive ? 1 : 0.6,
+                              y: 0,
+                            }}
+                            transition={{
+                              duration: prefersReducedMotion ? 0 : 0.3,
+                              delay: prefersReducedMotion ? 0 : 0.1,
+                            }}
+                            className={`mt-1 lg:mt-2 text-xs sm:text-sm lg:text-base transition-colors duration-300 ${
+                              isActive
+                                ? 'text-gray-200 sm:drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]'
+                                : 'text-gray-400 sm:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
+                            }`}
+                          >
+                            {reference.subtitle}
+                          </MotionDiv>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* External links */}
-              {isActive && (
-                <div className="flex flex-wrap gap-3">
-                  {reference.instagramUrl && (
-                    <a
-                      href={reference.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-medium text-white sm:px-5 sm:text-sm ${
-                        prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
-                      } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black`}
-                      aria-label={formatLabel(copy.instagramAria, reference.name)}
-                    >
-                      <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="whitespace-nowrap">{copy.instagram}</span>
-                    </a>
-                  )}
+                  {/* External links */}
+                  {isActive && (
+                    <div className="flex flex-wrap gap-3">
+                      {reference.instagramUrl && (
+                        <a
+                          href={reference.instagramUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-medium text-white sm:px-5 sm:text-sm ${
+                            prefersReducedMotion
+                              ? ''
+                              : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
+                          } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-black`}
+                          aria-label={formatLabel(copy.instagramAria, reference.name)}
+                        >
+                          <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="whitespace-nowrap">{copy.instagram}</span>
+                        </a>
+                      )}
 
-                  {reference.websiteUrl && (
-                    <a
-                      href={reference.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:px-5 sm:text-sm ${
-                        prefersReducedMotion ? '' : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
-                      } focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black`}
-                      aria-label={formatLabel(copy.websiteAria, reference.name)}
-                    >
-                      <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="whitespace-nowrap">{copy.website}</span>
-                    </a>
+                      {reference.websiteUrl && (
+                        <a
+                          href={reference.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:px-5 sm:text-sm ${
+                            prefersReducedMotion
+                              ? ''
+                              : 'transform-gpu transition-transform hover:scale-[1.02] active:scale-[0.97]'
+                          } focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-black`}
+                          aria-label={formatLabel(copy.websiteAria, reference.name)}
+                        >
+                          <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="whitespace-nowrap">{copy.website}</span>
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-          </MotionDiv>
-        );
-      })}
+              </MotionDiv>
+            );
+          })}
+        </div>
+
+        {!isExpanded && references.length > visibleCount && (
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black via-black/80 to-transparent" aria-hidden="true" />
+        )}
       </div>
+
+      {references.length > visibleCount && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="self-start rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md ring-1 ring-white/15 hover:bg-white/15 transition"
+        >
+          {isExpanded ? 'Show fewer' : `Show all (${references.length})`}
+        </button>
+      )}
     </div>
   );
 }
