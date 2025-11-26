@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import type { Reference } from '@/types/references';
@@ -33,7 +33,6 @@ export default function ReferenceList({
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const listRef = useRef<HTMLDivElement>(null);
   const formatLabel = useCallback(
     (template: string | ((name: string) => string), name: string) => {
       if (typeof template === 'function') {
@@ -45,54 +44,32 @@ export default function ReferenceList({
     []
   );
 
-  // Auto-scroll to keep active item visible
-  useEffect(() => {
-    if (!listRef.current || prefersReducedMotion) return;
+  const visibleIndices = (() => {
+    if (!references.length) return [] as number[];
+    if (references.length === 1) return [0];
+    if (references.length === 2) return [activeIndex, (activeIndex + 1) % 2];
 
-    const activeElement = listRef.current.children[activeIndex] as HTMLElement;
-    if (!activeElement) return;
-
-    const containerRect = listRef.current.getBoundingClientRect();
-    const elementRect = activeElement.getBoundingClientRect();
-
-    const isAbove = elementRect.top < containerRect.top;
-    const isBelow = elementRect.bottom > containerRect.bottom;
-
-    if (isAbove || isBelow) {
-      // Keep the interaction focused on the list by scrolling only the container
-      activeElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [activeIndex, prefersReducedMotion]);
-
-  const visibleCount = Math.min(4, references.length);
-  const [isExpanded, setIsExpanded] = useState(false);
+    const prev = (activeIndex - 1 + references.length) % references.length;
+    const next = (activeIndex + 1) % references.length;
+    return [prev, activeIndex, next];
+  })();
 
   return (
     <div className="relative h-full flex flex-col gap-4">
       <div className="relative">
-        <div
-          ref={listRef}
-          className={`space-y-4 lg:space-y-6 flex-1 overflow-x-hidden pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30 transition-all duration-300 ${
-            isExpanded ? 'max-h-none overflow-y-auto' : 'max-h-[60vh] overflow-y-auto'
-          }`}
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {references.map((reference, index) => {
+        <div className="space-y-4 lg:space-y-6 flex-1 overflow-visible">
+          {visibleIndices.map((index) => {
             const isActive = index === activeIndex;
             const isHovered = hoveredIndex === index;
             const shouldAnimate = isActive || isHovered;
+            const positionClass = isActive
+              ? 'opacity-100'
+              : 'opacity-60 sm:opacity-50';
 
             return (
               <MotionDiv
                 key={reference.id}
-                className={`cursor-pointer transition-all duration-300 ${
-                  isActive
-                    ? 'opacity-100'
-                    : 'opacity-50 sm:opacity-40 hover:opacity-80 sm:hover:opacity-70'
-                }`}
+                className={`cursor-pointer transition-all duration-300 ${positionClass}`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onClick={() => onSelect(index)}
@@ -194,20 +171,7 @@ export default function ReferenceList({
           })}
         </div>
 
-        {!isExpanded && references.length > visibleCount && (
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black via-black/80 to-transparent" aria-hidden="true" />
-        )}
       </div>
-
-      {references.length > visibleCount && (
-        <button
-          type="button"
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="self-start rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md ring-1 ring-white/15 hover:bg-white/15 transition"
-        >
-          {isExpanded ? 'Show fewer' : `Show all (${references.length})`}
-        </button>
-      )}
     </div>
   );
 }
