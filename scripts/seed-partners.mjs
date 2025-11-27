@@ -1,105 +1,77 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import dotenv from 'dotenv'
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const projectRoot = path.resolve(__dirname, '..')
-const mediaDir = path.join(projectRoot, 'media')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..');
+const publicDir = path.join(projectRoot, 'public');
 
-if (!fs.existsSync(mediaDir)) {
-  fs.mkdirSync(mediaDir, { recursive: true })
-}
-
-const envCandidates = ['.env']
-for (const candidate of envCandidates) {
-  const envPath = path.join(projectRoot, candidate)
-  if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath })
-    break
-  }
+const envPath = path.join(projectRoot, '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
 }
 
 if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URI) {
-  console.error('Missing PAYLOAD_SECRET or DATABASE_URI. Set environment variables before running the partners seed script.')
-  process.exit(1)
+  console.error('Missing PAYLOAD_SECRET or DATABASE_URI. Aborting partners seed.');
+  process.exit(1);
 }
 
-const partners = [
-  {
-    name: 'n8n',
-    logo: {
-      url: 'https://images.ctfassets.net/28eu8h0h0k27/5VNyQEBFDvka2JCQnuhVxZ/ac45fb1a5d73ff5102b31b9a8d5d74d9/n8n-logo.png',
-      filename: 'partner-n8n.png',
-      alt: 'n8n automation logo',
-    },
-    scale: 1,
-    order: 1,
-  },
-  {
-    name: 'OpenAI',
-    logo: {
-      url: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg',
-      filename: 'partner-openai.svg',
-      alt: 'OpenAI logo',
-    },
-    scale: 0.9,
-    order: 2,
-  },
-  {
-    name: 'Cal.com',
-    logo: {
-      url: 'https://assets.cal.com/brand/cal-logo-dark.svg',
-      filename: 'partner-cal.svg',
-      alt: 'Cal.com scheduling logo',
-    },
-    scale: 1,
-    order: 3,
-  },
-  {
-    name: 'Cursor',
-    logo: {
-      url: 'https://avatars.githubusercontent.com/u/12201221?s=200&v=4',
-      filename: 'partner-cursor.png',
-      alt: 'Cursor AI pair programming logo',
-    },
-    scale: 0.75,
-    order: 4,
-  },
-  {
-    name: 'BodyBody',
-    logo: {
-      url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&h=300&q=80',
-      filename: 'partner-bodybody.jpg',
-      alt: 'BodyBody wellness brand artwork',
-    },
-    scale: 1,
-    order: 5,
-  },
-  {
-    name: 'Pruzinárna',
-    logo: {
-      url: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=300&h=300&q=80',
-      filename: 'partner-pruzinarna.jpg',
-      alt: 'Manufacturing abstract illustration',
-    },
-    scale: 1,
-    order: 6,
-  },
-]
+const logoEntries = [
+  { name: 'Anthropic', file: 'images/partners/anthropic.svg', alt: 'Anthropic', scale: 0.9, order: 1 },
+  { name: 'Augment', file: 'images/partners/augment.svg', alt: 'Augment', scale: 0.95, order: 2 },
+  { name: 'Claude', file: 'images/partners/claude.svg', alt: 'Claude AI', scale: 0.95, order: 3 },
+  { name: 'Copilot', file: 'images/partners/copilot.svg', alt: 'GitHub Copilot', scale: 0.82, order: 4 },
+  { name: 'Cursor', file: 'images/partners/cursor_logo.svg', alt: 'Cursor', scale: 0.78, order: 5 },
+  { name: 'Gemini', file: 'images/partners/gemini.svg', alt: 'Google Gemini', scale: 0.9, order: 6 },
+  { name: 'Grok', file: 'images/partners/grok.svg', alt: 'xAI Grok', scale: 0.9, order: 7 },
+  { name: 'Kimi', file: 'images/partners/kimi-color.svg', alt: 'Kimi AI', scale: 0.95, order: 8 },
+  { name: 'Kling', file: 'images/partners/kling-color.svg', alt: 'Kling AI', scale: 0.95, order: 9 },
+  { name: 'Minimax', file: 'images/partners/minimax-color.svg', alt: 'MiniMax', scale: 0.9, order: 10 },
+  { name: 'n8n', file: 'images/partners/n8n_logo.svg', alt: 'n8n Automation', scale: 0.8, order: 11 },
+  { name: 'Ollama', file: 'images/partners/ollama.svg', alt: 'Ollama', scale: 0.82, order: 12 },
+  { name: 'OpenAI', file: 'images/partners/openai_logo.svg', alt: 'OpenAI', scale: 0.7, order: 13 },
+  { name: 'Sora', file: 'images/partners/sora.svg', alt: 'OpenAI Sora', scale: 0.88, order: 14 },
+];
 
-let sharpInstance = null
-const getSharp = async () => {
-  if (!sharpInstance) {
-    const sharpModule = await import('sharp')
-    sharpInstance = sharpModule.default ?? sharpModule
+const readLocalAsset = (relativePath) => {
+  const absolutePath = path.join(publicDir, relativePath);
+  if (!fs.existsSync(absolutePath)) {
+    throw new Error(`Missing logo asset at ${relativePath}`);
   }
-  return sharpInstance
-}
 
-const ensureMedia = async (payload, { url, filename, alt }) => {
-  const existing = await payload.find({
+  const buffer = fs.readFileSync(absolutePath);
+  const extension = path.extname(absolutePath).toLowerCase();
+  const mimeType =
+    extension === '.svg'
+      ? 'image/svg+xml'
+      : extension === '.png'
+        ? 'image/png'
+        : extension === '.jpg' || extension === '.jpeg'
+          ? 'image/jpeg'
+          : extension === '.webp'
+            ? 'image/webp'
+            : 'application/octet-stream';
+
+  return {
+    buffer,
+    mimeType,
+    filename: path.basename(absolutePath),
+  };
+};
+
+const { default: payload } = await import('payload');
+const configModule = await import(path.join(projectRoot, 'payload.config.js'));
+const config = configModule.default ?? configModule;
+
+await payload.init({
+  config,
+  local: true,
+});
+
+const findMediaByFilename = async (filename) => {
+  const result = await payload.find({
     collection: 'media',
     where: {
       filename: {
@@ -107,123 +79,114 @@ const ensureMedia = async (payload, { url, filename, alt }) => {
       },
     },
     limit: 1,
-  })
+  });
 
-  if (existing.totalDocs > 0) {
-    const doc = existing.docs[0]
-    if (doc.alt !== alt) {
-      await payload.update({ collection: 'media', id: doc.id, data: { alt } })
-    }
-    return doc.id
+  if (result.totalDocs > 0) {
+    const doc = result.docs[0];
+    return {
+      id: doc.id ?? doc._id,
+      doc,
+    };
   }
 
-  let buffer = null
-  let mimetype = 'image/png'
+  return { id: null, doc: null };
+};
 
-  if (url) {
-    try {
-      const response = await fetch(url)
-      if (response.ok) {
-        const arrayBuffer = await response.arrayBuffer()
-        buffer = Buffer.from(arrayBuffer)
-        mimetype = response.headers.get('content-type') ?? mimetype
-      } else {
-        console.warn(`[seed:partners] Download failed (${response.status}) for ${url}. Generating placeholder.`)
-      }
-    } catch (error) {
-      console.warn(`[seed:partners] Download error for ${url}: ${error instanceof Error ? error.message : error}. Generating placeholder.`)
-    }
-  }
+const ensureMediaAsset = async (entry) => {
+  const { filename, buffer, mimeType } = readLocalAsset(entry.file);
+  const existing = await findMediaByFilename(filename);
 
-  if (!buffer) {
-    const sharp = await getSharp()
-    buffer = await sharp({
-      create: {
-        width: 512,
-        height: 512,
-        channels: 3,
-        background: '#0f172a',
+  if (existing.id) {
+    await payload.update({
+      collection: 'media',
+      id: existing.id,
+      data: {
+        alt: entry.alt,
       },
-    })
-      .png()
-      .toBuffer()
-    mimetype = 'image/png'
+      file: {
+        name: filename,
+        data: buffer,
+        size: buffer.length,
+        mimetype: mimeType,
+      },
+    });
+    return existing.id;
   }
 
   const created = await payload.create({
     collection: 'media',
     data: {
-      alt,
+      alt: entry.alt,
     },
     file: {
       name: filename,
       data: buffer,
       size: buffer.length,
-      mimetype,
+      mimetype: mimeType,
     },
-  })
+  });
 
-  return created.id ?? created._id
-}
+  return created.id ?? created._id;
+};
 
-const upsertPartner = async (payload, partner) => {
-  const mediaId = await ensureMedia(payload, partner.logo)
-  const baseData = {
-    name: partner.name,
-    logo: mediaId,
-    logoAlt: partner.logo.alt ?? partner.name,
-    scale: partner.scale,
-    order: partner.order,
-    showOnSite: true,
-  }
+const upsertPartner = async (entry) => {
+  const logoId = await ensureMediaAsset(entry);
 
   const existing = await payload.find({
     collection: 'partners',
     where: {
       name: {
-        equals: partner.name,
+        equals: entry.name,
       },
     },
     limit: 1,
-  })
+    locale: 'all',
+  });
+
+  const baseData = {
+    name: entry.name,
+    logo: logoId,
+    logoAlt: entry.alt,
+    scale: entry.scale,
+    order: entry.order,
+    showOnSite: true,
+  };
 
   if (existing.totalDocs > 0) {
-    const doc = existing.docs[0]
-    await payload.update({ collection: 'partners', id: doc.id, data: baseData })
-    return { action: 'updated', name: partner.name, id: doc.id }
+    const doc = existing.docs[0];
+    const id = doc.id ?? doc._id;
+    await payload.update({
+      collection: 'partners',
+      id,
+      data: baseData,
+    });
+    return { action: 'updated', id };
   }
 
-  const created = await payload.create({ collection: 'partners', data: baseData })
-  return { action: 'created', name: partner.name, id: created.id ?? created._id }
+  const created = await payload.create({
+    collection: 'partners',
+    data: baseData,
+  });
+
+  return { action: 'created', id: created.id ?? created._id };
+};
+
+try {
+  const summary = { created: 0, updated: 0 };
+  for (const entry of logoEntries) {
+    const result = await upsertPartner(entry);
+    summary[result.action] += 1;
+    console.log(`${result.action.toUpperCase()}: ${entry.name} (${result.id})`);
+  }
+  console.log('Partners seed finished', summary);
+} catch (error) {
+  console.error('Failed to seed partners:', error);
+  process.exitCode = 1;
+} finally {
+  const client =
+    payload?.db?.connection?.getClient?.() ??
+    payload?.db?.client ??
+    payload?.db?.connection?.client ??
+    null;
+  await client?.close?.();
 }
-
-const run = async () => {
-  const { default: payload } = await import('payload')
-  const configModule = await import(path.join(projectRoot, 'payload.config.js'))
-  const config = configModule.default
-
-  await payload.init({ config, local: true, secret: process.env.PAYLOAD_SECRET })
-
-  const results = []
-  for (const partner of partners) {
-    const result = await upsertPartner(payload, partner)
-    results.push(result)
-  }
-
-  const summary = results.reduce((acc, entry) => {
-    acc[entry.action] = (acc[entry.action] ?? 0) + 1
-    return acc
-  }, {})
-
-  console.log('Partners seed complete:', summary)
-  for (const entry of results) {
-    console.log(`- ${entry.action.toUpperCase()}: ${entry.name} (${entry.id})`)
-  }
-
-  await payload.db.connection?.getClient?.()?.close?.()
-}
-
-run().catch((error) => {
-  console.error('Failed to seed partners:', error)
-  process.exitCode = 1
-})
