@@ -31,7 +31,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://ubytovani-hornacko.cz',
     image: {
       id: 'img1',
-      url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&h=800&fit=crop',
+      url: '/images/reference/ubytovani_hornacko.webp',
       alt: 'Ubytování Horňácko exterior',
     },
     order: 1,
@@ -46,7 +46,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://acklimes.cz',
     image: {
       id: 'img2',
-      url: 'https://images.unsplash.com/photo-1503389152951-9f343605f61e?w=1200&h=800&fit=crop',
+      url: '/images/reference/ac_tomes.webp',
       alt: 'HVAC technician working',
     },
     order: 2,
@@ -61,7 +61,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://apexmmagym.com',
     image: {
       id: 'img3',
-      url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&h=800&fit=crop',
+      url: '/images/reference/apex_gym.webp',
       alt: 'MMA gym training session',
     },
     order: 3,
@@ -76,7 +76,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://novaclinic.eu',
     image: {
       id: 'img4',
-      url: 'https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=1200&h=800&fit=crop',
+      url: '/images/reference/nova_clinic.webp',
       alt: 'Clinic interior',
     },
     order: 4,
@@ -91,7 +91,7 @@ const baseReferences: BaseReference[] = [
     websiteUrl: 'https://expando-logistics.com',
     image: {
       id: 'img5',
-      url: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=1200&h=800&fit=crop',
+      url: '/images/reference/expando_logistics.webp',
       alt: 'Logistics warehouse',
     },
     order: 5,

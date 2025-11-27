@@ -43,7 +43,7 @@
       "instagram": "https://www.instagram.com/mightymatty/"
     },
     "avatar": {
-      "url": "/images/team/matty.png",
+      "file": "images/team/matej_stipcak.webp",
       "alt": "Portrait of Matěj Štipčák"
     },
     "order": 3,
@@ -95,7 +95,7 @@
       "youtube": "https://www.youtube.com/@MatejVenclikAI"
     },
     "avatar": {
-      "url": "/images/team/matej-venclik.jpg",
+      "file": "images/team/matej-venclik.webp",
       "alt": "Portrait of Matěj Venclík"
     },
     "order": 1,
@@ -146,7 +146,7 @@
       "instagram": "https://www.instagram.com/expand.matrix/"
     },
     "avatar": {
-      "url": "/images/team/expandee.png",
+      "file": "images/team/expandee.webp",
       "alt": "Expandee avatar"
     },
     "order": 2,
