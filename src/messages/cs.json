@@ -120,153 +120,45 @@
             }
           ]
         },
-        "fashionBrand": {
-          "subtitle": "Udržitelná módní e-commerce",
+        "acKlimes": {
+          "subtitle": "HVAC servis a prediktivní údržba",
           "metrics": [
             {
-              "label": "Příprava uvedení produktu",
-              "value": "2 týdny → 4 dny"
+              "label": "Nárůst poptávek z webu",
+              "value": "+38%"
             },
             {
-              "label": "Obsah vytvořený AI studiem",
-              "value": "180 assetů / měsíc"
+              "label": "Rychlost webu (Lighthouse mobil)",
+              "value": "92"
             },
             {
-              "label": "Iterace optimalizace kampaní",
-              "value": "12 denně"
+              "label": "Automatizace dotazů",
+              "value": "65%"
             },
             {
-              "label": "Zákaznická péče řešená AI",
-              "value": "88 % požadavků"
-            },
-            {
-              "label": "Čas zpracování vratek",
-              "value": "↓ 65 %"
+              "label": "Zrychlení kalkulací",
+              "value": "48h → 6h"
             }
           ]
         },
-        "restaurantChain": {
-          "subtitle": "Síť restaurací na více místech",
+        "apexMma": {
+          "subtitle": "Výkonnostní MMA gym a akademie",
           "metrics": [
             {
-              "label": "Čas ušetřený plánováním směn",
-              "value": "40 hodin / týden"
+              "label": "Skóre Core Web Vitals",
+              "value": "95 / 100"
             },
             {
-              "label": "Automatizace objednávek surovin",
-              "value": "75 % objednávek"
+              "label": "Nárůst online rezervací",
+              "value": "+42%"
             },
             {
-              "label": "Zpracovaná zpětná vazba hostů",
-              "value": "6 400+ recenzí / měsíc"
+              "label": "Průměrná doba načtení",
+              "value": "4.2s → 1.2s"
             },
             {
-              "label": "Frekvence optimalizace menu",
-              "value": "Týdně díky AI insightům"
-            },
-            {
-              "label": "Snížení plýtvání",
-              "value": "-32 %"
-            }
-          ]
-        },
-        "healthTech": {
-          "subtitle": "Digitální zdravotnická řešení",
-          "metrics": [
-            {
-              "label": "Automatizace třídění pacientů",
-              "value": "82 % dotazů"
-            },
-            {
-              "label": "Reakční doba pečujícího týmu",
-              "value": "↓ z 12 h na 1 h"
-            },
-            {
-              "label": "Návrhy diagnóz od AI",
-              "value": "Přesnost 97 %"
-            },
-            {
-              "label": "Čas na compliance dokumentaci",
-              "value": "↓ 55 %"
-            },
-            {
-              "label": "Spokojenost s telemedicínou",
-              "value": "Hodnocení 4,8 / 5"
-            }
-          ]
-        },
-        "eduPlatform": {
-          "subtitle": "Online vzdělávací platforma",
-          "metrics": [
-            {
-              "label": "Tvorba kurzů s pomocí AI",
-              "value": "65 % modulů"
-            },
-            {
-              "label": "Automatizovaná podpora studentů",
-              "value": "94 % chatů"
-            },
-            {
-              "label": "Personalizované studijní cesty",
-              "value": "18 tisíc vytvořeno"
-            },
-            {
-              "label": "Snížení odchodů studentů",
-              "value": "-37 %"
-            },
-            {
-              "label": "Ušetřené hodiny týmu",
-              "value": "160 hodin / měsíc"
-            }
-          ]
-        },
-        "finTech": {
-          "subtitle": "Digitální bankovní řešení",
-          "metrics": [
-            {
-              "label": "Automatizace detekce podvodů",
-              "value": "Pokrytí 99,2 %"
-            },
-            {
-              "label": "Schvalování úvěrů přes AI",
-              "value": "78 % end-to-end"
-            },
-            {
-              "label": "Ušetřený čas na compliance auditech",
-              "value": "210 hodin / čtvrtletí"
-            },
-            {
-              "label": "Rychlost ověření klienta",
-              "value": "↓ z 48 h na 6 min"
-            },
-            {
-              "label": "Dostupnost služeb díky AI ops",
-              "value": "99,98 %"
-            }
-          ]
-        },
-        "acTomes": {
-          "subtitle": "Servis klimatizací a prediktivní údržba",
-          "metrics": [
-            {
-              "label": "Preventivních zásahů řízených AI",
-              "value": "320 / měsíc"
-            },
-            {
-              "label": "Ušetřený čas plánování techniků",
-              "value": "68 %"
-            },
-            {
-              "label": "Pokles pohotovostních výjezdů",
-              "value": "-42 %"
-            },
-            {
-              "label": "Rychlost tvorby cenové nabídky",
-              "value": "15 minut"
-            },
-            {
-              "label": "Spokojenost zákazníků",
-              "value": "4,9 / 5"
+              "label": "Přidané SEO landing pages",
+              "value": "12"
             }
           ]
         },

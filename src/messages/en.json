@@ -120,153 +120,45 @@
             }
           ]
         },
-        "fashionBrand": {
-          "subtitle": "Sustainable Fashion E-commerce",
+        "acKlimes": {
+          "subtitle": "HVAC Services & Predictive Maintenance",
           "metrics": [
             {
-              "label": "Product launch preparation",
-              "value": "2 weeks → 4 days"
+              "label": "New web lead uplift",
+              "value": "+38%"
             },
             {
-              "label": "Content produced by AI studio",
-              "value": "180 assets / month"
+              "label": "Page speed (mobile Lighthouse)",
+              "value": "92"
             },
             {
-              "label": "Ad optimization iterations",
-              "value": "12 per day"
-            },
-            {
-              "label": "Customer service handled by AI",
-              "value": "88% of tickets"
-            },
-            {
-              "label": "Return processing time",
-              "value": "↓ 65%"
-            }
-          ]
-        },
-        "restaurantChain": {
-          "subtitle": "Multi-location Restaurant Group",
-          "metrics": [
-            {
-              "label": "Staff scheduling time saved",
-              "value": "40 hrs / week"
-            },
-            {
-              "label": "Supply ordering automation",
-              "value": "75% of orders"
-            },
-            {
-              "label": "Guest feedback processed",
-              "value": "6,400+ reviews / month"
-            },
-            {
-              "label": "Menu optimization frequency",
-              "value": "Weekly via AI insights"
-            },
-            {
-              "label": "Waste reduction",
-              "value": "-32%"
-            }
-          ]
-        },
-        "healthTech": {
-          "subtitle": "Digital Health Solutions",
-          "metrics": [
-            {
-              "label": "Patient triage automation",
-              "value": "82% of inquiries"
-            },
-            {
-              "label": "Care team response time",
-              "value": "↓ from 12h to 1h"
-            },
-            {
-              "label": "AI diagnostic suggestions",
-              "value": "97% accuracy"
-            },
-            {
-              "label": "Compliance documentation time",
-              "value": "↓ 55%"
-            },
-            {
-              "label": "Telehealth satisfaction",
-              "value": "4.8 / 5 rating"
-            }
-          ]
-        },
-        "eduPlatform": {
-          "subtitle": "Online Learning Platform",
-          "metrics": [
-            {
-              "label": "Course creation assisted by AI",
-              "value": "65% of modules"
-            },
-            {
-              "label": "Learner support automated",
-              "value": "94% of chats"
-            },
-            {
-              "label": "Personalized learning paths",
-              "value": "18K generated"
-            },
-            {
-              "label": "Drop-out reduction",
-              "value": "-37%"
-            },
-            {
-              "label": "Team hours saved",
-              "value": "160 hrs / month"
-            }
-          ]
-        },
-        "finTech": {
-          "subtitle": "Digital Banking Solutions",
-          "metrics": [
-            {
-              "label": "Fraud detection automation",
-              "value": "99.2% coverage"
-            },
-            {
-              "label": "Loan approvals processed by AI",
-              "value": "78% end-to-end"
-            },
-            {
-              "label": "Compliance audit time saved",
-              "value": "210 hrs / quarter"
-            },
-            {
-              "label": "Customer verification speed",
-              "value": "↓ from 48h to 6m"
-            },
-            {
-              "label": "Service uptime with AI ops",
-              "value": "99.98%"
-            }
-          ]
-        },
-        "acTomes": {
-          "subtitle": "HVAC Servicing & Predictive Maintenance",
-          "metrics": [
-            {
-              "label": "Preventive jobs dispatched by AI",
-              "value": "320 / month"
-            },
-            {
-              "label": "Technician routing time saved",
-              "value": "68%"
-            },
-            {
-              "label": "Emergency callouts reduced",
-              "value": "-42%"
+              "label": "Support inquiries automated",
+              "value": "65%"
             },
             {
               "label": "Quote turnaround time",
-              "value": "15 min"
+              "value": "48h → 6h"
+            }
+          ]
+        },
+        "apexMma": {
+          "subtitle": "Performance MMA Gym & Academy",
+          "metrics": [
+            {
+              "label": "Core Web Vitals score",
+              "value": "95 / 100"
             },
             {
-              "label": "Customer satisfaction",
-              "value": "4.9 / 5"
+              "label": "Online bookings increase",
+              "value": "+42%"
+            },
+            {
+              "label": "Average load time",
+              "value": "4.2s → 1.2s"
+            },
+            {
+              "label": "SEO landing pages added",
+              "value": "12"
             }
           ]
         },
