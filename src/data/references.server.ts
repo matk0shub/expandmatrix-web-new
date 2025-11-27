@@ -187,7 +187,7 @@ const getReferencesCached = unstable_cache(
     return { references };
   },
   ['references'],
-  { revalidate: 60, tags: ['references'] },
+  { revalidate: 0, tags: ['references'] },
 );
 
 export const getReferences = async ({ locale }: GetReferencesOptions): Promise<ReferencesResult> =>
