@@ -2,7 +2,9 @@
   --payload-admin-font-stack: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
-body,
-body * {
-  font-family: var(--payload-admin-font-stack) !important;
+.payload,
+.payload *,
+.payload *::before,
+.payload *::after {
+  font-family: var(--payload-admin-font-stack), sans-serif !important;
 }
