@@ -404,7 +404,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
   const circleDiameter = computeCircleDiameter(layout.greenRadius);
   const circleTopPercent = clampValue(layout.topRatio * 100, 38, 54);
-  const sectionMinHeightStyle = `max(${layout.sectionMinHeight + layout.ballSize}px, 88vh)`;
+  const sectionMinHeightStyle = `max(${layout.sectionMinHeight}px, 70vh)`;
   const unifiedHeadingSize = clampValue(layout.greenRadius * 0.30, 20, 42);
   const primaryTextSize = unifiedHeadingSize;
   const monochromeFilter = 'none';
@@ -1020,7 +1020,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-black pt-24 pb-32 sm:pb-36 md:py-40 lg:py-48"
+      className="relative w-full overflow-hidden bg-black py-24 md:py-40 lg:py-48"
       style={{ minHeight: sectionMinHeightStyle }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
