@@ -449,8 +449,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
   const renderBallContent = useCallback(
     (ball: BallConfig) => {
-      const scale = ball.content.scale ?? 0.56;
-      const side = Math.max(layout.ballSize * scale, 32);
+      const scale = clampValue(ball.content.scale ?? 0.56, 0.4, 0.82);
+      const side = Math.max(layout.ballSize * scale, 28);
 
       return (
         <div
@@ -474,7 +474,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         </div>
       );
     },
-    [layout.ballSize, monochromeFilter]
+    [clampValue, layout.ballSize, monochromeFilter],
   );
 
   // Resolve circle-circle collisions with impulse response and tangential friction.

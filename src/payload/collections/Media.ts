@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { CollectionConfig } from 'payload'
 
 const WEBP_OPTIONS = {
@@ -7,13 +9,22 @@ const WEBP_OPTIONS = {
   effort: 6,
 } as const;
 
+const uploadDir = process.env.PAYLOAD_UPLOAD_PATH
+  ? path.resolve(process.env.PAYLOAD_UPLOAD_PATH)
+  : path.resolve(process.cwd(), 'media')
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true })
+}
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: () => true, // Allow public read access to media files
   },
   upload: {
-    staticDir: 'media',
+    staticDir: uploadDir,
+    staticURL: '/media',
     // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
     formatOptions: {
       format: 'webp',
