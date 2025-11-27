@@ -25,47 +25,29 @@ export default function ReferenceBackground({
 
   return (
     <div className="absolute inset-0 overflow-hidden rounded-[40px]">
-      {shouldAnimate ? (
-        <MotionDiv
-          key={reference.id}
-          className="absolute inset-0 w-full h-full"
-          initial={{ x: '15%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '-15%', opacity: 0 }}
-          transition={{
-            duration: 0.6,
-            ease: 'easeInOut',
-          }}
-        >
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={reference.image?.alt ?? ''}
-              fill
-              priority={false}
-              sizes="100vw"
-              className="object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
-          )}
-        </MotionDiv>
-      ) : (
-        <div className="absolute inset-0 w-full h-full">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={reference.image?.alt ?? ''}
-              fill
-              priority={false}
-              sizes="100vw"
-              className="object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
-          )}
-        </div>
-      )}
+      <MotionDiv
+        key={reference.id}
+        className="absolute inset-0 w-full h-full"
+        initial={shouldAnimate ? { opacity: 0 } : false}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: shouldAnimate ? 0.45 : 0,
+          ease: 'easeOut',
+        }}
+      >
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={reference.image?.alt ?? ''}
+            fill
+            priority={false}
+            sizes="100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
+        )}
+      </MotionDiv>
 
       <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
       <div

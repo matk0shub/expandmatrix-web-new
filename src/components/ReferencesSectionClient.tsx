@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback, type CSSProperties, type ReactElement } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { FallbackAnimatePresence } from '@/utils/motionFallback';
 import ReferenceList from './ReferenceList';
 import ReferenceBackground from './ReferenceBackground';
 import ReferenceStatsCard from './ReferenceStatsCard';
@@ -30,8 +28,6 @@ export default function ReferencesSectionClient({
   references,
   copy,
 }: ReferencesSectionClientProps): ReactElement | null {
-  const framer = useFramerMotion('idle');
-  const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const prefersReducedMotion = useReducedMotion();
   const orderedReferences = useMemo(
     () => references.slice().sort((a, b) => a.order - b.order),
@@ -126,16 +122,14 @@ export default function ReferencesSectionClient({
           className="pointer-events-none absolute overflow-hidden rounded-[40px]"
           style={backgroundInsetStyle}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {activeReference && (
-              <ReferenceBackground
-                key={activeReference.id}
-                reference={activeReference}
-                prefersReducedMotion={prefersReducedMotion}
-                animateOnChange={hasInteracted}
-              />
-            )}
-          </AnimatePresence>
+          {activeReference && (
+            <ReferenceBackground
+              key={activeReference.id}
+              reference={activeReference}
+              prefersReducedMotion={prefersReducedMotion}
+              animateOnChange={hasInteracted}
+            />
+          )}
         </div>
 
         <div
