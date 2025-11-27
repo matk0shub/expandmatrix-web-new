@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
-import '@/utils/silenceExperimentalWarnings'
+import '../utils/silenceExperimentalWarnings'
 
 import { FAQ } from './collections/FAQ'
 import { FooterLinks } from './collections/FooterLinks'

@@ -54,124 +54,44 @@ const baseReferences = [
     placeholderColor: '#38bdf8',
   },
   {
-    translationKey: 'fashionBrand',
-    slug: 'fashion-brand',
+    translationKey: 'acKlimes',
+    slug: 'ac-klimes',
     name: {
-      en: 'FashionBrand',
-      cs: 'FashionBrand',
+      en: 'AC Klimeš',
+      cs: 'AC Klimeš',
     },
-    instagramUrl: 'https://instagram.com/fashionbrand',
-    websiteUrl: 'https://fashionbrand.studio',
-    image: {
-      url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'fashion-brand.jpg',
-      alt: {
-        en: 'Fashion brand store',
-        cs: 'Fashion brand store',
-      },
-    },
-    order: 2,
-    placeholderColor: '#f472b6',
-  },
-  {
-    translationKey: 'restaurantChain',
-    slug: 'restaurant-chain',
-    name: {
-      en: 'RestaurantChain',
-      cs: 'RestaurantChain',
-    },
-    instagramUrl: 'https://instagram.com/restaurantchain',
-    websiteUrl: 'https://restaurantchain.digital',
-    image: {
-      url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'restaurant-chain.jpg',
-      alt: {
-        en: 'Restaurant interior',
-        cs: 'Restaurant interior',
-      },
-    },
-    order: 3,
-    placeholderColor: '#f97316',
-  },
-  {
-    translationKey: 'healthTech',
-    slug: 'health-tech',
-    name: {
-      en: 'HealthTech',
-      cs: 'HealthTech',
-    },
-    instagramUrl: 'https://instagram.com/healthtech',
-    websiteUrl: 'https://healthtech.care',
-    image: {
-      url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'health-tech.jpg',
-      alt: {
-        en: 'Healthcare technology',
-        cs: 'Healthcare technology',
-      },
-    },
-    order: 4,
-    placeholderColor: '#34d399',
-  },
-  {
-    translationKey: 'eduPlatform',
-    slug: 'edu-platform',
-    name: {
-      en: 'EduPlatform',
-      cs: 'EduPlatform',
-    },
-    instagramUrl: 'https://instagram.com/eduplatform',
-    websiteUrl: 'https://eduplatform.academy',
-    image: {
-      url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'edu-platform.jpg',
-      alt: {
-        en: 'Online education',
-        cs: 'Online education',
-      },
-    },
-    order: 5,
-    placeholderColor: '#a855f7',
-  },
-  {
-    translationKey: 'finTech',
-    slug: 'fin-tech',
-    name: {
-      en: 'FinTech',
-      cs: 'FinTech',
-    },
-    instagramUrl: 'https://instagram.com/fintech',
-    websiteUrl: 'https://fintech.global',
-    image: {
-      url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'fin-tech.jpg',
-      alt: {
-        en: 'Financial technology',
-        cs: 'Financial technology',
-      },
-    },
-    order: 6,
-    placeholderColor: '#22d3ee',
-  },
-  {
-    translationKey: 'acTomes',
-    slug: 'ac-tomes',
-    name: {
-      en: 'AC Tomes',
-      cs: 'AC Tomes',
-    },
-    instagramUrl: 'https://instagram.com/actomes',
-    websiteUrl: 'https://actomes.cz',
+    instagramUrl: 'https://instagram.com/ac_klimes',
+    websiteUrl: 'https://acklimes.cz',
     image: {
       url: 'https://images.unsplash.com/photo-1458891216473-4f26bb4eb40e?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'ac-tomes.jpg',
+      filename: 'ac-klimes.jpg',
       alt: {
         en: 'HVAC technicians at work',
         cs: 'Technici HVAC',
       },
     },
-    order: 7,
+    order: 2,
     placeholderColor: '#34d399',
+  },
+  {
+    translationKey: 'apexMma',
+    slug: 'apex-mma-gym',
+    name: {
+      en: 'Apex MMA Gym',
+      cs: 'Apex MMA Gym',
+    },
+    instagramUrl: 'https://www.instagram.com/apexmmagym/',
+    websiteUrl: 'https://apexmmagym.com',
+    image: {
+      url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'apex-mma-gym.jpg',
+      alt: {
+        en: 'MMA gym training session',
+        cs: 'Trénink v MMA gymu',
+      },
+    },
+    order: 3,
+    placeholderColor: '#f97316',
   },
   {
     translationKey: 'novaClinic',
@@ -190,7 +110,7 @@ const baseReferences = [
         cs: 'Interiér kliniky',
       },
     },
-    order: 8,
+    order: 4,
     placeholderColor: '#fb7185',
   },
   {
@@ -210,7 +130,7 @@ const baseReferences = [
         cs: 'Logistický hub',
       },
     },
-    order: 9,
+    order: 5,
     placeholderColor: '#10b981',
   },
 ]

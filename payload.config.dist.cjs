@@ -356,8 +356,7 @@ var dualLocaleTextField = ({
   type: "group",
   validate: validateLocalizedField(label),
   admin: {
-    description,
-    layout: "horizontal"
+    description
   },
   fields: REQUIRED_LOCALES.map((locale) => ({
     name: locale,
@@ -440,8 +439,7 @@ var References = {
             }
           ],
           admin: {
-            description: 'Metric label (e.g., "Orders", "Leads", "Revenue")',
-            layout: "horizontal"
+            description: 'Metric label (e.g., "Orders", "Leads", "Revenue")'
           }
         },
         {
@@ -463,8 +461,7 @@ var References = {
             }
           ],
           admin: {
-            description: 'Metric value (e.g., "887 655 CZK", "9.2 %")',
-            layout: "horizontal"
+            description: 'Metric value (e.g., "887 655 CZK", "9.2 %")'
           }
         }
       ],
