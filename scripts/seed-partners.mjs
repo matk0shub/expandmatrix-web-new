@@ -19,20 +19,20 @@ if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URI) {
 }
 
 const logoEntries = [
-  { name: 'Anthropic', file: 'images/partners/anthropic.svg', alt: 'Anthropic', scale: 0.9, order: 1 },
-  { name: 'Augment', file: 'images/partners/augment.svg', alt: 'Augment', scale: 0.95, order: 2 },
-  { name: 'Claude', file: 'images/partners/claude.svg', alt: 'Claude AI', scale: 0.95, order: 3 },
-  { name: 'Copilot', file: 'images/partners/copilot.svg', alt: 'GitHub Copilot', scale: 0.82, order: 4 },
-  { name: 'Cursor', file: 'images/partners/cursor_logo.svg', alt: 'Cursor', scale: 0.78, order: 5 },
-  { name: 'Gemini', file: 'images/partners/gemini.svg', alt: 'Google Gemini', scale: 0.9, order: 6 },
-  { name: 'Grok', file: 'images/partners/grok.svg', alt: 'xAI Grok', scale: 0.9, order: 7 },
-  { name: 'Kimi', file: 'images/partners/kimi-color.svg', alt: 'Kimi AI', scale: 0.95, order: 8 },
-  { name: 'Kling', file: 'images/partners/kling-color.svg', alt: 'Kling AI', scale: 0.95, order: 9 },
-  { name: 'Minimax', file: 'images/partners/minimax-color.svg', alt: 'MiniMax', scale: 0.9, order: 10 },
-  { name: 'n8n', file: 'images/partners/n8n_logo.svg', alt: 'n8n Automation', scale: 0.8, order: 11 },
-  { name: 'Ollama', file: 'images/partners/ollama.svg', alt: 'Ollama', scale: 0.82, order: 12 },
-  { name: 'OpenAI', file: 'images/partners/openai_logo.svg', alt: 'OpenAI', scale: 0.7, order: 13 },
-  { name: 'Sora', file: 'images/partners/sora.svg', alt: 'OpenAI Sora', scale: 0.88, order: 14 },
+  { name: 'Anthropic', file: 'images/partners/anthropic.svg', alt: 'Anthropic', scale: 0.78, order: 1 },
+  { name: 'Augment', file: 'images/partners/augment.svg', alt: 'Augment AI', scale: 0.82, order: 2 },
+  { name: 'Claude', file: 'images/partners/claude.svg', alt: 'Claude AI', scale: 0.82, order: 3 },
+  { name: 'Copilot', file: 'images/partners/copilot.svg', alt: 'GitHub Copilot', scale: 0.74, order: 4 },
+  { name: 'Cursor', file: 'images/partners/cursor.svg', alt: 'Cursor', scale: 0.76, order: 5 },
+  { name: 'Gemini', file: 'images/partners/gemini.svg', alt: 'Google Gemini', scale: 0.8, order: 6 },
+  { name: 'Grok', file: 'images/partners/grok.svg', alt: 'xAI Grok', scale: 0.8, order: 7 },
+  { name: 'Kimi', file: 'images/partners/kimi.svg', alt: 'Kimi AI', scale: 0.82, order: 8 },
+  { name: 'Kling', file: 'images/partners/kling-color.svg', alt: 'Kling AI', scale: 0.86, order: 9 },
+  { name: 'MiniMax', file: 'images/partners/minimax.svg', alt: 'MiniMax', scale: 0.8, order: 10 },
+  { name: 'n8n', file: 'images/partners/n8n_logo.svg', alt: 'n8n Automation', scale: 0.75, order: 11 },
+  { name: 'Ollama', file: 'images/partners/ollama.svg', alt: 'Ollama', scale: 0.8, order: 12 },
+  { name: 'OpenAI', file: 'images/partners/openai_logo.svg', alt: 'OpenAI', scale: 0.72, order: 13 },
+  { name: 'Sora', file: 'images/partners/sora.svg', alt: 'OpenAI Sora', scale: 0.8, order: 14 },
 ];
 
 const readLocalAsset = (relativePath) => {
@@ -171,13 +171,36 @@ const upsertPartner = async (entry) => {
   return { action: 'created', id: created.id ?? created._id };
 };
 
+const allowedNames = new Set(logoEntries.map((entry) => entry.name.toLowerCase()));
+
 try {
-  const summary = { created: 0, updated: 0 };
+  const summary = { created: 0, updated: 0, removed: 0 };
   for (const entry of logoEntries) {
     const result = await upsertPartner(entry);
     summary[result.action] += 1;
     console.log(`${result.action.toUpperCase()}: ${entry.name} (${result.id})`);
   }
+
+  const existingPartners = await payload.find({
+    collection: 'partners',
+    limit: 200,
+    locale: 'all',
+  });
+
+  for (const partner of existingPartners.docs) {
+    const id = partner.id ?? partner._id;
+    if (!id) {
+      continue;
+    }
+
+    const name = String(partner.name ?? '').toLowerCase();
+    if (!allowedNames.has(name)) {
+      await payload.delete({ collection: 'partners', id });
+      summary.removed += 1;
+      console.log(`REMOVED: ${partner.name} (${id})`);
+    }
+  }
+
   console.log('Partners seed finished', summary);
 } catch (error) {
   console.error('Failed to seed partners:', error);
