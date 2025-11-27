@@ -22,7 +22,7 @@ if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URI) {
 }
 
 const allowedSlugs = [
-  'tech-startup',
+  'ubytovani-hornacko',
   'ac-klimes',
   'apex-mma-gym',
   'nova-clinic',

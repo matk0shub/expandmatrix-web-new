@@ -95,28 +95,24 @@
       "metaName": "Klientské reference",
       "metaDescription": "Vybrané úspěšné spolupráce a výsledky implementace AI.",
       "samples": {
-        "techStartup": {
-          "subtitle": "SaaS platforma poháněná AI",
+        "ubytovaniHornacko": {
+          "subtitle": "Butikové ubytování v regionu Horňácko",
           "metrics": [
             {
-              "label": "Čas ušetřený AI agenty",
-              "value": "120+ hodin / měsíc"
+              "label": "Nárůst konverzí rezervací",
+              "value": "+47%"
             },
             {
-              "label": "Automatizace onboardingu klientů",
-              "value": "90 % automatizováno"
+              "label": "Průměrná doba načtení",
+              "value": "5,4s → 1,4s"
             },
             {
-              "label": "Rychlost řešení podpory",
-              "value": "3× rychlejší"
+              "label": "Organická návštěvnost",
+              "value": "+62%"
             },
             {
-              "label": "Snížení provozních nákladů",
-              "value": "-28 %"
-            },
-            {
-              "label": "Přínos AI k upsellu",
-              "value": "+62 % tržeb na klienta"
+              "label": "Automatická synchronizace dostupnosti",
+              "value": "95%"
             }
           ]
         },
@@ -154,7 +150,7 @@
             },
             {
               "label": "Průměrná doba načtení",
-              "value": "4.2s → 1.2s"
+              "value": "4,2s → 1,2s"
             },
             {
               "label": "Přidané SEO landing pages",
@@ -163,15 +159,15 @@
           ]
         },
         "novaClinic": {
-          "subtitle": "Síť estetických a stomatologických klinik",
+          "subtitle": "Síť estetických a dentálních klinik",
           "metrics": [
             {
-              "label": "Dotazů vyřešených AI recepcí",
+              "label": "AI vyřízené dotazy pacientů",
               "value": "4 500 / měsíc"
             },
             {
-              "label": "Automatizace objednání konzultací",
-              "value": "92 %"
+              "label": "Automatizace plánování konzultací",
+              "value": "92%"
             },
             {
               "label": "Tvorba léčebného plánu",
@@ -179,36 +175,32 @@
             },
             {
               "label": "Nárůst cross-sellu",
-              "value": "+36 %"
+              "value": "+36%"
             },
             {
-              "label": "Čas ušetřený lékařům na administrativě",
+              "label": "Ušetřený čas lékařů",
               "value": "55 h / týden"
             }
           ]
         },
         "expandoLogistics": {
-          "subtitle": "Mid-mile logistika a skladové operace",
+          "subtitle": "Mid-mile logistika a skladování",
           "metrics": [
             {
-              "label": "Nakládek plánovaných AI dispečerem",
-              "value": "1 240 / týden"
+              "label": "Automatizované objednání slotů",
+              "value": "74%"
             },
             {
-              "label": "Optimalizace spotřeby paliva",
-              "value": "-18 %"
+              "label": "Optimalizace tras",
+              "value": "18% rychleji"
             },
             {
-              "label": "Zkrácení prostojů na rampě",
-              "value": "-41 %"
+              "label": "Automatizace reklamací",
+              "value": "63%"
             },
             {
-              "label": "Automatizace onboardingů dopravců",
-              "value": "80 %"
-            },
-            {
-              "label": "Včasné doručení",
-              "value": "99,2 %"
+              "label": "Snížení CO₂ na zásilku",
+              "value": "-9%"
             }
           ]
         }

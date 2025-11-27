@@ -3,8 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const COMPILED_PATH = path.resolve(__dirname, 'payload.config.dist.cjs');
+const shouldUseCompiled = process.env.NODE_ENV === 'production' && fs.existsSync(COMPILED_PATH);
 
-if (fs.existsSync(COMPILED_PATH)) {
+if (shouldUseCompiled) {
+  const compiled = require(COMPILED_PATH);
+  module.exports = compiled?.default ?? compiled;
+} else if (fs.existsSync(COMPILED_PATH) && process.env.PAYLOAD_PREFER_DIST === 'true') {
   const compiled = require(COMPILED_PATH);
   module.exports = compiled?.default ?? compiled;
 } else if (process.env.NODE_ENV !== 'production') {

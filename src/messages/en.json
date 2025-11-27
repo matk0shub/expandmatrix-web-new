@@ -95,28 +95,24 @@
       "metaName": "Client References",
       "metaDescription": "Featured client success stories and AI implementation results.",
       "samples": {
-        "techStartup": {
-          "subtitle": "AI-Powered SaaS Platform",
+        "ubytovaniHornacko": {
+          "subtitle": "Boutique stays in the Horňácko region",
           "metrics": [
             {
-              "label": "Time saved by AI agents",
-              "value": "120+ hrs / month"
+              "label": "Booking conversion uplift",
+              "value": "+47%"
             },
             {
-              "label": "Customer onboarding automation",
-              "value": "90% automated"
+              "label": "Average load time",
+              "value": "5.4s → 1.4s"
             },
             {
-              "label": "Support resolution speed",
-              "value": "3× faster"
+              "label": "Organic search traffic",
+              "value": "+62%"
             },
             {
-              "label": "Operational cost reduction",
-              "value": "-28%"
-            },
-            {
-              "label": "AI upsell contribution",
-              "value": "+62% revenue / client"
+              "label": "Availability sync automation",
+              "value": "95%"
             }
           ]
         },
@@ -191,24 +187,20 @@
           "subtitle": "Mid-mile Logistics & Warehousing",
           "metrics": [
             {
-              "label": "Loads planned by AI dispatchers",
-              "value": "1,240 / week"
+              "label": "Automated slot booking",
+              "value": "74%"
             },
             {
-              "label": "Fuel spend optimization",
-              "value": "-18%"
+              "label": "Routing optimization",
+              "value": "18% faster"
             },
             {
-              "label": "Dock idle time reduction",
-              "value": "-41%"
+              "label": "Claims handling automation",
+              "value": "63%"
             },
             {
-              "label": "Carrier onboarding automation",
-              "value": "80%"
-            },
-            {
-              "label": "On-time deliveries",
-              "value": "99.2%"
+              "label": "CO2 reduction per shipment",
+              "value": "-9%"
             }
           ]
         }

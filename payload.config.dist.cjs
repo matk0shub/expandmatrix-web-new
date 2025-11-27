@@ -818,6 +818,7 @@ var payloadConfig = (0, import_payload.buildConfig)({
   secret,
   admin: {
     user: "users",
+    css: import_path.default.resolve(__dirname, "./admin.css"),
     ...enableAutoLogin && autoLoginEmail && autoLoginPassword ? {
       autoLogin: {
         email: autoLoginEmail,

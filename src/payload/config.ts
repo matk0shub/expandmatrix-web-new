@@ -52,6 +52,7 @@ const payloadConfig = buildConfig({
   secret,
   admin: {
     user: 'users',
+    css: path.resolve(__dirname, './admin.css'),
     ...(enableAutoLogin && autoLoginEmail && autoLoginPassword
       ? {
           autoLogin: {

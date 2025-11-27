@@ -24,15 +24,15 @@ const referenceTranslations: Record<SupportedLocale, ReferenceTranslations> = {
 const baseReferences: BaseReference[] = [
   {
     id: '1',
-    name: 'TechStartup',
-    slug: 'tech-startup',
-    translationKey: 'techStartup',
-    instagramUrl: 'https://instagram.com/techstartup',
-    websiteUrl: 'https://techstartup.ai',
+    name: 'Ubytování Horňácko',
+    slug: 'ubytovani-hornacko',
+    translationKey: 'ubytovaniHornacko',
+    instagramUrl: 'https://instagram.com/ubytovani_hornacko',
+    websiteUrl: 'https://ubytovani-hornacko.cz',
     image: {
       id: 'img1',
-      url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=800&fit=crop',
-      alt: 'Tech startup office',
+      url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&h=800&fit=crop',
+      alt: 'Ubytování Horňácko exterior',
     },
     order: 1,
     isFeatured: true,

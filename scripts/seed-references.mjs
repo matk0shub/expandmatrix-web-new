@@ -34,20 +34,20 @@ if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URI) {
 
 const baseReferences = [
   {
-    translationKey: 'techStartup',
-    slug: 'tech-startup',
+    translationKey: 'ubytovaniHornacko',
+    slug: 'ubytovani-hornacko',
     name: {
-      en: 'TechStartup',
-      cs: 'TechStartup',
+      en: 'Ubytování Horňácko',
+      cs: 'Ubytování Horňácko',
     },
-    instagramUrl: 'https://instagram.com/techstartup',
-    websiteUrl: 'https://techstartup.ai',
+    instagramUrl: 'https://instagram.com/ubytovani_hornacko',
+    websiteUrl: 'https://ubytovani-hornacko.cz',
     image: {
-      url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=960&h=640&q=75',
-      filename: 'tech-startup.jpg',
+      url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=960&h=640&q=75',
+      filename: 'ubytovani-hornacko.jpg',
       alt: {
-        en: 'Tech startup office',
-        cs: 'Tech startup office',
+        en: 'Boutique accommodation in Horňácko',
+        cs: 'Butikové ubytování na Horňácku',
       },
     },
     order: 1,
