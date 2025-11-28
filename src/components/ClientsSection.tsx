@@ -449,8 +449,8 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
   const renderBallContent = useCallback(
     (ball: BallConfig) => {
-      const scale = clampValue(ball.content.scale ?? 0.56, 0.4, 0.82);
-      const side = Math.max(layout.ballSize * scale, 28);
+      const scale = clampValue(ball.content.scale ?? 0.5, 0.35, 0.72);
+      const side = Math.max(layout.ballSize * scale, 26);
 
       return (
         <div
