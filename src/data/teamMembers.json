@@ -42,10 +42,7 @@
       "twitter": "https://x.com/mightymattys",
       "instagram": "https://www.instagram.com/mightymatty/"
     },
-    "avatar": {
-      "file": "images/team/matej_stipcak.webp",
-      "alt": "Portrait of Matěj Štipčák"
-    },
+    "avatarPath": "/images/team/matej_stipcak.webp",
     "order": 3,
     "featured": true,
     "showOnSite": true
@@ -94,10 +91,7 @@
       "instagram": "https://www.instagram.com/mvenclik.ai/",
       "youtube": "https://www.youtube.com/@MatejVenclikAI"
     },
-    "avatar": {
-      "file": "images/team/matej-venclik.webp",
-      "alt": "Portrait of Matěj Venclík"
-    },
+    "avatarPath": "/images/team/matej-venclik.webp",
     "order": 1,
     "featured": true,
     "showOnSite": true
@@ -145,10 +139,7 @@
       "twitter": "https://x.com/ExpandMatrix",
       "instagram": "https://www.instagram.com/expand.matrix/"
     },
-    "avatar": {
-      "file": "images/team/expandee.webp",
-      "alt": "Expandee avatar"
-    },
+    "avatarPath": "/images/team/expandee.webp",
     "order": 2,
     "featured": true,
     "showOnSite": true

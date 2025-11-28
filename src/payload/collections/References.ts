@@ -50,6 +50,27 @@ export const References: CollectionConfig = {
     useAsTitle: 'slug',
     defaultColumns: ['slug', 'order'],
   },
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (!data) {
+          return data
+        }
+
+        if (!data.imageAlt) {
+          const name = data.name
+          const derived =
+            (typeof name === 'object' && (name.cs || name.en)) ||
+            (typeof name === 'string' ? name : null)
+          if (derived) {
+            data.imageAlt = derived
+          }
+        }
+
+        return data
+      },
+    ],
+  },
   fields: [
     dualLocaleTextField({
       name: 'name',
@@ -86,12 +107,24 @@ export const References: CollectionConfig = {
       },
     },
     {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'imagePath',
+      label: 'Image path',
+      type: 'text',
       required: true,
       admin: {
-        description: 'Background image for the reference',
+        description: 'Cesta k obrázku verzovanému v repozitáři (např. /images/reference/nova_clinic.webp)',
+      },
+      validate: (value) =>
+        typeof value === 'string' && value.trim().startsWith('/')
+          ? true
+          : 'Použij cestu ve tvaru /images/reference/example.webp',
+    },
+    {
+      name: 'imageAlt',
+      label: 'Image alt text',
+      type: 'text',
+      admin: {
+        description: 'Volitelné – pokud necháš prázdné, doplní se automaticky z názvu reference.',
       },
     },
     {

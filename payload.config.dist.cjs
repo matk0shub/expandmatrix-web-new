@@ -203,12 +203,18 @@ var FooterLinks = {
 };
 
 // src/payload/collections/Media.ts
+var import_node_fs = __toESM(require("node:fs"));
+var import_node_path = __toESM(require("node:path"));
 var WEBP_OPTIONS = {
   quality: 80,
   alphaQuality: 85,
   smartSubsample: true,
   effort: 6
 };
+var uploadDir = process.env.PAYLOAD_UPLOAD_PATH ? import_node_path.default.resolve(process.env.PAYLOAD_UPLOAD_PATH) : import_node_path.default.resolve(process.cwd(), "media");
+if (!import_node_fs.default.existsSync(uploadDir)) {
+  import_node_fs.default.mkdirSync(uploadDir, { recursive: true });
+}
 var Media = {
   slug: "media",
   access: {
@@ -216,7 +222,8 @@ var Media = {
     // Allow public read access to media files
   },
   upload: {
-    staticDir: "media",
+    staticDir: uploadDir,
+    staticURL: "/media",
     // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
     formatOptions: {
       format: "webp",
@@ -289,10 +296,13 @@ var Partners = {
       required: true
     },
     {
-      name: "logo",
-      type: "upload",
-      relationTo: "media",
-      required: true
+      name: "logoPath",
+      type: "text",
+      required: true,
+      admin: {
+        description: "Cesta k logu verzovan\xE9mu v repozit\xE1\u0159i, nap\u0159. /images/partners/openai_logo.svg"
+      },
+      validate: (value) => typeof value === "string" && value.trim().length > 0 && value.trim().startsWith("/") ? true : "Zadej relativn\xED cestu za\u010D\xEDnaj\xEDc\xED lom\xEDtkem (nap\u0159. /images/partners/logo.svg)"
     },
     {
       name: "logoAlt",
@@ -371,6 +381,23 @@ var References = {
     useAsTitle: "slug",
     defaultColumns: ["slug", "order"]
   },
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (!data) {
+          return data;
+        }
+        if (!data.imageAlt) {
+          const name = data.name;
+          const derived = typeof name === "object" && (name.cs || name.en) || (typeof name === "string" ? name : null);
+          if (derived) {
+            data.imageAlt = derived;
+          }
+        }
+        return data;
+      }
+    ]
+  },
   fields: [
     dualLocaleTextField({
       name: "name",
@@ -407,12 +434,21 @@ var References = {
       }
     },
     {
-      name: "image",
-      type: "upload",
-      relationTo: "media",
+      name: "imagePath",
+      label: "Image path",
+      type: "text",
       required: true,
       admin: {
-        description: "Background image for the reference"
+        description: "Cesta k obr\xE1zku verzovan\xE9mu v repozit\xE1\u0159i (nap\u0159. /images/reference/nova_clinic.webp)"
+      },
+      validate: (value) => typeof value === "string" && value.trim().startsWith("/") ? true : "Pou\u017Eij cestu ve tvaru /images/reference/example.webp"
+    },
+    {
+      name: "imageAlt",
+      label: "Image alt text",
+      type: "text",
+      admin: {
+        description: "Voliteln\xE9 \u2013 pokud nech\xE1\u0161 pr\xE1zdn\xE9, dopln\xED se automaticky z n\xE1zvu reference."
       }
     },
     {
@@ -650,10 +686,14 @@ var Team = {
       }
     },
     {
-      name: "avatar",
-      type: "upload",
-      relationTo: "media",
-      required: false
+      name: "avatarPath",
+      label: "Avatar path",
+      type: "text",
+      required: true,
+      admin: {
+        description: "Cesta k obr\xE1zku ve slo\u017Ece public (nap\u0159. /images/team/matej.webp)"
+      },
+      validate: (value) => typeof value === "string" && value.trim().startsWith("/") ? true : "Zadej cestu ve tvaru /images/team/jmeno.webp"
     },
     {
       name: "socials",

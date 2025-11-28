@@ -11,7 +11,9 @@ interface PayloadReference {
   subtitle?: string;
   instagramUrl?: string | null;
   websiteUrl?: string | null;
-  image?: Record<string, unknown> | string | null;
+  imagePath?: string | null;
+  imageAlt?: string | null;
+  image?: Record<string, unknown> | string | null; // legacy uploader
   metrics?: Array<Record<string, unknown>>;
   order?: number | null;
 }
@@ -42,7 +44,7 @@ const ensureString = (value: unknown, preferredLocale?: string): string => {
   return '';
 };
 
-const resolveImage = (
+const resolveLegacyImage = (
   image: PayloadReference['image'],
   locale: string,
 ): Reference['image'] | null => {
@@ -51,7 +53,8 @@ const resolveImage = (
   }
 
   if (typeof image === 'string') {
-    return { id: image, url: '', alt: undefined };
+    const url = resolveMediaUrl(image);
+    return url ? { id: image, url, alt: undefined } : null;
   }
 
   if (typeof image !== 'object') {
@@ -97,6 +100,29 @@ const resolveImage = (
 
 const missingReferenceImages = new Set<string>();
 
+const resolveImageFromPath = (
+  doc: PayloadReference,
+  locale: string,
+): Reference['image'] | null => {
+  const rawPath = ensureString(doc.imagePath);
+  if (!rawPath) {
+    return null;
+  }
+
+  const url = resolveMediaUrl(rawPath);
+  if (!url) {
+    return null;
+  }
+
+  const fallbackAlt = ensureString(doc.imageAlt) || ensureString(doc.subtitle, locale) || ensureString(doc.name, locale);
+
+  return {
+    id: ensureString(doc.slug) || url,
+    url,
+    alt: fallbackAlt || undefined,
+  };
+};
+
 const normalizeReferences = (docs: PayloadReference[], locale: string): Reference[] => {
   const normalized: Reference[] = [];
 
@@ -108,13 +134,17 @@ const normalizeReferences = (docs: PayloadReference[], locale: string): Referenc
       return;
     }
 
-    let image = resolveImage(doc.image, locale);
+    let image = resolveImageFromPath(doc, locale);
+
+    if (!image) {
+      image = resolveLegacyImage(doc.image, locale);
+    }
 
     if (!image) {
       if (!missingReferenceImages.has(slug)) {
         console.warn(
           `[references] Missing media asset for "${slug}". Using gradient fallback. ` +
-            'Upload an image in Payload > Media and re-run the references seed to restore visuals.',
+            'Přidej obrázek do public/images/reference a spusť script scripts/seed-references.mjs.',
         );
         missingReferenceImages.add(slug);
       }

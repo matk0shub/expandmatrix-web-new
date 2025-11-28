@@ -54,18 +54,32 @@ export function normalizePayloadTeamMembers(
 ): NormalizedTeamMember[] {
   return docs
     .map((doc) => {
-      const avatar =
+      const configuredAvatarPath =
+        typeof (doc as { avatarPath?: unknown }).avatarPath === 'string'
+          ? ((doc as { avatarPath?: string }).avatarPath ?? '').trim()
+          : '';
+
+      const avatarFromPath = configuredAvatarPath
+        ? {
+            url: resolveMediaUrl(configuredAvatarPath),
+            alt: localizedValue(doc.name, locale),
+          }
+        : undefined;
+
+      const avatarLegacy =
         typeof doc.avatar === 'string'
           ? {
               url: resolveMediaUrl(doc.avatar),
               alt: localizedValue(doc.name, locale),
             }
           : doc.avatar?.url
-          ? {
-              url: resolveMediaUrl(doc.avatar.url),
-              alt: doc.avatar.alt ?? localizedValue(doc.name, locale),
-            }
-          : undefined;
+            ? {
+                url: resolveMediaUrl(doc.avatar.url),
+                alt: doc.avatar.alt ?? localizedValue(doc.name, locale),
+              }
+            : undefined;
+
+      const avatar = avatarFromPath?.url ? avatarFromPath : avatarLegacy;
 
       return {
         id: doc.id,

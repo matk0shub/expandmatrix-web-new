@@ -50,6 +50,7 @@ export interface TeamMemberDocument {
   focus?: TeamMemberFocusItem[];
   accent?: string;
   socials?: TeamMemberSocials;
+  avatarPath?: string;
   avatar?: TeamMemberMedia | string | null;
   order: number;
   featured: boolean;

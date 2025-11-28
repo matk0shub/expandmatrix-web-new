@@ -130,10 +130,17 @@ export const Team: CollectionConfig = {
       },
     },
     {
-      name: 'avatar',
-      type: 'upload',
-      relationTo: 'media',
-      required: false,
+      name: 'avatarPath',
+      label: 'Avatar path',
+      type: 'text',
+      required: true,
+      admin: {
+        description: 'Cesta k obrázku ve složce public (např. /images/team/matej.webp)',
+      },
+      validate: (value) =>
+        typeof value === 'string' && value.trim().startsWith('/')
+          ? true
+          : 'Zadej cestu ve tvaru /images/team/jmeno.webp',
     },
     {
       name: 'socials',

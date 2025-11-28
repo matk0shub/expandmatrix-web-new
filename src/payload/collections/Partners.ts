@@ -26,10 +26,17 @@ export const Partners: CollectionConfig = {
       required: true,
     },
     {
-      name: 'logo',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'logoPath',
+      type: 'text',
       required: true,
+      admin: {
+        description:
+          'Cesta k logu verzovanému v repozitáři, např. /images/partners/openai_logo.svg',
+      },
+      validate: (value) =>
+        typeof value === 'string' && value.trim().length > 0 && value.trim().startsWith('/')
+          ? true
+          : 'Zadej relativní cestu začínající lomítkem (např. /images/partners/logo.svg)',
     },
     {
       name: 'logoAlt',
@@ -69,4 +76,3 @@ export const Partners: CollectionConfig = {
     },
   ],
 };
-

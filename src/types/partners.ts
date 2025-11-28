@@ -1,4 +1,8 @@
-import type { Partner as PartnerDocument } from '../../payload-types';
+import type { Partner as PartnerBase } from '../../payload-types';
+
+export type PartnerDocument = PartnerBase & {
+  logoPath?: string;
+};
 
 export interface NormalizedPartner {
   id: string;
@@ -11,5 +15,3 @@ export interface NormalizedPartner {
   order: number;
   showOnSite: boolean;
 }
-
-export type { PartnerDocument };
