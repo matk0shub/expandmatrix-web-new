@@ -96,6 +96,13 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: false,
   },
+  serverExternalPackages: [
+    'payload',
+    '@payloadcms/db-mongodb',
+    '@payloadcms/richtext-lexical',
+    'sharp',
+    'nodemailer',
+  ],
   webpack: (config, { dev }) => {
     if (dev) {
       config.devtool = false;
@@ -207,6 +214,6 @@ const nextConfig = {
 
 export default withBundleAnalyzer(
   withPayload(withNextIntl(nextConfig), {
-    devBundleServerPackages: true,
+    devBundleServerPackages: false,
   }),
 );

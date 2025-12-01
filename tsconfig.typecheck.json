@@ -13,6 +13,7 @@
   "exclude": [
     ".next/types/**/*",
     "node_modules",
+    "node_modules_pnpm",
     "node_modules.old",
     "node_modules.health-backup",
     "node_modules.bak"

@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache';
 import { getPayloadClient } from '@/payload/getPayloadClient';
 import type { Reference } from '@/types/references';
 import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
+import { serverLog } from '@/utils/serverLog';
 
 interface PayloadReference {
   id?: string | number;
@@ -197,6 +198,7 @@ const getReferencesCached = unstable_cache(
     const payload = await getPayloadClient();
     const resolvedLocale = resolveLocale(locale);
 
+    serverLog('[references] fetch start', { locale: resolvedLocale });
     const result = await payload.find({
       collection: 'references',
       depth: 2,
@@ -210,6 +212,7 @@ const getReferencesCached = unstable_cache(
       : [];
     const references = normalizeReferences(docs, resolvedLocale);
 
+    serverLog('[references] fetch done', { count: references.length });
     if (!references.length) {
       console.warn('[references] No references were returned from Payload CMS.');
     }

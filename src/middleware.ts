@@ -10,7 +10,7 @@ const intlMiddleware = createMiddleware({
   locales,
   defaultLocale,
   localePrefix: 'always',
-  localeDetection: true,
+  localeDetection: false,
 });
 
 const getLocaleFromPath = (pathname: string) =>

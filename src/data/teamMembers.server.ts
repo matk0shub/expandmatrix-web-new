@@ -4,6 +4,7 @@ import type { Where } from 'payload';
 import { getPayloadClient } from '@/payload/getPayloadClient';
 import { normalizePayloadTeamMembers } from '@/data/teamMembers';
 import type { NormalizedTeamMember, TeamMemberDocument } from '@/types/team';
+import { serverLog } from '@/utils/serverLog';
 
 interface GetTeamMembersOptions {
   locale: string;
@@ -22,6 +23,7 @@ const getTeamMembersCached = unstable_cache(
     const featuredOnly = featuredKey === '1'
     const payload = await getPayloadClient();
 
+    serverLog('[team] fetch start', { locale, featuredOnly });
     const where: Where =
       featuredOnly
         ? {
@@ -49,6 +51,7 @@ const getTeamMembersCached = unstable_cache(
     const docs = Array.isArray(result.docs) ? (result.docs as TeamMemberDocument[]) : [];
     const normalized = normalizePayloadTeamMembers(docs, locale);
 
+    serverLog('[team] fetch done', { count: normalized.length, featuredOnly });
     if (!normalized.length) {
       console.warn('[team] No team members were returned from Payload CMS.');
     }

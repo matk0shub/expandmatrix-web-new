@@ -137,7 +137,7 @@ export const Team: CollectionConfig = {
       admin: {
         description: 'Cesta k obrázku ve složce public (např. /images/team/matej.webp)',
       },
-      validate: (value) =>
+      validate: (value: unknown) =>
         typeof value === 'string' && value.trim().startsWith('/')
           ? true
           : 'Zadej cestu ve tvaru /images/team/jmeno.webp',

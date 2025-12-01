@@ -102,6 +102,16 @@ const applyPreferredPath = (url, { allowOverride = false } = {}) => {
   return updated.toString();
 };
 
+const appendLighthouseParam = (value) => {
+  try {
+    const url = new URL(value);
+    url.searchParams.set('lighthouse', '1');
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
+
 function resolveAuditUrl() {
   const exactCandidates = [process.env.LIGHTHOUSE_URL];
   for (const candidate of exactCandidates) {
@@ -110,7 +120,7 @@ function resolveAuditUrl() {
       if (prefersRemoteHosts && isLocalHost(url)) {
         continue;
       }
-      return url.toString();
+      return appendLighthouseParam(url.toString());
     }
   }
 
@@ -134,12 +144,12 @@ function resolveAuditUrl() {
       if (prefersRemoteHosts && isLocalHost(url)) {
         continue;
       }
-      return applyPreferredPath(url);
+      return appendLighthouseParam(applyPreferredPath(url));
     }
   }
 
   const fallback = tryParseUrl(createDefaultUrl());
-  return fallback ? applyPreferredPath(fallback) : createDefaultUrl();
+  return appendLighthouseParam(fallback ? applyPreferredPath(fallback) : createDefaultUrl());
 }
 
 function main() {

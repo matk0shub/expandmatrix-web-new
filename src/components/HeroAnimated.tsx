@@ -52,6 +52,10 @@ export default function Hero() {
     if (!isClient || typeof window === 'undefined') return false;
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   }, [isClient]);
+  const enable3DLogo = useMemo(
+    () => isClient && !prefersReducedMotion && supportsHover,
+    [isClient, prefersReducedMotion, supportsHover],
+  );
 
   useEffect(() => {
     if (!heroLogoRef.current || !heroRef.current || prefersReducedMotion || !supportsHover) {
@@ -222,7 +226,7 @@ export default function Hero() {
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ willChange: 'opacity' }}>
         {/* 3D Rotating Logo - Center */}
-        {isClient && (
+        {enable3DLogo ? (
            <div 
              ref={heroLogoRef}
              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
@@ -252,7 +256,7 @@ export default function Hero() {
               }}
             >
               {/* Extrusion Layers - Creating Real 3D Thickness */}
-              {[...Array(40)].map((_, i) => (
+              {[...Array(12)].map((_, i) => (
                 <div
                   key={`extrusion-${i}`}
                   className="absolute inset-0 flex items-center justify-center"
@@ -319,6 +323,22 @@ export default function Hero() {
               </div>
 
             </MotionDiv>
+            </div>
+        ) : (
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56"
+            aria-hidden="true"
+          >
+            <Image
+              src="/logo.svg"
+              alt="Expand Matrix logo"
+              width={224}
+              height={224}
+              className="w-full h-full object-contain drop-shadow-[0_20px_60px_rgba(0,215,107,0.35)]"
+              priority
+              fetchPriority="high"
+              sizes={logoSizes}
+            />
           </div>
         )}
 

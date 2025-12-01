@@ -33,7 +33,7 @@ export const Partners: CollectionConfig = {
         description:
           'Cesta k logu verzovanému v repozitáři, např. /images/partners/openai_logo.svg',
       },
-      validate: (value) =>
+      validate: (value: unknown) =>
         typeof value === 'string' && value.trim().length > 0 && value.trim().startsWith('/')
           ? true
           : 'Zadej relativní cestu začínající lomítkem (např. /images/partners/logo.svg)',

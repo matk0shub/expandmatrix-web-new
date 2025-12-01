@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, UploadConfig } from 'payload'
 
 const WEBP_OPTIONS = {
   quality: 80,
@@ -17,52 +17,54 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
 }
 
+const uploadConfig: UploadConfig & { staticURL: string } = {
+  staticDir: uploadDir,
+  staticURL: '/media',
+  // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
+  formatOptions: {
+    format: 'webp',
+    options: WEBP_OPTIONS,
+  },
+  imageSizes: [
+    {
+      name: 'thumbnail',
+      width: 400,
+      height: 300,
+      position: 'centre',
+      // Ensure generated sizes use the same WebP settings
+      formatOptions: { format: 'webp', options: WEBP_OPTIONS },
+    },
+    {
+      name: 'card',
+      width: 768,
+      height: 1024,
+      position: 'centre',
+      formatOptions: { format: 'webp', options: WEBP_OPTIONS },
+    },
+    {
+      name: 'tablet',
+      width: 1024,
+      height: undefined,
+      position: 'centre',
+      formatOptions: { format: 'webp', options: WEBP_OPTIONS },
+    },
+  ],
+  adminThumbnail: 'thumbnail',
+  mimeTypes: [
+    'image/*',
+    'image/svg+xml',
+    'application/svg+xml',
+    'application/xml',
+    'text/xml',
+  ],
+}
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: () => true, // Allow public read access to media files
   },
-  upload: {
-    staticDir: uploadDir,
-    staticURL: '/media',
-    // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
-    formatOptions: {
-      format: 'webp',
-      options: WEBP_OPTIONS,
-    },
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 300,
-        position: 'centre',
-        // Ensure generated sizes use the same WebP settings
-        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
-      },
-      {
-        name: 'card',
-        width: 768,
-        height: 1024,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
-      },
-      {
-        name: 'tablet',
-        width: 1024,
-        height: undefined,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: WEBP_OPTIONS },
-      },
-    ],
-    adminThumbnail: 'thumbnail',
-    mimeTypes: [
-      'image/*',
-      'image/svg+xml',
-      'application/svg+xml',
-      'application/xml',
-      'text/xml',
-    ],
-  },
+  upload: uploadConfig,
   fields: [
     {
       name: 'alt',

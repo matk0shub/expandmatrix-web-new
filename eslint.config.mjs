@@ -36,6 +36,7 @@ const eslintConfig = [
   {
     ignores: [
       'node_modules/**',
+      'node_modules_pnpm/**',
       'node_modules.bak/**',
       'node_modules.old/**',
       '.next/**',

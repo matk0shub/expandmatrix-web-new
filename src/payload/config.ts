@@ -4,6 +4,7 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import nodemailer from 'nodemailer'
 import { buildConfig } from 'payload'
+import type { Config } from 'payload'
 import sharp from 'sharp'
 
 import '../utils/silenceExperimentalWarnings'
@@ -48,21 +49,23 @@ const enableAutoLogin = process.env.PAYLOAD_AUTOLOGIN === 'true'
 const autoLoginEmail = process.env.PAYLOAD_ADMIN_EMAIL
 const autoLoginPassword = process.env.PAYLOAD_ADMIN_PASSWORD
 
+const adminConfig: Config['admin'] & { css: string } = {
+  user: 'users',
+  css: path.resolve(__dirname, './admin.css'),
+  ...(enableAutoLogin && autoLoginEmail && autoLoginPassword
+    ? {
+        autoLogin: {
+          email: autoLoginEmail,
+          password: autoLoginPassword,
+          prefillOnly: true,
+        },
+      }
+    : {}),
+}
+
 const payloadConfig = buildConfig({
   secret,
-  admin: {
-    user: 'users',
-    css: path.resolve(__dirname, './admin.css'),
-    ...(enableAutoLogin && autoLoginEmail && autoLoginPassword
-      ? {
-          autoLogin: {
-            email: autoLoginEmail,
-            password: autoLoginPassword,
-            prefillOnly: true,
-          },
-        }
-      : {}),
-  },
+  admin: adminConfig,
   routes: {
     admin: '/admin',
   },

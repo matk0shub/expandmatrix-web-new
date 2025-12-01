@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { getPayloadClient } from '@/payload/getPayloadClient';
 import type { FAQ } from '@/types/faqs';
 import FAQSectionClient from './FAQSectionClient';
+import { serverLog } from '@/utils/serverLog';
 
 interface FAQSectionProps {
   locale: string;
@@ -33,6 +34,7 @@ export default async function FAQSection({ locale }: FAQSectionProps) {
   const t = await getTranslations({ locale, namespace: 'sections.faq' });
   const payload = await getPayloadClient();
 
+  serverLog('[faq] fetch start', { locale });
   const response = await payload.find({
     collection: 'faqs',
     limit: 100,
@@ -46,6 +48,7 @@ export default async function FAQSection({ locale }: FAQSectionProps) {
   });
 
   const faqs = normalizeFaqs((response.docs ?? []) as FAQDocument[]);
+  serverLog('[faq] fetch done', { count: faqs.length });
 
   const copy = {
     titleLine1: t('title.line1'),

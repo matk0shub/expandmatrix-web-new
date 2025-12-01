@@ -2,15 +2,17 @@ import type { NormalizedPartner, PartnerDocument } from '@/types/partners';
 import { resolveMediaUrl } from '@/utils/resolveMediaUrl';
 
 const normalizePayloadPartner = (doc: PartnerDocument): NormalizedPartner | null => {
-  const configuredPath = typeof (doc as { logoPath?: unknown }).logoPath === 'string'
-    ? (doc as { logoPath?: string }).logoPath.trim()
-    : '';
+  const rawLogoPath = (doc as { logoPath?: unknown }).logoPath;
+  const configuredPath = typeof rawLogoPath === 'string' ? rawLogoPath.trim() : '';
+
+  const payloadLogo =
+    typeof doc.logo === 'object' && doc.logo !== null ? doc.logo : undefined;
 
   const logoSource =
     configuredPath ||
     (typeof doc.logo === 'string'
       ? doc.logo
-      : doc.logo?.url ?? doc.logo?.filename ?? null);
+      : payloadLogo?.url ?? payloadLogo?.filename ?? null);
 
   const logoUrl = resolveMediaUrl(logoSource ?? undefined);
   if (!logoUrl) {

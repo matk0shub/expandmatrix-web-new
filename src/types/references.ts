@@ -19,4 +19,5 @@ export interface Reference {
   image: ReferenceImage;
   metrics: ReferenceMetric[];
   order: number;
+  isFeatured?: boolean;
 }

@@ -10,6 +10,7 @@ import ReferencesSection from '@/components/ReferencesSection';
 import ServicesSection from '@/components/ServicesSection';
 import TeamSection from '@/components/TeamSection';
 import { getPartners } from '@/data/partners.server';
+import type { NormalizedPartner } from '@/types/partners';
 
 export const dynamicParams = true;
 export const revalidate = 60;
@@ -24,8 +25,15 @@ interface PageProps {
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  const { partners } = await getPartners();
-  const safePartners = Array.isArray(partners) ? partners : [];
+  console.log('[env check] PAYLOAD_SECRET present?', Boolean(process.env.PAYLOAD_SECRET));
+  let safePartners: NormalizedPartner[] = [];
+
+  try {
+    const { partners } = await getPartners();
+    safePartners = partners;
+  } catch (error) {
+    console.error('[home] Failed to load partners from Payload CMS:', error);
+  }
 
   return (
     <>

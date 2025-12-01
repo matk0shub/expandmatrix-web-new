@@ -215,53 +215,54 @@ var uploadDir = process.env.PAYLOAD_UPLOAD_PATH ? import_node_path.default.resol
 if (!import_node_fs.default.existsSync(uploadDir)) {
   import_node_fs.default.mkdirSync(uploadDir, { recursive: true });
 }
+var uploadConfig = {
+  staticDir: uploadDir,
+  staticURL: "/media",
+  // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
+  formatOptions: {
+    format: "webp",
+    options: WEBP_OPTIONS
+  },
+  imageSizes: [
+    {
+      name: "thumbnail",
+      width: 400,
+      height: 300,
+      position: "centre",
+      // Ensure generated sizes use the same WebP settings
+      formatOptions: { format: "webp", options: WEBP_OPTIONS }
+    },
+    {
+      name: "card",
+      width: 768,
+      height: 1024,
+      position: "centre",
+      formatOptions: { format: "webp", options: WEBP_OPTIONS }
+    },
+    {
+      name: "tablet",
+      width: 1024,
+      height: void 0,
+      position: "centre",
+      formatOptions: { format: "webp", options: WEBP_OPTIONS }
+    }
+  ],
+  adminThumbnail: "thumbnail",
+  mimeTypes: [
+    "image/*",
+    "image/svg+xml",
+    "application/svg+xml",
+    "application/xml",
+    "text/xml"
+  ]
+};
 var Media = {
   slug: "media",
   access: {
     read: () => true
     // Allow public read access to media files
   },
-  upload: {
-    staticDir: uploadDir,
-    staticURL: "/media",
-    // Convert uploaded rasters (PNG/JPG) to WebP using tuned options that balance quality and size.
-    formatOptions: {
-      format: "webp",
-      options: WEBP_OPTIONS
-    },
-    imageSizes: [
-      {
-        name: "thumbnail",
-        width: 400,
-        height: 300,
-        position: "centre",
-        // Ensure generated sizes use the same WebP settings
-        formatOptions: { format: "webp", options: WEBP_OPTIONS }
-      },
-      {
-        name: "card",
-        width: 768,
-        height: 1024,
-        position: "centre",
-        formatOptions: { format: "webp", options: WEBP_OPTIONS }
-      },
-      {
-        name: "tablet",
-        width: 1024,
-        height: void 0,
-        position: "centre",
-        formatOptions: { format: "webp", options: WEBP_OPTIONS }
-      }
-    ],
-    adminThumbnail: "thumbnail",
-    mimeTypes: [
-      "image/*",
-      "image/svg+xml",
-      "application/svg+xml",
-      "application/xml",
-      "text/xml"
-    ]
-  },
+  upload: uploadConfig,
   fields: [
     {
       name: "alt",
@@ -854,19 +855,20 @@ var databaseUri = resolveDatabaseUri();
 var enableAutoLogin = process.env.PAYLOAD_AUTOLOGIN === "true";
 var autoLoginEmail = process.env.PAYLOAD_ADMIN_EMAIL;
 var autoLoginPassword = process.env.PAYLOAD_ADMIN_PASSWORD;
+var adminConfig = {
+  user: "users",
+  css: import_path.default.resolve(__dirname, "./admin.css"),
+  ...enableAutoLogin && autoLoginEmail && autoLoginPassword ? {
+    autoLogin: {
+      email: autoLoginEmail,
+      password: autoLoginPassword,
+      prefillOnly: true
+    }
+  } : {}
+};
 var payloadConfig = (0, import_payload.buildConfig)({
   secret,
-  admin: {
-    user: "users",
-    css: import_path.default.resolve(__dirname, "./admin.css"),
-    ...enableAutoLogin && autoLoginEmail && autoLoginPassword ? {
-      autoLogin: {
-        email: autoLoginEmail,
-        password: autoLoginPassword,
-        prefillOnly: true
-      }
-    } : {}
-  },
+  admin: adminConfig,
   routes: {
     admin: "/admin"
   },

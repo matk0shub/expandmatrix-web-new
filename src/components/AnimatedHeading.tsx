@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes, type JSX } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
 
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 

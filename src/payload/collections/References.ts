@@ -114,7 +114,7 @@ export const References: CollectionConfig = {
       admin: {
         description: 'Cesta k obrázku verzovanému v repozitáři (např. /images/reference/nova_clinic.webp)',
       },
-      validate: (value) =>
+      validate: (value: unknown) =>
         typeof value === 'string' && value.trim().startsWith('/')
           ? true
           : 'Použij cestu ve tvaru /images/reference/example.webp',
