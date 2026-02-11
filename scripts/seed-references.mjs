@@ -35,32 +35,6 @@ const ensureAssetExists = (relativePath) => {
 
 const baseReferences = [
   {
-    translationKey: 'ubytovaniHornacko',
-    slug: 'ubytovani-hornacko',
-    name: {
-      en: 'Ubytování Horňácko',
-      cs: 'Ubytování Horňácko',
-    },
-    instagramUrl: 'https://instagram.com/ubytovani_hornacko',
-    websiteUrl: 'https://ubytovani-hornacko.cz',
-    imagePath: '/images/reference/ubytovani_hornacko.webp',
-    imageAlt: 'Boutique accommodation in Horňácko',
-    order: 1,
-  },
-  {
-    translationKey: 'acKlimes',
-    slug: 'ac-klimes',
-    name: {
-      en: 'AC Klimeš',
-      cs: 'AC Klimeš',
-    },
-    instagramUrl: 'https://instagram.com/ac_klimes',
-    websiteUrl: 'https://acklimes.cz',
-    imagePath: '/images/reference/ac_tomes.webp',
-    imageAlt: 'HVAC technicians at work',
-    order: 2,
-  },
-  {
     translationKey: 'apexMma',
     slug: 'apex-mma-gym',
     name: {
@@ -68,36 +42,23 @@ const baseReferences = [
       cs: 'Apex MMA Gym',
     },
     instagramUrl: 'https://www.instagram.com/apexmmagym/',
-    websiteUrl: 'https://apexmmagym.com',
-    imagePath: '/images/reference/apex_gym.webp',
+    websiteUrl: 'https://www.apexmma.cz/',
+    imagePath: '/images/reference/apex_gym_new.webp',
     imageAlt: 'MMA gym training session',
-    order: 3,
+    order: 1,
   },
   {
-    translationKey: 'novaClinic',
-    slug: 'nova-clinic',
+    translationKey: 'tarifix',
+    slug: 'tarifix',
     name: {
-      en: 'Nova Clinic',
-      cs: 'Nova Clinic',
+      en: 'Tarifix.cz',
+      cs: 'Tarifix.cz',
     },
-    instagramUrl: 'https://instagram.com/novaclinic',
-    websiteUrl: 'https://novaclinic.eu',
-    imagePath: '/images/reference/nova_clinic.webp',
-    imageAlt: 'Clinic interior',
-    order: 4,
-  },
-  {
-    translationKey: 'expandoLogistics',
-    slug: 'expando-logistics',
-    name: {
-      en: 'Expando Logistics',
-      cs: 'Expando Logistics',
-    },
-    instagramUrl: 'https://instagram.com/expandologistics',
-    websiteUrl: 'https://expando-logistics.com',
-    imagePath: '/images/reference/expando_logistics.webp',
-    imageAlt: 'Logistics warehouse',
-    order: 5,
+    instagramUrl: 'https://www.instagram.com/tarifix_cz/',
+    websiteUrl: 'https://www.tarifix.cz/',
+    imagePath: '/images/reference/tarifix.webp',
+    imageAlt: 'Tarifix telecom comparison',
+    order: 2,
   },
 ]
 

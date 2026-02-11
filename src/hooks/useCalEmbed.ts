@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const CAL_NAMESPACE = "strategy";
-const CAL_LINK = "team/em-core/strategy";
+const CAL_LINK = "expandmatrix/45min";
 const CAL_ORIGIN = "https://meet.expandmatrix.com";
 const CAL_EMBED_URL = `${CAL_ORIGIN}/embed/embed.js`;
 

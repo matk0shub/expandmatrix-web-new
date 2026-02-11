@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
@@ -32,6 +32,7 @@ interface TeamSectionClientProps {
 
 export default function TeamSectionClient({ members, copy }: TeamSectionClientProps) {
   const { title, empty } = copy;
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
 
   const backgroundStyle = useMemo<CSSProperties>(
     () => ({
@@ -94,19 +95,21 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                   distance={220}
                   viewportAmount={0.55}
                   fade={false}
-                  className="group relative"
+                  className="group relative cursor-pointer"
                   itemScope
                   itemType="https://schema.org/Person"
+                  data-active={activeCardId === member.id ? 'true' : undefined}
+                  onClick={() => setActiveCardId((prev) => (prev === member.id ? null : member.id))}
                 >
                   <meta itemProp="name" content={member.name} />
                   <meta itemProp="jobTitle" content={member.role} />
                   {member.bio ? <meta itemProp="description" content={member.bio} /> : null}
-                  <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-black/[0.95] via-black/[0.98] to-black/[0.99] shadow-[0_30px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2">
+                  <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-black/[0.95] via-black/[0.98] to-black/[0.99] shadow-[0_30px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2 group-data-[active=true]:-translate-y-2">
                     <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-[inherit] pointer-events-none mix-blend-normal" />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-[inherit] pointer-events-none mix-blend-normal" />
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-[inherit] pointer-events-none mix-blend-normal" />
                     <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-[inherit] pointer-events-none mix-blend-normal" />
-                    <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 group-data-[active=true]:opacity-100 transition-opacity duration-700">
                       <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.18),transparent_70%)] rotate-12" />
                     </div>
                     <div className="relative aspect-[4/5] overflow-hidden">
@@ -116,7 +119,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                           alt={member.avatar.alt ?? `${member.name} portrait`}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                          className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105"
+                          className="object-cover transition-all duration-700 grayscale contrast-110 group-hover:grayscale-0 group-hover:scale-105 group-data-[active=true]:grayscale-0 group-data-[active=true]:scale-105"
                           priority={index === 0}
                           itemProp="image"
                         />
@@ -136,10 +139,10 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                           </span>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/30 to-black/75 opacity-100 transition-opacity duration-700 group-hover:via-black/25 group-hover:to-black/65" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/30 to-black/75 opacity-100 transition-opacity duration-700 group-hover:via-black/25 group-hover:to-black/65 group-data-[active=true]:via-black/25 group-data-[active=true]:to-black/65" />
                     </div>
                     <div className="relative px-6 pb-8 pt-8 text-center bg-transparent overflow-hidden rounded-b-[2rem]">
-                      <div className="absolute inset-0 rounded-b-[2rem] bg-white/[0.08] opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+                      <div className="absolute inset-0 rounded-b-[2rem] bg-white/[0.08] opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-data-[active=true]:opacity-100 pointer-events-none" />
                       <div className="relative z-10 flex flex-col items-center">
                         <h3 className="text-2xl font-semibold text-white font-lato">{member.name}</h3>
                         <p className="mt-2 text-[0.75rem] uppercase tracking-[0.4em] text-white/55 font-lato">
@@ -155,7 +158,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                             {member.focus.map((focusText, focusIndex) => (
                               <li
                                 key={`${member.id}-focus-${focusIndex}`}
-                                className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/80 transition-colors duration-300 group-hover:border-white/25 group-hover:bg-white/[0.12] group-hover:text-white font-lato"
+                                className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/80 transition-colors duration-300 group-hover:border-white/25 group-hover:bg-white/[0.12] group-hover:text-white group-data-[active=true]:border-white/25 group-data-[active=true]:bg-white/[0.12] group-data-[active=true]:text-white font-lato"
                               >
                                 {focusText}
                               </li>
@@ -175,7 +178,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                                 itemProp="sameAs"
                               >
                                 <Icon className="h-5 w-5" />
-                                <span className="absolute inset-0 rounded-full bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                                <span className="absolute inset-0 rounded-full bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[active=true]:opacity-100" />
                               </a>
                             ))}
                           </div>

@@ -33,6 +33,7 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
     Array<{ delay: number; duration: string }>
   >([]);
   const [supportsHover, setSupportsHover] = useState(false);
+  const [activeCard, setActiveCard] = useState<number | null>(null);
 
   useEffect(() => {
     setAnimationValues(
@@ -160,8 +161,14 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
               fade={false}
             >
               <div
-                className="accuracy-card relative p-6 sm:p-8 md:p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex flex-col overflow-hidden"
+                className="accuracy-card relative p-6 sm:p-8 md:p-10 lg:p-12 bg-gradient-to-br from-black/95 via-black/98 to-black/99 backdrop-blur-2xl rounded-3xl min-h-[240px] sm:min-h-[280px] md:min-h-[320px] flex flex-col overflow-hidden cursor-pointer"
                 data-hover={supportsHover ? 'enabled' : 'disabled'}
+                data-active={!supportsHover && activeCard === index ? 'true' : 'false'}
+                onClick={() => {
+                  if (!supportsHover) {
+                    setActiveCard((prev) => (prev === index ? null : index));
+                  }
+                }}
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />

@@ -95,112 +95,45 @@
       "metaName": "Client References",
       "metaDescription": "Featured client success stories and AI implementation results.",
       "samples": {
-        "ubytovaniHornacko": {
-          "subtitle": "Boutique stays in the Horňácko region",
-          "metrics": [
-            {
-              "label": "Booking conversion uplift",
-              "value": "+47%"
-            },
-            {
-              "label": "Average load time",
-              "value": "5.4s → 1.4s"
-            },
-            {
-              "label": "Organic search traffic",
-              "value": "+62%"
-            },
-            {
-              "label": "Availability sync automation",
-              "value": "95%"
-            }
-          ]
-        },
-        "acKlimes": {
-          "subtitle": "HVAC Services & Predictive Maintenance",
-          "metrics": [
-            {
-              "label": "New web lead uplift",
-              "value": "+38%"
-            },
-            {
-              "label": "Page speed (mobile Lighthouse)",
-              "value": "92"
-            },
-            {
-              "label": "Support inquiries automated",
-              "value": "65%"
-            },
-            {
-              "label": "Quote turnaround time",
-              "value": "48h → 6h"
-            }
-          ]
-        },
         "apexMma": {
-          "subtitle": "Performance MMA Gym & Academy",
+          "subtitle": "Professional MMA Gym & Academy in Náchod",
           "metrics": [
             {
-              "label": "Core Web Vitals score",
-              "value": "95 / 100"
+              "label": "New online visibility",
+              "value": "0 → full website"
             },
             {
-              "label": "Online bookings increase",
-              "value": "+42%"
+              "label": "Organic traffic in 1st month",
+              "value": "+320 visits"
             },
             {
-              "label": "Average load time",
-              "value": "4.2s → 1.2s"
+              "label": "New member online sign-ups",
+              "value": "+27%"
             },
             {
-              "label": "SEO landing pages added",
-              "value": "12"
+              "label": "Google Lighthouse score",
+              "value": "96 / 100"
             }
           ]
         },
-        "novaClinic": {
-          "subtitle": "Aesthetic & Dental Care Network",
+        "tarifix": {
+          "subtitle": "Telecom Tariff Comparison & Brokerage",
           "metrics": [
             {
-              "label": "AI-handled patient inquiries",
-              "value": "4,500 / month"
+              "label": "Lead processing automation",
+              "value": "78%"
             },
             {
-              "label": "Consult scheduling automation",
-              "value": "92%"
+              "label": "Tariff comparison speed",
+              "value": "12 min → 45s"
             },
             {
-              "label": "Treatment plan generation",
-              "value": "18 mins → 3 mins"
+              "label": "Website conversion rate",
+              "value": "+34%"
             },
             {
-              "label": "Cross-sell conversion lift",
-              "value": "+36%"
-            },
-            {
-              "label": "Clinician admin time saved",
-              "value": "55 hrs / week"
-            }
-          ]
-        },
-        "expandoLogistics": {
-          "subtitle": "Mid-mile Logistics & Warehousing",
-          "metrics": [
-            {
-              "label": "Automated slot booking",
-              "value": "74%"
-            },
-            {
-              "label": "Routing optimization",
-              "value": "18% faster"
-            },
-            {
-              "label": "Claims handling automation",
-              "value": "63%"
-            },
-            {
-              "label": "CO2 reduction per shipment",
-              "value": "-9%"
+              "label": "Manual work saved weekly",
+              "value": "18 hours"
             }
           ]
         }

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
 import ReferencesSectionClient from './ReferencesSectionClient';
-import { getReferences } from '@/data/references.server';
+import { getSampleReferences } from '@/data/references';
 
 interface ReferencesSectionProps {
   locale: string;
@@ -9,9 +9,8 @@ interface ReferencesSectionProps {
 
 export default async function ReferencesSection({ locale }: ReferencesSectionProps) {
   const t = await getTranslations({ locale, namespace: 'sections.references' });
-  const { references } = await getReferences({
-    locale,
-  });
+
+  const references = getSampleReferences(locale);
 
   const copy = {
     metaName: t('metaName'),

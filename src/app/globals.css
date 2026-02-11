@@ -350,12 +350,24 @@ h6 {
 }
 
 .accuracy-card[data-hover='disabled'] {
-  transition: none;
+  transition: transform 0.7s ease;
 }
 
 .accuracy-card[data-hover='disabled'] .accuracy-card__label,
 .accuracy-card[data-hover='disabled'] .accuracy-card__value {
-  transition: none;
+  transition: color 0.5s ease, transform 0.7s ease;
+}
+
+.accuracy-card[data-active='true'] {
+  transform: scale(1.05) rotate(1deg);
+}
+
+.accuracy-card[data-active='true'] .accuracy-card__label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.accuracy-card[data-active='true'] .accuracy-card__value {
+  transform: scale(1.1);
 }
 
 /* Traveling animations for neon spots */

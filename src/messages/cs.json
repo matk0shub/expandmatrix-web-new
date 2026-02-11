@@ -95,112 +95,45 @@
       "metaName": "Klientské reference",
       "metaDescription": "Vybrané úspěšné spolupráce a výsledky implementace AI.",
       "samples": {
-        "ubytovaniHornacko": {
-          "subtitle": "Butikové ubytování v regionu Horňácko",
-          "metrics": [
-            {
-              "label": "Nárůst konverzí rezervací",
-              "value": "+47%"
-            },
-            {
-              "label": "Průměrná doba načtení",
-              "value": "5,4s → 1,4s"
-            },
-            {
-              "label": "Organická návštěvnost",
-              "value": "+62%"
-            },
-            {
-              "label": "Automatická synchronizace dostupnosti",
-              "value": "95%"
-            }
-          ]
-        },
-        "acKlimes": {
-          "subtitle": "HVAC servis a prediktivní údržba",
-          "metrics": [
-            {
-              "label": "Nárůst poptávek z webu",
-              "value": "+38%"
-            },
-            {
-              "label": "Rychlost webu (Lighthouse mobil)",
-              "value": "92"
-            },
-            {
-              "label": "Automatizace dotazů",
-              "value": "65%"
-            },
-            {
-              "label": "Zrychlení kalkulací",
-              "value": "48h → 6h"
-            }
-          ]
-        },
         "apexMma": {
-          "subtitle": "Výkonnostní MMA gym a akademie",
+          "subtitle": "Profesionální MMA gym a akademie v Náchodě",
           "metrics": [
             {
-              "label": "Skóre Core Web Vitals",
-              "value": "95 / 100"
+              "label": "Nová online viditelnost",
+              "value": "0 → plný web"
             },
             {
-              "label": "Nárůst online rezervací",
-              "value": "+42%"
+              "label": "Organická návštěvnost za 1. měsíc",
+              "value": "+320 návštěv"
             },
             {
-              "label": "Průměrná doba načtení",
-              "value": "4,2s → 1,2s"
+              "label": "Online registrace nových členů",
+              "value": "+27%"
             },
             {
-              "label": "Přidané SEO landing pages",
-              "value": "12"
+              "label": "Skóre Google Lighthouse",
+              "value": "96 / 100"
             }
           ]
         },
-        "novaClinic": {
-          "subtitle": "Síť estetických a dentálních klinik",
+        "tarifix": {
+          "subtitle": "Srovnávač a zprostředkovatel telco tarifů",
           "metrics": [
             {
-              "label": "AI vyřízené dotazy pacientů",
-              "value": "4 500 / měsíc"
+              "label": "Automatizace zpracování poptávek",
+              "value": "78%"
             },
             {
-              "label": "Automatizace plánování konzultací",
-              "value": "92%"
+              "label": "Zrychlení porovnání tarifů",
+              "value": "12 min → 45s"
             },
             {
-              "label": "Tvorba léčebného plánu",
-              "value": "18 min → 3 min"
+              "label": "Konverzní poměr webu",
+              "value": "+34%"
             },
             {
-              "label": "Nárůst cross-sellu",
-              "value": "+36%"
-            },
-            {
-              "label": "Ušetřený čas lékařů",
-              "value": "55 h / týden"
-            }
-          ]
-        },
-        "expandoLogistics": {
-          "subtitle": "Mid-mile logistika a skladování",
-          "metrics": [
-            {
-              "label": "Automatizované objednání slotů",
-              "value": "74%"
-            },
-            {
-              "label": "Optimalizace tras",
-              "value": "18% rychleji"
-            },
-            {
-              "label": "Automatizace reklamací",
-              "value": "63%"
-            },
-            {
-              "label": "Snížení CO₂ na zásilku",
-              "value": "-9%"
+              "label": "Úspora manuální práce týdně",
+              "value": "18 hodin"
             }
           ]
         }
