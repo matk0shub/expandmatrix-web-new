@@ -93,11 +93,11 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
   const glowDelay = index * 0.45;
   const glowDuration = `${3 + index * 0.4}s`;
   return (
-    <div className="relative w-full">
+    <div className="group/card relative w-full">
       <input
         type="checkbox"
         id={controlId}
-        className="peer sr-only"
+        className="sr-only"
         defaultChecked={defaultChecked}
         aria-label={service.title}
       />
@@ -123,10 +123,10 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
                 'inline-flex items-center justify-center rounded-full bg-green-500 transition-all duration-300',
                 'w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12',
                 'group-hover:bg-green-400 group-hover:scale-110',
-                'peer-checked:bg-green-400 peer-checked:scale-110',
+                'touch:group-has-[input:checked]/card:bg-green-400 touch:group-has-[input:checked]/card:scale-110',
               )}
             >
-              <PlusIcon className="transition-transform duration-300 group-hover:rotate-90 peer-checked:rotate-90" />
+              <PlusIcon className="transition-transform duration-300 group-hover:rotate-90 touch:group-has-[input:checked]/card:rotate-90" />
             </span>
           </div>
 
@@ -140,7 +140,7 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
               <h3
                 className={clsx(
                   'w-full max-w-[24ch] text-center text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight mx-auto',
-                  'transition-opacity duration-500 group-hover:opacity-0 peer-checked:opacity-0',
+                  'transition-opacity duration-500 group-hover:opacity-0 touch:group-has-[input:checked]/card:opacity-0',
                 )}
               >
                 {service.title}
@@ -157,7 +157,7 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
                   'w-full max-w-[32ch] text-white/90 text-sm sm:text-base md:text-lg leading-relaxed font-lato font-medium mx-auto',
                   'opacity-0 scale-95 transition-all duration-500',
                   'group-hover:opacity-100 group-hover:scale-100',
-                  'peer-checked:opacity-100 peer-checked:scale-100',
+                  'touch:group-has-[input:checked]/card:opacity-100 touch:group-has-[input:checked]/card:scale-100',
                 )}
               >
                 {service.description}
@@ -192,7 +192,7 @@ function CardBackgroundLayers({
           } as CSSProperties
         }
       />
-      <div className="absolute inset-0 rounded-3xl bg-white/0 transition-all duration-500 pointer-events-none group-hover:bg-white/[0.03] group-hover:backdrop-blur-sm peer-checked:bg-white/[0.03]" />
+      <div className="absolute inset-0 rounded-3xl bg-white/0 transition-all duration-500 pointer-events-none group-hover:bg-white/[0.03] group-hover:backdrop-blur-sm touch:group-has-[input:checked]/card:bg-white/[0.03]" />
       <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 rounded-b-3xl" />
     </>
   );
