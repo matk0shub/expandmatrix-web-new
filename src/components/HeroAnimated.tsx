@@ -53,8 +53,8 @@ export default function Hero() {
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   }, [isClient]);
   const enable3DLogo = useMemo(
-    () => isClient && !prefersReducedMotion && supportsHover,
-    [isClient, prefersReducedMotion, supportsHover],
+    () => isClient && !prefersReducedMotion,
+    [isClient, prefersReducedMotion],
   );
 
   useEffect(() => {
