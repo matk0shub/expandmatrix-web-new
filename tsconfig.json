@@ -10,7 +10,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "allowArbitraryExtensions": true,
-    "moduleSuffixes": [".js", ".ts", ".tsx"],
+    "moduleSuffixes": ["", ".js", ".ts", ".tsx"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import Head from 'next/head';
+
 import { useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import ScrambleText from './ScrambleText';
@@ -134,9 +134,6 @@ export default function Hero() {
 
   return (
     <>
-      <Head>
-        <link rel="preload" as="image" href="/logo.svg" fetchPriority="high" />
-      </Head>
       <section
       ref={heroRef}
       className="hero-animated relative min-h-screen w-full overflow-hidden bg-black"

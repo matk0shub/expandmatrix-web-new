@@ -8,7 +8,7 @@ import "../globals.css";
 import ScrollRestoration from '@/components/ScrollRestoration';
 
 const BASE_URL = 'https://expandmatrix.com';
-const LOGO_URL = `${BASE_URL}/logo.png`;
+const LOGO_URL = `${BASE_URL}/og-image.png`;
 
 export async function generateMetadata({
   params,
@@ -286,6 +286,8 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* Preload critical above-the-fold image */}
+        <link rel="preload" as="image" href="/logo.svg" fetchPriority="high" />
         {/* Preconnect/DNS-prefetch for Payload host (if configured) */}
         {payloadBaseUrl && (
           <>
@@ -311,27 +313,36 @@ export default async function LocaleLayout({
           {children}
           <ScrollRestoration />
         </NextIntlClientProvider>
-        <Script
-          id="chatwoot-widget"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(d,t) {
-                var BASE_URL="https://chat.expandmatrix.com";
-                var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-                g.src=BASE_URL+"/packs/js/sdk.js";
-                g.async=true;
-                s.parentNode.insertBefore(g,s);
-                g.onload=function(){
-                  window.chatwootSDK.run({
-                    websiteToken: 'hwKhP9Y2skx6RU1c37PeeK6f',
-                    baseUrl: BASE_URL
-                  })
-                }
-              })(document,"script");
-            `,
-          }}
-        />
+        {isCzech && (
+          <Script
+            id="chatwoot-widget"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.chatwootSettings = {
+                  locale: 'cs',
+                  position: 'right',
+                  type: 'standard',
+                  showPopoutButton: true
+                };
+                (function(d,t) {
+                  var BASE_URL="https://chat.expandmatrix.com";
+                  var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+                  g.src=BASE_URL+"/packs/js/sdk.js";
+                  g.async=true;
+                  s.parentNode.insertBefore(g,s);
+                  g.onload=function(){
+                    window.chatwootSDK.run({
+                      websiteToken: 'hwKhP9Y2skx6RU1c37PeeK6f',
+                      baseUrl: BASE_URL,
+                      locale: 'cs'
+                    })
+                  }
+                })(document,"script");
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

@@ -4,6 +4,8 @@ import { getPayloadClient } from '@/payload/getPayloadClient';
 import type { TeamMemberDocument } from '@/types/team';
 import { normalizePayloadTeamMembers } from '@/data/teamMembers';
 
+export const revalidate = 60;
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const localeParam = searchParams.get('locale');
@@ -31,7 +33,11 @@ export async function GET(request: Request) {
     const docs = Array.isArray(result.docs) ? (result.docs as TeamMemberDocument[]) : [];
     const normalized = normalizePayloadTeamMembers(docs, locale);
 
-    return NextResponse.json({ docs: normalized });
+    return NextResponse.json({ docs: normalized }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      },
+    });
   } catch (error) {
     console.error('Error fetching team members from Payload:', error);
     return NextResponse.json(

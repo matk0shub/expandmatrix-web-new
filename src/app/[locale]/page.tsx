@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import AccuracySection from '@/components/AccuracySection';
 import CalEmbedInitializer from '@/components/CalEmbedInitializer';
 import ClientsSection from '@/components/ClientsSection';
@@ -50,13 +51,19 @@ export default async function HomePage({ params }: PageProps) {
           <ProcessSection />
         </div>
         <div id="references">
-          <ReferencesSection locale={locale} />
+          <Suspense fallback={<div className="min-h-[60vh] bg-black" />}>
+            <ReferencesSection locale={locale} />
+          </Suspense>
         </div>
         <div id="team">
-          <TeamSection locale={locale} />
+          <Suspense fallback={<div className="min-h-[60vh] bg-black" />}>
+            <TeamSection locale={locale} />
+          </Suspense>
         </div>
         <div id="faq">
-          <FAQSection locale={locale} />
+          <Suspense fallback={<div className="min-h-[50vh] bg-black" />}>
+            <FAQSection locale={locale} />
+          </Suspense>
         </div>
         <div id="contact">
           <CookieConsent />

@@ -3,6 +3,8 @@ import type { Where } from 'payload';
 
 import { getPayloadClient } from '@/payload/getPayloadClient';
 
+export const revalidate = 60;
+
 const resolveLocale = (raw: string | null): 'en' | 'cs' | undefined => {
   if (!raw) {
     return undefined;
@@ -43,7 +45,11 @@ export async function GET(request: Request) {
       where,
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      },
+    });
   } catch (error) {
     console.error('Error fetching FAQs from Payload:', error);
     return NextResponse.json(
