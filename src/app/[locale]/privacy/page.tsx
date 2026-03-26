@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
-import CookieConsent from '@/components/CookieConsent';
 import Footer from '@/components/Footer';
 import SiteNavbar from '@/components/SiteNavbar';
 import { legalContent, getSectionIcon } from '@/data/legalContent';
@@ -103,7 +102,6 @@ export default async function PrivacyPolicyPage({ params }: RouteProps) {
         </div>
       </main>
       <Footer />
-      <CookieConsent />
     </>
   );
 }

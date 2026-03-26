@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import AccuracySection from '@/components/AccuracySection';
 import CalEmbedInitializer from '@/components/CalEmbedInitializer';
 import ClientsSection from '@/components/ClientsSection';
-import CookieConsent from '@/components/CookieConsent';
 import FAQSection from '@/components/FAQSection';
 import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
@@ -65,9 +64,7 @@ export default async function HomePage({ params }: PageProps) {
             <FAQSection locale={locale} />
           </Suspense>
         </div>
-        <div id="contact">
-          <CookieConsent />
-        </div>
+        <div id="contact" />
       </main>
       <Footer />
       <CalEmbedInitializer />

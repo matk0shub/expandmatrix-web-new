@@ -80,9 +80,6 @@ importers:
       react:
         specifier: 19.2.0
         version: 19.2.0
-      react-cookie-consent:
-        specifier: ^9.0.0
-        version: 9.0.0(react@19.2.0)
       react-dom:
         specifier: 19.2.0
         version: 19.2.0(react@19.2.0)
@@ -98,6 +95,9 @@ importers:
       use-scramble:
         specifier: ^2.2.15
         version: 2.2.15(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      vanilla-cookieconsent:
+        specifier: ^3.1.0
+        version: 3.1.0
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -3031,9 +3031,6 @@ packages:
   jpeg-js@0.4.4:
     resolution: {integrity: sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==}
 
-  js-cookie@2.2.1:
-    resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
-
   js-library-detector@6.7.0:
     resolution: {integrity: sha512-c80Qupofp43y4cJ7+8TTDN/AsDwLi5oOm/plBrWI+iQt485vKXCco+yVmOwEgdo9VOdsYTuV0UlTeetVPTriXA==}
     engines: {node: '>=12'}
@@ -3784,12 +3781,6 @@ packages:
   quick-format-unescaped@4.0.4:
     resolution: {integrity: sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==}
 
-  react-cookie-consent@9.0.0:
-    resolution: {integrity: sha512-Blyj+m+Zz7SFHYqT18p16EANgnSg2sIyU6Yp3vk83AnOnSW7qnehPkUe4+8+qxztJrNmCH5GP+VHsWzAKVOoZA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>=16'
-
   react-datepicker@7.6.0:
     resolution: {integrity: sha512-9cQH6Z/qa4LrGhzdc3XoHbhrxNcMi9MKjZmYgF/1MNNaJwvdSjv3Xd+jjvrEEbKEf71ZgCA3n7fQbdwd70qCRw==}
     peerDependencies:
@@ -4381,6 +4372,9 @@ packages:
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
+
+  vanilla-cookieconsent@3.1.0:
+    resolution: {integrity: sha512-/McNRtm/3IXzb9dhqMIcbquoU45SzbN2VB+To4jxEPqMmp7uVniP6BhGLjU8MC7ZCDsNQVOp27fhQTM/ruIXAA==}
 
   vfile-message@4.0.3:
     resolution: {integrity: sha512-QTHzsGd1EhbZs4AsQ20JX1rC3cOlt/IWJruk893DfLRr57lcnOeMaWG4K0JrRta4mIJZKth2Au3mM3u03/JWKw==}
@@ -7708,8 +7702,6 @@ snapshots:
 
   jpeg-js@0.4.4: {}
 
-  js-cookie@2.2.1: {}
-
   js-library-detector@6.7.0: {}
 
   js-tokens@4.0.0: {}
@@ -8637,11 +8629,6 @@ snapshots:
 
   quick-format-unescaped@4.0.4: {}
 
-  react-cookie-consent@9.0.0(react@19.2.0):
-    dependencies:
-      js-cookie: 2.2.1
-      react: 19.2.0
-
   react-datepicker@7.6.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@floating-ui/react': 0.27.16(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -9345,6 +9332,8 @@ snapshots:
   utf8-byte-length@1.0.5: {}
 
   uuid@10.0.0: {}
+
+  vanilla-cookieconsent@3.1.0: {}
 
   vfile-message@4.0.3:
     dependencies:

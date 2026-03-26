@@ -5,6 +5,7 @@ import '@/payload/prewarm';
 import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 import { lato } from '../fonts';
 import "../globals.css";
+import CookieConsentBanner from '@/components/CookieConsent';
 import ScrollRestoration from '@/components/ScrollRestoration';
 
 const BASE_URL = 'https://expandmatrix.com';
@@ -311,6 +312,7 @@ export default async function LocaleLayout({
         />
         <NextIntlClientProvider messages={messages}>
           {children}
+          <CookieConsentBanner />
           <ScrollRestoration />
         </NextIntlClientProvider>
         {isCzech && (

@@ -1,66 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import CookieConsent from 'react-cookie-consent';
-
-import { COOKIE_CONSENT_NAME, COOKIE_RESET_EVENT, clearCookieConsent } from '@/constants/cookies';
+import { useEffect, useRef } from 'react';
+import { useLocale } from 'next-intl';
+import 'vanilla-cookieconsent/dist/cookieconsent.css';
+import * as CookieConsent from 'vanilla-cookieconsent';
+import { getCookieConsentConfig } from '@/lib/cookieconsent-config';
 
 export default function CookieConsentBanner() {
-  const t = useTranslations('cookie');
-  const [resetCounter, setResetCounter] = useState(0);
+  const locale = useLocale();
+  const initialized = useRef(false);
 
   useEffect(() => {
-    const handleReset = () => {
-      clearCookieConsent();
-      setResetCounter((prev) => prev + 1);
-    };
+    if (initialized.current) return;
+    initialized.current = true;
+    CookieConsent.run(getCookieConsentConfig(locale));
+  }, [locale]);
 
-    document.addEventListener(COOKIE_RESET_EVENT, handleReset);
-    return () => document.removeEventListener(COOKIE_RESET_EVENT, handleReset);
-  }, []);
-
-  return (
-    <CookieConsent
-      key={resetCounter}
-      location="bottom"
-      buttonText={t('buttonText')}
-      cookieName={COOKIE_CONSENT_NAME}
-      style={{
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        borderRadius: '16px',
-        margin: '16px',
-        padding: '20px',
-        fontSize: '14px',
-        color: '#374151',
-        zIndex: 9999
-      }}
-      buttonStyle={{
-        background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%)',
-        color: 'white',
-        fontSize: '14px',
-        fontWeight: '600',
-        padding: '10px 16px',
-        borderRadius: '9999px',
-        border: 'none',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-      }}
-      buttonClasses="hover:scale-105 hover:shadow-lg transition-all duration-300"
-      expires={150}
-    >
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4">
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 mb-2">{t('title')}</h4>
-          <p className="text-sm text-gray-600">
-            {t('message')}
-          </p>
-        </div>
-      </div>
-    </CookieConsent>
-  );
+  return null;
 }
+
+export { CookieConsent };
