@@ -47,7 +47,3 @@ next-env.d.ts
 # payload build artifacts
 /media
 
-# env files
-.env
-.env.local
-.env.*.local
