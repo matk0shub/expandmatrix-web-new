@@ -14,7 +14,7 @@ import {
   type StrapiArticle,
 } from '@/lib/strapi';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
