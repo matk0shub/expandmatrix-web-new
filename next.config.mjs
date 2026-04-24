@@ -157,11 +157,41 @@ const nextConfig = {
         ],
       },
       {
-        source: '/:all*.(avif|webp|svg|png|jpg|jpeg|ico|woff2)',
+        // Long-lived cache for content-hashed assets + fonts. Favicon + apple
+        // icons are handled below with a shorter TTL because their URL is
+        // stable, so changes must propagate without waiting a year.
+        source: '/:all*.(avif|webp|svg|png|jpg|jpeg|woff2)',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:all*.ico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/apple-touch-icon.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/apple-touch-icon-precomposed.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, must-revalidate',
           },
         ],
       },
