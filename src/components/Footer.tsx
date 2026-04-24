@@ -106,6 +106,12 @@ export default function Footer() {
             className="flex flex-col items-center gap-4 md:flex-row md:gap-[var(--gap-x)]"
           >
             <Link
+              href={`/${locale}/blog`}
+              className="rounded-full px-3 py-2 text-[var(--brand-fg)] opacity-80 transition duration-200 hover:opacity-100 hover:underline hover:underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-accent)]"
+            >
+              {linksT('blog')}
+            </Link>
+            <Link
               href={`/${locale}/terms`}
               className="rounded-full px-3 py-2 text-[var(--brand-fg)] opacity-80 transition duration-200 hover:opacity-100 hover:underline hover:underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-accent)]"
             >

@@ -68,6 +68,10 @@ const imageRemotePatterns = [
     protocol: 'https',
     hostname: 'images.unsplash.com',
   },
+  {
+    protocol: 'https',
+    hostname: 'cms.expandmatrix.com',
+  },
 ];
 
 if (payloadServerUrl) {
