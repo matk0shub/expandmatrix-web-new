@@ -14,7 +14,7 @@ import {
   type StrapiArticle,
 } from '@/lib/strapi';
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{ locale: string }>;
