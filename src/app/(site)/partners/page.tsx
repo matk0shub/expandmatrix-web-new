@@ -1,9 +1,18 @@
 import Image from 'next/image';
+import type { Metadata } from 'next';
 
 import { getPartners } from '@/data/partners.server';
 import type { NormalizedPartner } from '@/types/partners';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Partners | Expand Matrix',
+  description:
+    'Technology partners powering Expand Matrix AI agents, modern websites and business automation — Anthropic, OpenAI, Claude, Cursor and more.',
+  alternates: { canonical: 'https://expandmatrix.com/partners' },
+  robots: { index: true, follow: true },
+};
 
 export default async function PartnersPage() {
   const { partners } = await getPartners();

@@ -1,7 +1,17 @@
+import type { Metadata } from 'next';
+
 import { getTeamMembers } from '@/data/teamMembers.server';
 import type { NormalizedTeamMember } from '@/types/team';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Team | Expand Matrix',
+  description:
+    'Meet the people behind Expand Matrix — AI architects, system engineers and implementation specialists building production-grade AI agents.',
+  alternates: { canonical: 'https://expandmatrix.com/team' },
+  robots: { index: true, follow: true },
+};
 
 export default async function TeamPage() {
   const { members } = await getTeamMembers({ locale: 'en', featuredOnly: false });

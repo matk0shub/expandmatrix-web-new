@@ -55,9 +55,11 @@ export default function Hero() {
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   }, [isClient]);
   const enable3DLogo = useMemo(
-    () => isClient && !prefersReducedMotion && !isMobile,
-    [isClient, prefersReducedMotion, isMobile],
+    () => isClient && !prefersReducedMotion,
+    [isClient, prefersReducedMotion],
   );
+  // Decorative particles / scan lines / quantum dots stay desktop-only so mobile first
+  // paint isn't flooded with ~80 animated elements competing with the 3D logo.
   const enableDecorations = isClient && !isMobile;
 
   useEffect(() => {
@@ -343,7 +345,7 @@ export default function Hero() {
         )}
 
             {/* Advanced Matrix Rain Effect */}
-        {enableDecorations && [...Array(25)].map((_, i) => {
+        {enableDecorations && [...Array(10)].map((_, i) => {
               // Use deterministic values based on index to prevent hydration mismatch
               const left = (i * 7.3) % 100;
               const top = (i * 11.7) % 100;
@@ -377,7 +379,7 @@ export default function Hero() {
             })}
 
         {/* Neural Network Connections */}
-        {enableDecorations && [...Array(12)].map((_, i) => {
+        {enableDecorations && [...Array(6)].map((_, i) => {
           // Use deterministic values based on index to prevent hydration mismatch
           const left = (i * 13.7) % 100;
           const top = (i * 19.3) % 100;
@@ -411,12 +413,12 @@ export default function Hero() {
         })}
 
         {/* Advanced Digital Grid Lines */}
-        {enableDecorations && [...Array(8)].map((_, i) => (
+        {enableDecorations && [...Array(4)].map((_, i) => (
           <MotionDiv
             key={`grid-${i}`}
             className="absolute border border-[#00d76b]/30"
         style={{
-              left: `${(i * 6.67)}%`,
+              left: `${(i * 13)}%`,
               top: 0,
               height: '100%',
               width: '1px',
@@ -435,7 +437,7 @@ export default function Hero() {
         ))}
 
         {/* Holographic Scan Lines */}
-        {enableDecorations && [...Array(4)].map((_, i) => (
+        {enableDecorations && [...Array(2)].map((_, i) => (
           <MotionDiv
             key={`scan-${i}`}
             className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[#00d76b]/40 to-transparent"
@@ -456,7 +458,7 @@ export default function Hero() {
         ))}
 
             {/* Advanced Floating Code Particles */}
-            {enableDecorations && [...Array(8)].map((_, i) => {
+            {enableDecorations && [...Array(4)].map((_, i) => {
               // Use deterministic values based on index to prevent hydration mismatch
               const left = (i * 23.7) % 100;
               const top = (i * 31.3) % 100;
@@ -495,7 +497,7 @@ export default function Hero() {
             })}
 
         {/* Quantum Dots */}
-        {enableDecorations && [...Array(20)].map((_, i) => {
+        {enableDecorations && [...Array(8)].map((_, i) => {
           // Use deterministic values based on index to prevent hydration mismatch
           const left = (i * 17.3) % 100;
           const top = (i * 29.7) % 100;
@@ -535,7 +537,7 @@ export default function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: 'linear-gradient(to bottom right, rgba(0, 215, 107, 0.08), transparent)' }} />
         
         {/* Dynamic Energy Fields */}
-        {enableDecorations && [...Array(3)].map((_, i) => (
+        {enableDecorations && [...Array(2)].map((_, i) => (
           <MotionDiv
             key={`energy-${i}`}
             className="absolute rounded-full blur-2xl"

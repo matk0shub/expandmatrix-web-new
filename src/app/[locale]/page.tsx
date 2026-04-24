@@ -25,7 +25,6 @@ interface PageProps {
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  console.log('[env check] PAYLOAD_SECRET present?', Boolean(process.env.PAYLOAD_SECRET));
   let safePartners: NormalizedPartner[] = [];
 
   try {

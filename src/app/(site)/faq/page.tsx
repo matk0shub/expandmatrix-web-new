@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
+
 import { getPayloadClient } from '@/payload/getPayloadClient';
+
+export const metadata: Metadata = {
+  title: 'FAQ | Expand Matrix',
+  description:
+    'Frequently asked questions about Expand Matrix AI agents, website development and AI business implementation services.',
+  alternates: { canonical: 'https://expandmatrix.com/faq' },
+  robots: { index: true, follow: true },
+};
 
 type LocalizedString =
   | string
