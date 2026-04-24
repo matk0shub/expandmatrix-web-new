@@ -21,10 +21,6 @@ interface PageProps {
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
-export async function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'cs' }];
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
@@ -101,7 +97,7 @@ function Pagination({
   return (
     <nav className="flex items-center justify-center gap-2 pt-12" aria-label="Pagination">
       {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
-        <Link
+        <a
           key={p}
           href={href(p)}
           className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200 ${
@@ -112,15 +108,15 @@ function Pagination({
           aria-current={p === page ? 'page' : undefined}
         >
           {p}
-        </Link>
+        </a>
       ))}
       {page < pageCount && (
-        <Link
+        <a
           href={href(page + 1)}
           className="flex h-10 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-semibold text-white/60 hover:border-white/40 hover:text-white transition-all duration-200"
         >
           {nextLabel}
-        </Link>
+        </a>
       )}
     </nav>
   );
