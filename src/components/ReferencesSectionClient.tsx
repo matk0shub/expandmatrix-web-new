@@ -124,7 +124,6 @@ export default function ReferencesSectionClient({
         >
           {activeReference && (
             <ReferenceBackground
-              key={activeReference.id}
               reference={activeReference}
               prefersReducedMotion={prefersReducedMotion}
               animateOnChange={hasInteracted}

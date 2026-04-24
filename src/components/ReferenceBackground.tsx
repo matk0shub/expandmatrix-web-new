@@ -19,35 +19,44 @@ export default function ReferenceBackground({
 }: ReferenceBackgroundProps) {
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
+  const AnimatePresence = framer?.AnimatePresence ?? null;
 
   const imageUrl = reference.image?.url ?? '';
   const shouldAnimate = animateOnChange && !prefersReducedMotion;
 
+  const imageLayer = (
+    <MotionDiv
+      key={reference.id}
+      className="absolute inset-0 w-full h-full"
+      initial={shouldAnimate ? { opacity: 0 } : false}
+      animate={{ opacity: 1 }}
+      exit={shouldAnimate ? { opacity: 0 } : undefined}
+      transition={{
+        duration: shouldAnimate ? 0.4 : 0,
+        ease: 'easeInOut',
+      }}
+    >
+      {imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={reference.image?.alt ?? ''}
+          fill
+          priority={false}
+          sizes="100vw"
+          className="object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
+      )}
+    </MotionDiv>
+  );
+
   return (
     <div className="absolute inset-0 overflow-hidden rounded-[40px]">
-      <MotionDiv
-        key={reference.id}
-        className="absolute inset-0 w-full h-full"
-        initial={shouldAnimate ? { opacity: 0 } : false}
-        animate={{ opacity: 1 }}
-        transition={{
-          duration: shouldAnimate ? 0.45 : 0,
-          ease: 'easeOut',
-        }}
-      >
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={reference.image?.alt ?? ''}
-            fill
-            priority={false}
-            sizes="100vw"
-            className="object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
-        )}
-      </MotionDiv>
+      {AnimatePresence && shouldAnimate
+        ? <AnimatePresence mode="sync">{imageLayer}</AnimatePresence>
+        : imageLayer
+      }
 
       <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
       <div
