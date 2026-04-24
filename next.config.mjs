@@ -187,6 +187,15 @@ const nextConfig = {
           },
         ],
       },
+      // Blog: force-dynamic pages — no CDN cache (must come AFTER the generic /:locale/:path* rule)
+      {
+        source: '/:locale(en|cs)/blog',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+      },
+      {
+        source: '/:locale(en|cs)/blog/:slug*',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+      },
       {
         source: '/:path*',
         headers: [
