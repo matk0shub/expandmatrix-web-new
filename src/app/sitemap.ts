@@ -1,8 +1,33 @@
 import { MetadataRoute } from 'next';
+import { getPayloadClient } from '@/payload/getPayloadClient';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+const latestUpdate = async (collection: 'partners' | 'teamMembers' | 'faqs'): Promise<Date> => {
+  try {
+    const payload = await getPayloadClient();
+    const result = await payload.find({
+      collection,
+      sort: '-updatedAt',
+      limit: 1,
+      depth: 0,
+    });
+    const doc = result?.docs?.[0] as { updatedAt?: string } | undefined;
+    const when = doc?.updatedAt ? new Date(doc.updatedAt) : null;
+    return when && !Number.isNaN(when.getTime()) ? when : new Date();
+  } catch {
+    return new Date();
+  }
+};
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://expandmatrix.com';
   const now = new Date();
+  const [partnersMtime, teamMtime, faqMtime] = await Promise.all([
+    latestUpdate('partners'),
+    latestUpdate('teamMembers'),
+    latestUpdate('faqs'),
+  ]);
 
   const locales = ['en', 'cs'] as const;
   const homeAndLocales: MetadataRoute.Sitemap = [
@@ -38,19 +63,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const contentPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/partners`,
-      lastModified: now,
+      lastModified: partnersMtime,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/team`,
-      lastModified: now,
+      lastModified: teamMtime,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/faq`,
-      lastModified: now,
+      lastModified: faqMtime,
       changeFrequency: 'monthly',
       priority: 0.7,
     },

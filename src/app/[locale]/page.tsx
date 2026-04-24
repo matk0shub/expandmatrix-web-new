@@ -36,7 +36,7 @@ export default async function HomePage({ params }: PageProps) {
 
   return (
     <>
-      <main className="min-h-screen">
+      <main id="main-content" className="min-h-screen">
         <Hero />
         <div id="about">
           <AccuracySection locale={locale} />

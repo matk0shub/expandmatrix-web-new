@@ -257,20 +257,23 @@ export default function Hero() {
                 willChange: prefersReducedMotion ? 'auto' : 'transform',
               }}
             >
-              {/* Extrusion Layers - Creating Real 3D Thickness */}
-              {[...Array(12)].map((_, i) => (
+              {/* Extrusion Layers — 6 stacked copies (at 4px each) produce the same
+                  visible ~24px thickness as the previous 12 × 2px stack while
+                  halving DOM weight + animation cost on mobile. */}
+              {[...Array(6)].map((_, i) => (
                 <div
                   key={`extrusion-${i}`}
                   className="absolute inset-0 flex items-center justify-center"
                   style={{
                     transformStyle: 'preserve-3d',
-                    transform: `translateZ(-${i * 2}px)`,
-                    opacity: Math.max(0, 1 - i * 0.02),
+                    transform: `translateZ(-${i * 4}px)`,
+                    opacity: Math.max(0, 1 - i * 0.04),
                   }}
+                  aria-hidden={i !== 0 ? true : undefined}
                 >
                   <Image
                     src="/logo.svg"
-                    alt="Expand Matrix logo"
+                    alt={i === 0 ? 'Expand Matrix logo' : ''}
                     width={200}
                     height={200}
                     className="w-full h-full object-contain"

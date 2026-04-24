@@ -29,12 +29,12 @@ This repository contains the public-facing Expand Matrix website built with Next
 
 ### Requirements
 
-- Node.js **20.9+** (aligns with Next.js 15 recommendation)
-- **pnpm 9+** (preferred package manager for this repo)
+- Node.js **20.9+** (tested on 22 and 24; Netlify currently pins 24.4.1 — see `netlify.toml`)
+- **pnpm 10** (repo uses `pnpm-lock.yaml` v10)
 - MongoDB connection string (Atlas or self-hosted replica set)
 - `.env` populated with secrets provided out of band
 
-> You’ll receive the filled `.env` file from the maintainer via PM. Never commit it — copy the values into your local `.env`.
+> You’ll receive the filled `.env` file from the maintainer via PM. Never commit it — copy the values into your local `.env`. A sanitised template lives in `.env.example`.
 
 ### Local setup checklist
 

@@ -298,6 +298,12 @@ export default async function LocaleLayout({
         )}
       </head>
       <body className={`${lato.variable} antialiased`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-[#00d76b] focus:px-4 focus:py-2 focus:text-black focus:font-semibold focus:shadow-[0_8px_24px_rgba(0,0,0,0.4)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-[#00d76b]"
+        >
+          {isCzech ? 'Přeskočit na hlavní obsah' : 'Skip to main content'}
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

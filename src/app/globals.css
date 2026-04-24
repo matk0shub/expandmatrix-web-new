@@ -3,13 +3,16 @@
 @custom-variant touch (@media (hover: none));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* The site is designed dark-only; declare the scheme explicitly so browser
+     UI (scrollbars, form controls, autofill) matches instead of flashing
+     light chrome. */
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ededed;
   /* Brand tokens */
   --brand-primary: #00d76b; /* main green */
   --brand-accent: #00b85c;  /* darker green */
   --brand-glow: rgba(0, 215, 107, 0.2);
-  color-scheme: light dark;
 }
 
 @theme inline {
@@ -22,12 +25,6 @@
   --font-heading: var(--font-lato);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);

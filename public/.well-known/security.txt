@@ -1,0 +1,5 @@
+Contact: mailto:security@expandmatrix.com
+Contact: mailto:info@expandmatrix.com
+Preferred-Languages: en, cs
+Canonical: https://expandmatrix.com/.well-known/security.txt
+Expires: 2027-04-24T00:00:00.000Z
