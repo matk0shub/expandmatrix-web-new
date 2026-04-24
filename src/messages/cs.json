@@ -136,6 +136,27 @@
               "value": "18 hodin"
             }
           ]
+        },
+        "pendlerFinance": {
+          "subtitle": "Finanční poradenství pro přeshraniční pracovníky",
+          "metrics": [
+            {
+              "label": "Nový web spuštěn",
+              "value": "0 → plný web"
+            },
+            {
+              "label": "AI chatbot — odbavené dotazy",
+              "value": "24/7 bez operátora"
+            },
+            {
+              "label": "Rezervace hovorů přes booking",
+              "value": "3× více leadů"
+            },
+            {
+              "label": "Čas odpovědi na dotaz klienta",
+              "value": "hodiny → < 10s"
+            }
+          ]
         }
       }
     },
@@ -199,12 +220,26 @@
     "references": "REFERENCE",
     "faq": "FAQ",
     "contact": "KONTAKT",
+    "blog": "BLOG",
     "homeLinkLabel": "Přejít na hlavní stránku",
     "menuToggleOpen": "Otevřít navigační menu",
     "menuToggleClose": "Zavřít navigační menu",
     "process": "Proces",
     "team": "Tým",
     "cta": "Začít spolupráci"
+  },
+  "blog": {
+    "metaTitle": "Blog | Expand Matrix",
+    "metaDescription": "Tipy, novinky a návody z oblasti AI agentů, automatizace a digitální transformace od týmu Expand Matrix.",
+    "heading": "Blog",
+    "subtitle": "Tipy, novinky a návody z oblasti AI agentů, automatizace a digitální transformace.",
+    "featuredBadge": "Doporučený článek",
+    "featuredCta": "Doporučený článek",
+    "moreArticles": "Další články",
+    "emptyTitle": "Zatím žádné články",
+    "emptySubtitle": "Brzy zde přibydou první příspěvky. Sledujte nás!",
+    "backToBlog": "Zpět na blog",
+    "noContent": "Obsah článku brzy přibyde."
   },
   "footer": {
     "nav": "Hlavní navigace v patičce",
@@ -234,6 +269,7 @@
       "references": "Reference",
       "faq": "FAQ",
       "contact": "Kontakt",
+      "blog": "Blog",
       "privacy": "Zásady ochrany osobních údajů",
       "terms": "Obchodní podmínky",
       "cookies": "Nastavení cookies"

@@ -52,6 +52,20 @@ const baseReferences: BaseReference[] = [
     order: 2,
     isFeatured: true,
   },
+  {
+    id: '3',
+    name: 'Pendler Finance',
+    slug: 'pendler-finance',
+    translationKey: 'pendlerFinance',
+    websiteUrl: 'https://www.pendlerfinance.cz/',
+    image: {
+      id: 'img3',
+      url: '/images/reference/pendler_finance.webp',
+      alt: 'Pendler Finance finanční poradenství',
+    },
+    order: 3,
+    isFeatured: true,
+  },
 ];
 
 function resolveLocale(locale: string | undefined): SupportedLocale {
