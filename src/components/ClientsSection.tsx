@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useIsCoarsePointer } from '@/hooks/useIsMobile';
 import type { NormalizedPartner } from '@/types/partners';
 
 interface PartnerBallContent {
@@ -48,6 +49,8 @@ const WALL_RESTITUTION = 0.82;
 const GROUND_FRICTION = 0.84;
 const SURFACE_FRICTION = 0.18;
 const BALL_SIZE_MULTIPLIER = 1.12;
+const REST_SPEED_THRESHOLD = 40; // px/s below which a ball at floor can sleep
+const REST_OFFSET_THRESHOLD = 1.5; // px distance from floor at which ball is considered on ground
 
 interface ClientsSectionProps {
   partners?: NormalizedPartner[];
@@ -87,36 +90,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
     sectionMinHeight: 720,
     ballCount: Math.max(partnerCount, 1),
   }));
-  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia === 'undefined') {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia('(pointer: coarse)');
-    const update = (event: MediaQueryList | MediaQueryListEvent) => {
-      setIsCoarsePointer('matches' in event ? event.matches : mediaQuery.matches);
-    };
-
-    update(mediaQuery);
-
-    const listener = (event: MediaQueryListEvent) => update(event);
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', listener);
-    } else {
-      mediaQuery.addListener(listener);
-    }
-
-    return () => {
-      if (typeof mediaQuery.removeEventListener === 'function') {
-        mediaQuery.removeEventListener('change', listener);
-      } else {
-        mediaQuery.removeListener(listener);
-      }
-    };
-  }, []);
+  const isCoarsePointer = useIsCoarsePointer();
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -266,14 +240,14 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
         greenScale: 0.18,
         greenMin: 64,
         greenMax: 104,
-        topBase: 0.46,
+        topBase: 0.38,
         topSlope: 0.0001,
-        topMin: 0.44,
-        topMax: 0.54,
-        sectionMultiplier: 1.18,
-        viewportMultiplier: 0.72,
-        sectionMin: 460,
-        sectionMax: 680,
+        topMin: 0.36,
+        topMax: 0.46,
+        sectionMultiplier: 1.4,
+        viewportMultiplier: 0.95,
+        sectionMin: 620,
+        sectionMax: 860,
         horizontalPaddingScale: 0.08,
         horizontalPaddingMin: 20,
         horizontalPaddingMax: 70,
@@ -307,9 +281,11 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       const partnerTotal = Math.max(ballConfigs.length, 1);
       const idealCount = Math.max(config.ballCount, 1);
       const densityRatio = partnerTotal / idealCount;
+      // When the partner list outgrows the breakpoint's ideal density, shrink balls
+      // proportionally so everything still fits without stacking past the visible area.
       const sizeFactor =
         partnerTotal >= idealCount
-          ? 1
+          ? clampValue(Math.sqrt(idealCount / partnerTotal), 0.55, 1)
           : clampValue(Math.sqrt(idealCount / partnerTotal), 1, 1.25);
       const velocityFactor = clampValue(Math.sqrt(densityRatio), 0.75, 1.28);
 
@@ -375,6 +351,9 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
           greenRadius,
           topRatio,
           sectionMinHeight,
+          // Show every partner — ball size + section height are already scaled per
+          // breakpoint via sizeFactor + sectionMultiplier so narrow viewports get
+          // smaller balls and a taller canvas instead of hiding any logos.
           ballCount: partnerTotal
         },
         padding: {
@@ -583,6 +562,15 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
   // Integrate motion, apply forces, and resolve all collisions for a single time step.
   const updatePhysics = useCallback((dt: number) => {
+    // Read the current container dimensions so balls cannot float past the visible
+    // area when layout settles after the initial measurement.
+    if (containerRef.current) {
+      const liveWidth = containerRef.current.clientWidth;
+      const liveHeight = containerRef.current.clientHeight;
+      if (liveWidth && liveHeight) {
+        dimensionsRef.current = { width: liveWidth, height: liveHeight };
+      }
+    }
     const { width, height } = dimensionsRef.current;
     if (!width || !height) {
       return;
@@ -616,7 +604,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       if (ball.y + ball.radius > height) {
         ball.y = height - ball.radius;
-        if (Math.abs(ball.vy) < 20) {
+        if (Math.abs(ball.vy) < 30) {
           ball.vy = 0;
         } else {
           ball.vy = -Math.abs(ball.vy) * FLOOR_RESTITUTION;
@@ -629,18 +617,53 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       }
     });
 
-    for (let i = 0; i < balls.length; i += 1) {
-      for (let j = i + 1; j < balls.length; j += 1) {
-        resolveBallCollision(balls[i], balls[j]);
+    // Iterate collision resolution a few times so piles converge. Without this,
+    // balls pressed by the pile can keep penetrating past the container walls.
+    const COLLISION_ITERATIONS = 3;
+    for (let iter = 0; iter < COLLISION_ITERATIONS; iter += 1) {
+      for (let i = 0; i < balls.length; i += 1) {
+        for (let j = i + 1; j < balls.length; j += 1) {
+          resolveBallCollision(balls[i], balls[j]);
+        }
       }
+      balls.forEach((b: BallState) => resolveGreenCollision(b));
+      balls.forEach((ball: BallState) => {
+        if (ball.x - ball.radius < 0) {
+          ball.x = ball.radius;
+          if (ball.vx < 0) ball.vx = 0;
+        } else if (ball.x + ball.radius > width) {
+          ball.x = width - ball.radius;
+          if (ball.vx > 0) ball.vx = 0;
+        }
+        if (ball.y + ball.radius > height) {
+          ball.y = height - ball.radius;
+          if (ball.vy > 0) ball.vy = 0;
+        } else if (ball.y - ball.radius < 0) {
+          ball.y = ball.radius;
+          if (ball.vy < 0) ball.vy = 0;
+        }
+      });
     }
 
-    balls.forEach((b: BallState) => resolveGreenCollision(b));
+    // Snap balls that are on the floor and moving slowly to rest so the pile
+    // doesn't keep twitching.
+    balls.forEach((ball: BallState) => {
+      if (ball.isDragging) return;
+      const onGround = ball.y + ball.radius >= height - REST_OFFSET_THRESHOLD;
+      if (onGround && Math.hypot(ball.vx, ball.vy) < REST_SPEED_THRESHOLD) {
+        ball.vx = 0;
+        ball.vy = 0;
+        ball.angularVelocity = 0;
+      }
+    });
 
     balls.forEach((ball: BallState) => {
       if (!ball.isDragging) {
         ball.angle += ball.angularVelocity * dt;
-        ball.angularVelocity *= 0.985;
+        ball.angularVelocity *= 0.97;
+        if (Math.abs(ball.angularVelocity) < 0.25) {
+          ball.angularVelocity = 0;
+        }
       }
     });
   }, [resolveBallCollision, resolveGreenCollision]);

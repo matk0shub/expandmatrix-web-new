@@ -1,7 +1,7 @@
 import { getPayloadBaseUrlFromEnv, getSelfHosts } from './payloadServerUrl';
 
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
-const INTERNAL_PREFIXES = ['/media/', '/api/media/file/'];
+const INTERNAL_PREFIXES = ['/media/', '/api/media/file/', '/images/', '/partners/', '/fonts/'];
 
 const stripOriginIfInternal = (value: string): string => {
   try {
@@ -75,6 +75,16 @@ export const resolveMediaUrl = (input?: string | null): string => {
   }
 
   const normalizedPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+
+  // Local static assets (anything under /images/, /partners/, /fonts/) live inside
+  // next/public and are served from the current origin — never prepend the Payload
+  // base URL, otherwise they break when the app runs on a different port/host.
+  const isLocalStatic = ['/images/', '/partners/', '/fonts/'].some((prefix) =>
+    normalizedPath.startsWith(prefix),
+  );
+  if (isLocalStatic) {
+    return normalizedPath;
+  }
 
   const baseUrl = getPayloadServerUrl();
 

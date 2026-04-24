@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import ScrambleText from './ScrambleText';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { CalCTAButton } from './CalCTAButton';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
 import { fallbackMotion } from '@/utils/motionFallback';
@@ -74,9 +75,9 @@ const cardBaseStyle = `
   bg-gradient-to-br from-black/95 via-black/98 to-black/99
   backdrop-blur-2xl
   transition-all duration-700
-  hover:scale-[1.03]
   isolation-auto
 `;
+const cardHoverScale = 'hover:scale-[1.03]';
 
 // Subtle rotations for scattered look
 const cardRotations = [0, 0, 0, 0, 0];
@@ -89,29 +90,26 @@ const cardOffsets = ['-15px', '20px', '-10px', '18px', '-8px'];
 export default function ProcessSection() {
   const t = useTranslations('sections.process');
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Generate random animation values only on client side to prevent hydration mismatch
-  const [animationValues, setAnimationValues] = useState<{ delay: number; duration: string }[]>([]);
+  // Deterministic animation values seeded by index to avoid hydration mismatch.
+  const [animationValues] = useState(() =>
+    Array.from({ length: 5 }, (_, i) => ({
+      delay: Number(((i * 0.9) % 5).toFixed(2)),
+      duration: `${(2 + ((i * 0.7) % 3)).toFixed(2)}s`
+    }))
+  );
   const [stackingEnabled, setStackingEnabled] = useState(false);
   const [shouldInitGsap, setShouldInitGsap] = useState(false);
   const [isSmall, setIsSmall] = useState(false);
-  
-  useEffect(() => {
-    setAnimationValues(
-      Array.from({ length: 5 }, () => ({
-        delay: Math.random() * 5,
-        duration: `${2 + Math.random() * 3}s`
-      }))
-    );
-  }, []);
 
   useEffect(() => {
-    setStackingEnabled(!prefersReducedMotion);
-  }, [prefersReducedMotion]);
+    setStackingEnabled(!prefersReducedMotion && !isMobile);
+  }, [prefersReducedMotion, isMobile]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -288,11 +286,15 @@ export default function ProcessSection() {
 
           {/* Description and CTA */}
           <MotionDiv
-            initial={{ opacity: 0, x: 100 }}
-            whileInView={{ 
-              opacity: 1, 
+            initial={
+              prefersReducedMotion || isMobile
+                ? { opacity: 0 }
+                : { opacity: 0, x: 100 }
+            }
+            whileInView={{
+              opacity: 1,
               x: 0,
-              transition: { duration: prefersReducedMotion ? 0 : 1, ease: "easeOut" }
+              transition: { duration: prefersReducedMotion || isMobile ? 0 : 1, ease: 'easeOut' }
             }}
             viewport={{ once: true }}
             className="flex justify-start md:justify-end mb-16"
@@ -343,20 +345,22 @@ export default function ProcessSection() {
               <MotionDiv
                 className="w-full"
                 initial={
-                  stackingEnabled || prefersReducedMotion
+                  stackingEnabled || prefersReducedMotion || isMobile
                     ? undefined
                     : { opacity: 0.85, y: 30, scale: 0.97 }
                 }
                 whileInView={
-                  stackingEnabled || prefersReducedMotion
+                  stackingEnabled || prefersReducedMotion || isMobile
                     ? undefined
                     : { opacity: 1, y: 0, scale: 1 }
                 }
                 viewport={
-                  stackingEnabled || prefersReducedMotion ? undefined : { once: false, amount: 0.5 }
+                  stackingEnabled || prefersReducedMotion || isMobile
+                    ? undefined
+                    : { once: false, amount: 0.5 }
                 }
                 transition={
-                  stackingEnabled || prefersReducedMotion
+                  stackingEnabled || prefersReducedMotion || isMobile
                     ? undefined
                     : { duration: 0.7, ease: 'easeOut' }
                 }
@@ -378,12 +382,13 @@ export default function ProcessSection() {
                   ${CARD_CONFIG.borderRadius}
                   ${cardBaseStyle}
                   ${CARD_CONFIG.effects.shadow}
-                  ${CARD_CONFIG.effects.hoverShadow}
+                  ${isMobile ? '' : cardHoverScale}
+                  ${isMobile ? '' : CARD_CONFIG.effects.hoverShadow}
                   ${CARD_CONFIG.effects.defaultTransform}
-                  ${CARD_CONFIG.effects.hoverTransform}
+                  ${isMobile ? '' : CARD_CONFIG.effects.hoverTransform}
                   mx-auto
                   transform-gpu
-                  ${prefersReducedMotion ? '' : 'hover:rotate-0'}
+                  ${prefersReducedMotion || isMobile ? '' : 'hover:rotate-0'}
                   relative
                   overflow-hidden
                 `}

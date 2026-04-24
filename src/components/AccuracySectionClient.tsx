@@ -29,20 +29,14 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
     duration: ANIMATION_DURATION.SLOW,
   });
 
-  const [animationValues, setAnimationValues] = useState<
-    Array<{ delay: number; duration: string }>
-  >([]);
+  const [animationValues] = useState(() =>
+    Array.from({ length: stats.length }, (_, i) => ({
+      delay: Number(((i * 1.1) % 5).toFixed(2)),
+      duration: `${(2 + ((i * 0.6) % 3)).toFixed(2)}s`,
+    })),
+  );
   const [supportsHover, setSupportsHover] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-
-  useEffect(() => {
-    setAnimationValues(
-      Array.from({ length: stats.length }, () => ({
-        delay: Math.random() * 5,
-        duration: `${2 + Math.random() * 3}s`,
-      })),
-    );
-  }, [stats.length]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
