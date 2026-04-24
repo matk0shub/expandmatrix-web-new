@@ -234,20 +234,20 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       };
 
       const mobileConfig = {
-        ballScale: 0.16,
-        ballMin: 38,
-        ballMax: 68,
+        ballScale: 0.2,
+        ballMin: 52,
+        ballMax: 88,
         greenScale: 0.18,
         greenMin: 64,
         greenMax: 104,
-        topBase: 0.38,
+        topBase: 0.36,
         topSlope: 0.0001,
-        topMin: 0.36,
-        topMax: 0.46,
-        sectionMultiplier: 1.4,
-        viewportMultiplier: 0.95,
-        sectionMin: 620,
-        sectionMax: 860,
+        topMin: 0.34,
+        topMax: 0.44,
+        sectionMultiplier: 1.5,
+        viewportMultiplier: 1,
+        sectionMin: 680,
+        sectionMax: 920,
         horizontalPaddingScale: 0.08,
         horizontalPaddingMin: 20,
         horizontalPaddingMax: 70,
@@ -283,9 +283,10 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
       const densityRatio = partnerTotal / idealCount;
       // When the partner list outgrows the breakpoint's ideal density, shrink balls
       // proportionally so everything still fits without stacking past the visible area.
+      // Floor is generous enough that phones still show chunky logos.
       const sizeFactor =
         partnerTotal >= idealCount
-          ? clampValue(Math.sqrt(idealCount / partnerTotal), 0.55, 1)
+          ? clampValue(Math.sqrt(idealCount / partnerTotal), 0.72, 1)
           : clampValue(Math.sqrt(idealCount / partnerTotal), 1, 1.25);
       const velocityFactor = clampValue(Math.sqrt(densityRatio), 0.75, 1.28);
 
