@@ -7,6 +7,7 @@ import { lato } from '../fonts';
 import "../globals.css";
 import CookieConsentBanner from '@/components/CookieConsent';
 import ScrollRestoration from '@/components/ScrollRestoration';
+import Analytics from '@/components/Analytics';
 
 const BASE_URL = 'https://expandmatrix.com';
 const LOGO_URL = `${BASE_URL}/og-image.png`;
@@ -320,6 +321,7 @@ export default async function LocaleLayout({
           {children}
           <CookieConsentBanner />
           <ScrollRestoration />
+          <Analytics />
         </NextIntlClientProvider>
         {isCzech && (
           <Script

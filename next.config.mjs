@@ -95,6 +95,10 @@ const nextConfig = {
   },
   experimental: {
     webpackBuildWorker: false,
+    // Inline critical CSS into HTML so the first paint doesn't wait for the
+    // external stylesheet round-trip. Lighthouse flagged ~280 ms of
+    // render-blocking CSS on mobile pre-flag.
+    inlineCss: true,
   },
   serverExternalPackages: [
     'payload',
