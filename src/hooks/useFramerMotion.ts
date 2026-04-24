@@ -5,10 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 type MotionModule = typeof import('framer-motion');
 
 let motionModulePromise: Promise<MotionModule> | null = null;
+let cachedModule: MotionModule | null = null;
 
 const loadFramerModule = async () => {
   if (!motionModulePromise) {
-    motionModulePromise = import('framer-motion');
+    motionModulePromise = import('framer-motion').then((mod) => {
+      cachedModule = mod;
+      return mod;
+    });
   }
 
   return motionModulePromise;
@@ -31,6 +35,13 @@ export function useFramerMotion(strategy: LoadStrategy = 'instant') {
   const startedRef = useRef(false);
 
   useEffect(() => {
+    // If module already loaded in a previous mount, apply it immediately
+    // (safe to do in effect — runs client-side only, after hydration)
+    if (cachedModule && !module) {
+      setModule(cachedModule);
+      return;
+    }
+
     if (module || startedRef.current) {
       return;
     }

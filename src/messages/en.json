@@ -136,6 +136,27 @@
               "value": "18 hours"
             }
           ]
+        },
+        "pendlerFinance": {
+          "subtitle": "Financial Advisory for Cross-Border Workers",
+          "metrics": [
+            {
+              "label": "New website launched",
+              "value": "0 → full web"
+            },
+            {
+              "label": "AI chatbot — queries handled",
+              "value": "24/7, no operator"
+            },
+            {
+              "label": "Booked calls via booking system",
+              "value": "3× more leads"
+            },
+            {
+              "label": "Response time to client inquiry",
+              "value": "hours → < 10s"
+            }
+          ]
         }
       }
     },
@@ -199,12 +220,31 @@
     "references": "REFERENCES",
     "faq": "FAQ",
     "contact": "CONTACT",
+    "blog": "BLOG",
     "homeLinkLabel": "Expand Matrix, go to homepage",
     "menuToggleOpen": "Open navigation menu",
     "menuToggleClose": "Close navigation menu",
     "process": "Process",
     "team": "Team",
     "cta": "Start cooperation"
+  },
+  "blog": {
+    "metaTitle": "Blog | Expand Matrix",
+    "metaDescription": "Tips, news and guides on AI agents, automation and digital transformation from the Expand Matrix team.",
+    "heading": "Blog",
+    "subtitle": "Tips and news on AI agents, automation and digital transformation.",
+    "searchPlaceholder": "Search articles...",
+    "featuredBadge": "Featured article",
+    "featuredCta": "Featured article",
+    "moreArticles": "More articles",
+    "searchResults": "Search results",
+    "next": "Next",
+    "emptyTitle": "No articles yet",
+    "emptySubtitle": "First posts are coming soon. Stay tuned!",
+    "noResults": "Nothing found",
+    "noResultsSubtitle": "Try a different term or browse all articles.",
+    "backToBlog": "Back to blog",
+    "noContent": "Article content coming soon."
   },
   "footer": {
     "nav": "Footer primary navigation",
@@ -234,6 +274,7 @@
       "references": "References",
       "faq": "FAQ",
       "contact": "Contact",
+      "blog": "Blog",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "cookies": "Cookie settings"

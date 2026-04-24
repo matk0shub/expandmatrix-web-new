@@ -35,9 +35,12 @@ export default function Hero() {
     const node = heroRef.current;
     node.classList.add('hero-animated');
 
+    let observerFired = false;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          observerFired = true;
           node.classList.add('is-visible');
           observer.disconnect();
         }
@@ -47,7 +50,18 @@ export default function Hero() {
 
     observer.observe(node);
 
-    return () => observer.disconnect();
+    // Fallback: if IntersectionObserver doesn't fire (e.g. during client-side navigation),
+    // force the visible state after a short delay so the hero never stays frozen.
+    const fallbackTimer = setTimeout(() => {
+      if (!observerFired) {
+        node.classList.add('is-visible');
+      }
+    }, 120);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
   }, [prefersReducedMotion]);
 
   const supportsHover = useMemo(() => {

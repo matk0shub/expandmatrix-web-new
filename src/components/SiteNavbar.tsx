@@ -16,12 +16,13 @@ type SiteNavbarProps = {
   className?: string;
 };
 
-const NAV_LINKS: Array<{ id: string; labelKey: string }> = [
+const NAV_LINKS: Array<{ id: string; labelKey: string; directHref?: string }> = [
   { id: 'about', labelKey: 'about' },
   { id: 'services', labelKey: 'services' },
   { id: 'references', labelKey: 'references' },
   { id: 'faq', labelKey: 'faq' },
   { id: 'contact', labelKey: 'contact' },
+  { id: 'blog', labelKey: 'blog', directHref: '/blog' },
 ];
 
 export default function SiteNavbar({
@@ -58,6 +59,14 @@ export default function SiteNavbar({
   };
 
   const renderDesktopLink = (link: (typeof NAV_LINKS)[number]) => {
+    if (link.directHref) {
+      return (
+        <Link key={link.id} href={`/${locale}${link.directHref}`} className={desktopLinkClass}>
+          {navT(link.labelKey)}
+        </Link>
+      );
+    }
+
     if (onNavigateSection) {
       return (
         <button
@@ -79,6 +88,19 @@ export default function SiteNavbar({
   };
 
   const renderMobileLink = (link: (typeof NAV_LINKS)[number]) => {
+    if (link.directHref) {
+      return (
+        <Link
+          key={link.id}
+          href={`/${locale}${link.directHref}`}
+          className={mobileLinkClass}
+          onClick={closeMenu}
+        >
+          {navT(link.labelKey)}
+        </Link>
+      );
+    }
+
     if (onNavigateSection) {
       return (
         <button

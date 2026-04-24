@@ -68,6 +68,10 @@ const imageRemotePatterns = [
     protocol: 'https',
     hostname: 'images.unsplash.com',
   },
+  {
+    protocol: 'https',
+    hostname: 'cms.expandmatrix.com',
+  },
 ];
 
 if (payloadServerUrl) {
@@ -186,6 +190,15 @@ const nextConfig = {
             value: 'Accept-Language, Cookie',
           },
         ],
+      },
+      // Blog: force-dynamic pages — no CDN cache (must come AFTER the generic /:locale/:path* rule)
+      {
+        source: '/:locale(en|cs)/blog',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+      },
+      {
+        source: '/:locale(en|cs)/blog/:slug*',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
       },
       {
         source: '/:path*',
