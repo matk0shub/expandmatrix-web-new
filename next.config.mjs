@@ -174,33 +174,6 @@ const nextConfig = {
           },
         ],
       },
-      // Blog pages: short cache so on-demand revalidation takes effect quickly
-      {
-        source: '/:locale(en|cs)/blog',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=60, stale-while-revalidate=60',
-          },
-          {
-            key: 'Vary',
-            value: 'Accept-Language, Cookie',
-          },
-        ],
-      },
-      {
-        source: '/:locale(en|cs)/blog/:slug*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=60, stale-while-revalidate=60',
-          },
-          {
-            key: 'Vary',
-            value: 'Accept-Language, Cookie',
-          },
-        ],
-      },
       {
         source: '/:locale(en|cs)/:path*',
         headers: [
