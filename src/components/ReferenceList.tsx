@@ -228,42 +228,21 @@ export default function ReferenceList({
     );
   }
 
-  // Mobile / tablet: single-card carousel with prev/next arrows + pagination dots.
-  // Avoids the "all three titles competing for attention" problem.
-  // We use a CSS opacity transition (not AnimatePresence) so that nothing can
-  // get stuck mid-exit when the user taps multiple controls in quick succession.
+  // Mobile / tablet: single-card carousel with chevron prev/next + pagination
+  // dots placed ABOVE the active reference (out of the photo's centerline).
+  // CSS opacity transition only (no AnimatePresence) so nothing can get stuck
+  // mid-exit when the user taps controls in quick succession.
   return (
-    <div className="relative flex h-full flex-col gap-5">
-      <div
-        className="relative min-h-[120px] sm:min-h-[140px]"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        <MotionDiv
-          key={activeIndex}
-          initial={prefersReducedMotion ? false : {
-            opacity: 0,
-            x: transitionDirection === 'next' ? 24 : -24,
-          }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{
-            duration: prefersReducedMotion ? 0 : 0.3,
-            ease: 'easeOut',
-          }}
-        >
-          {references[activeIndex] && renderReference(references[activeIndex], activeIndex)}
-        </MotionDiv>
-      </div>
-
+    <div className="relative flex h-full flex-col gap-4">
       {references.length > 1 && (
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 self-end">
           <button
             type="button"
             onClick={goPrev}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-black/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             aria-label="Previous reference"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
 
           <div className="flex items-center gap-2" role="tablist" aria-label="Reference selector">
@@ -288,13 +267,34 @@ export default function ReferenceList({
           <button
             type="button"
             onClick={goNext}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-black/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             aria-label="Next reference"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}
+
+      <div
+        className="relative min-h-[120px] sm:min-h-[140px]"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <MotionDiv
+          key={activeIndex}
+          initial={prefersReducedMotion ? false : {
+            opacity: 0,
+            x: transitionDirection === 'next' ? 24 : -24,
+          }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{
+            duration: prefersReducedMotion ? 0 : 0.3,
+            ease: 'easeOut',
+          }}
+        >
+          {references[activeIndex] && renderReference(references[activeIndex], activeIndex)}
+        </MotionDiv>
+      </div>
     </div>
   );
 }

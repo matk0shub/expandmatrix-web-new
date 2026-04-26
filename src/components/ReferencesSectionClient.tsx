@@ -103,7 +103,10 @@ export default function ReferencesSectionClient({
     return null;
   }
 
-  const referencesPadding = 'clamp(12px, 3vw, 72px)';
+  // No inset on mobile (the inset created a visible "white frame" around the
+  // active reference photo). Desktop keeps a generous frame so the focal logo
+  // isn't pushed all the way into the corners.
+  const referencesPadding = 'clamp(0px, 3vw, 72px)';
   const sectionStyle = {
     '--references-padding': referencesPadding,
   } as CSSProperties;
