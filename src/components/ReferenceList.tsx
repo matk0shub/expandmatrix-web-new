@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { Globe, Instagram } from 'lucide-react';
+import { useState, useCallback, useEffect, useRef, type TouchEvent } from 'react';
+import { ChevronLeft, ChevronRight, Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
 import type { Reference } from '@/types/references';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
-import { fallbackMotion, FallbackAnimatePresence } from '@/utils/motionFallback';
+import { fallbackMotion } from '@/utils/motionFallback';
 
 interface ReferenceListCopy {
   selectReference: string | ((name: string) => string);
@@ -32,7 +32,6 @@ export default function ReferenceList({
 }: ReferenceListProps) {
   const framer = useFramerMotion('idle');
   const MotionDiv = framer?.motion.div ?? fallbackMotion.div;
-  const AnimatePresence = framer?.AnimatePresence ?? FallbackAnimatePresence;
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'next' | 'prev'>('next');
@@ -192,25 +191,32 @@ export default function ReferenceList({
     ],
   );
 
-  const visibleEntries = useMemo(() => {
-    if (!references.length) return [];
-    if (references.length === 1) return [{ reference: references[0], index: 0 }];
-    if (references.length === 2) {
-      return [
-        { reference: references[activeIndex], index: activeIndex },
-        { reference: references[(activeIndex + 1) % 2], index: (activeIndex + 1) % 2 },
-      ];
-    }
+  const goPrev = useCallback(() => {
+    if (!references.length) return;
+    onSelect((activeIndex - 1 + references.length) % references.length);
+  }, [activeIndex, onSelect, references.length]);
 
-    const prevIndex = (activeIndex - 1 + references.length) % references.length;
-    const nextIndex = (activeIndex + 1) % references.length;
+  const goNext = useCallback(() => {
+    if (!references.length) return;
+    onSelect((activeIndex + 1) % references.length);
+  }, [activeIndex, onSelect, references.length]);
 
-    return [
-      { reference: references[prevIndex], index: prevIndex },
-      { reference: references[activeIndex], index: activeIndex },
-      { reference: references[nextIndex], index: nextIndex },
-    ];
-  }, [references, activeIndex]);
+  // Touch swipe support for mobile
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  }, []);
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      if (touchStartX.current === null) return;
+      const dx = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+      const SWIPE_THRESHOLD = 50;
+      if (dx > SWIPE_THRESHOLD) goPrev();
+      else if (dx < -SWIPE_THRESHOLD) goNext();
+      touchStartX.current = null;
+    },
+    [goNext, goPrev],
+  );
 
   if (isDesktop) {
     return (
@@ -222,26 +228,73 @@ export default function ReferenceList({
     );
   }
 
+  // Mobile / tablet: single-card carousel with prev/next arrows + pagination dots.
+  // Avoids the "all three titles competing for attention" problem.
+  // We use a CSS opacity transition (not AnimatePresence) so that nothing can
+  // get stuck mid-exit when the user taps multiple controls in quick succession.
   return (
-    <div className="relative h-full flex flex-col gap-4">
-      <AnimatePresence mode="wait" initial={false}>
+    <div className="relative flex h-full flex-col gap-5">
+      <div
+        className="relative min-h-[120px] sm:min-h-[140px]"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <MotionDiv
           key={activeIndex}
-          initial={{
+          initial={prefersReducedMotion ? false : {
             opacity: 0,
-            y: transitionDirection === 'next' ? 40 : -40,
+            x: transitionDirection === 'next' ? 24 : -24,
           }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: transitionDirection === 'next' ? -40 : 40 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{
-            duration: prefersReducedMotion ? 0 : 0.45,
+            duration: prefersReducedMotion ? 0 : 0.3,
             ease: 'easeOut',
           }}
-          className="space-y-4"
         >
-          {visibleEntries.map(({ reference, index }) => renderReference(reference, index))}
+          {references[activeIndex] && renderReference(references[activeIndex], activeIndex)}
         </MotionDiv>
-      </AnimatePresence>
+      </div>
+
+      {references.length > 1 && (
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={goPrev}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label="Previous reference"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          <div className="flex items-center gap-2" role="tablist" aria-label="Reference selector">
+            {references.map((reference, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <button
+                  key={reference.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={formatLabel(copy.selectReference, reference.name)}
+                  onClick={() => onSelect(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    isActive ? 'w-6 bg-[#00d76b]' : 'w-2 bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={goNext}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00d76b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label="Next reference"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

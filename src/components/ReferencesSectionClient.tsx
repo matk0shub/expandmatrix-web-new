@@ -51,6 +51,16 @@ export default function ReferencesSectionClient({
     return () => clearInterval(interval);
   }, [orderedReferences.length, prefersReducedMotion, hasInteracted]);
 
+  // Mark as interacted on the first scroll/touch inside the section so the
+  // auto-rotate doesn't yank a mobile user reading a reference.
+  useEffect(() => {
+    if (hasInteracted) return;
+    if (typeof window === 'undefined') return;
+    const stop = () => setHasInteracted(true);
+    window.addEventListener('touchstart', stop, { passive: true, once: true });
+    return () => window.removeEventListener('touchstart', stop);
+  }, [hasInteracted]);
+
   const activeReference = orderedReferences[activeIndex];
 
   const handleKeyDown = useCallback(
@@ -117,7 +127,7 @@ export default function ReferencesSectionClient({
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative min-h-screen overflow-hidden rounded-[36px] sm:rounded-[40px] lg:rounded-[48px]">
+      <div className="relative overflow-hidden rounded-[36px] sm:rounded-[40px] lg:min-h-screen lg:rounded-[48px]">
         <div
           className="pointer-events-none absolute overflow-hidden rounded-[40px]"
           style={backgroundInsetStyle}
@@ -129,14 +139,16 @@ export default function ReferencesSectionClient({
               animateOnChange={hasInteracted}
             />
           )}
+          {/* Extra dimming on mobile so the bg image reads as accent, not backdrop */}
+          <div className="absolute inset-0 bg-black/55 lg:bg-black/30" />
         </div>
 
         <div
-          className="relative z-10 py-16 sm:py-20 lg:py-32"
+          className="relative z-10 py-12 sm:py-16 lg:py-32"
           style={contentPaddingStyle}
         >
           <div className="mx-auto w-full max-w-[1780px]">
-            <div className="flex flex-col gap-8 sm:gap-10 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12">
+            <div className="flex flex-col gap-6 sm:gap-8 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12">
               <div className="w-full lg:w-1/2 flex flex-col gap-6">
                 <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-gray-300">
                   {copy.overline}
