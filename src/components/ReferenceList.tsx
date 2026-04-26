@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useCallback, useEffect, useRef, type TouchEvent } from 'react';
 import { ChevronLeft, ChevronRight, Globe, Instagram } from 'lucide-react';
 import ScrambleText from './ScrambleText';
@@ -100,38 +101,51 @@ export default function ReferenceList({
           whileTap={{}}
         >
           <div className="flex flex-col gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="relative z-10">
-                  <ScrambleText
-                    text={reference.name}
-                    className={`font-bold transition-all duration-300 ${
-                      isActive
-                        ? 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-white sm:drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] lg:drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]'
-                        : 'text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 sm:drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] lg:drop-shadow-[0_3px_8px_rgba(0,0,0,0.6)]'
-                    }`}
-                    applyScramble={shouldAnimate && !prefersReducedMotion}
-                    trigger="manual"
+            <div className="flex items-center gap-3 sm:gap-4">
+              {/* Small logo chip — replaces the big per-reference background */}
+              {reference.image?.url && (
+                <div
+                  className={`relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl bg-white/90 ring-1 ring-white/10 transition-all duration-300 ${
+                    isActive ? 'shadow-[0_8px_28px_rgba(0,0,0,0.45)]' : 'opacity-80'
+                  }`}
+                >
+                  <Image
+                    src={reference.image.url}
+                    alt={reference.image.alt ?? reference.name}
+                    fill
+                    sizes="56px"
+                    className="object-contain p-1.5"
                   />
-
-                  {reference.subtitle && (
-                    <MotionDiv
-                      initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-                      animate={{ opacity: isActive ? 1 : 0.6, y: 0 }}
-                      transition={{
-                        duration: prefersReducedMotion ? 0 : 0.3,
-                        delay: prefersReducedMotion ? 0 : 0.1,
-                      }}
-                      className={`mt-1 lg:mt-2 text-xs sm:text-sm lg:text-base transition-colors duration-300 ${
-                        isActive
-                          ? 'text-gray-200 sm:drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]'
-                          : 'text-gray-400 sm:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
-                      }`}
-                    >
-                      {reference.subtitle}
-                    </MotionDiv>
-                  )}
                 </div>
+              )}
+
+              <div className="flex-1 min-w-0">
+                <ScrambleText
+                  text={reference.name}
+                  className={`font-bold transition-all duration-300 ${
+                    isActive
+                      ? 'text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-white'
+                      : 'text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200'
+                  }`}
+                  applyScramble={shouldAnimate && !prefersReducedMotion}
+                  trigger="manual"
+                />
+
+                {reference.subtitle && (
+                  <MotionDiv
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: isActive ? 1 : 0.6, y: 0 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.3,
+                      delay: prefersReducedMotion ? 0 : 0.1,
+                    }}
+                    className={`mt-1 lg:mt-2 text-xs sm:text-sm lg:text-base transition-colors duration-300 ${
+                      isActive ? 'text-gray-200' : 'text-gray-400'
+                    }`}
+                  >
+                    {reference.subtitle}
+                  </MotionDiv>
+                )}
               </div>
             </div>
 

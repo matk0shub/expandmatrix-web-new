@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useCallback, type CSSProperties, type ReactElement } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import ReferenceList from './ReferenceList';
-import ReferenceBackground from './ReferenceBackground';
 import ReferenceStatsCard from './ReferenceStatsCard';
 import type { Reference } from '@/types/references';
 
@@ -103,16 +102,11 @@ export default function ReferencesSectionClient({
     return null;
   }
 
-  // No inset on mobile (the inset created a visible "white frame" around the
-  // active reference photo). Desktop keeps a generous frame so the focal logo
-  // isn't pushed all the way into the corners.
+  // Outer padding controls where the content starts inside the rounded card.
+  // Mobile is edge-to-edge; desktop gets breathing room.
   const referencesPadding = 'clamp(0px, 3vw, 72px)';
   const sectionStyle = {
     '--references-padding': referencesPadding,
-  } as CSSProperties;
-
-  const backgroundInsetStyle = {
-    inset: 'var(--references-padding)',
   } as CSSProperties;
 
   const contentPaddingStyle = {
@@ -130,20 +124,33 @@ export default function ReferencesSectionClient({
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative overflow-hidden rounded-[36px] sm:rounded-[40px] lg:min-h-screen lg:rounded-[48px]">
+      <div className="relative overflow-hidden rounded-[36px] sm:rounded-[40px] lg:rounded-[48px]">
+        {/* Ambient brand-aligned backdrop. No per-reference photos — those
+            were just framed logos that competed with the content. Each
+            reference's logo now appears as a small chip next to the title. */}
         <div
-          className="pointer-events-none absolute overflow-hidden rounded-[40px]"
-          style={backgroundInsetStyle}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[40px]"
         >
-          {activeReference && (
-            <ReferenceBackground
-              reference={activeReference}
-              prefersReducedMotion={prefersReducedMotion}
-              animateOnChange={hasInteracted}
-            />
-          )}
-          {/* Extra dimming on mobile so the bg image reads as accent, not backdrop */}
-          <div className="absolute inset-0 bg-black/55 lg:bg-black/30" />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#0a0a0a',
+              backgroundImage:
+                'radial-gradient(circle at 12% 18%, rgba(0, 215, 107, 0.18) 0%, transparent 38%),' +
+                'radial-gradient(circle at 88% 82%, rgba(0, 215, 107, 0.12) 0%, transparent 42%),' +
+                'radial-gradient(circle at 65% 30%, rgba(96, 200, 255, 0.06) 0%, transparent 35%),' +
+                'linear-gradient(135deg, #07120c 0%, #0a0a0a 55%, #050a08 100%)',
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.045] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.6) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+            }}
+          />
         </div>
 
         <div
