@@ -102,19 +102,24 @@ export default function ReferenceList({
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3 sm:gap-4">
-              {/* Small logo chip — replaces the big per-reference background */}
+              {/* Small logo chip. Each reference's image is now a self-contained
+                  square (square brand mark with its own background), so we use
+                  a transparent wrapper and let the logo's own shape carry the
+                  identity. Active state gets a subtle outer glow. */}
               {reference.image?.url && (
                 <div
-                  className={`relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl bg-white/90 ring-1 ring-white/10 transition-all duration-300 ${
-                    isActive ? 'shadow-[0_8px_28px_rgba(0,0,0,0.45)]' : 'opacity-80'
+                  className={`relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/10 transition-all duration-300 ${
+                    isActive
+                      ? 'shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                      : 'opacity-70'
                   }`}
                 >
                   <Image
                     src={reference.image.url}
                     alt={reference.image.alt ?? reference.name}
                     fill
-                    sizes="56px"
-                    className="object-contain p-1.5"
+                    sizes="(min-width: 1024px) 80px, 64px"
+                    className="object-cover"
                   />
                 </div>
               )}
