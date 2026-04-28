@@ -84,6 +84,12 @@ export async function generateMetadata({
         'x-default': `${BASE_URL}/en`,
       },
     },
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '48x48' },
+        { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
+      ],
+    },
     other: {
       'geo.region': 'CZ-10',
       'geo.placename': 'Prague',
