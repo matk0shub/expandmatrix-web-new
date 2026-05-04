@@ -226,33 +226,34 @@ export default function FAQSectionClient({ locale, faqs, copy }: FAQSectionClien
                           </div>
                         </button>
 
-                        <AnimatePresence>
-                          {isOpen && (
-                            <MotionDiv
-                              id={`faq-panel-${index}`}
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{
-                                duration: prefersReducedMotion ? 0.1 : 0.3,
-                                ease: 'easeInOut',
-                              }}
-                              className="overflow-hidden"
-                              itemProp="acceptedAnswer"
-                              itemScope
-                              itemType="https://schema.org/Answer"
-                            >
-                              <div className="px-6 pb-6">
-                                <p
-                                  className="text-white/80 text-base md:text-lg leading-relaxed font-lato"
-                                  itemProp="text"
-                                >
-                                  {answer}
-                                </p>
-                              </div>
-                            </MotionDiv>
-                          )}
-                        </AnimatePresence>
+                        <div
+                          itemProp="acceptedAnswer"
+                          itemScope
+                          itemType="https://schema.org/Answer"
+                        >
+                          <meta itemProp="text" content={answer} />
+                          <AnimatePresence>
+                            {isOpen && (
+                              <MotionDiv
+                                id={`faq-panel-${index}`}
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                  duration: prefersReducedMotion ? 0.1 : 0.3,
+                                  ease: 'easeInOut',
+                                }}
+                                className="overflow-hidden"
+                              >
+                                <div className="px-6 pb-6">
+                                  <p className="text-white/80 text-base md:text-lg leading-relaxed font-lato">
+                                    {answer}
+                                  </p>
+                                </div>
+                              </MotionDiv>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       </div>
                     </AnimatedReveal>
                   );
