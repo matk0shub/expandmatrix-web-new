@@ -112,7 +112,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         }}
       />
       <SiteNavbar variant="page" />
-      <main className="min-h-screen bg-black text-white">
+      <main id="main-content" className="min-h-screen bg-black text-white">
         {/* Back link */}
         <div className="pt-32 pb-4 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 max-w-[1780px] mx-auto">
           <Link
@@ -141,7 +141,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.excerpt && (
               <p className="text-lg text-white/60 leading-relaxed mb-6">{post.excerpt}</p>
             )}
-            <time className="text-sm text-white/40 uppercase tracking-wider">{date}</time>
+            <time className="text-sm text-white/60 uppercase tracking-wider">{date}</time>
           </header>
 
           {/* Cover image */}
@@ -175,7 +175,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
           ) : (
-            <div className="max-w-3xl mx-auto py-16 text-center text-white/40">
+            <div className="max-w-3xl mx-auto py-16 text-center text-white/60">
               {t('noContent')}
             </div>
           )}

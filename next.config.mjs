@@ -94,9 +94,6 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   experimental: {
     webpackBuildWorker: false,
     // CSS inlining stays off: payload size outweighed the ~280 ms render-blocking win, and the external stylesheet is immutable-cached.

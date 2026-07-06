@@ -77,7 +77,7 @@ export default function FooterBottomBar() {
 
       {/* Creative note */}
       <MotionDiv 
-        className="flex items-center gap-2 text-white/40 text-xs font-lato"
+        className="flex items-center gap-2 text-white/60 text-xs font-lato"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.5 }}

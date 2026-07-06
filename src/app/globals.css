@@ -514,6 +514,18 @@ html.js .heading-reveal--mount {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-border-glow,
+  .animate-pulse,
+  [style*='breathe'],
+  [style*='travel'],
+  [style*='shimmer'],
+  [style*='glow'],
+  [style*='pulse'] {
+    animation: none !important;
+  }
+}
+
 /* ── vanilla-cookieconsent brand overrides ── */
 #cc-main {
   --cc-font-family: var(--font-lato), 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

@@ -79,12 +79,12 @@ function ArticleCard({ post, locale }: { post: StrapiArticle; locale: string }) 
 
       {/* Body */}
       <div className="flex flex-col flex-1 gap-2.5 p-5">
-        <time className="text-xs text-white/35 uppercase tracking-wider">{date}</time>
+        <time className="text-xs text-white/60 uppercase tracking-wider">{date}</time>
         <h3 className="text-[15px] font-semibold text-white font-lato leading-snug line-clamp-2 group-hover:text-[#00d76b] transition-colors duration-200">
           {post.title}
         </h3>
         {post.excerpt && (
-          <p className="text-sm text-white/50 leading-relaxed line-clamp-3 mt-0.5">{post.excerpt}</p>
+          <p className="text-sm text-white/60 leading-relaxed line-clamp-3 mt-0.5">{post.excerpt}</p>
         )}
       </div>
     </Link>
@@ -165,14 +165,14 @@ export default async function BlogPage({ params, searchParams }: PageProps) {
   return (
     <div className="bg-black min-h-screen">
       <SiteNavbar variant="page" />
-      <main className="text-white">
+      <main id="main-content" className="text-white">
 
         {/* ── Hero header ─────────────────────────────────────────── */}
         <section className="pt-12 pb-10 px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 max-w-[1780px] mx-auto">
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight font-lato mb-4">
             {t('heading')}
           </h1>
-          <p className="text-base text-white/50 mb-8 max-w-xl leading-relaxed">
+          <p className="text-base text-white/60 mb-8 max-w-xl leading-relaxed">
             {t('subtitle')}
           </p>
           <BlogSearch
@@ -215,11 +215,11 @@ export default async function BlogPage({ params, searchParams }: PageProps) {
                   {featuredPost.title}
                 </h2>
                 {featuredPost.excerpt && (
-                  <p className="text-white/50 leading-relaxed text-sm line-clamp-3">
+                  <p className="text-white/60 leading-relaxed text-sm line-clamp-3">
                     {featuredPost.excerpt}
                   </p>
                 )}
-                <time className="text-xs text-white/30 uppercase tracking-wider">
+                <time className="text-xs text-white/60 uppercase tracking-wider">
                   {formatPostDate(featuredPost.publishedAt, locale)}
                 </time>
                 <span className="inline-flex self-start items-center gap-1.5 rounded-full border border-[#00d76b]/40 bg-[#00d76b]/10 px-5 py-2.5 text-sm font-semibold text-[#00d76b] transition-all duration-200 group-hover:bg-[#00d76b]/20">
@@ -258,7 +258,7 @@ export default async function BlogPage({ params, searchParams }: PageProps) {
               <h2 className="text-xl font-bold font-lato mb-3">
                 {searchQuery ? t('noResults') : t('emptyTitle')}
               </h2>
-              <p className="text-white/40 max-w-sm text-sm">
+              <p className="text-white/60 max-w-sm text-sm">
                 {searchQuery ? t('noResultsSubtitle') : t('emptySubtitle')}
               </p>
             </div>

@@ -16,6 +16,12 @@ This repository contains the public-facing Expand Matrix website built with Next
 - structured data (Organization, FAQ, ItemList, Person) for SEO-rich snippets
 - Payload CMS collections for team, references, FAQs and more
 
+## Architecture note
+
+The site uses two CMS backends by design. Payload CMS runs inside this Next.js app, uses MongoDB, and owns partners, team members, references, FAQs, media, subscribers and admin workflows at `/admin`.
+The public blog is separate: Strapi at `cms.expandmatrix.com` is the source for blog posts only.
+Local development and production builds require Node.js 24 or newer; use the version pinned in `.nvmrc` for parity with Netlify.
+
 ## Tech Stack
 
 - **Framework:** Next.js 15 (App Router, React 19, Server Actions)
@@ -29,7 +35,7 @@ This repository contains the public-facing Expand Matrix website built with Next
 
 ### Requirements
 
-- Node.js **20.9+** (tested on 22 and 24; Netlify currently pins 24.4.1 — see `netlify.toml`)
+- Node.js **24+** (Netlify currently pins 24.4.1 — see `netlify.toml`)
 - **pnpm 10** (repo uses `pnpm-lock.yaml` v10)
 - MongoDB connection string (Atlas or self-hosted replica set)
 - `.env` populated with secrets provided out of band

@@ -185,9 +185,9 @@ Chybí `loading.tsx` pro streamované segmenty; Suspense fallbacky jsou prázdn�
 
 ## 5. NÍZKÁ — Úklid a dokumentace
 
-- [ ] README: zdokumentovat dual-CMS (Payload = partneři/tým/reference/FAQ, Strapi = blog) a deployment flow.
-- [ ] Smazat/opravit `docs/security/secret-audit.md` (nepravdivý závěr).
-- [ ] `payload-audit.log`, `tsconfig.typecheck.tsbuildinfo` v rootu — přidat do .gitignore.
+- [x] README: zdokumentovat dual-CMS (Payload = partneři/tým/reference/FAQ, Strapi = blog) a deployment flow.
+- [x] Smazat/opravit `docs/security/secret-audit.md` (nepravdivý závěr).
+- [x] `payload-audit.log`, `tsconfig.typecheck.tsbuildinfo` v rootu — přidat do .gitignore.
 - [ ] Zvážit `Cross-Origin-Resource-Policy` hlavičku.
 - [ ] Konsolidovat duplicitní "glass card" gradient overlay stacky (5 vrstev divů opakovaných v každé kartě) do sdílené komponenty.
 
@@ -216,9 +216,9 @@ Chybí `loading.tsx` pro streamované segmenty; Suspense fallbacky jsou prázdn�
 - [ ] Blog na ISR + webhook (S1.4)
 
 ### Fáze 4 — Přístupnost + refaktoring (průběžně) 🟡
-- [ ] Partner loga a11y (A1), kontrast (A2), mobilní menu (A3)
+- [x] Partner loga a11y (A1), kontrast (A2), mobilní menu (A3)
 - [ ] Rozbít ClientsSection/HeroAnimated/ProcessSection (R1)
-- [ ] Smazat mrtvý kód (R2), odstranit ignoreBuildErrors (R4)
+- [x] Smazat mrtvý kód (R2), odstranit ignoreBuildErrors (R4)
 - [x] Fix toolchain pro Node 26 / pin engines (R5)
 
 ### Fáze 5 — Úklid a dokumentace 🟢

@@ -1,5 +1,9 @@
 # Secret Audit
 
+## Correction (2026-07-06)
+
+The 2025-11-06 conclusion below is invalid. A 2026-07-06 audit found real credentials committed through tracked environment and deployment configuration files and in git history, including database, SMTP, Payload, and revalidation secrets. Treat the affected values as compromised and follow `docs/PRODUCTION_READINESS_PLAN.md` section S0.1 for rotation and history cleanup. Do not rely on the older summary until that work is complete.
+
 Date: 2025-11-06
 
 ## Summary

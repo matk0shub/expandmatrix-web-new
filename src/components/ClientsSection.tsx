@@ -1080,6 +1080,7 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
 
       <div
         ref={containerRef}
+        aria-hidden="true"
         className="absolute inset-0"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -1106,6 +1107,14 @@ const greenPhysicsRef = useRef({ x: 0, y: 0, radius: 135 });
           </div>
         ))}
       </div>
+
+      {partners.length > 0 && (
+        <ul className="sr-only">
+          {partners.map((partner) => (
+            <li key={partner.id}>{partner.name}</li>
+          ))}
+        </ul>
+      )}
 
       <div className="absolute inset-0 pointer-events-none">
         <div

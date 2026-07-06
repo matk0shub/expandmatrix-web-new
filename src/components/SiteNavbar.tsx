@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import LocaleSwitcher from './LocaleSwitcher';
 import { useFramerMotion } from '@/hooks/useFramerMotion';
@@ -52,6 +52,23 @@ export default function SiteNavbar({
   const sectionHref = (id: string) => `/${locale}#${id}`;
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      event.preventDefault();
+      setIsMenuOpen(false);
+      window.requestAnimationFrame(() => {
+        document.querySelector<HTMLButtonElement>('[aria-controls="site-mobile-nav"]')?.focus();
+      });
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen]);
 
   const handleSectionSelect = (sectionId: string) => {
     onNavigateSection?.(sectionId);
@@ -164,8 +181,11 @@ export default function SiteNavbar({
   );
 
   const mobileMenu = (
-    <div className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg">
-      <nav className="flex flex-col p-6 space-y-4" id="site-mobile-nav">
+    <div
+      id="site-mobile-nav"
+      className="lg:hidden mt-4 bg-black/95 backdrop-blur-sm border-t border-white/10 rounded-lg"
+    >
+      <nav className="flex flex-col p-6 space-y-4">
         {NAV_LINKS.map(renderMobileLink)}
         <div className="pt-4 border-t border-white/10">
           <LocaleSwitcher />

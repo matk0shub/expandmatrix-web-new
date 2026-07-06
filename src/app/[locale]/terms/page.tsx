@@ -10,10 +10,10 @@ interface PageParams {
   locale: string;
 }
 
-type RouteProps = { params: PageParams };
+type RouteProps = { params: Promise<PageParams> };
 
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
 
   return {
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
 }
 
 export default async function TermsPage({ params }: RouteProps) {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
   const localeKey = locale === 'cs' ? 'cs' : 'en';
   const content = legalContent.terms[localeKey];

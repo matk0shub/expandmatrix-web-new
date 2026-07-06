@@ -27,6 +27,7 @@
 .DS_Store
 *.pem
 *.log
+payload-audit.log
 /.claude/
 
 # secrets — treat with care. `.env` is currently tracked for the Netlify
@@ -49,6 +50,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+tsconfig.typecheck.tsbuildinfo
 next-env.d.ts
 
 # backup directories
@@ -56,4 +58,3 @@ next-env.d.ts
 
 # payload build artifacts
 /media
-

@@ -41,7 +41,7 @@ export default function BlogSearch({ placeholder, defaultValue = '' }: BlogSearc
         defaultValue={defaultValue}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full rounded-full border border-white/15 bg-white/5 py-3 pl-11 pr-5 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-[#00d76b]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#00d76b]/20"
+        className="w-full rounded-full border border-white/15 bg-white/5 py-3 pl-11 pr-5 text-sm text-white placeholder:text-white/60 outline-none transition focus:border-[#00d76b]/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-[#00d76b]/20"
       />
     </div>
   );
