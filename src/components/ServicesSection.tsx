@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import type { CSSProperties } from 'react';
 
 import AnimatedReveal from './AnimatedReveal';
+import GlassCardOverlays from './GlassCardOverlays';
 
 interface ServicesSectionProps {
   locale: string;
@@ -112,7 +113,17 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
           'min-h-[260px] md:min-h-[320px] lg:min-h-[360px] px-6 py-10 sm:px-8 sm:py-12',
         )}
       >
-        <CardBackgroundLayers glowDelay={glowDelay} glowDuration={glowDuration} />
+        <GlassCardOverlays
+          gradientOrder="rounded-first"
+          glowStyle={
+            {
+              '--glow-delay': glowDelay ? `${glowDelay}s` : undefined,
+              '--glow-duration': glowDuration,
+            } as CSSProperties
+          }
+          accentOpacity="opacity-80"
+          hoverOverlay
+        />
         <div className="relative z-10 flex h-full flex-col">
           <div className="flex items-start justify-between px-1 pb-4 sm:px-0">
             <div className="text-white/70 font-lato text-lg sm:text-xl md:text-2xl font-semibold">
@@ -167,34 +178,6 @@ function ServiceCard({ service, index }: { service: ServiceItem; index: number }
         </div>
       </label>
     </div>
-  );
-}
-
-function CardBackgroundLayers({
-  glowDelay,
-  glowDuration,
-}: {
-  glowDelay?: number;
-  glowDuration?: string;
-}) {
-  return (
-    <>
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 pointer-events-none mix-blend-normal" />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 pointer-events-none mix-blend-normal" />
-      <div
-        className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
-        style={
-          {
-            '--glow-delay': glowDelay ? `${glowDelay}s` : undefined,
-            '--glow-duration': glowDuration,
-          } as CSSProperties
-        }
-      />
-      <div className="absolute inset-0 rounded-3xl bg-white/0 transition-all duration-500 pointer-events-none group-hover:bg-white/[0.03] group-hover:backdrop-blur-sm touch:group-has-[input:checked]/card:bg-white/[0.03]" />
-      <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-80 rounded-b-3xl" />
-    </>
   );
 }
 

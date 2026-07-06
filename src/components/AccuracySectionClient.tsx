@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
+import GlassCardOverlays from './GlassCardOverlays';
 import { useGSAPAnimation } from '@/hooks/useGSAPAnimation';
 import { ANIMATION_DURATION, ANIMATION_DELAYS } from '@/constants/animations';
 
@@ -164,20 +165,13 @@ export default function AccuracySectionClient({ stats, copy }: AccuracySectionCl
                   }
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-3xl pointer-events-none mix-blend-normal" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-3xl pointer-events-none mix-blend-normal" />
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-3xl pointer-events-none mix-blend-normal" />
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-3xl pointer-events-none mix-blend-normal" />
-
-                <div
-                  className="absolute inset-0 rounded-3xl animate-border-glow pointer-events-none"
-                  style={{
+                <GlassCardOverlays
+                  glowStyle={{
                     '--glow-delay': animationValues[index]?.delay || 0,
                     '--glow-duration': animationValues[index]?.duration || '2s',
                   } as CSSProperties}
+                  accentOpacity="opacity-60"
                 />
-
-                <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-[#00d76b] to-[#00b85c] opacity-60 rounded-b-3xl" />
 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-6 sm:mb-8 md:mb-10">

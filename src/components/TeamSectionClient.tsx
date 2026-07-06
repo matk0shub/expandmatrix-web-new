@@ -8,6 +8,7 @@ import { Globe, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 import type { NormalizedTeamMember } from '@/types/team';
 import AnimatedHeading from './AnimatedHeading';
 import AnimatedReveal from './AnimatedReveal';
+import GlassCardOverlays from './GlassCardOverlays';
 
 const DEFAULT_ACCENT =
   'linear-gradient(135deg, rgba(0, 215, 107, 0.7), rgba(0, 184, 92, 0.35))';
@@ -105,10 +106,7 @@ export default function TeamSectionClient({ members, copy }: TeamSectionClientPr
                   <meta itemProp="jobTitle" content={member.role} />
                   {member.bio ? <meta itemProp="description" content={member.bio} /> : null}
                   <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-black/[0.95] via-black/[0.98] to-black/[0.99] shadow-[0_30px_120px_-48px_rgba(0,0,0,0.85)] transition-transform duration-500 group-hover:-translate-y-2 group-data-[active=true]:-translate-y-2">
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-white/[0.04] to-white/[0.02] rounded-[inherit] pointer-events-none mix-blend-normal" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent opacity-50 rounded-[inherit] pointer-events-none mix-blend-normal" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent opacity-40 rounded-[inherit] pointer-events-none mix-blend-normal" />
-                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/[0.04] to-transparent opacity-30 rounded-[inherit] pointer-events-none mix-blend-normal" />
+                    <GlassCardOverlays roundedClass="rounded-[inherit]" />
                     <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 group-data-[active=true]:opacity-100 transition-opacity duration-700">
                       <div className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-[radial-gradient(closest-side,rgba(34,197,94,0.18),transparent_70%)] rotate-12" />
                     </div>

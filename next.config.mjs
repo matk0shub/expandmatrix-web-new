@@ -271,6 +271,10 @@ const nextConfig = {
             value: 'same-origin',
           },
           {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'same-origin',
+          },
+          {
             key: 'Content-Security-Policy-Report-Only',
             value:
               "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.cal.com https://cal.com https://*.cal.com https://plausible.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: http://localhost:* http://127.0.0.1:*; font-src 'self' data:; connect-src 'self' https://api.cal.com https://*.cal.com https://cal.com https://cms.expandmatrix.com https://plausible.io https://*.sentry.io http://localhost:* ws://localhost:*; frame-src 'self' https://app.cal.com https://cal.com https://*.cal.com; media-src 'self' data:; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; upgrade-insecure-requests;",

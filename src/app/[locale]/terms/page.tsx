@@ -6,6 +6,9 @@ import Footer from '@/components/Footer';
 import SiteNavbar from '@/components/SiteNavbar';
 import { legalContent, getSectionIcon } from '@/data/legalContent';
 
+const BASE_URL = 'https://expandmatrix.com';
+const OG_IMAGE_URL = `${BASE_URL}/og-image.png`;
+
 interface PageParams {
   locale: string;
 }
@@ -15,10 +18,39 @@ type RouteProps = { params: Promise<PageParams> };
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.terms' });
+  const localePath = locale === 'cs' ? 'cs' : 'en';
+  const pageUrl = `${BASE_URL}/${localePath}/terms`;
+  const title = t('metaTitle');
+  const description = t('metaDescription');
 
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription'),
+    title,
+    description,
+    alternates: {
+      canonical: pageUrl,
+      languages: {
+        cs: `${BASE_URL}/cs/terms`,
+        en: `${BASE_URL}/en/terms`,
+        'x-default': `${BASE_URL}/en/terms`,
+      },
+    },
+    openGraph: {
+      type: 'website',
+      locale: localePath === 'cs' ? 'cs_CZ' : 'en_US',
+      alternateLocale: localePath === 'cs' ? 'en_US' : 'cs_CZ',
+      url: pageUrl,
+      title,
+      description,
+      siteName: 'Expand Matrix',
+      images: [
+        {
+          url: OG_IMAGE_URL,
+          width: 1200,
+          height: 630,
+          alt: 'Expand Matrix',
+        },
+      ],
+    },
   };
 }
 

@@ -23,6 +23,18 @@ interface PageProps {
   params: Promise<{ locale: string }>;
 }
 
+function SectionFallback({ minHeightClass }: { minHeightClass: string }) {
+  return (
+    <div className={`${minHeightClass} flex items-center justify-center bg-black`} aria-hidden="true">
+      <div className="flex w-full max-w-sm flex-col items-center gap-3 px-6">
+        <div className="h-3 w-32 animate-pulse rounded-full bg-white/[0.04]" />
+        <div className="h-3 w-48 animate-pulse rounded-full bg-white/[0.04]" />
+        <div className="h-3 w-24 animate-pulse rounded-full bg-white/[0.04]" />
+      </div>
+    </div>
+  );
+}
+
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
   let safePartners: NormalizedPartner[] = [];
@@ -49,17 +61,17 @@ export default async function HomePage({ params }: PageProps) {
           <ProcessSection />
         </div>
         <div id="references">
-          <Suspense fallback={<div className="min-h-[60vh] bg-black" />}>
+          <Suspense fallback={<SectionFallback minHeightClass="min-h-[60vh]" />}>
             <ReferencesSection locale={locale} />
           </Suspense>
         </div>
         <div id="team">
-          <Suspense fallback={<div className="min-h-[60vh] bg-black" />}>
+          <Suspense fallback={<SectionFallback minHeightClass="min-h-[60vh]" />}>
             <TeamSection locale={locale} />
           </Suspense>
         </div>
         <div id="faq">
-          <Suspense fallback={<div className="min-h-[50vh] bg-black" />}>
+          <Suspense fallback={<SectionFallback minHeightClass="min-h-[50vh]" />}>
             <FAQSection locale={locale} />
           </Suspense>
         </div>

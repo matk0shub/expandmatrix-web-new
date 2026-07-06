@@ -188,8 +188,8 @@ Chybí `loading.tsx` pro streamované segmenty; Suspense fallbacky jsou prázdn�
 - [x] README: zdokumentovat dual-CMS (Payload = partneři/tým/reference/FAQ, Strapi = blog) a deployment flow.
 - [x] Smazat/opravit `docs/security/secret-audit.md` (nepravdivý závěr).
 - [x] `payload-audit.log`, `tsconfig.typecheck.tsbuildinfo` v rootu — přidat do .gitignore.
-- [ ] Zvážit `Cross-Origin-Resource-Policy` hlavičku.
-- [ ] Konsolidovat duplicitní "glass card" gradient overlay stacky (5 vrstev divů opakovaných v každé kartě) do sdílené komponenty.
+- [x] Zvážit `Cross-Origin-Resource-Policy` hlavičku.
+- [x] Konsolidovat duplicitní "glass card" gradient overlay stacky (5 vrstev divů opakovaných v každé kartě) do sdílené komponenty.
 
 ---
 
@@ -222,7 +222,7 @@ Chybí `loading.tsx` pro streamované segmenty; Suspense fallbacky jsou prázdn�
 - [x] Fix toolchain pro Node 26 / pin engines (R5)
 
 ### Fáze 5 — Úklid a dokumentace 🟢
-- [ ] README, .gitignore, skeletony, CORP hlavička, glass-card komponenta
+- [x] README, .gitignore, skeletony, CORP hlavička, glass-card komponenta
 
 ---
 
