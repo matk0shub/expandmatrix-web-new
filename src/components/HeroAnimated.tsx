@@ -26,44 +26,6 @@ export default function Hero() {
   const MotionDiv = motion.div;
   const logoSizes = '(max-width: 768px) 160px, (max-width: 1280px) 200px, 240px';
 
-
-  useEffect(() => {
-    if (!heroRef.current || prefersReducedMotion) {
-      return;
-    }
-
-    const node = heroRef.current;
-    node.classList.add('hero-animated');
-
-    let observerFired = false;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          observerFired = true;
-          node.classList.add('is-visible');
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(node);
-
-    // Fallback: if IntersectionObserver doesn't fire (e.g. during client-side navigation),
-    // force the visible state after a short delay so the hero never stays frozen.
-    const fallbackTimer = setTimeout(() => {
-      if (!observerFired) {
-        node.classList.add('is-visible');
-      }
-    }, 120);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallbackTimer);
-    };
-  }, [prefersReducedMotion]);
-
   const supportsHover = useMemo(() => {
     if (!isClient || typeof window === 'undefined') return false;
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -178,6 +140,7 @@ export default function Hero() {
                  className="hero-heading hero-heading-grid"
                  aria-label={`${t('heading.line1')} ${t('heading.line2a')} ${t('heading.line2b')} ${t('heading.line3')} ${t('heading.line4')}`}
                  delay={0.2}
+                 revealOnMount
                >
                  {/* First line - WE CREATE / VYVÍJÍME - right-aligned */}
                  <span className="hero-heading-line-first" data-line="1">

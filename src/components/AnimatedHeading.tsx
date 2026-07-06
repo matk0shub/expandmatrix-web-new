@@ -12,6 +12,7 @@ type AnimatedHeadingProps = HTMLAttributes<HTMLHeadingElement> & {
   direction?: 'up' | 'down' | 'left' | 'right';
   distance?: number;
   once?: boolean;
+  revealOnMount?: boolean;
 };
 
 const DEFAULT_DISTANCE = 200;
@@ -29,6 +30,7 @@ export default function AnimatedHeading({
   direction = 'right',
   distance = DEFAULT_DISTANCE,
   once = true,
+  revealOnMount = false,
   className,
   children,
   ...rest
@@ -37,7 +39,8 @@ export default function AnimatedHeading({
   const HeadingTag: HeadingTag = as;
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [offset, setOffset] = useState(() => distance);
-  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
+  const [isArmed, setIsArmed] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (prefersReducedMotion || typeof window === 'undefined') {
@@ -54,18 +57,28 @@ export default function AnimatedHeading({
   }, [distance, prefersReducedMotion]);
 
   useEffect(() => {
+    if (revealOnMount) {
+      return;
+    }
+
     if (prefersReducedMotion || typeof window === 'undefined' || !headingRef.current) {
+      setIsArmed(false);
       setIsVisible(true);
       return;
     }
 
-    const observer = new IntersectionObserver(
+    setIsArmed(true);
+    setIsVisible(false);
+
+    let observer: IntersectionObserver | null = null;
+
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
             if (once) {
-              observer.disconnect();
+              observer?.disconnect();
             }
           } else if (!once) {
             setIsVisible(false);
@@ -77,8 +90,10 @@ export default function AnimatedHeading({
 
     observer.observe(headingRef.current);
 
-    return () => observer.disconnect();
-  }, [once, prefersReducedMotion]);
+    return () => {
+      observer?.disconnect();
+    };
+  }, [once, prefersReducedMotion, revealOnMount]);
 
   const hiddenTransform = useMemo(() => {
     if (prefersReducedMotion) {
@@ -102,10 +117,17 @@ export default function AnimatedHeading({
     '--reveal-x': `${hiddenTransform.x}px`,
     '--reveal-y': `${hiddenTransform.y}px`,
     transitionDelay: `${delay}s`,
+    animationDelay: revealOnMount ? `${delay}s` : undefined,
   } as CSSProperties;
 
   const classes = [className, 'heading-reveal'];
-  if (isVisible || prefersReducedMotion) {
+  if (revealOnMount) {
+    classes.push('heading-reveal--mount');
+  }
+  if (!revealOnMount && isArmed && !prefersReducedMotion) {
+    classes.push('heading-reveal--armed');
+  }
+  if (!revealOnMount && (isVisible || prefersReducedMotion)) {
     classes.push('heading-reveal--visible');
   }
 

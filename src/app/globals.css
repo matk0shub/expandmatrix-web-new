@@ -47,15 +47,34 @@ body::-webkit-scrollbar {
 }
 
 .hero-animated {
-  opacity: 0;
-  transform: translate3d(0, 32px, 0);
-  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.7s ease;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+html.js .hero-animated {
+  animation: hero-enter 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
   will-change: transform, opacity;
 }
 
-.hero-animated.is-visible {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animated,
+  html.js .hero-animated {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .hero-logo-tilt {
@@ -248,6 +267,11 @@ h6 {
 }
 
 .heading-reveal {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.heading-reveal--armed {
   opacity: 0;
   transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 40px), 0);
   transition:
@@ -256,14 +280,39 @@ h6 {
   will-change: transform, opacity;
 }
 
-.heading-reveal--visible {
+.heading-reveal--armed.heading-reveal--visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
 
+.heading-reveal--mount {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+html.js .heading-reveal--mount {
+  animation: heading-enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes heading-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 40px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .heading-reveal,
-  .heading-reveal--visible {
+  .heading-reveal--armed,
+  .heading-reveal--visible,
+  .heading-reveal--mount,
+  html.js .heading-reveal--mount {
+    animation: none;
     opacity: 1;
     transform: none;
     transition: none;
@@ -539,4 +588,3 @@ h6 {
 #cc-main a:hover {
   color: #00b85c;
 }
-

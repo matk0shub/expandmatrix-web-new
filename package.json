@@ -2,10 +2,13 @@
   "name": "expandmatrix_web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "predev": "node scripts/check-port.mjs",
-    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev",
-    "dev:turbo": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
+    "dev:turbo": "NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
     "build": "next build",
     "prestart": "npm run payload:compile && node scripts/check-cache.js",
     "start": "node scripts/start-next.mjs",
@@ -25,9 +28,9 @@
     "audit:all": "npm run audit:mobile && npm run audit:tablet && npm run audit:desktop",
     "seed:faqs": "node scripts/seed-faqs.mjs",
     "seed:team": "node scripts/seed-team.mjs",
-    "payload:migrate": "cross-env NODE_ENV=production payload migrate --config payload.config.js",
-    "payload:seed": "cross-env NODE_ENV=production node scripts/payload-seed.mjs",
-    "payload:health": "cross-env NODE_ENV=production node scripts/payload-health.mjs"
+    "payload:migrate": "NODE_ENV=production payload migrate --config payload.config.js",
+    "payload:seed": "NODE_ENV=production node scripts/payload-seed.mjs",
+    "payload:health": "NODE_ENV=production node scripts/payload-health.mjs"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
@@ -72,7 +75,6 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "chrome-launcher": "^1.2.1",
-    "cross-env": "^10.1.0",
     "es-errors": "^1.3.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",

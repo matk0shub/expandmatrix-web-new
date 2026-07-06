@@ -233,13 +233,6 @@ export default async function LocaleLayout({
         worksFor: { "@id": `${BASE_URL}/#organization` },
       },
     ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "35",
-      bestRating: "5",
-      worstRating: "1",
-    },
   };
 
   const websiteSchema = {
@@ -294,6 +287,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         {/* Preload critical above-the-fold image */}
         <link rel="preload" as="image" href="/logo.svg" fetchPriority="high" />
         {/* Preconnect/DNS-prefetch for Payload host (if configured) */}

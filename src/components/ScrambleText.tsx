@@ -1,12 +1,9 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import type { ComponentProps } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import clsx from 'clsx';
 
-const ScrambleTextInteractive = dynamic(() => import('./ScrambleTextInteractive'), {
-  ssr: false,
-});
+import ScrambleTextInteractive from './ScrambleTextInteractive';
 
 export type ScrambleTextProps = ComponentProps<typeof ScrambleTextInteractive>;
 
@@ -18,26 +15,32 @@ const normalizeLines = (props: ScrambleTextProps) => {
 };
 
 export default function ScrambleText(props: ScrambleTextProps) {
-  if (!props.applyScramble) {
-    const lines = normalizeLines(props);
+  const [isMounted, setIsMounted] = useState(false);
 
-    if (lines.length <= 1) {
-      return <span className={props.className}>{props.text ?? lines[0] ?? ''}</span>;
-    }
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    return (
-      <span className={clsx('inline-flex flex-col', props.className)}>
-        {lines.map(
-          (line, index) =>
-            line && (
-              <span key={index} className="block">
-                {line}
-              </span>
-            ),
-        )}
-      </span>
-    );
+  if (props.applyScramble && isMounted) {
+    return <ScrambleTextInteractive {...props} />;
   }
 
-  return <ScrambleTextInteractive {...props} />;
+  const lines = normalizeLines(props);
+
+  if (lines.length <= 1) {
+    return <span className={props.className}>{props.text ?? lines[0] ?? ''}</span>;
+  }
+
+  return (
+    <span className={clsx('inline-flex flex-col', props.className)}>
+      {lines.map(
+        (line, index) =>
+          line && (
+            <span key={index} className="block">
+              {line}
+            </span>
+          ),
+      )}
+    </span>
+  );
 }
