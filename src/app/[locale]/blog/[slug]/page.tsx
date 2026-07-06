@@ -13,11 +13,17 @@ import {
   renderBlocksToHtml,
 } from '@/lib/strapi';
 
-export const dynamic = 'force-dynamic';
+const BASE_URL = 'https://expandmatrix.com';
+const OG_IMAGE_URL = `${BASE_URL}/og-image.png`;
+
+export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
+
+const getDateModified = (post: { publishedAt: string } & { updatedAt?: unknown }) =>
+  typeof post.updatedAt === 'string' ? post.updatedAt : post.publishedAt;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -28,18 +34,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const imageUrl = getStrapiMediaUrl(post.coverImage?.url);
-  const BASE_URL = 'https://expandmatrix.com';
+  const pageUrl = `${BASE_URL}/${locale}/blog/${slug}`;
+  const description = post.excerpt ?? undefined;
 
   return {
     title: `${post.title} | Expand Matrix Blog`,
-    description: post.excerpt ?? undefined,
+    description,
     openGraph: {
       type: 'article',
       title: post.title,
-      description: post.excerpt ?? undefined,
+      description,
       publishedTime: post.publishedAt,
-      url: `${BASE_URL}/${locale}/blog/${slug}`,
-      images: imageUrl ? [{ url: imageUrl }] : [],
+      modifiedTime: getDateModified(post),
+      authors: ['Expand Matrix s.r.o.'],
+      section: 'Blog',
+      url: pageUrl,
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              width: post.coverImage?.width,
+              height: post.coverImage?.height,
+              alt: post.coverImage?.alternativeText || post.title,
+            },
+          ]
+        : [
+            {
+              url: OG_IMAGE_URL,
+              width: 1200,
+              height: 630,
+              alt: 'Expand Matrix',
+            },
+          ],
     },
   };
 }
@@ -54,9 +80,37 @@ export default async function BlogPostPage({ params }: PageProps) {
   const imageUrl = getStrapiMediaUrl(post.coverImage?.url);
   const date = formatPostDate(post.publishedAt, locale);
   const htmlContent = renderBlocksToHtml(post.content);
+  const pageUrl = `${BASE_URL}/${locale}/blog/${slug}`;
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt ?? post.title,
+    ...(imageUrl ? { image: imageUrl } : {}),
+    datePublished: post.publishedAt,
+    dateModified: getDateModified(post),
+    author: {
+      '@type': 'Organization',
+      name: 'Expand Matrix s.r.o.',
+    },
+    publisher: { '@id': `${BASE_URL}/#organization` },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': pageUrl,
+    },
+    inLanguage: locale,
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          // Escape "<" so CMS-controlled text (title/excerpt) cannot close the
+          // script tag and inject markup (JSON.stringify keeps "</script>" raw).
+          __html: JSON.stringify(articleSchema).replace(/</g, '\\u003c'),
+        }}
+      />
       <SiteNavbar variant="page" />
       <main className="min-h-screen bg-black text-white">
         {/* Back link */}

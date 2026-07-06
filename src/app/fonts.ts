@@ -17,7 +17,7 @@ export const lato = localFont({
     },
     {
       path: '../../public/fonts/lato-v25-latin-700.woff2',
-      weight: '700',
+      weight: '600 900',
       style: 'normal',
     },
   ],
@@ -25,4 +25,3 @@ export const lato = localFont({
   variable: '--font-lato',
   preload: true,
 });
-

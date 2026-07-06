@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
-import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import * as CookieConsent from 'vanilla-cookieconsent';
 import { getCookieConsentConfig } from '@/lib/cookieconsent-config';
 
@@ -13,7 +12,19 @@ export default function CookieConsentBanner() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    CookieConsent.run(getCookieConsentConfig(locale));
+
+    let cancelled = false;
+
+    void (async () => {
+      // @ts-expect-error Next.js supports lazy global CSS imports in client components.
+      await import('vanilla-cookieconsent/dist/cookieconsent.css');
+      if (cancelled) return;
+      CookieConsent.run(getCookieConsentConfig(locale));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [locale]);
 
   return null;

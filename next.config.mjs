@@ -99,10 +99,7 @@ const nextConfig = {
   },
   experimental: {
     webpackBuildWorker: false,
-    // Inline critical CSS into HTML so the first paint doesn't wait for the
-    // external stylesheet round-trip. Lighthouse flagged ~280 ms of
-    // render-blocking CSS on mobile pre-flag.
-    inlineCss: true,
+    // CSS inlining stays off: payload size outweighed the ~280 ms render-blocking win, and the external stylesheet is immutable-cached.
   },
   serverExternalPackages: [
     'payload',
@@ -221,14 +218,33 @@ const nextConfig = {
           },
         ],
       },
-      // Blog: force-dynamic pages — no CDN cache (must come AFTER the generic /:locale/:path* rule)
+      // Blog: edge freshness must match the pages' revalidate = 300 — this rule
+      // has to come AFTER the generic /:locale/:path* rule to win for /blog.
       {
-        source: '/:locale(en|cs)/blog',
-        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+        source: '/:locale(en|cs)/blog/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=300, stale-while-revalidate=300',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Language, Cookie',
+          },
+        ],
       },
       {
-        source: '/:locale(en|cs)/blog/:slug*',
-        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+        source: '/:locale(en|cs)/blog',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=300, stale-while-revalidate=300',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Language, Cookie',
+          },
+        ],
       },
       {
         source: '/:path*',

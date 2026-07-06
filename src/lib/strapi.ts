@@ -56,7 +56,7 @@ export async function getBlogPosts(
       url += `&filters[$or][0][title][$containsi]=${encodeURIComponent(query)}&filters[$or][1][excerpt][$containsi]=${encodeURIComponent(query)}`;
     }
     const res = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) throw new Error(`Strapi ${res.status}`);
@@ -82,7 +82,7 @@ export async function getBlogPost(
   try {
     const url = `${STRAPI_URL}/api/articles?filters[slug][$eq]=${encodeURIComponent(slug)}&locale=${locale}&populate=coverImage`;
     const res = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) throw new Error(`Strapi ${res.status}`);
@@ -100,7 +100,7 @@ export async function getFeaturedPost(locale: string): Promise<StrapiArticle | n
   try {
     const url = `${STRAPI_URL}/api/articles?filters[featured][$eq]=true&locale=${locale}&populate=coverImage&sort=publishedAt:desc&pagination[pageSize]=1`;
     const res = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) throw new Error(`Strapi ${res.status}`);

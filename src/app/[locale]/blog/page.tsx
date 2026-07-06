@@ -14,7 +14,10 @@ import {
   type StrapiArticle,
 } from '@/lib/strapi';
 
-export const dynamic = 'force-dynamic';
+const BASE_URL = 'https://expandmatrix.com';
+const OG_IMAGE_URL = `${BASE_URL}/og-image.png`;
+
+export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -24,9 +27,26 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
+  const title = t('metaTitle');
+  const description = t('metaDescription');
+
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription'),
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      url: `${BASE_URL}/${locale}/blog`,
+      images: [
+        {
+          url: OG_IMAGE_URL,
+          width: 1200,
+          height: 630,
+          alt: 'Expand Matrix',
+        },
+      ],
+    },
   };
 }
 

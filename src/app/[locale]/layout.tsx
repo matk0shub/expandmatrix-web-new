@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
+import type { AbstractIntlMessages } from 'use-intl/core';
 import '@/payload/prewarm';
 import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 import { lato } from '../fonts';
@@ -11,6 +12,71 @@ import Analytics from '@/components/Analytics';
 
 const BASE_URL = 'https://expandmatrix.com';
 const LOGO_URL = `${BASE_URL}/og-image.png`;
+
+// Keep this list in sync with `useTranslations(...)` calls in client components.
+// Add a namespace here when a new client component uses translations; missing namespaces throw visible next-intl runtime errors in dev.
+const CLIENT_NAMESPACES = [
+  'common',
+  'sections.process',
+  'sections.clients',
+  'hero',
+  'footer',
+  'footer.cta',
+  'footer.links',
+  'navigation',
+  'footer.newsletter',
+] as const;
+
+const isMessageMap = (value: unknown): value is AbstractIntlMessages =>
+  Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+
+const getNamespaceMessages = (
+  messages: AbstractIntlMessages,
+  namespace: string,
+) =>
+  namespace
+    .split('.')
+    .reduce<unknown>(
+      (current, segment) => (isMessageMap(current) ? current[segment] : undefined),
+      messages,
+    );
+
+const cloneMessageValue = (value: AbstractIntlMessages | string) =>
+  isMessageMap(value) ? { ...value } : value;
+
+const setNamespaceMessages = (
+  target: AbstractIntlMessages,
+  namespace: string,
+  value: AbstractIntlMessages | string,
+) => {
+  const segments = namespace.split('.');
+  let cursor = target;
+
+  segments.forEach((segment, index) => {
+    if (index === segments.length - 1) {
+      cursor[segment] = cloneMessageValue(value);
+      return;
+    }
+
+    if (!isMessageMap(cursor[segment])) {
+      cursor[segment] = {};
+    }
+    cursor = cursor[segment] as AbstractIntlMessages;
+  });
+};
+
+const pickClientMessages = (messages: AbstractIntlMessages): AbstractIntlMessages => {
+  const clientMessages: AbstractIntlMessages = {};
+
+  CLIENT_NAMESPACES.forEach((namespace) => {
+    const namespaceMessages = getNamespaceMessages(messages, namespace);
+    if (typeof namespaceMessages === 'string' || isMessageMap(namespaceMessages)) {
+      setNamespaceMessages(clientMessages, namespace, namespaceMessages);
+    }
+  });
+
+  return clientMessages;
+};
 
 export async function generateMetadata({
   params,
@@ -111,14 +177,15 @@ export default async function LocaleLayout({
   const pageUrl = `${BASE_URL}/${locale}`;
 
   // Import messages dynamically with error handling
-  let messages;
+  let messages: AbstractIntlMessages;
   try {
-    messages = (await import(`@/messages/${locale}.json`)).default;
+    messages = (await import(`@/messages/${locale}.json`)).default as unknown as AbstractIntlMessages;
   } catch {
     // Fallback to English if locale file doesn't exist
     console.warn(`Failed to load messages for locale ${locale}, falling back to English`);
-    messages = (await import(`@/messages/en.json`)).default;
+    messages = (await import(`@/messages/en.json`)).default as unknown as AbstractIntlMessages;
   }
+  const clientMessages = pickClientMessages(messages);
 
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -317,7 +384,7 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
         />
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={clientMessages}>
           {children}
           <CookieConsentBanner />
           <ScrollRestoration />
