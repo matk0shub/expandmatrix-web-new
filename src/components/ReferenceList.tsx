@@ -114,7 +114,11 @@ export default function ReferenceList({
 
   return (
     <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-      <ClientLogo logoUrl={undefined} name={activeReference.name} alt={activeReference.name} />
+      <ClientLogo
+        logoUrl={activeReference.image?.url}
+        name={activeReference.name}
+        alt={activeReference.image?.alt ?? activeReference.name}
+      />
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

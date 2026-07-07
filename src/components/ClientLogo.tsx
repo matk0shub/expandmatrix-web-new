@@ -38,7 +38,7 @@ export default function ClientLogo({
           fill
           sizes="72px"
           loading="lazy"
-          className="object-contain p-3"
+          className="object-cover"
         />
       </div>
     );
