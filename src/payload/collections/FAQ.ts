@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateSiteContent } from '../revalidateSiteContent'
+
 export const FAQ: CollectionConfig = {
   slug: 'faqs',
   admin: {
@@ -38,6 +40,8 @@ export const FAQ: CollectionConfig = {
         return doc
       },
     ],
+    afterChange: [() => revalidateSiteContent()],
+    afterDelete: [() => revalidateSiteContent()],
   },
   fields: [
     {

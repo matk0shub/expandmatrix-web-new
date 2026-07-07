@@ -194,7 +194,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=600',
+            value: 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400',
           },
           {
             key: 'Vary',
@@ -207,7 +207,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=600, stale-while-revalidate=600',
+            value: 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400',
           },
           {
             key: 'Vary',

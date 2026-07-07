@@ -59,7 +59,7 @@ const getTeamMembersCached = unstable_cache(
     return { members: normalized };
   },
   ['team-members'],
-  { revalidate: 60, tags: ['team-members'] },
+  { revalidate: false, tags: ['team-members'] },
 );
 
 export const getTeamMembers = async ({

@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import SiteNavbar from '@/components/SiteNavbar';
 import {
   getBlogPost,
+  getBlogPosts,
   getStrapiMediaUrl,
   formatPostDate,
   renderBlocksToHtml,
@@ -15,8 +16,11 @@ import {
 
 const BASE_URL = 'https://expandmatrix.com';
 const OG_IMAGE_URL = `${BASE_URL}/og-image.png`;
+const locales = ['en', 'cs'] as const;
+const blogStaticPageSize = 100;
 
 export const revalidate = 300;
+export const dynamicParams = true;
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -24,6 +28,35 @@ interface PageProps {
 
 const getDateModified = (post: { publishedAt: string } & { updatedAt?: unknown }) =>
   typeof post.updatedAt === 'string' ? post.updatedAt : post.publishedAt;
+
+export async function generateStaticParams() {
+  try {
+    const postsByLocale = await Promise.all(
+      locales.map(async (locale) => {
+        const firstPage = await getBlogPosts(locale, 1, blogStaticPageSize);
+        const remainingPages =
+          firstPage.pageCount > 1
+            ? await Promise.all(
+                Array.from({ length: firstPage.pageCount - 1 }, (_, index) =>
+                  getBlogPosts(locale, index + 2, blogStaticPageSize),
+                ),
+              )
+            : [];
+
+        return [
+          ...firstPage.posts,
+          ...remainingPages.flatMap(({ posts }) => posts),
+        ]
+          .filter((post) => post.slug)
+          .map((post) => ({ locale, slug: post.slug }));
+      }),
+    );
+
+    return postsByLocale.flat();
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params;

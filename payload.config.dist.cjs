@@ -53,6 +53,29 @@ if (!global.__silencedSQLiteWarning) {
   global.__silencedSQLiteWarning = true;
 }
 
+// src/payload/revalidateSiteContent.ts
+var revalidateSiteContent = async (tag) => {
+  let cache;
+  try {
+    const nextCacheModule = "next/cache";
+    cache = await import(
+      /* webpackIgnore: true */
+      nextCacheModule
+    );
+  } catch {
+    return;
+  }
+  try {
+    if (tag) {
+      cache.revalidateTag(tag);
+    }
+    cache.revalidatePath("/en", "page");
+    cache.revalidatePath("/cs", "page");
+  } catch (error) {
+    console.error("[revalidateSiteContent] Failed to revalidate cache:", error);
+  }
+};
+
 // src/payload/collections/FAQ.ts
 var FAQ = {
   slug: "faqs",
@@ -86,7 +109,9 @@ var FAQ = {
         }
         return doc;
       }
-    ]
+    ],
+    afterChange: [() => revalidateSiteContent()],
+    afterDelete: [() => revalidateSiteContent()]
   },
   fields: [
     {
@@ -288,7 +313,9 @@ var Partners = {
         }
         return data;
       }
-    ]
+    ],
+    afterChange: [() => revalidateSiteContent("partners")],
+    afterDelete: [() => revalidateSiteContent("partners")]
   },
   fields: [
     {
@@ -397,7 +424,9 @@ var References = {
         }
         return data;
       }
-    ]
+    ],
+    afterChange: [() => revalidateSiteContent("references")],
+    afterDelete: [() => revalidateSiteContent("references")]
   },
   fields: [
     dualLocaleTextField({
@@ -562,6 +591,10 @@ var Team = {
   admin: {
     useAsTitle: "displayName",
     defaultColumns: ["displayName", "roleDisplay", "order", "featured"]
+  },
+  hooks: {
+    afterChange: [() => revalidateSiteContent("team-members")],
+    afterDelete: [() => revalidateSiteContent("team-members")]
   },
   fields: [
     {

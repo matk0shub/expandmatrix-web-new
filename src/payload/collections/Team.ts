@@ -1,10 +1,16 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateSiteContent } from '../revalidateSiteContent'
+
 export const Team: CollectionConfig = {
   slug: 'teamMembers',
   admin: {
     useAsTitle: 'displayName',
     defaultColumns: ['displayName', 'roleDisplay', 'order', 'featured'],
+  },
+  hooks: {
+    afterChange: [() => revalidateSiteContent('team-members')],
+    afterDelete: [() => revalidateSiteContent('team-members')],
   },
   fields: [
     {

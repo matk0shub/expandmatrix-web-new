@@ -13,7 +13,7 @@ import { getPartners } from '@/data/partners.server';
 import type { NormalizedPartner } from '@/types/partners';
 
 export const dynamicParams = true;
-export const revalidate = 60;
+export const revalidate = false;
 
 export async function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'cs' }];

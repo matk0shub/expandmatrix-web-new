@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
 import type { AbstractIntlMessages } from 'use-intl/core';
-import '@/payload/prewarm';
 import { getPayloadBaseUrl } from '@/utils/payloadServerUrl';
 import { lato } from '../fonts';
 import "../globals.css";

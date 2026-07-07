@@ -36,7 +36,7 @@ const getPartnersCached = unstable_cache(
     };
   },
   ['partners'],
-  { revalidate: 60, tags: ['partners'] },
+  { revalidate: false, tags: ['partners'] },
 );
 
 export const getPartners = async (): Promise<PartnersResult> => getPartnersCached();

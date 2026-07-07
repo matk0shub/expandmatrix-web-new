@@ -15,6 +15,12 @@ interface PageParams {
 
 type RouteProps = { params: Promise<PageParams> };
 
+export function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'cs' }];
+}
+
+export const revalidate = false;
+
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'legal.privacy' });

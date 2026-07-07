@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload';
 
+import { revalidateSiteContent } from '../revalidateSiteContent';
+
 export const Partners: CollectionConfig = {
   slug: 'partners',
   admin: {
@@ -18,6 +20,8 @@ export const Partners: CollectionConfig = {
         return data;
       },
     ],
+    afterChange: [() => revalidateSiteContent('partners')],
+    afterDelete: [() => revalidateSiteContent('partners')],
   },
   fields: [
     {

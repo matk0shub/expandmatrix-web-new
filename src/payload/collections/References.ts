@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateSiteContent } from '../revalidateSiteContent'
+
 const REQUIRED_LOCALES = ['en', 'cs'] as const
 
 const validateLocalizedField = (fieldLabel: string) => (value: unknown) => {
@@ -70,6 +72,8 @@ export const References: CollectionConfig = {
         return data
       },
     ],
+    afterChange: [() => revalidateSiteContent('references')],
+    afterDelete: [() => revalidateSiteContent('references')],
   },
   fields: [
     dualLocaleTextField({

@@ -4,7 +4,6 @@ import { serverLog } from '@/utils/serverLog';
 
 const locales = ['en', 'cs'] as const;
 const defaultLocale = 'en';
-const localeCookieName = 'NEXT_LOCALE';
 
 const intlMiddleware = createMiddleware({
   locales,
@@ -16,29 +15,7 @@ const intlMiddleware = createMiddleware({
 const getLocaleFromPath = (pathname: string) =>
   locales.find((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
 
-const getPreferredLocale = (request: NextRequest): (typeof locales)[number] => {
-  const cookieLocale = request.cookies.get(localeCookieName)?.value;
-  if (cookieLocale && locales.includes(cookieLocale as (typeof locales)[number])) {
-    return cookieLocale as (typeof locales)[number];
-  }
-
-  const accept = request.headers.get('accept-language');
-  if (accept) {
-    const preferred = accept
-      .split(',')
-      .map((part) => part.trim().split(';')[0])
-      .find((lng) => locales.includes(lng.split('-')[0] as (typeof locales)[number]));
-    if (preferred) {
-      return preferred.split('-')[0] as (typeof locales)[number];
-    }
-  }
-
-  return defaultLocale;
-};
-
 export default function middleware(request: NextRequest) {
-  const cookieLocale = request.cookies.get(localeCookieName)?.value;
-  const hasCookieLocale = cookieLocale && locales.includes(cookieLocale as (typeof locales)[number]);
   const pathname = request.nextUrl.pathname;
   const currentLocale = getLocaleFromPath(pathname);
   const normalizedPathname = currentLocale
@@ -66,14 +43,23 @@ export default function middleware(request: NextRequest) {
   }
 
   if (!currentLocale) {
-    const target = hasCookieLocale ? (cookieLocale as (typeof locales)[number]) : getPreferredLocale(request);
+    // Unconditional redirect to the default locale - deliberately NOT personalized
+    // by the NEXT_LOCALE cookie. A cookie-dependent redirect here would be cached
+    // by the browser (Cache-Control, not just Netlify's edge) keyed only on the
+    // URL, so a returning cs-cookied visitor could keep getting a stale /en
+    // redirect from their own HTTP cache after switching locale. Real in-site
+    // navigation always carries a /en or /cs prefix and goes through
+    // intlMiddleware below, which is unaffected and handles locale correctly;
+    // this branch only covers the bare, locale-less entry point (typically `/`).
     const suffix = pathname || '/';
     const normalizedSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
 
     const url = request.nextUrl.clone();
-    url.pathname = `/${target}${normalizedSuffix === '/' ? '' : normalizedSuffix}`;
-    serverLog('[middleware] redirecting to preferred locale', { from: pathname, to: url.pathname });
-    return NextResponse.redirect(url);
+    url.pathname = `/${defaultLocale}${normalizedSuffix === '/' ? '' : normalizedSuffix}`;
+    serverLog('[middleware] redirecting to default locale', { from: pathname, to: url.pathname });
+    const response = NextResponse.redirect(url, 308);
+    response.headers.set('Cache-Control', 'public, max-age=3600');
+    return response;
   }
 
   return intlMiddleware(request);
