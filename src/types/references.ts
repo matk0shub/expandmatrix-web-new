@@ -14,6 +14,7 @@ export interface Reference {
   name: string;
   slug: string;
   subtitle?: string;
+  sector?: string;
   instagramUrl?: string;
   websiteUrl?: string;
   image: ReferenceImage;

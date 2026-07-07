@@ -16,12 +16,14 @@ export default async function ReferencesSection({ locale }: ReferencesSectionPro
     metaName: t('metaName'),
     metaDescription: t('metaDescription'),
     overline: t('overline'),
+    heading: t('heading'),
+    subtitle: t('subtitle'),
+    deliveredHeading: t('deliveredHeading'),
     selectReference: t.raw('selectReference'),
     instagram: t('instagram'),
     instagramAria: t.raw('instagramAria'),
     website: t('website'),
     websiteAria: t.raw('websiteAria'),
-    impactHeading: t('impactHeading'),
   };
 
   return (

@@ -1,21 +1,33 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, type CSSProperties, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type TouchEvent,
+} from 'react';
+
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import type { Reference } from '@/types/references';
+import GlassCardOverlays from './GlassCardOverlays';
 import ReferenceList from './ReferenceList';
 import ReferenceStatsCard from './ReferenceStatsCard';
-import type { Reference } from '@/types/references';
 
 interface ReferencesSectionCopy {
   metaName: string;
   metaDescription: string;
   overline: string;
+  heading: string;
+  subtitle: string;
+  deliveredHeading: string;
   selectReference: string | ((name: string) => string);
   instagram: string;
   instagramAria: string | ((name: string) => string);
   website: string;
   websiteAria: string | ((name: string) => string);
-  impactHeading: string;
 }
 
 interface ReferencesSectionClientProps {
@@ -34,6 +46,7 @@ export default function ReferencesSectionClient({
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     setActiveIndex((prev) => Math.min(prev, Math.max(orderedReferences.length - 1, 0)));
@@ -45,49 +58,22 @@ export default function ReferencesSectionClient({
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % orderedReferences.length);
-    }, 6500);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [orderedReferences.length, prefersReducedMotion, hasInteracted]);
 
-  // Mark as interacted on the first scroll/touch inside the section so the
-  // auto-rotate doesn't yank a mobile user reading a reference.
-  useEffect(() => {
-    if (hasInteracted) return;
-    if (typeof window === 'undefined') return;
-    const stop = () => setHasInteracted(true);
-    window.addEventListener('touchstart', stop, { passive: true, once: true });
-    return () => window.removeEventListener('touchstart', stop);
-  }, [hasInteracted]);
+  const goPrev = useCallback(() => {
+    if (!orderedReferences.length) return;
+    setHasInteracted(true);
+    setActiveIndex((prev) => (prev - 1 + orderedReferences.length) % orderedReferences.length);
+  }, [orderedReferences.length]);
 
-  const activeReference = orderedReferences[activeIndex];
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (!orderedReferences.length) return;
-
-      switch (event.key) {
-        case 'ArrowUp':
-          event.preventDefault();
-          setHasInteracted(true);
-          setActiveIndex((prev) => (prev > 0 ? prev - 1 : orderedReferences.length - 1));
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          setHasInteracted(true);
-          setActiveIndex((prev) => (prev < orderedReferences.length - 1 ? prev + 1 : 0));
-          break;
-        default:
-          break;
-      }
-    },
-    [orderedReferences.length],
-  );
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+  const goNext = useCallback(() => {
+    if (!orderedReferences.length) return;
+    setHasInteracted(true);
+    setActiveIndex((prev) => (prev + 1) % orderedReferences.length);
+  }, [orderedReferences.length]);
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -98,102 +84,163 @@ export default function ReferencesSectionClient({
     [activeIndex],
   );
 
+  const handleTouchStart = useCallback((event: TouchEvent<HTMLElement>) => {
+    setHasInteracted(true);
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (event: TouchEvent<HTMLElement>) => {
+      if (touchStartX.current === null) return;
+
+      const dx = (event.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+      const swipeThreshold = 50;
+
+      if (dx > swipeThreshold) {
+        goPrev();
+      } else if (dx < -swipeThreshold) {
+        goNext();
+      }
+
+      touchStartX.current = null;
+    },
+    [goNext, goPrev],
+  );
+
   if (!orderedReferences.length) {
     return null;
   }
 
-  // Outer padding controls where the content starts inside the rounded card.
-  // Mobile is edge-to-edge; desktop gets breathing room.
-  const referencesPadding = 'clamp(0px, 3vw, 72px)';
-  const sectionStyle = {
-    '--references-padding': referencesPadding,
-  } as CSSProperties;
-
-  const contentPaddingStyle = {
-    paddingInline: 'var(--references-padding)',
-  } as CSSProperties;
+  const activeReference = orderedReferences[activeIndex] ?? orderedReferences[0];
 
   return (
     <section
-      className="relative my-24 text-white"
+      className="relative w-full overflow-hidden bg-black py-24 text-white md:py-40 lg:py-48"
       id="references"
       itemScope
       itemType="https://schema.org/ItemList"
-      style={sectionStyle}
+      onMouseEnter={() => setHasInteracted(true)}
+      onFocusCapture={() => setHasInteracted(true)}
     >
       <meta itemProp="name" content={copy.metaName} />
       <meta itemProp="description" content={copy.metaDescription} />
 
-      <div className="relative overflow-hidden rounded-[36px] sm:rounded-[40px] lg:rounded-[48px]">
-        {/* Ambient brand-aligned backdrop. No per-reference photos — those
-            were just framed logos that competed with the content. Each
-            reference's logo now appears as a small chip next to the title. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[40px]"
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundColor: '#0a0a0a',
-              backgroundImage:
-                'radial-gradient(circle at 12% 18%, rgba(0, 215, 107, 0.18) 0%, transparent 38%),' +
-                'radial-gradient(circle at 88% 82%, rgba(0, 215, 107, 0.12) 0%, transparent 42%),' +
-                'radial-gradient(circle at 65% 30%, rgba(96, 200, 255, 0.06) 0%, transparent 35%),' +
-                'linear-gradient(135deg, #07120c 0%, #0a0a0a 55%, #050a08 100%)',
-            }}
-          />
-          <div
-            className="absolute inset-0 opacity-[0.045] mix-blend-overlay"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.6) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
+      {/* Complete ItemList markup: every reference, not just the visible one, so
+          crawlers see all client organizations without interacting with tabs. */}
+      <ul className="sr-only">
+        {orderedReferences.map((reference, index) => (
+          <li
+            key={reference.id}
+            itemProp="itemListElement"
+            itemScope
+            itemType="https://schema.org/ListItem"
+          >
+            <meta itemProp="position" content={String(index + 1)} />
+            <div itemProp="item" itemScope itemType="https://schema.org/Organization">
+              <meta itemProp="name" content={reference.name} />
+              {reference.websiteUrl ? (
+                <meta itemProp="url" content={reference.websiteUrl} />
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <BackgroundOrnaments />
+
+      <div className="relative z-10 mx-auto w-full max-w-[1780px] px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24">
+        <div className="mb-14 max-w-4xl md:mb-20 lg:mb-24">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00d76b] sm:text-sm">
+            {copy.overline}
+          </p>
+          <h2 className="heading-main mt-5 text-balance">{copy.heading}</h2>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg md:text-xl">
+            {copy.subtitle}
+          </p>
         </div>
 
         <div
-          className="relative z-10 py-12 sm:py-16 lg:py-32"
-          style={contentPaddingStyle}
+          className="mx-auto flex w-full max-w-[980px] flex-col gap-6"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          <div className="mx-auto w-full max-w-[1780px]">
-            <div className="flex flex-col gap-6 sm:gap-8 rounded-[28px] sm:rounded-[32px] px-3 py-6 sm:px-6 sm:py-8 lg:flex-row lg:items-start lg:gap-16 lg:px-10 lg:py-12">
-              <div className="w-full lg:w-1/2 flex flex-col gap-6">
-                <p className="text-xs sm:text-sm font-medium uppercase tracking-wider text-gray-300">
-                  {copy.overline}
-                </p>
-                <ReferenceList
-                  references={orderedReferences}
-                  activeIndex={activeIndex}
-                  onSelect={handleSelect}
-                  prefersReducedMotion={prefersReducedMotion}
-                  copy={{
-                    selectReference: copy.selectReference,
-                    instagram: copy.instagram,
-                    instagramAria: copy.instagramAria,
-                    website: copy.website,
-                    websiteAria: copy.websiteAria,
-                  }}
+          <article
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-black/95 via-black/98 to-black/99 px-5 py-6 shadow-[0_35px_120px_rgba(0,0,0,0.55)] sm:px-8 sm:py-8 lg:px-10 lg:py-10"
+            aria-live="polite"
+            aria-atomic="true"
+            id="reference-panel"
+          >
+            <GlassCardOverlays gradientOrder="rounded-first" accentOpacity="opacity-80" />
+
+            <div className="relative z-10">
+              <ReferenceList
+                references={orderedReferences}
+                activeIndex={activeIndex}
+                onSelect={handleSelect}
+                prefersReducedMotion={prefersReducedMotion}
+                mode="identity"
+                copy={{
+                  selectReference: copy.selectReference,
+                  instagram: copy.instagram,
+                  instagramAria: copy.instagramAria,
+                  website: copy.website,
+                  websiteAria: copy.websiteAria,
+                }}
+              />
+
+              <div className="mt-8 border-t border-white/10 pt-8">
+                <ReferenceStatsCard
+                  metrics={activeReference.metrics}
+                  heading={copy.deliveredHeading}
                 />
               </div>
-
-              <div className="w-full lg:w-1/2">
-                <div className="flex justify-center lg:justify-end">
-                  {activeReference && (
-                    <ReferenceStatsCard
-                      metrics={activeReference.metrics}
-                      prefersReducedMotion={prefersReducedMotion}
-                      heading={copy.impactHeading}
-                      animate={!prefersReducedMotion}
-                    />
-                  )}
-                </div>
-              </div>
             </div>
-          </div>
+          </article>
+
+          <ReferenceList
+            references={orderedReferences}
+            activeIndex={activeIndex}
+            onSelect={handleSelect}
+            prefersReducedMotion={prefersReducedMotion}
+            mode="tabs"
+            copy={{
+              selectReference: copy.selectReference,
+              instagram: copy.instagram,
+              instagramAria: copy.instagramAria,
+              website: copy.website,
+              websiteAria: copy.websiteAria,
+            }}
+          />
         </div>
       </div>
     </section>
+  );
+}
+
+function BackgroundOrnaments() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div
+        className="absolute -left-40 top-[12%] h-[420px] w-[520px] blur-3xl"
+        style={{
+          background:
+            'radial-gradient(ellipse 58% 46%, rgba(0, 215, 107, 0.18) 0%, rgba(0, 215, 107, 0.10) 48%, transparent 82%)',
+        }}
+      />
+      <div
+        className="absolute -right-44 top-[34%] h-[460px] w-[560px] blur-3xl"
+        style={{
+          background:
+            'radial-gradient(ellipse 54% 48%, rgba(0, 215, 107, 0.14) 0%, rgba(0, 184, 92, 0.10) 52%, transparent 84%)',
+        }}
+      />
+      <div
+        className="absolute bottom-[6%] left-1/2 h-[360px] w-[520px] -translate-x-1/2 blur-3xl"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(0, 215, 107, 0.12) 0%, rgba(0, 215, 107, 0.08) 50%, transparent 82%)',
+        }}
+      />
+    </div>
   );
 }

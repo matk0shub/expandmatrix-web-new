@@ -85,6 +85,8 @@
     "references": {
       "title": "Reference",
       "overline": "REFERENCE",
+      "heading": "Výsledky, ne sliby",
+      "subtitle": "Reálné projekty a čísla, která přinesly.",
       "instagram": "Instagram",
       "viewProfile": "Zobrazit profil",
       "website": "Web",
@@ -92,11 +94,13 @@
       "instagramAria": "Otevřít Instagram {name}",
       "websiteAria": "Navštívit web {name}",
       "impactHeading": "Přehled dopadu AI",
+      "deliveredHeading": "Co jsme dodali",
       "metaName": "Klientské reference",
       "metaDescription": "Vybrané úspěšné spolupráce a výsledky implementace AI.",
       "samples": {
         "apexMma": {
           "subtitle": "Profesionální MMA gym a akademie v Náchodě",
+          "sector": "Web",
           "metrics": [
             {
               "label": "Nová online viditelnost",
@@ -118,6 +122,7 @@
         },
         "tarifix": {
           "subtitle": "Srovnávač a zprostředkovatel telco tarifů",
+          "sector": "Automatizace",
           "metrics": [
             {
               "label": "Automatizace zpracování poptávek",
@@ -139,6 +144,7 @@
         },
         "pendlerFinance": {
           "subtitle": "Finanční poradenství pro přeshraniční pracovníky",
+          "sector": "AI agent + Web",
           "metrics": [
             {
               "label": "Nový web spuštěn",

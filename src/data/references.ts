@@ -8,6 +8,7 @@ type ReferenceTranslations = Record<
   string,
   {
     subtitle: string;
+    sector: string;
     metrics: Array<{ label: string; value: string }>;
   }
 >;
@@ -76,7 +77,7 @@ function getLocalizedReference(translationKey: string, locale: SupportedLocale) 
   const fallback = referenceTranslations.en[translationKey];
   const localized = referenceTranslations[locale][translationKey] ?? fallback;
 
-  return localized ?? { subtitle: '', metrics: [] };
+  return localized ?? { subtitle: '', sector: '', metrics: [] };
 }
 
 export function getSampleReferences(locale?: string): Reference[] {
@@ -88,6 +89,7 @@ export function getSampleReferences(locale?: string): Reference[] {
     return {
       ...reference,
       subtitle: localized.subtitle,
+      sector: localized.sector,
       metrics: localized.metrics.map((metric) => ({
         label: metric.label,
         value: metric.value,
