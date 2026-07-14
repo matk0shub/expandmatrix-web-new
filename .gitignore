@@ -30,9 +30,8 @@
 payload-audit.log
 /.claude/
 
-# secrets — treat with care. `.env` is currently tracked for the Netlify
-# auto-deploy flow; move its contents to Netlify env vars and add `.env` back
-# to the list below once that migration is done. Other env variants stay out.
+# secrets — runtime values live in Netlify or local untracked files.
+.env
 .env.local
 .env.*.local
 .env.production
